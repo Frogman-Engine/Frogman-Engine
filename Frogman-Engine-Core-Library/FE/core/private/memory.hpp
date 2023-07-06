@@ -66,12 +66,6 @@ struct type_memory_utilization
 };
 
 
-END_NAMESPACE
-
-
-
-
-BEGIN_NAMESPACE(FE::internal)
 
 
 _MAYBE_UNUSED_ constexpr uint8 _BYTE_SIZE_ = 1;
