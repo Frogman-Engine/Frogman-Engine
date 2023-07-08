@@ -90,8 +90,8 @@ bool FE::real_time_exception_history_logging_strategy::__exception_handling_stra
     case _LOG_EXCEPTION_HISTORY_: // store exception logs in a global container and write  exception history file right before the unsafe_end of the application.  
         exception::tl_s_exception_reporter << exception::tl_s_full_debug_info_buffer.get() << "\n\n";
 
-        ::memset(exception::tl_s_source_code_line_info_buffer.get(), '\0', _LINE_INFO_BUFFER_SIZE_);
-        ::memset(exception::tl_s_full_debug_info_buffer.get(), '\0', _FULL_DEBUG_INFO_BUFFER_SIZE_);
+        ::FE::memset_s(exception::tl_s_source_code_line_info_buffer.get(), _NULL_, _LINE_INFO_BUFFER_SIZE_, sizeof(exception::char_type));
+        ::FE::memset_s(exception::tl_s_full_debug_info_buffer.get(), _NULL_, _FULL_DEBUG_INFO_BUFFER_SIZE_, sizeof(exception::char_type));
         break;
 
 
@@ -100,8 +100,8 @@ bool FE::real_time_exception_history_logging_strategy::__exception_handling_stra
 
         exception::tl_s_exception_reporter << exception::tl_s_full_debug_info_buffer.get() << "\n\n";
 
-        ::memset(exception::tl_s_source_code_line_info_buffer.get(), '\0', _LINE_INFO_BUFFER_SIZE_);
-        ::memset(exception::tl_s_full_debug_info_buffer.get(), '\0', _FULL_DEBUG_INFO_BUFFER_SIZE_);
+        ::FE::memset_s(exception::tl_s_source_code_line_info_buffer.get(), _NULL_, _LINE_INFO_BUFFER_SIZE_, sizeof(exception::char_type));
+        ::FE::memset_s(exception::tl_s_full_debug_info_buffer.get(), _NULL_, _FULL_DEBUG_INFO_BUFFER_SIZE_, sizeof(exception::char_type));
 
         ::abort(); // aborts the entire processes of the application.
 
@@ -121,10 +121,10 @@ bool FE::real_time_exception_history_logging_strategy::__exception_handling_stra
 
         exception::tl_s_exception_reporter << exception::tl_s_full_debug_info_buffer.get() << "\n\n";
 
-        ::memset(exception::tl_s_source_code_line_info_buffer.get(), '\0', _LINE_INFO_BUFFER_SIZE_);
-        ::memset(exception::tl_s_full_debug_info_buffer.get(), '\0', _FULL_DEBUG_INFO_BUFFER_SIZE_);
+        ::FE::memset_s(exception::tl_s_source_code_line_info_buffer.get(), _NULL_, _LINE_INFO_BUFFER_SIZE_, sizeof(exception::char_type));
+        ::FE::memset_s(exception::tl_s_full_debug_info_buffer.get(), _NULL_, _FULL_DEBUG_INFO_BUFFER_SIZE_, sizeof(exception::char_type));
 
-        ::exit(exit_code_p);
+        ::std::exit(exit_code_p);
     }
 
     return true;
@@ -258,27 +258,26 @@ void FE::real_time_exception_history_logging_strategy::__exception_destruction_s
 
 
 
+FE::var::uint32 FE::exception_history_log_buffering_strategy::s_buffer_capacity = 0;
 
 
-
-
-bool FE::exception_history_log_pooling_strategy::__exception_handling_strategy(const bool expression_p, const char* const expression_string_ptrc_p, const FE::EXCEPTION_MODE runtime_exception_mode_p, const char* message_ptr_p, const char* file_name_ptr_p, const char* function_name_ptr_p, const int line_p, const int exit_code_p) noexcept
+bool FE::exception_history_log_buffering_strategy::__exception_handling_strategy(const bool expression_p, const char* const expression_string_ptrc_p, const FE::EXCEPTION_MODE runtime_exception_mode_p, const char* message_ptr_p, const char* file_name_ptr_p, const char* function_name_ptr_p, const int line_p, const int exit_code_p) noexcept
 {
     return false;
 }
 
-void FE::exception_history_log_pooling_strategy::__main_thread_exception_construction_strategy() noexcept
+void FE::exception_history_log_buffering_strategy::__main_thread_exception_construction_strategy() noexcept
 {
 }
 
-void FE::exception_history_log_pooling_strategy::__main_thread_exception_destruction_strategy() noexcept
+void FE::exception_history_log_buffering_strategy::__main_thread_exception_destruction_strategy() noexcept
 {
 }
 
-void FE::exception_history_log_pooling_strategy::__exception_construction_strategy() noexcept
+void FE::exception_history_log_buffering_strategy::__exception_construction_strategy() noexcept
 {
 }
 
-void FE::exception_history_log_pooling_strategy::__exception_destruction_strategy() noexcept
+void FE::exception_history_log_buffering_strategy::__exception_destruction_strategy() noexcept
 {
 }

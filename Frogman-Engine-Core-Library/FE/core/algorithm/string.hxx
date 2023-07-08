@@ -293,6 +293,7 @@ _FORCE_INLINE_ void copy_string(char_type* const destination_out_ptrc_p, count_t
     FE_ASSERT_WITHOUT_LOG(destination_count_p < source_count_p);
 
     FE::memcpy_s(destination_out_ptrc_p, destination_count_p, sizeof(char_type), source_ptrc_p, source_count_p, sizeof(char_type));
+    destination_out_ptrc_p[source_count_p] = static_cast<char_type>('\0');
 }
 
 
@@ -1048,6 +1049,14 @@ _NODISCARD_ _FORCE_INLINE_::std::optional<string_range> search_very_last_substri
 
     return ::std::nullopt;
 }
+
+
+// search_very_first_substring_within_range
+// search_very_last_substring_within_range
+
+// search_very_first_character_within_range
+// search_very_last_character_within_range
+// search_all_corresponding_characters_within_range
 
 
 template<typename char_type, typename int_type>

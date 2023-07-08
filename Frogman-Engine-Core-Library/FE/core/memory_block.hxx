@@ -9,7 +9,7 @@ BEGIN_NAMESPACE(FE)
 
 
 #pragma pack(push, _DWORD_SIZE_)
-template<typename T, class padding_size = FE::internal::align_null>
+template<typename T, class padding_size = FE::align_null>
 class alignas(padding_size::s_size) memory_block final
 {
 private:

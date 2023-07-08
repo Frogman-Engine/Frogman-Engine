@@ -10,7 +10,7 @@ BEGIN_NAMESPACE(FE)
 
 #pragma pack(push, _DWORD_SIZE_)
 // construction and destruction operations are lock-free and thread-safe but the instance may not be safe from data race condition.
-template<typename T, class padding_size = FE::internal::align_null>
+template<typename T, class padding_size = FE::align_null>
 class alignas(padding_size::s_size) concurrent_memory_block final
 {
 private:

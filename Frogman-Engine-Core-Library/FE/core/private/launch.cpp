@@ -28,7 +28,7 @@ void ::FE::internal::engine_main::shutdown_engine() noexcept
 	::FE::exception::__destruct_exception_on_main_thread();
 }
 
-void ::FE::internal::engine_main::abnormal_shutdown_with_exit_code(int signal_p) noexcept
+void ::FE::internal::engine_main::abnormal_shutdown_with_exit_code(int32 signal_p) noexcept
 {
 	::FE::exception::__destruct_exception();
 	::std::exit(signal_p);

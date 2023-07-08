@@ -202,6 +202,10 @@ public:
         return l_result;
     }
 
+    // constexpr ::std::optional<algorithm::string::string_range> rfind(compile_time_constant_string<char_type>& target_substring_ref_p, index_t position_p = 0) const noexcept
+    // constexpr ::std::optional<algorithm::string::string_range> rfind(const char_type* const target_substring_ptrc_p, index_t position_p = 0) const noexcept
+    // constexpr algorithm::string::target_char_search_result<char_type> rfind(const char_type target_character_p, index_t position_p = 0) const noexcept
+
     constexpr algorithm::string::target_char_count<char_type> find_all_corresponding_characters(const char_type target_character_p, index_t position_p = 0) const noexcept
     {
         return algorithm::string::search_all_corresponding_characters(this->data() + position_p, target_character_p);

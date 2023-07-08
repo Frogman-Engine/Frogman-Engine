@@ -7,10 +7,6 @@
 BEGIN_NAMESPACE(FE)
 
 
-_MAYBE_UNUSED_ static constexpr uint16 _LINE_INFO_BUFFER_SIZE_ = 40;
-_MAYBE_UNUSED_ static constexpr uint16 _FULL_DEBUG_INFO_BUFFER_SIZE_ = 1024;
-
-
 enum struct EXCEPTION_MODE : uint8
 {
     _LOG_EXCEPTION_HISTORY_ = 0,

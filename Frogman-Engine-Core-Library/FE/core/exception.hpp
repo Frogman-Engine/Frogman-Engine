@@ -10,6 +10,10 @@
 BEGIN_NAMESPACE(FE)
 
 
+_MAYBE_UNUSED_ static constexpr uint16 _LINE_INFO_BUFFER_SIZE_ = 32;
+_MAYBE_UNUSED_ static constexpr uint16 _FULL_DEBUG_INFO_BUFFER_SIZE_ = 512;
+
+
 class thread;
 
 class clock;
@@ -104,11 +108,18 @@ private:
     virtual void __exception_destruction_strategy() noexcept override;
 };
 
-class exception_history_log_pooling_strategy : public exception
+class exception_history_log_buffering_strategy : public exception
 {
+    static var::uint32 s_buffer_capacity;
 public:
-    constexpr exception_history_log_pooling_strategy() noexcept {}
-    _CONSTEXPR20_ ~exception_history_log_pooling_strategy() noexcept {}
+    constexpr exception_history_log_buffering_strategy() noexcept {}
+    
+    constexpr exception_history_log_buffering_strategy(uint32 buffer_capacity_p) noexcept 
+    {
+        s_buffer_capacity = buffer_capacity_p;
+    }
+    
+    _CONSTEXPR20_ ~exception_history_log_buffering_strategy() noexcept {}
 
 private:
     virtual bool __exception_handling_strategy(const bool expression_p, const char* const expression_string_ptrc_p, const FE::EXCEPTION_MODE runtime_exception_mode_p, const char* message_ptr_p, const char* file_name_ptr_p, const char* function_name_ptr_p, const int line_p, const int exit_code_p) noexcept override;
