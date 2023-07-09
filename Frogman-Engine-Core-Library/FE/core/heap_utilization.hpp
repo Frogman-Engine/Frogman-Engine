@@ -53,8 +53,8 @@ private:
 		heap_memory_tracker::s_global_total_bytes.fetch_add(size_bytes_p, ::std::memory_order_relaxed);
 		heap_memory_tracker::tl_s_thread_local_total_bytes += size_bytes_p;
 
-		heap_utilization<U>::s_global_total_bytes_by_type.fetch_add(size_bytes_p, ::std::memory_order_relaxed);
-		heap_utilization<U>::tl_s_thread_local_total_bytes_by_type += size_bytes_p;
+		heap_utilization::s_global_total_bytes_by_type.fetch_add(size_bytes_p, ::std::memory_order_relaxed);
+		heap_utilization::tl_s_thread_local_total_bytes_by_type += size_bytes_p;
 	}
 
 	static void sub(size_t size_bytes_p) noexcept
@@ -62,12 +62,12 @@ private:
 		heap_memory_tracker::s_global_total_bytes.fetch_sub(size_bytes_p, ::std::memory_order_relaxed);
 		heap_memory_tracker::tl_s_thread_local_total_bytes -= size_bytes_p;
 
-		heap_utilization<U>::s_global_total_bytes_by_type.fetch_sub(size_bytes_p, ::std::memory_order_relaxed);
-		heap_utilization<U>::tl_s_thread_local_total_bytes_by_type -= size_bytes_p;
+		heap_utilization::s_global_total_bytes_by_type.fetch_sub(size_bytes_p, ::std::memory_order_relaxed);
+		heap_utilization::tl_s_thread_local_total_bytes_by_type -= size_bytes_p;
 	}
 
 public:
-	typedef U memory_type;
+	typedef U memory_value_type;
 
 	static total_memory_utilization_data query_all_data() noexcept 
 	{
@@ -75,7 +75,7 @@ public:
 		total_memory_utilization_data l_data
 		{
 			heap_memory_tracker::s_global_total_bytes.load(std::memory_order_relaxed), heap_memory_tracker::tl_s_thread_local_total_bytes,
-			heap_utilization<U>::s_global_total_bytes_by_type.load(std::memory_order_relaxed), heap_utilization<U>::tl_s_thread_local_total_bytes_by_type
+			heap_utilization::s_global_total_bytes_by_type.load(std::memory_order_relaxed), heap_utilization::tl_s_thread_local_total_bytes_by_type
 		};
 		return l_data;
 #else
@@ -103,7 +103,7 @@ public:
 #if _ENABLE_MEMORY_TRACKER_ == true
 		type_memory_utilization l_data
 		{
-			heap_utilization<U>::s_global_total_bytes_by_type.load(std::memory_order_relaxed), heap_utilization<U>::tl_s_thread_local_total_bytes_by_type
+			heap_utilization::s_global_total_bytes_by_type.load(std::memory_order_relaxed), heap_utilization::tl_s_thread_local_total_bytes_by_type
 		};
 		return l_data;
 #else
@@ -135,7 +135,7 @@ template<typename T, class alignment = align_8bytes>
 _NODISCARD_ _FORCE_INLINE_ T* trackable_calloc(length_t count_p, size_t bytes_p) noexcept
 {
 #if _ENABLE_MEMORY_TRACKER_ == true
-	::FE::heap_utilization<T>::add(count_p * bytes_p);
+	::FE::heap_utilization<T, alignment>::add(count_p * bytes_p);
 #endif
 	T* l_result_ptr = (T*)::scalable_aligned_malloc(count_p * bytes_p, alignment::s_size);
 	::FE::memset_s(l_result_ptr, _NULL_, count_p, bytes_p);
@@ -148,7 +148,7 @@ template<typename T, class alignment = align_8bytes>
 _FORCE_INLINE_ void trackable_free(T* const memblock_ptrc_p, length_t count_p, size_t bytes_p) noexcept
 {
 #if _ENABLE_MEMORY_TRACKER_ == true
-	::FE::heap_utilization<T>::sub(count_p * bytes_p);
+	::FE::heap_utilization<T, alignment>::sub(count_p * bytes_p);
 #endif 
 	::scalable_aligned_free(memblock_ptrc_p);
 }
@@ -158,8 +158,8 @@ template<typename T, class alignment = align_8bytes>
 _NODISCARD_ _FORCE_INLINE_ T* trackable_realloc(T* const memblock_ptrc_p, length_t prev_length_p, size_t prev_bytes_p, length_t new_length_p, size_t new_bytes_p) noexcept
 {
 #if _ENABLE_MEMORY_TRACKER_ == true
-	::FE::heap_utilization<T>::s_global_total_bytes_by_type::sub(prev_length_p * prev_bytes_p);
-	::FE::heap_utilization<T>::s_global_total_bytes_by_type::add(new_length_p * new_bytes_p);
+	::FE::heap_utilization<T, alignment>::s_global_total_bytes_by_type::sub(prev_length_p * prev_bytes_p);
+	::FE::heap_utilization<T, alignment>::s_global_total_bytes_by_type::add(new_length_p * new_bytes_p);
 #endif
 
 	T* l_realloc_result_ptr = (T*)::scalable_aligned_realloc(memblock_ptrc_p, new_bytes_p * new_length_p, alignment::s_size);
