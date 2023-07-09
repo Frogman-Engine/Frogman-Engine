@@ -20,7 +20,7 @@ public:
 	typedef T& reference;
 	typedef const T& const_reference;
 	typedef var::size_t size_type;
-
+	
 
 	_NODISCARD_ _FORCE_INLINE_ static T* allocate(count_t count_p) noexcept
 	{
@@ -91,8 +91,8 @@ public:
 };
 
 
-template <typename T>
-class scalable_allocator final
+template <typename T, class alignment = align_8bytes>
+class scalable_aligned_allocator final
 {
 public:
 	typedef T value_type;
@@ -107,7 +107,7 @@ public:
 	{
 		FE_ASSERT(count_p == 0, "UNRECOVERABLE CRITICAL ERROR!: queried allocation size is zero.", _EXCEPTION_ORIGIN_);
 
-		return ::FE::trackable_calloc<T>(count_p, sizeof(T));
+		return ::FE::trackable_calloc<T, alignment>(count_p, sizeof(T));
 	}
 
 
@@ -115,7 +115,7 @@ public:
 	{
 		FE_ASSERT(new_count_p == 0, "UNRECOVERABLE CRITICAL ERROR!: queried reallocation size is zero.", _EXCEPTION_ORIGIN_);
 
-		return ::FE::trackable_realloc(ptrc_p, prev_count_p, sizeof(T), new_count_p, sizeof(T));
+		return ::FE::trackable_realloc<T, alignment>(ptrc_p, prev_count_p, sizeof(T), new_count_p, sizeof(T));
 	}
 
 
@@ -123,7 +123,7 @@ public:
 	{
 		FE_ASSERT((ptrc_p == nullptr) || (count_p == 0), "UNRECOVERABLE CRITICAL ERROR!: attempted to delete nullptr or the size input value is zero.", _EXCEPTION_ORIGIN_);
 		
-		::FE::trackable_free(ptrc_p, count_p, sizeof(T));
+		::FE::trackable_free<T, alignment>(ptrc_p, count_p, sizeof(T));
 	}
 };
 
