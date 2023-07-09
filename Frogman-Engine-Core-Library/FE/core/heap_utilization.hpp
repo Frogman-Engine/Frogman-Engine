@@ -10,7 +10,7 @@
 BEGIN_NAMESPACE(FE)
 
 
-template<typename T, class alignment>
+template<typename T, class address_alignment>
 class heap_utilization;
 
 template<typename T>
@@ -36,11 +36,11 @@ protected:
 };
 
 
-template<typename U, class alignment = align_8bytes>
+template<typename U, class address_alignment = align_8bytes>
 class heap_utilization final : public heap_memory_tracker
 {
 	friend class new_delete_allocator<U>;
-	friend class scalable_aligned_allocator<U, alignment>;
+	friend class scalable_aligned_allocator<U, address_alignment>;
 	friend class cache_aligned_allocator<U>;
 
 private:
@@ -124,11 +124,11 @@ public:
 };
 
 
-template<typename T, class alignment>
-::std::atomic_size_t FE::heap_utilization<T, alignment>::s_global_total_bytes_by_type = 0;
+template<typename T, class address_alignment>
+::std::atomic_size_t FE::heap_utilization<T, address_alignment>::s_global_total_bytes_by_type = 0;
 
-template<typename T, class alignment>
-thread_local var::size_t FE::heap_utilization<T, alignment>::tl_s_thread_local_total_bytes_by_type = 0;
+template<typename T, class address_alignment>
+thread_local var::size_t FE::heap_utilization<T, address_alignment>::tl_s_thread_local_total_bytes_by_type = 0;
 
 
 template<typename T, class alignment = align_8bytes>
