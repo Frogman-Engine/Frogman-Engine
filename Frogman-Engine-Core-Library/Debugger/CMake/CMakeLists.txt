@@ -6,6 +6,7 @@ PROJECT(Frogma_Engine_Core_Library_Debugger)
 
 
 SET(CMAKE_BUILD_TYPE "Debug")
+SET(SIMD_OPTION "AVX")
 SET(CMAKE_CXX_STANDARD 20)
 
 
@@ -228,16 +229,54 @@ else()
 endif()
 
 
-# Add compiler options
-ADD_COMPILE_OPTIONS(-pthread -g -mavx -march=x86-64)
+if(${SIMD_OPTION} STREQUAL "AVX-512")
+ADD_COMPILE_OPTIONS(-mavx512)
+
+elseif(${SIMD_OPTION} STREQUAL "AVX-2")
+ADD_COMPILE_OPTIONS(-mavx2)
+
+elseif(${SIMD_OPTION} STREQUAL "AVX")
+ADD_COMPILE_OPTIONS(-mavx)
+
+else()
+message(FATAL_ERROR "Detected an invalid X86-64 intrinsic SIMD option")
+
+endif()
+
+
+if(${CMAKE_BUILD_TYPE} STREQUAL "Release")
+ADD_COMPILE_OPTIONS(-pthread -finline-functions -march=x86-64 -O3)
+
+elseif(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+ADD_COMPILE_OPTIONS(-pthread -g -march=x86-64 -O0)
+
+else()
+message(FATAL_ERROR "Detected an invalid Build Option")
+
+endif()
+
 
 ADD_COMPILE_DEFINITIONS(_LINUX_64BIT_OS_=1)
 ADD_COMPILE_DEFINITIONS(_WINDOWS_64BIT_OS_=0)
 
+
+if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
 FIND_LIBRARY(UNIT_TEST_LINUX libgtest.a PATHS ${CMAKE_CURRENT_SOURCE_DIR}/../../../Frogman-Engine-Unit-Tests/Unit-Test-Linux-Packages)
-FIND_LIBRARY(CITY_HASH libCITY_HASH.a PATHS ${CMAKE_CURRENT_SOURCE_DIR}/../../../Third-Party-Libraries/City-Hash/Binaries/Linux/Release/a)
+FIND_LIBRARY(CITY_HASH libCITY_HASH.a PATHS ${CMAKE_CURRENT_SOURCE_DIR}/../../../Third-Party-Libraries/City-Hash/Binaries/Linux/Debug/a)
 FIND_LIBRARY(TBB_LINUX libtbb_debug.so PATHS ${CMAKE_CURRENT_SOURCE_DIR}/../../../Third-Party-Libraries/OneAPI-TBB_2021_9_0/binaries/Linux/so/intel64/gcc4.8 PATH_SUFFIXES gcc4.8)
 FIND_LIBRARY(TBB_MALLOC_LINUX libtbbmalloc_debug.so PATHS ${CMAKE_CURRENT_SOURCE_DIR}/../../../Third-Party-Libraries/OneAPI-TBB_2021_9_0/binaries/Linux/so/intel64/gcc4.8 PATH_SUFFIXES gcc4.8)
+
+elseif(${CMAKE_BUILD_TYPE} STREQUAL "Release")
+FIND_LIBRARY(UNIT_TEST_LINUX libgtest.a PATHS ${CMAKE_CURRENT_SOURCE_DIR}/../../../Frogman-Engine-Unit-Tests/Unit-Test-Linux-Packages)
+FIND_LIBRARY(CITY_HASH libCITY_HASH.a PATHS ${CMAKE_CURRENT_SOURCE_DIR}/../../../Third-Party-Libraries/City-Hash/Binaries/Linux/Release/a)
+FIND_LIBRARY(TBB_LINUX libtbb.so PATHS ${CMAKE_CURRENT_SOURCE_DIR}/../../../Third-Party-Libraries/OneAPI-TBB_2021_9_0/binaries/Linux/so/intel64/gcc4.8 PATH_SUFFIXES gcc4.8)
+FIND_LIBRARY(TBB_MALLOC_LINUX libtbbmalloc.so PATHS ${CMAKE_CURRENT_SOURCE_DIR}/../../../Third-Party-Libraries/OneAPI-TBB_2021_9_0/binaries/Linux/so/intel64/gcc4.8 PATH_SUFFIXES gcc4.8)
+
+else()
+message(FATAL_ERROR "Detected an invalid Build Option")
+
+endif()
+
 
 # Add the executable target
 ADD_EXECUTABLE(	${PROJECT_NAME} 
@@ -280,15 +319,42 @@ message("Configurating The Build Environment for Windows X86-64")
 ADD_COMPILE_DEFINITIONS(_WINDOWS_64BIT_OS_=1)
 ADD_COMPILE_DEFINITIONS(_LINUX_64BIT_OS_=0)
 
-# Add compiler options 
-ADD_COMPILE_OPTIONS(/WX- /W4 /MP /Od /Oi /MTd /Gy /arch:AVX /DEBUG)
 
+if(${SIMD_OPTION} STREQUAL "AVX-512")
+ADD_COMPILE_OPTIONS(/arch:AVX512)
+
+elseif(${SIMD_OPTION} STREQUAL "AVX-2")
+ADD_COMPILE_OPTIONS(/arch:AVX2)
+
+elseif(${SIMD_OPTION} STREQUAL "AVX")
+ADD_COMPILE_OPTIONS(/arch:AVX)
+
+else()
+message(FATAL_ERROR "Detected an invalid X86-64 intrinsic SIMD option")
+
+endif()
+
+ADD_COMPILE_OPTIONS(/WX- /W4 /MP /Od /Oi /MTd /Gy /DEBUG)
+
+
+if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
 FIND_LIBRARY(UNIT_TEST_WINDOWS gtest.lib PATHS ${CMAKE_CURRENT_SOURCE_DIR}/../../../Frogman-Engine-Unit-Tests/Unit-Test-Windows-Packages/lib/Debug)
 FIND_LIBRARY(CITY_HASH CITY_HASH.lib PATHS ${CMAKE_CURRENT_SOURCE_DIR}/../../../Third-Party-Libraries/City-Hash/Binaries/Windows/Debug)
 FIND_LIBRARY(TBB_WINDOWS tbb12_debug.lib PATHS ${CMAKE_CURRENT_SOURCE_DIR}/../../../Third-Party-Libraries/OneAPI-TBB_2021_9_0/binaries/Windows/lib/intel64/vc14_uwp PATH_SUFFIXES vc14_uwp)
 FIND_LIBRARY(TBB_MALLOC_WINDOWS tbbmalloc_debug.lib PATHS ${CMAKE_CURRENT_SOURCE_DIR}/../../../Third-Party-Libraries/OneAPI-TBB_2021_9_0/binaries/Windows/lib/intel64/vc14_uwp PATH_SUFFIXES vc14_uwp)
 
-# Add the executable target
+elseif(${CMAKE_BUILD_TYPE} STREQUAL "Release")
+FIND_LIBRARY(UNIT_TEST_WINDOWS gtest.lib PATHS ${CMAKE_CURRENT_SOURCE_DIR}/../../../Frogman-Engine-Unit-Tests/Unit-Test-Windows-Packages/lib/Release)
+FIND_LIBRARY(CITY_HASH CITY_HASH.lib PATHS ${CMAKE_CURRENT_SOURCE_DIR}/../../../Third-Party-Libraries/City-Hash/Binaries/Windows/Release)
+FIND_LIBRARY(TBB_WINDOWS tbb12.lib PATHS ${CMAKE_CURRENT_SOURCE_DIR}/../../../Third-Party-Libraries/OneAPI-TBB_2021_9_0/binaries/Windows/lib/intel64/vc14_uwp PATH_SUFFIXES vc14_uwp)
+FIND_LIBRARY(TBB_MALLOC_WINDOWS tbbmalloc.lib PATHS ${CMAKE_CURRENT_SOURCE_DIR}/../../../Third-Party-Libraries/OneAPI-TBB_2021_9_0/binaries/Windows/lib/intel64/vc14_uwp PATH_SUFFIXES vc14_uwp)
+
+else()
+message(FATAL_ERROR "Detected an invalid Build Option")
+
+endif()
+
+
 ADD_EXECUTABLE(	${PROJECT_NAME} 
 				main.cpp
 				${_ALGORITHM_}
