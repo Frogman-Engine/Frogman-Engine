@@ -1,32 +1,39 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 3.2)
 
 
-# Set Project Name
-PROJECT(FE_CORE)
-
 SET(CMAKE_BUILD_TYPE "Release")
+
+
+SET(SIMD_OPTION "AVX")
+if(${SIMD_OPTION} STREQUAL "AVX")
+	PROJECT(FE_CORE_with_AVX)
+
+	elseif(${SIMD_OPTION} STREQUAL "AVX-2")
+	PROJECT(FE_CORE_with_AVX2)
+
+	elseif(${SIMD_OPTION} STREQUAL "AVX-512")
+	PROJECT(FE_CORE_with_AVX512)
+endif()
+
+
 SET(CMAKE_CXX_STANDARD 20)
-
 if(${CMAKE_CXX_STANDARD} EQUAL 23)
-
-ADD_COMPILE_DEFINITIONS(_HAS_CXX23_=1)
-ADD_COMPILE_DEFINITIONS(_HAS_CXX20_=1)
-ADD_COMPILE_DEFINITIONS(_HAS_CXX17_=1)
+	ADD_COMPILE_DEFINITIONS(_HAS_CXX23_=1)
+	ADD_COMPILE_DEFINITIONS(_HAS_CXX20_=1)
+	ADD_COMPILE_DEFINITIONS(_HAS_CXX17_=1)
 
 elseif(${CMAKE_CXX_STANDARD} EQUAL 20)
-
-ADD_COMPILE_DEFINITIONS(_HAS_CXX23_=0)
-ADD_COMPILE_DEFINITIONS(_HAS_CXX20_=1)
-ADD_COMPILE_DEFINITIONS(_HAS_CXX17_=1)
+	ADD_COMPILE_DEFINITIONS(_HAS_CXX23_=0)
+	ADD_COMPILE_DEFINITIONS(_HAS_CXX20_=1)
+	ADD_COMPILE_DEFINITIONS(_HAS_CXX17_=1)
 
 elseif(${CMAKE_CXX_STANDARD} EQUAL 17)
-
-ADD_COMPILE_DEFINITIONS(_HAS_CXX23_=0)
-ADD_COMPILE_DEFINITIONS(_HAS_CXX20_=0)
-ADD_COMPILE_DEFINITIONS(_HAS_CXX17_=1)
+	ADD_COMPILE_DEFINITIONS(_HAS_CXX23_=0)
+	ADD_COMPILE_DEFINITIONS(_HAS_CXX20_=0)
+	ADD_COMPILE_DEFINITIONS(_HAS_CXX17_=1)
 
 else()
-message(FATAL_ERROR "CMAKE_CXX_STANDARD must be C++ 17 or the latest")
+	message(FATAL_ERROR "CMAKE_CXX_STANDARD must be C++ 17 or the latest")
 endif()
 
 
@@ -202,29 +209,66 @@ else()
 endif()
 
 
-ADD_COMPILE_OPTIONS(-pthread -finline-functions -mavx -march=x86-64 -O3)
+if(${SIMD_OPTION} STREQUAL "AVX-512")
+	ADD_COMPILE_OPTIONS(-mavx512)
+
+elseif(${SIMD_OPTION} STREQUAL "AVX-2")
+	ADD_COMPILE_OPTIONS(-mavx2)
+
+elseif(${SIMD_OPTION} STREQUAL "AVX")
+	ADD_COMPILE_OPTIONS(-mavx)
+
+else()
+	message(FATAL_ERROR "Detected an invalid X86-64 intrinsic SIMD option")
+
+endif()
+
+
+if(${CMAKE_BUILD_TYPE} STREQUAL "Release")
+	ADD_COMPILE_OPTIONS(-pthread -finline-functions -march=x86-64 -O3)
+
+elseif(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+	ADD_COMPILE_OPTIONS(-pthread -g -march=x86-64 -O0)
+
+else()
+	MESSAGE(FATAL_ERROR "Detected an invalid Build Option")
+
+endif()
+
 
 ADD_COMPILE_DEFINITIONS(_LINUX_64BIT_OS_=1)
 ADD_COMPILE_DEFINITIONS(_WINDOWS_64BIT_OS_=0)
 
-FIND_LIBRARY(CITY_HASH libCITY_HASH.a PATHS ${CMAKE_CURRENT_SOURCE_DIR}/../../../../Third-Party-Libraries/City-Hash/Binaries/Linux/Release/a)
-FIND_LIBRARY(TBB_LINUX libtbb.so PATHS ${CMAKE_CURRENT_SOURCE_DIR}/../../../../Third-Party-Libraries/OneAPI-TBB_2021_9_0/binaries/Linux/so/intel64/gcc4.8 PATH_SUFFIXES gcc4.8)
-FIND_LIBRARY(TBB_MALLOC_LINUX libtbbmalloc.so PATHS ${CMAKE_CURRENT_SOURCE_DIR}/../../../../Third-Party-Libraries/OneAPI-TBB_2021_9_0/binaries/Linux/so/intel64/gcc4.8 PATH_SUFFIXES gcc4.8)
 
-# Add the executable target
-ADD_LIBRARY(	${PROJECT_NAME} STATIC
-		${_ALGORITHM_}
-		${_CONCURRENT_CONTAINERS_}
-		${_CONCURRENT_SMART_POINTERS_}
-		${_CONTAINERS_}
-		${_MACROS_}
-		${_MEMORY_POOL_} 
-		${_PRIVATE_}
-		${_SMART_POINTERS_}
-		${_CORE_}
-		${_MISCELLANEOUS_PRIVATE_}
-		${_MISCELLANEOUS_}
-		)
+if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+	FIND_LIBRARY(CITY_HASH libCITY_HASH.a PATHS ${CMAKE_CURRENT_SOURCE_DIR}/../../../../Third-Party-Libraries/City-Hash/Binaries/Linux/Debug/a)
+	FIND_LIBRARY(TBB_LINUX libtbb_debug.so PATHS ${CMAKE_CURRENT_SOURCE_DIR}/../../../../Third-Party-Libraries/OneAPI-TBB_2021_9_0/binaries/Linux/so/intel64/gcc4.8 PATH_SUFFIXES gcc4.8)
+	FIND_LIBRARY(TBB_MALLOC_LINUX libtbbmalloc_debug.so PATHS ${CMAKE_CURRENT_SOURCE_DIR}/../../../../Third-Party-Libraries/OneAPI-TBB_2021_9_0/binaries/Linux/so/intel64/gcc4.8 PATH_SUFFIXES gcc4.8)
+
+elseif(${CMAKE_BUILD_TYPE} STREQUAL "Release")
+	FIND_LIBRARY(CITY_HASH libCITY_HASH.a PATHS ${CMAKE_CURRENT_SOURCE_DIR}/../../../../Third-Party-Libraries/City-Hash/Binaries/Linux/Release/a)
+	FIND_LIBRARY(TBB_LINUX libtbb.so PATHS ${CMAKE_CURRENT_SOURCE_DIR}/../../../../Third-Party-Libraries/OneAPI-TBB_2021_9_0/binaries/Linux/so/intel64/gcc4.8 PATH_SUFFIXES gcc4.8)
+	FIND_LIBRARY(TBB_MALLOC_LINUX libtbbmalloc.so PATHS ${CMAKE_CURRENT_SOURCE_DIR}/../../../../Third-Party-Libraries/OneAPI-TBB_2021_9_0/binaries/Linux/so/intel64/gcc4.8 PATH_SUFFIXES gcc4.8)
+
+else()
+	MESSAGE(FATAL_ERROR "Detected an invalid Build Option")
+
+endif()
+
+
+ADD_LIBRARY(${PROJECT_NAME} STATIC
+			${_ALGORITHM_}
+			${_CONCURRENT_CONTAINERS_}
+			${_CONCURRENT_SMART_POINTERS_}
+			${_CONTAINERS_}
+			${_MACROS_}
+			${_MEMORY_POOL_} 
+			${_PRIVATE_}
+			${_SMART_POINTERS_}
+			${_CORE_}
+			${_MISCELLANEOUS_PRIVATE_}
+			${_MISCELLANEOUS_}
+			)
 
 # Set the output directory for the executable
 SET_TARGET_PROPERTIES(	${PROJECT_NAME} 
@@ -247,9 +291,20 @@ ADD_COMPILE_DEFINITIONS(_WINDOWS_64BIT_OS_=1)
 ADD_COMPILE_DEFINITIONS(_LINUX_64BIT_OS_=0)
 
 
-FIND_LIBRARY(TBB_WINDOWS tbb12.lib PATHS ${CMAKE_CURRENT_SOURCE_DIR}/../../../../Third-Party-Libraries/OneAPI-TBB_2021_9_0/binaries/Windows/lib/intel64/vc14_uwp PATH_SUFFIXES vc14_uwp)
-FIND_LIBRARY(CITY_HASH CITY_HASH.lib PATHS ${CMAKE_CURRENT_SOURCE_DIR}/../../../../Third-Party-Libraries/City-Hash/Binaries/Windows/Release)
-FIND_LIBRARY(TBB_MALLOC_WINDOWS tbbmalloc.lib PATHS ${CMAKE_CURRENT_SOURCE_DIR}/../../../../Third-Party-Libraries/OneAPI-TBB_2021_9_0/binaries/Windows/lib/intel64/vc14_uwp PATH_SUFFIXES vc14_uwp)
+if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+	FIND_LIBRARY(TBB_WINDOWS tbb12_debug.lib PATHS ${CMAKE_CURRENT_SOURCE_DIR}/../../../../Third-Party-Libraries/OneAPI-TBB_2021_9_0/binaries/Windows/lib/intel64/vc14_uwp PATH_SUFFIXES vc14_uwp)
+	FIND_LIBRARY(CITY_HASH CITY_HASH.lib PATHS ${CMAKE_CURRENT_SOURCE_DIR}/../../../../Third-Party-Libraries/City-Hash/Binaries/Windows/Debug)
+	FIND_LIBRARY(TBB_MALLOC_WINDOWS tbbmalloc_debug.lib PATHS ${CMAKE_CURRENT_SOURCE_DIR}/../../../../Third-Party-Libraries/OneAPI-TBB_2021_9_0/binaries/Windows/lib/intel64/vc14_uwp PATH_SUFFIXES vc14_uwp)
+
+elseif(${CMAKE_BUILD_TYPE} STREQUAL "Release")
+	FIND_LIBRARY(TBB_WINDOWS tbb12.lib PATHS ${CMAKE_CURRENT_SOURCE_DIR}/../../../../Third-Party-Libraries/OneAPI-TBB_2021_9_0/binaries/Windows/lib/intel64/vc14_uwp PATH_SUFFIXES vc14_uwp)
+	FIND_LIBRARY(CITY_HASH CITY_HASH.lib PATHS ${CMAKE_CURRENT_SOURCE_DIR}/../../../../Third-Party-Libraries/City-Hash/Binaries/Windows/Release)
+	FIND_LIBRARY(TBB_MALLOC_WINDOWS tbbmalloc.lib PATHS ${CMAKE_CURRENT_SOURCE_DIR}/../../../../Third-Party-Libraries/OneAPI-TBB_2021_9_0/binaries/Windows/lib/intel64/vc14_uwp PATH_SUFFIXES vc14_uwp)
+
+else()
+	MESSAGE(FATAL_ERROR "Detected an invalid Build Option")
+
+endif()
 
 
 ADD_LIBRARY(${PROJECT_NAME} STATIC
@@ -277,11 +332,29 @@ TARGET_LINK_LIBRARIES(	${PROJECT_NAME}
 						${TBB_MALLOC_WINDOWS}
 						)
 
+
+if(${SIMD_OPTION} STREQUAL "AVX-512")
+	ADD_COMPILE_OPTIONS(/arch:AVX512)
+
+elseif(${SIMD_OPTION} STREQUAL "AVX-2")
+	ADD_COMPILE_OPTIONS(/arch:AVX2)
+
+elseif(${SIMD_OPTION} STREQUAL "AVX")
+	ADD_COMPILE_OPTIONS(/arch:AVX)
+
+else()
+	message(FATAL_ERROR "Detected an invalid X86-64 intrinsic SIMD option")
+
+endif()
+
+
 TARGET_COMPILE_OPTIONS(	${PROJECT_NAME} PRIVATE 
-						$<$<CONFIG:DEBUG>:/WX- /W4 /MP /Od /Ob2 /Oi /Ot /Oy- /GT /MTd /Gy /arch:AVX>
-						$<$<CONFIG:RELEASE>:/WX- /W4 /MP /O2 /Ob2 /Oi /Ot /Oy /GT /MT /Gy /arch:AVX>
-						$<$<CONFIG:RELWITHDEBINFO>:/WX- /W4 /MP /O2 /Ob2 /Oi /Ot /Oy /GT /MT /Gy /arch:AVX>
+						$<$<CONFIG:DEBUG>:/WX- /W4 /MP /Od /Ob2 /Oi /Ot /Oy- /GT /MTd /Gy>
+						$<$<CONFIG:RELEASE>:/WX- /W4 /MP /O2 /Ob2 /Oi /Ot /Oy /GT /MT /Gy>
+						$<$<CONFIG:RELWITHDEBINFO>:/WX- /W4 /MP /O2 /Ob2 /Oi /Ot /Oy /GT /MT /Gy>
 						)
+
+
 endif()
 
 
