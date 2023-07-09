@@ -11,7 +11,7 @@ TEST(allocator_adaptor_in_conjunction_with_heap_memory_util_tracker, memory_usag
 	EXPECT_EQ(FE::heap_utilization<int>::query_all_data()._global_total_bytes, 0);
 	
 	{
-		::std::vector<int, FE::std_style::scalable_allocator<int>> l_sample_vector;
+		::std::vector<int, FE::std_style::scalable_aligned_allocator<int>> l_sample_vector;
 		l_sample_vector.reserve(100);
 	
 		EXPECT_EQ(FE::heap_utilization<int>::query_type_data()._thread_local_total_bytes_by_type, 400);
