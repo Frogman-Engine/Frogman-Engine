@@ -12,7 +12,7 @@ ENABLE_TEST_FOR(basic_string);
 BEGIN_NAMESPACE(FE)
 
 
-template< typename char_type = char, typename max_length_type = var::uint32, class allocator = FE::scalable_allocator<char_type> >
+template< typename char_type = char, typename max_length_type = var::uint32, class allocator = FE::scalable_aligned_allocator<char_type> >
 #if _HAS_CXX20 == 1
     requires character_type<char_type>
 #endif
