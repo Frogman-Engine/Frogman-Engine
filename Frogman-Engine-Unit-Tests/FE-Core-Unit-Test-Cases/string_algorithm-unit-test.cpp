@@ -103,10 +103,13 @@ TEST(FE_algorithm_string, string_concatenation)
 TEST(FE_algorithm_string, capitalize_string)
 {
 	std::string l_string = "experience our british premium bottle of water!";
-
 	::FE::algorithm::string::capitalize_string<std::string::value_type>(l_string.data());
 
 	EXPECT_TRUE(::FE::algorithm::string::string_comparison(l_string.c_str(), "EXPERIENCE OUR BRITISH PREMIUM BOTTLE OF WATER!"));
+
+
+	var::character l_grade = 'a';
+	EXPECT_EQ(::FE::algorithm::string::capitalize_character<var::character>(l_grade), 'A');
 }
 
 
@@ -115,10 +118,13 @@ TEST(FE_algorithm_string, capitalize_string)
 TEST(FE_algorithm_string, to_lowercase)
 {
 	std::string l_string = "EXPERIENCE OUR KOREAN PREMIUM KIMCHI!";
-
 	::FE::algorithm::string::to_lowercase<std::string::value_type>(l_string.data());
 
 	EXPECT_TRUE(::FE::algorithm::string::string_comparison(l_string.c_str(), "experience our korean premium kimchi!"));
+
+
+	var::character l_grade = 'F';
+	EXPECT_EQ(::FE::algorithm::string::to_lowercase<var::character>(l_grade), 'f');
 }
 
 
@@ -136,33 +142,33 @@ TEST(FE_algorithm_string, capitalize_every_first_letter_of_words)
 
 
 
-TEST(FE_algorithm_string, compare_strings_regardless_of_capitalization)
+TEST(FE_algorithm_string, insensitive_string_comparison)
 {
 	std::string l_capitalized_string = "MANGO";
 	std::string l_lowercased_string = "mango";
 
-	EXPECT_TRUE(::FE::algorithm::string::compare_strings_regardless_of_capitalization(l_capitalized_string.c_str(), l_lowercased_string.data()));
-	EXPECT_TRUE(::FE::algorithm::string::compare_strings_regardless_of_capitalization(l_capitalized_string.data(), l_lowercased_string.c_str()));
+	EXPECT_TRUE(::FE::algorithm::string::insensitive_string_comparison(l_capitalized_string.c_str(), l_lowercased_string.data()));
+	EXPECT_TRUE(::FE::algorithm::string::insensitive_string_comparison(l_capitalized_string.data(), l_lowercased_string.c_str()));
 
-	EXPECT_TRUE(::FE::algorithm::string::compare_strings_regardless_of_capitalization(l_capitalized_string.data(), l_lowercased_string.data()));
-	EXPECT_TRUE(::FE::algorithm::string::compare_strings_regardless_of_capitalization(l_capitalized_string.c_str(), l_lowercased_string.c_str()));
+	EXPECT_TRUE(::FE::algorithm::string::insensitive_string_comparison(l_capitalized_string.data(), l_lowercased_string.data()));
+	EXPECT_TRUE(::FE::algorithm::string::insensitive_string_comparison(l_capitalized_string.c_str(), l_lowercased_string.c_str()));
 }
 
 
 
 
-TEST(FE_algorithm_string, compare_ranged_strings_regardless_of_capitalization)
+TEST(FE_algorithm_string, insensitive_ranged_string_comparison)
 {
 	std::string l_left_string = "* Apple MANGO *";
 	std::string l_right_string = "- Mango -";
 	algorithm::string::string_range left_substring_range{8, 13};
 	algorithm::string::string_range right_substring_range{2, 7};
 
-	EXPECT_TRUE(algorithm::string::compare_ranged_strings_regardless_of_capitalization(l_left_string.c_str(), left_substring_range, l_right_string.data(), right_substring_range));
-	EXPECT_TRUE(algorithm::string::compare_ranged_strings_regardless_of_capitalization(l_left_string.data(), left_substring_range, l_right_string.c_str(), right_substring_range));
+	EXPECT_TRUE(algorithm::string::insensitive_ranged_string_comparison(l_left_string.c_str(), left_substring_range, l_right_string.data(), right_substring_range));
+	EXPECT_TRUE(algorithm::string::insensitive_ranged_string_comparison(l_left_string.data(), left_substring_range, l_right_string.c_str(), right_substring_range));
 
-	EXPECT_TRUE(algorithm::string::compare_ranged_strings_regardless_of_capitalization(l_left_string.data(), left_substring_range, l_right_string.data(), right_substring_range));
-	EXPECT_TRUE(algorithm::string::compare_ranged_strings_regardless_of_capitalization(l_left_string.c_str(), left_substring_range, l_right_string.c_str(), right_substring_range));
+	EXPECT_TRUE(algorithm::string::insensitive_ranged_string_comparison(l_left_string.data(), left_substring_range, l_right_string.data(), right_substring_range));
+	EXPECT_TRUE(algorithm::string::insensitive_ranged_string_comparison(l_left_string.c_str(), left_substring_range, l_right_string.c_str(), right_substring_range));
 }
 
 

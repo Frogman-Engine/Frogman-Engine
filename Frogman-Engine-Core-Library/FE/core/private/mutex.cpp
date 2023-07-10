@@ -14,7 +14,7 @@ FE::mutex::mutex() noexcept : m_is_locked(false)
 
 FE::mutex::~mutex() noexcept
 {
-    FE_ASSERT(this->m_is_locked.load(std::memory_order_acquire) == true, "CRITICAL ERROR: mutex is still locked", _EXCEPTION_ORIGIN_);
+    FE_ASSERT(this->m_is_locked.load(std::memory_order_acquire) == true, "CRITICAL ERROR: mutex is still locked", _SOURCE_LOCATION_);
 
 #if _WINDOWS_64BIT_OS_ == 1
     CloseHandle(this->m_mutex);
@@ -82,7 +82,7 @@ FE::timed_mutex::timed_mutex() noexcept : m_is_locked(false)
 
 FE::timed_mutex::~timed_mutex() noexcept
 {
-    FE_ASSERT(this->m_is_locked.load(std::memory_order_acquire) == true, "CRITICAL ERROR: timed mutex is still locked", _EXCEPTION_ORIGIN_);
+    FE_ASSERT(this->m_is_locked.load(std::memory_order_acquire) == true, "CRITICAL ERROR: timed mutex is still locked", _SOURCE_LOCATION_);
 
 #if _WINDOWS_64BIT_OS_ == 1
     CloseHandle(this->m_timed_mutex);

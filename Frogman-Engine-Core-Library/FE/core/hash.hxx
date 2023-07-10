@@ -16,7 +16,7 @@ public:
 	typedef const char* byte_array_ptr_t;
 	typedef T value_type;
 
-	var::uint64 operator()(value_type value_p) noexcept
+	_FORCE_INLINE_ var::uint64 operator()(value_type value_p) noexcept
 	{
 		if constexpr (::std::is_pointer<T>::value == true)
 		{
@@ -34,7 +34,7 @@ public:
 	typedef const char* byte_array_ptr_t;
 	typedef const char* value_type;
 
-	var::uint64 operator()(value_type value_p) noexcept
+	_FORCE_INLINE_ var::uint64 operator()(value_type value_p) noexcept
 	{
 		return CityHash64((byte_array_ptr_t)value_p, algorithm::string::string_length(value_p));
 	}
@@ -47,7 +47,7 @@ public:
 	typedef const char* byte_array_ptr_t;
 	typedef const wchar_t* value_type;
 
-	var::uint64 operator()(value_type value_p) noexcept
+	_FORCE_INLINE_ var::uint64 operator()(value_type value_p) noexcept
 	{
 		return CityHash64((byte_array_ptr_t)value_p, algorithm::string::string_length(value_p) * sizeof(wchar_t));
 	}
@@ -61,7 +61,7 @@ public:
 	typedef const char* byte_array_ptr_t;
 	typedef const char8_t* value_type;
 
-	var::uint64 operator()(value_type value_p) noexcept
+	_FORCE_INLINE_ var::uint64 operator()(value_type value_p) noexcept
 	{
 		return CityHash64((byte_array_ptr_t)value_p, algorithm::string::string_length(value_p) * sizeof(char8_t));
 	}
@@ -75,7 +75,7 @@ public:
 	typedef const char* byte_array_ptr_t;
 	typedef const char16_t* value_type;
 
-	var::uint64 operator()(value_type value_p) noexcept
+	_FORCE_INLINE_ var::uint64 operator()(value_type value_p) noexcept
 	{
 		return CityHash64((byte_array_ptr_t)value_p, algorithm::string::string_length(value_p) * sizeof(char16_t));
 	}
@@ -88,7 +88,7 @@ public:
 	typedef const char* byte_array_ptr_t;
 	typedef const char32_t* value_type;
 
-	var::uint64 operator()(value_type value_p) noexcept
+	_FORCE_INLINE_ var::uint64 operator()(value_type value_p) noexcept
 	{
 		return CityHash64((byte_array_ptr_t)value_p, algorithm::string::string_length(value_p) * sizeof(char32_t));
 	}

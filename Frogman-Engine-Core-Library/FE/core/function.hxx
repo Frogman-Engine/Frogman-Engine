@@ -30,8 +30,8 @@ struct one_arg
 
 
     constexpr one_arg() noexcept {}
-    one_arg(first_argument_type param0_p) noexcept : _param0(param0_p) {}
-    ~one_arg() noexcept = default;
+    _FORCE_INLINE_ one_arg(first_argument_type param0_p) noexcept : _param0(param0_p) {}
+    constexpr ~one_arg() noexcept {}
 };
 
 template<typename P0, typename P1 = P0>
@@ -44,8 +44,8 @@ struct two_args : public one_arg<P0>
 
     
     constexpr two_args() noexcept {}
-    two_args(typename parent::first_argument_type param0_p, second_argument_type param1_p) noexcept : parent(param0_p), _param1(param1_p) {}
-    ~two_args() noexcept = default;
+    _FORCE_INLINE_ two_args(typename parent::first_argument_type param0_p, second_argument_type param1_p) noexcept : parent(param0_p), _param1(param1_p) {}
+    constexpr ~two_args() noexcept {}
 };
 
 template<typename P0, typename P1 = P0, typename P2 = P1>
@@ -58,8 +58,8 @@ struct three_args : public two_args<P0, P1>
 
 
     constexpr three_args() noexcept {}
-    three_args(typename parent::first_argument_type param0_p, typename parent::second_argument_type param1_p, third_argument_type param2_p) noexcept : parent(param0_p, param1_p), _param2(param2_p) {}
-    ~three_args() noexcept = default;
+    _FORCE_INLINE_ three_args(typename parent::first_argument_type param0_p, typename parent::second_argument_type param1_p, third_argument_type param2_p) noexcept : parent(param0_p, param1_p), _param2(param2_p) {}
+    constexpr ~three_args() noexcept {}
 };
 
 template<typename P0, typename P1 = P0, typename P2 = P1, typename P3 = P2>
@@ -72,8 +72,8 @@ struct four_args : public three_args<P0, P1, P2>
 
 
     constexpr four_args() noexcept {}
-    four_args(typename parent::first_argument_type param0_p, typename parent::second_argument_type param1_p, typename parent::third_argument_type param2_p, fourth_argument_type param3_p) noexcept : parent(param0_p, param1_p, param2_p), _param3(param3_p) {}
-    ~four_args() noexcept = default;
+    _FORCE_INLINE_ four_args(typename parent::first_argument_type param0_p, typename parent::second_argument_type param1_p, typename parent::third_argument_type param2_p, fourth_argument_type param3_p) noexcept : parent(param0_p, param1_p, param2_p), _param3(param3_p) {}
+    constexpr ~four_args() noexcept {}
 };
 
 template<typename P0, typename P1 = P0, typename P2 = P1, typename P3 = P2, typename P4 = P3>
@@ -86,8 +86,8 @@ struct five_args : public four_args<P0, P1, P2, P3>
 
 
     constexpr five_args() noexcept {}
-    five_args(typename parent::first_argument_type param0_p, typename parent::second_argument_type param1_p, typename parent::third_argument_type param2_p, typename parent::fourth_argument_type param3_p, fifth_argument_type param4_p) noexcept : parent(param0_p, param1_p, param2_p, param3_p), _param4(param4_p) {}
-    ~five_args() noexcept = default;
+    _FORCE_INLINE_ five_args(typename parent::first_argument_type param0_p, typename parent::second_argument_type param1_p, typename parent::third_argument_type param2_p, typename parent::fourth_argument_type param3_p, fifth_argument_type param4_p) noexcept : parent(param0_p, param1_p, param2_p, param3_p), _param4(param4_p) {}
+    constexpr ~five_args() noexcept {}
 };
 
 template<typename P0, typename P1 = P0, typename P2 = P1, typename P3 = P2, typename P4 = P3, typename P5 = P4>
@@ -100,8 +100,8 @@ struct six_args : public five_args<P0, P1, P2, P3, P4>
 
 
     constexpr six_args() noexcept {}
-    six_args(typename parent::first_argument_type param0_p, typename parent::second_argument_type param1_p, typename parent::third_argument_type param2_p, typename parent::fourth_argument_type param3_p, typename parent::fifth_argument_type param4_p, sixth_argument_type param5_p) noexcept : parent(param0_p, param1_p, param2_p, param3_p, param4_p), _param5(param5_p) {}
-    ~six_args() noexcept = default;
+    _FORCE_INLINE_ six_args(typename parent::first_argument_type param0_p, typename parent::second_argument_type param1_p, typename parent::third_argument_type param2_p, typename parent::fourth_argument_type param3_p, typename parent::fifth_argument_type param4_p, sixth_argument_type param5_p) noexcept : parent(param0_p, param1_p, param2_p, param3_p, param4_p), _param5(param5_p) {}
+    constexpr ~six_args() noexcept {}
 };
 
 template<typename P0, typename P1 = P0, typename P2 = P1, typename P3 = P2, typename P4 = P3, typename P5 = P4, typename P6 = P5>
@@ -114,8 +114,8 @@ struct seven_args : public six_args<P0, P1, P2, P3, P4, P5>
 
 
     constexpr seven_args() noexcept {}
-    seven_args(typename parent::first_argument_type param0_p, typename parent::second_argument_type param1_p, typename parent::third_argument_type param2_p, typename parent::fourth_argument_type param3_p, typename parent::fifth_argument_type param4_p, typename parent::sixth_argument_type param5_p, seventh_argument_type param6_p) noexcept : parent(param0_p, param1_p, param2_p, param3_p, param4_p, param5_p), _param6(param6_p) {}
-    ~seven_args() noexcept = default;
+    _FORCE_INLINE_ seven_args(typename parent::first_argument_type param0_p, typename parent::second_argument_type param1_p, typename parent::third_argument_type param2_p, typename parent::fourth_argument_type param3_p, typename parent::fifth_argument_type param4_p, typename parent::sixth_argument_type param5_p, seventh_argument_type param6_p) noexcept : parent(param0_p, param1_p, param2_p, param3_p, param4_p, param5_p), _param6(param6_p) {}
+    constexpr ~seven_args() noexcept {}
 };
 
 template<typename P0, typename P1 = P0, typename P2 = P1, typename P3 = P2, typename P4 = P3, typename P5 = P4, typename P6 = P5, typename P7 = P6>
@@ -128,8 +128,8 @@ struct eight_args : public seven_args<P0, P1, P2, P3, P4, P5, P6>
 
 
     constexpr eight_args() noexcept {}
-    eight_args(typename parent::first_argument_type param0_p, typename parent::second_argument_type param1_p, typename parent::third_argument_type param2_p, typename parent::fourth_argument_type param3_p, typename parent::fifth_argument_type param4_p, typename parent::sixth_argument_type param5_p, typename parent::seventh_argument_type param6_p, eighth_argument_type param7_p) noexcept : parent(param0_p, param1_p, param2_p, param3_p, param4_p, param5_p, param6_p), _param7(param7_p) {}
-    ~eight_args() noexcept = default;
+    _FORCE_INLINE_ eight_args(typename parent::first_argument_type param0_p, typename parent::second_argument_type param1_p, typename parent::third_argument_type param2_p, typename parent::fourth_argument_type param3_p, typename parent::fifth_argument_type param4_p, typename parent::sixth_argument_type param5_p, typename parent::seventh_argument_type param6_p, eighth_argument_type param7_p) noexcept : parent(param0_p, param1_p, param2_p, param3_p, param4_p, param5_p, param6_p), _param7(param7_p) {}
+    constexpr ~eight_args() noexcept {}
 };
 
 template<typename P0, typename P1 = P0, typename P2 = P1, typename P3 = P2, typename P4 = P3, typename P5 = P4, typename P6 = P5, typename P7 = P6, typename P8 = P7>
@@ -141,8 +141,8 @@ struct nine_args : public eight_args<P0, P1, P2, P3, P4, P5, P6, P7>
     nineth_argument_type _param8;
 
     constexpr nine_args() noexcept {}
-    nine_args(typename parent::first_argument_type param0_p, typename parent::second_argument_type param1_p, typename parent::third_argument_type param2_p, typename parent::fourth_argument_type param3_p, typename parent::fifth_argument_type param4_p, typename parent::sixth_argument_type param5_p, typename parent::seventh_argument_type param6_p, typename parent::eighth_argument_type param7_p, nineth_argument_type param8_p) noexcept : parent(param0_p, param1_p, param2_p, param3_p, param4_p, param5_p, param6_p, param7_p), _param8(param8_p) {}
-    ~nine_args() noexcept = default;
+    _FORCE_INLINE_ nine_args(typename parent::first_argument_type param0_p, typename parent::second_argument_type param1_p, typename parent::third_argument_type param2_p, typename parent::fourth_argument_type param3_p, typename parent::fifth_argument_type param4_p, typename parent::sixth_argument_type param5_p, typename parent::seventh_argument_type param6_p, typename parent::eighth_argument_type param7_p, nineth_argument_type param8_p) noexcept : parent(param0_p, param1_p, param2_p, param3_p, param4_p, param5_p, param6_p, param7_p), _param8(param8_p) {}
+    constexpr ~nine_args() noexcept {}
 };
 
 template<typename P0, typename P1 = P0, typename P2 = P1, typename P3 = P2, typename P4 = P3, typename P5 = P4, typename P6 = P5, typename P7 = P6, typename P8 = P7, typename P9 = P8>
@@ -154,8 +154,8 @@ struct ten_args : public nine_args<P0, P1, P2, P3, P4, P5, P6, P7, P8>
     tenth_argument_type _param9;
 
     constexpr ten_args() noexcept {}
-    ten_args(typename parent::first_argument_type param0_p, typename parent::second_argument_type param1_p, typename parent::third_argument_type param2_p, typename parent::fourth_argument_type param3_p, typename parent::fifth_argument_type param4_p, typename parent::sixth_argument_type param5_p, typename parent::seventh_argument_type param6_p, typename parent::eighth_argument_type param7_p, typename parent::nineth_argument_type param8_p, tenth_argument_type param9_p) noexcept : parent(param0_p, param1_p, param2_p, param3_p, param4_p, param5_p, param6_p, param7_p, param8_p), _param9(param9_p) {}
-    ~ten_args() noexcept = default;
+    _FORCE_INLINE_ ten_args(typename parent::first_argument_type param0_p, typename parent::second_argument_type param1_p, typename parent::third_argument_type param2_p, typename parent::fourth_argument_type param3_p, typename parent::fifth_argument_type param4_p, typename parent::sixth_argument_type param5_p, typename parent::seventh_argument_type param6_p, typename parent::eighth_argument_type param7_p, typename parent::nineth_argument_type param8_p, tenth_argument_type param9_p) noexcept : parent(param0_p, param1_p, param2_p, param3_p, param4_p, param5_p, param6_p, param7_p, param8_p), _param9(param9_p) {}
+    constexpr ~ten_args() noexcept {}
 };
 
 
@@ -169,20 +169,20 @@ struct void_function : public task_base
     using function_type = decltype(_function);
   
 
-    void_function() noexcept = default;
+    _FORCE_INLINE_ void_function() noexcept = default;
     void_function(function_type function_p) noexcept : _function(function_p) {}
 
     void_function(void_function& other_ref_p) noexcept : _function(other_ref_p._function) {}
     void_function(void_function&& rvalue_p) noexcept : _function(rvalue_p._function) {}
 
 
-    void_function& operator=(void_function& other_ref_p) noexcept
+    _FORCE_INLINE_ void_function& operator=(void_function& other_ref_p) noexcept
     {
         this->_function = other_ref_p._function;
         return *this;
     }
 
-    void_function& operator=(void_function&& rvalue_p) noexcept
+    _FORCE_INLINE_ void_function& operator=(void_function&& rvalue_p) noexcept
     {
         this->_function = rvalue_p._function;
         return *this;
@@ -216,14 +216,14 @@ struct void_method : public task_base
     void_method(void_method&& rvalue_p) noexcept : _method(rvalue_p._method), _object(rvalue_p._object) {}
 
 
-    void_method& operator=(void_method& function_ref_p) noexcept
+    _FORCE_INLINE_ void_method& operator=(void_method& function_ref_p) noexcept
     {
         this->_method = function_ref_p._method;
         this->_object = function_ref_p._object;
         return *this;
     }
 
-    void_method& operator=(void_method&& function_p) noexcept
+    _FORCE_INLINE_ void_method& operator=(void_method&& function_p) noexcept
     {
         this->_method = function_p._method;
         this->_object = function_p._object;
@@ -261,14 +261,14 @@ struct void_function_with_1_arg : public task_base
     void_function_with_1_arg(void_function_with_1_arg&& rvalue_p) noexcept : _function(rvalue_p.function_p), _parameters(rvalue_p.parameters_p) {}
 
 
-    void_function_with_1_arg& operator=(void_function_with_1_arg& function_ref_p) noexcept
+    _FORCE_INLINE_ void_function_with_1_arg& operator=(void_function_with_1_arg& function_ref_p) noexcept
     {
         this->_function = function_ref_p._function;
         this->_parameters = function_ref_p._parameters;
         return *this;
     }
 
-    void_function_with_1_arg& operator=(void_function_with_1_arg&& function_p) noexcept
+    _FORCE_INLINE_ void_function_with_1_arg& operator=(void_function_with_1_arg&& function_p) noexcept
     {
         this->_function = function_p._function;
         this->_parameters = function_p._parameters;
@@ -308,7 +308,7 @@ struct void_method_with_1_arg : public task_base
     void_method_with_1_arg(void_method_with_1_arg&& rvalue_p) noexcept : _method(rvalue_p._method), _object(rvalue_p._object), _parameters(rvalue_p._parameters) {}
 
 
-    void_method_with_1_arg& operator=(void_method_with_1_arg& other_ref_p) noexcept
+    _FORCE_INLINE_ void_method_with_1_arg& operator=(void_method_with_1_arg& other_ref_p) noexcept
     {
         this->_method = other_ref_p._method;
         this->_object = other_ref_p._object;
@@ -316,7 +316,7 @@ struct void_method_with_1_arg : public task_base
         return *this;
     }
 
-    void_method_with_1_arg& operator=(void_method_with_1_arg&& rvalue_p) noexcept
+    _FORCE_INLINE_ void_method_with_1_arg& operator=(void_method_with_1_arg&& rvalue_p) noexcept
     {
         this->_method = rvalue_p._method;
         this->_object = rvalue_p._object;
@@ -359,14 +359,14 @@ struct void_function_with_2_args : public task_base
     void_function_with_2_args(void_function_with_2_args&& rvalue_p) noexcept : _function(rvalue_p.function_p), _parameters(rvalue_p.parameters_p) {}
 
 
-    void_function_with_2_args& operator=(void_function_with_2_args& other_ref_p) noexcept
+    _FORCE_INLINE_ void_function_with_2_args& operator=(void_function_with_2_args& other_ref_p) noexcept
     {
         this->_function = other_ref_p._function;
         this->_parameters = other_ref_p._parameters;
         return *this;
     }
 
-    void_function_with_2_args& operator=(void_function_with_2_args&& rvalue_p) noexcept
+    _FORCE_INLINE_ void_function_with_2_args& operator=(void_function_with_2_args&& rvalue_p) noexcept
     {
         this->_function = rvalue_p._function;
         this->_parameters = rvalue_p._parameters;
@@ -406,7 +406,7 @@ struct void_method_with_2_args : public task_base
     void_method_with_2_args(void_method_with_2_args&& rvalue_p) noexcept : _method(rvalue_p._method), _object(rvalue_p._object), _parameters(rvalue_p._parameters) {}
 
 
-    void_method_with_2_args& operator=(void_method_with_2_args& other_ref_p) noexcept
+    _FORCE_INLINE_ void_method_with_2_args& operator=(void_method_with_2_args& other_ref_p) noexcept
     {
         this->_method = other_ref_p._method;
         this->_object = other_ref_p._object;
@@ -414,7 +414,7 @@ struct void_method_with_2_args : public task_base
         return *this;
     }
 
-    void_method_with_2_args& operator=(void_method_with_2_args&& rvalue_p) noexcept
+    _FORCE_INLINE_ void_method_with_2_args& operator=(void_method_with_2_args&& rvalue_p) noexcept
     {
         this->_method = rvalue_p._method;
         this->_object = rvalue_p._object;
@@ -457,14 +457,14 @@ struct void_function_with_3_args : public task_base
     void_function_with_3_args(void_function_with_3_args&& rvalue_p) noexcept : _function(rvalue_p.function_p), _parameters(rvalue_p.parameters_p) {}
 
 
-    void_function_with_3_args& operator=(void_function_with_3_args& other_ref_p) noexcept
+    _FORCE_INLINE_ void_function_with_3_args& operator=(void_function_with_3_args& other_ref_p) noexcept
     {
         this->_function = other_ref_p._function;
         this->_parameters = other_ref_p._parameters;
         return *this;
     }
 
-    void_function_with_3_args& operator=(void_function_with_3_args&& rvalue_p) noexcept
+    _FORCE_INLINE_ void_function_with_3_args& operator=(void_function_with_3_args&& rvalue_p) noexcept
     {
         this->_function = rvalue_p._function;
         this->_parameters = rvalue_p._parameters;
@@ -495,7 +495,7 @@ struct void_method_with_3_args : public task_base
     using parameter_package_type = decltype(_parameters);
 
 
-    void_method_with_3_args() noexcept : _object() {}
+    constexpr void_method_with_3_args() noexcept : _object() {}
     void_method_with_3_args(function_type function_p) noexcept : _method(function_p), _object() {}
     void_method_with_3_args(T* const object_ptrc_p) noexcept : _object(object_ptrc_p) {}
     void_method_with_3_args(parameter_package_type parameters_p) noexcept : _object(), _parameters(parameters_p) {}
@@ -505,7 +505,7 @@ struct void_method_with_3_args : public task_base
     void_method_with_3_args(void_method_with_3_args&& rvalue_p) noexcept : _method(rvalue_p._method), _object(rvalue_p._object), _parameters(rvalue_p._parameters) {}
 
 
-    void_method_with_3_args& operator=(void_method_with_3_args& other_ref_p) noexcept
+    _FORCE_INLINE_ void_method_with_3_args& operator=(void_method_with_3_args& other_ref_p) noexcept
     {
         this->_method = other_ref_p._method;
         this->_object = other_ref_p._object;
@@ -513,7 +513,7 @@ struct void_method_with_3_args : public task_base
         return *this;
     }
 
-    void_method_with_3_args& operator=(void_method_with_3_args&& rvalue_p) noexcept
+    _FORCE_INLINE_ void_method_with_3_args& operator=(void_method_with_3_args&& rvalue_p) noexcept
     {
         this->_method = rvalue_p._method;
         this->_object = rvalue_p._object;
@@ -558,14 +558,14 @@ struct void_function_with_4_args : public task_base
     void_function_with_4_args(void_function_with_4_args&& rvalue_p) noexcept : _function(rvalue_p.function_p), _parameters(rvalue_p.parameters_p) {}
 
 
-    void_function_with_4_args& operator=(void_function_with_4_args& other_ref_p) noexcept
+    _FORCE_INLINE_ void_function_with_4_args& operator=(void_function_with_4_args& other_ref_p) noexcept
     {
         this->_function = other_ref_p._function;
         this->_parameters = other_ref_p._parameters;
         return *this;
     }
 
-    void_function_with_4_args& operator=(void_function_with_4_args&& rvalue_p) noexcept
+    _FORCE_INLINE_ void_function_with_4_args& operator=(void_function_with_4_args&& rvalue_p) noexcept
     {
         this->_function = rvalue_p._function;
         this->_parameters = rvalue_p._parameters;
@@ -607,7 +607,7 @@ struct void_method_with_4_args : public task_base
     void_method_with_4_args(void_method_with_4_args&& rvalue_p) noexcept : _method(rvalue_p._method), _object(rvalue_p._object), _parameters(rvalue_p._parameters) {}
 
 
-    void_method_with_4_args& operator=(void_method_with_4_args& other_ref_p) noexcept
+    _FORCE_INLINE_ void_method_with_4_args& operator=(void_method_with_4_args& other_ref_p) noexcept
     {
         this->_method = other_ref_p._method;
         this->_object = other_ref_p._object;
@@ -615,7 +615,7 @@ struct void_method_with_4_args : public task_base
         return *this;
     }
 
-    void_method_with_4_args& operator=(void_method_with_4_args&& rvalue_p) noexcept
+    _FORCE_INLINE_ void_method_with_4_args& operator=(void_method_with_4_args&& rvalue_p) noexcept
     {
         this->_method = rvalue_p._method;
         this->_object = rvalue_p._object;
@@ -662,14 +662,14 @@ struct void_function_with_5_args : public task_base
     void_function_with_5_args(void_function_with_5_args&& rvalue_p) noexcept : _function(rvalue_p.function_p), _parameters(rvalue_p.parameters_p) {}
 
 
-    void_function_with_5_args& operator=(void_function_with_5_args& other_ref_p) noexcept
+    _FORCE_INLINE_ void_function_with_5_args& operator=(void_function_with_5_args& other_ref_p) noexcept
     {
         this->_function = other_ref_p._function;
         this->_parameters = other_ref_p._parameters;
         return *this;
     }
 
-    void_function_with_5_args& operator=(void_function_with_5_args&& rvalue_p) noexcept
+    _FORCE_INLINE_ void_function_with_5_args& operator=(void_function_with_5_args&& rvalue_p) noexcept
     {
         this->_function = rvalue_p._function;
         this->_parameters = rvalue_p._parameters;
@@ -714,7 +714,7 @@ struct void_method_with_5_args : public task_base
     void_method_with_5_args(void_method_with_5_args&& rvalue_p) noexcept : _method(rvalue_p._method), _object(rvalue_p._object), _parameters(rvalue_p._parameters) {}
 
 
-    void_method_with_5_args& operator=(void_method_with_5_args& other_ref_p) noexcept
+    _FORCE_INLINE_ void_method_with_5_args& operator=(void_method_with_5_args& other_ref_p) noexcept
     {
         this->_method = other_ref_p._method;
         this->_object = other_ref_p._object;
@@ -722,7 +722,7 @@ struct void_method_with_5_args : public task_base
         return *this;
     }
 
-    void_method_with_5_args& operator=(void_method_with_5_args&& rvalue_p) noexcept
+    _FORCE_INLINE_ void_method_with_5_args& operator=(void_method_with_5_args&& rvalue_p) noexcept
     {
         this->_method = rvalue_p._method;
         this->_object = rvalue_p._object;
@@ -770,14 +770,14 @@ struct void_function_with_6_args : public task_base
     void_function_with_6_args(void_function_with_6_args&& rvalue_p) noexcept : _function(rvalue_p.function_p), _parameters(rvalue_p.parameters_p) {}
 
 
-    void_function_with_6_args& operator=(void_function_with_6_args& other_ref_p) noexcept
+    _FORCE_INLINE_ void_function_with_6_args& operator=(void_function_with_6_args& other_ref_p) noexcept
     {
         this->_function = other_ref_p._function;
         this->_parameters = other_ref_p._parameters;
         return *this;
     }
 
-    void_function_with_6_args& operator=(void_function_with_6_args&& rvalue_p) noexcept
+    _FORCE_INLINE_ void_function_with_6_args& operator=(void_function_with_6_args&& rvalue_p) noexcept
     {
         this->_function = rvalue_p._function;
         this->_parameters = rvalue_p._parameters;
@@ -822,7 +822,7 @@ struct void_method_with_6_args : public task_base
     void_method_with_6_args(void_method_with_6_args&& rvalue_p) noexcept : _method(rvalue_p._method), _object(rvalue_p._object), _parameters(rvalue_p._parameters) {}
 
 
-    void_method_with_6_args& operator=(void_method_with_6_args& other_ref_p) noexcept
+    _FORCE_INLINE_ void_method_with_6_args& operator=(void_method_with_6_args& other_ref_p) noexcept
     {
         this->_method = other_ref_p._method;
         this->_object = other_ref_p._object;
@@ -830,7 +830,7 @@ struct void_method_with_6_args : public task_base
         return *this;
     }
 
-    void_method_with_6_args& operator=(void_method_with_6_args&& rvalue_p) noexcept
+    _FORCE_INLINE_ void_method_with_6_args& operator=(void_method_with_6_args&& rvalue_p) noexcept
     {
         this->_method = rvalue_p._method;
         this->_object = rvalue_p._object;
@@ -879,14 +879,14 @@ struct void_function_with_7_args : public task_base
     void_function_with_7_args(void_function_with_7_args&& rvalue_p) noexcept : _function(rvalue_p.function_p), _parameters(rvalue_p.parameters_p) {}
 
 
-    void_function_with_7_args& operator=(void_function_with_7_args& other_ref_p) noexcept
+    _FORCE_INLINE_ void_function_with_7_args& operator=(void_function_with_7_args& other_ref_p) noexcept
     {
         this->_function = other_ref_p._function;
         this->_parameters = other_ref_p._parameters;
         return *this;
     }
 
-    void_function_with_7_args& operator=(void_function_with_7_args&& rvalue_p) noexcept
+    _FORCE_INLINE_ void_function_with_7_args& operator=(void_function_with_7_args&& rvalue_p) noexcept
     {
         this->_function = rvalue_p._function;
         this->_parameters = rvalue_p._parameters;
@@ -933,7 +933,7 @@ struct void_method_with_7_args : public task_base
     void_method_with_7_args(void_method_with_7_args&& rvalue_p) noexcept : _method(rvalue_p._method), _object(rvalue_p._object), _parameters(rvalue_p._parameters) {}
 
 
-    void_method_with_7_args& operator=(void_method_with_7_args& other_ref_p) noexcept
+    _FORCE_INLINE_ void_method_with_7_args& operator=(void_method_with_7_args& other_ref_p) noexcept
     {
         this->_method = other_ref_p._method;
         this->_object = other_ref_p._object;
@@ -941,7 +941,7 @@ struct void_method_with_7_args : public task_base
         return *this;
     }
 
-    void_method_with_7_args& operator=(void_method_with_7_args&& rvalue_p) noexcept
+    _FORCE_INLINE_ void_method_with_7_args& operator=(void_method_with_7_args&& rvalue_p) noexcept
     {
         this->_method = rvalue_p._method;
         this->_object = rvalue_p._object;
@@ -982,7 +982,7 @@ struct void_function_with_8_args : public task_base
     using parameter_package_type = decltype(_parameters);
 
 
-    void_function_with_8_args() noexcept = default;
+    constexpr void_function_with_8_args() noexcept {};
     void_function_with_8_args(function_type function_p) noexcept : _function(function_p) {}
     void_function_with_8_args(parameter_package_type parameters_p) noexcept : _parameters(parameters_p) {}
     void_function_with_8_args(function_type function_p, parameter_package_type parameters_p) noexcept : _function(function_p), _parameters(parameters_p) {}
@@ -991,14 +991,14 @@ struct void_function_with_8_args : public task_base
     void_function_with_8_args(void_function_with_8_args&& rvalue_p) noexcept : _function(rvalue_p.function_p), _parameters(rvalue_p.parameters_p) {}
 
 
-    void_function_with_8_args& operator=(void_function_with_8_args& other_ref_p) noexcept
+    _FORCE_INLINE_ void_function_with_8_args& operator=(void_function_with_8_args& other_ref_p) noexcept
     {
         this->_function = other_ref_p._function;
         this->_parameters = other_ref_p._parameters;
         return *this;
     }
 
-    void_function_with_8_args& operator=(void_function_with_8_args&& rvalue_p) noexcept
+    _FORCE_INLINE_ void_function_with_8_args& operator=(void_function_with_8_args&& rvalue_p) noexcept
     {
         this->_function = rvalue_p._function;
         this->_parameters = rvalue_p._parameters;
@@ -1045,7 +1045,7 @@ struct void_method_with_8_args : public task_base
     void_method_with_8_args(void_method_with_8_args&& rvalue_p) noexcept : _method(rvalue_p._method), _object(rvalue_p._object), _parameters(rvalue_p._parameters) {}
 
 
-    void_method_with_8_args& operator=(void_method_with_8_args& other_ref_p) noexcept
+    _FORCE_INLINE_ void_method_with_8_args& operator=(void_method_with_8_args& other_ref_p) noexcept
     {
         this->_method = other_ref_p._method;
         this->_object = other_ref_p._object;
@@ -1053,7 +1053,7 @@ struct void_method_with_8_args : public task_base
         return *this;
     }
 
-    void_method_with_8_args& operator=(void_method_with_8_args&& rvalue_p) noexcept
+    _FORCE_INLINE_ void_method_with_8_args& operator=(void_method_with_8_args&& rvalue_p) noexcept
     {
         this->_method = rvalue_p._method;
         this->_object = rvalue_p._object;
@@ -1105,14 +1105,14 @@ struct void_function_with_9_args : public task_base
     void_function_with_9_args(void_function_with_9_args&& rvalue_p) noexcept : _function(rvalue_p.function_p), _parameters(rvalue_p.parameters_p) {}
 
 
-    void_function_with_9_args& operator=(void_function_with_9_args& other_ref_p) noexcept
+    _FORCE_INLINE_ void_function_with_9_args& operator=(void_function_with_9_args& other_ref_p) noexcept
     {
         this->_function = other_ref_p._function;
         this->_parameters = other_ref_p._parameters;
         return *this;
     }
 
-    void_function_with_9_args& operator=(void_function_with_9_args&& rvalue_p) noexcept
+    _FORCE_INLINE_ void_function_with_9_args& operator=(void_function_with_9_args&& rvalue_p) noexcept
     {
         this->_function = rvalue_p._function;
         this->_parameters = rvalue_p._parameters;
@@ -1161,7 +1161,7 @@ struct void_method_with_9_args : public task_base
     void_method_with_9_args(void_method_with_9_args&& rvalue_p) noexcept : _method(rvalue_p._method), _object(rvalue_p._object), _parameters(rvalue_p._parameters) {}
 
 
-    void_method_with_9_args& operator=(void_method_with_9_args& other_ref_p) noexcept
+    _FORCE_INLINE_ void_method_with_9_args& operator=(void_method_with_9_args& other_ref_p) noexcept
     {
         this->_method = other_ref_p._method;
         this->_object = other_ref_p._object;
@@ -1169,7 +1169,7 @@ struct void_method_with_9_args : public task_base
         return *this;
     }
 
-    void_method_with_9_args& operator=(void_method_with_9_args&& rvalue_p) noexcept
+    _FORCE_INLINE_ void_method_with_9_args& operator=(void_method_with_9_args&& rvalue_p) noexcept
     {
         this->_method = rvalue_p._method;
         this->_object = rvalue_p._object;
@@ -1221,14 +1221,14 @@ struct void_function_with_10_args : public task_base
     void_function_with_10_args(void_function_with_10_args&& rvalue_p) noexcept : _function(rvalue_p.function_p), _parameters(rvalue_p.parameters_p) {}
 
 
-    void_function_with_10_args& operator=(void_function_with_10_args& other_ref_p) noexcept
+    _FORCE_INLINE_ void_function_with_10_args& operator=(void_function_with_10_args& other_ref_p) noexcept
     {
         this->_function = other_ref_p._function;
         this->_parameters = other_ref_p._parameters;
         return *this;
     }
 
-    void_function_with_10_args& operator=(void_function_with_10_args&& rvalue_p) noexcept
+    _FORCE_INLINE_ void_function_with_10_args& operator=(void_function_with_10_args&& rvalue_p) noexcept
     {
         this->_function = rvalue_p._function;
         this->_parameters = rvalue_p._parameters;
@@ -1277,7 +1277,7 @@ struct void_method_with_10_args : public task_base
     void_method_with_10_args(void_method_with_10_args&& rvalue_p) noexcept : _method(rvalue_p._method), _object(rvalue_p._object), _parameters(rvalue_p._parameters) {}
 
 
-    void_method_with_10_args& operator=(void_method_with_10_args& other_ref_p) noexcept
+    _FORCE_INLINE_ void_method_with_10_args& operator=(void_method_with_10_args& other_ref_p) noexcept
     {
         this->_method = other_ref_p._method;
         this->_object = other_ref_p._object;
@@ -1285,7 +1285,7 @@ struct void_method_with_10_args : public task_base
         return *this;
     }
 
-    void_method_with_10_args& operator=(void_method_with_10_args&& rvalue_p) noexcept
+    _FORCE_INLINE_ void_method_with_10_args& operator=(void_method_with_10_args&& rvalue_p) noexcept
     {
         this->_method = rvalue_p._method;
         this->_object = rvalue_p._object;
@@ -1329,13 +1329,13 @@ struct function : public task_base
     function(function&& rvalue_p) noexcept : _function(rvalue_p._function) {}
 
 
-    function& operator=(function& other_ref_p) noexcept
+    _FORCE_INLINE_ function& operator=(function& other_ref_p) noexcept
     {
         this->_function = other_ref_p._function;
         return *this;
     }
 
-    function& operator=(function&& rvalue_p) noexcept
+    _FORCE_INLINE_ function& operator=(function&& rvalue_p) noexcept
     {
         this->_function = rvalue_p._function;
         return *this;
@@ -1344,7 +1344,7 @@ struct function : public task_base
 
     _NODISCARD_ virtual RETURN_TYPE execute(void* out_return_ptr_p, const char* const typename_str_ptrc_p) noexcept override
     {
-        FE_ASSERT(!::FE::algorithm::string::string_comparison<char>(typeid(return_type).name(), typename_str_ptrc_p), "ERROR: an ilegal type of data was passed", _ASSERTED_LOCATION_);
+        FE_ASSERT(!::FE::algorithm::string::string_comparison<char>(typeid(return_type).name(), typename_str_ptrc_p), "ERROR: an ilegal type of data was passed", _SOURCE_LOCATION_);
         
         *((return_type*)out_return_ptr_p) = _function();
 
@@ -1371,14 +1371,14 @@ struct method : public task_base
     method(method&& rvalue_p) noexcept : _method(rvalue_p._method), _object(rvalue_p._object) {}
 
 
-    method& operator=(method& function_ref_p) noexcept
+    _FORCE_INLINE_ method& operator=(method& function_ref_p) noexcept
     {
         this->_method = function_ref_p._method;
         this->_object = function_ref_p._object;
         return *this;
     }
 
-    method& operator=(method&& function_p) noexcept
+    _FORCE_INLINE_ method& operator=(method&& function_p) noexcept
     {
         this->_method = function_p._method;
         this->_object = function_p._object;
@@ -1388,7 +1388,7 @@ struct method : public task_base
 
     _NODISCARD_ virtual RETURN_TYPE execute(void* out_return_ptr_p, const char* const typename_str_ptrc_p) noexcept override
     {
-        FE_ASSERT(!::FE::algorithm::string::string_comparison<char>(typeid(return_type).name(), typename_str_ptrc_p), "ERROR: an ilegal type of data was passed", _ASSERTED_LOCATION_);
+        FE_ASSERT(!::FE::algorithm::string::string_comparison<char>(typeid(return_type).name(), typename_str_ptrc_p), "ERROR: an ilegal type of data was passed", _SOURCE_LOCATION_);
 
         *((return_type*)out_return_ptr_p) = _method(*_object);
 
@@ -1419,14 +1419,14 @@ struct function_with_1_arg : public task_base
     function_with_1_arg(function_with_1_arg&& rvalue_p) noexcept : _function(rvalue_p.function_p), _parameters(rvalue_p.parameters_p) {}
 
 
-    function_with_1_arg& operator=(function_with_1_arg& other_ref_p) noexcept
+    _FORCE_INLINE_ function_with_1_arg& operator=(function_with_1_arg& other_ref_p) noexcept
     {
         this->_function = other_ref_p._function;
         this->_parameters = other_ref_p._parameters;
         return *this;
     }
 
-    function_with_1_arg& operator=(function_with_1_arg&& rvalue_p) noexcept
+    _FORCE_INLINE_ function_with_1_arg& operator=(function_with_1_arg&& rvalue_p) noexcept
     {
         this->_function = rvalue_p._function;
         this->_parameters = rvalue_p._parameters;
@@ -1436,7 +1436,7 @@ struct function_with_1_arg : public task_base
 
     _NODISCARD_ virtual RETURN_TYPE execute(void* out_return_ptr_p, const char* const typename_str_ptrc_p) noexcept override
     {
-        FE_ASSERT(!::FE::algorithm::string::string_comparison<char>(typeid(return_type).name(), typename_str_ptrc_p), "ERROR: an ilegal type of data was passed", _ASSERTED_LOCATION_);
+        FE_ASSERT(!::FE::algorithm::string::string_comparison<char>(typeid(return_type).name(), typename_str_ptrc_p), "ERROR: an ilegal type of data was passed", _SOURCE_LOCATION_);
 
         *((return_type*)out_return_ptr_p) = _function
         (
@@ -1469,7 +1469,7 @@ struct method_with_1_arg : public task_base
     method_with_1_arg(method_with_1_arg&& rvalue_p) noexcept : _method(rvalue_p._method), _object(rvalue_p._object), _parameters(rvalue_p._parameters) {}
 
 
-    method_with_1_arg& operator=(method_with_1_arg& other_ref_p) noexcept
+    _FORCE_INLINE_ method_with_1_arg& operator=(method_with_1_arg& other_ref_p) noexcept
     {
         this->_method = other_ref_p._method;
         this->_object = other_ref_p._object;
@@ -1477,7 +1477,7 @@ struct method_with_1_arg : public task_base
         return *this;
     }
 
-    method_with_1_arg& operator=(method_with_1_arg&& rvalue_p) noexcept
+    _FORCE_INLINE_ method_with_1_arg& operator=(method_with_1_arg&& rvalue_p) noexcept
     {
         this->_method = rvalue_p._method;
         this->_object = rvalue_p._object;
@@ -1488,7 +1488,7 @@ struct method_with_1_arg : public task_base
 
     _NODISCARD_ virtual RETURN_TYPE execute(void* out_return_ptr_p, const char* const typename_str_ptrc_p) noexcept override
     {
-        FE_ASSERT(!::FE::algorithm::string::string_comparison<char>(typeid(return_type).name(), typename_str_ptrc_p), "ERROR: an ilegal type of data was passed", _ASSERTED_LOCATION_);
+        FE_ASSERT(!::FE::algorithm::string::string_comparison<char>(typeid(return_type).name(), typename_str_ptrc_p), "ERROR: an ilegal type of data was passed", _SOURCE_LOCATION_);
 
         *((return_type*)out_return_ptr_p) = _method
         (
@@ -1523,14 +1523,14 @@ struct function_with_2_args : public task_base
     function_with_2_args(function_with_2_args&& rvalue_p) noexcept : _function(rvalue_p.function_p), _parameters(rvalue_p.parameters_p) {}
 
 
-    function_with_2_args& operator=(function_with_2_args& other_ref_p) noexcept
+    _FORCE_INLINE_ function_with_2_args& operator=(function_with_2_args& other_ref_p) noexcept
     {
         this->_function = other_ref_p._function;
         this->_parameters = other_ref_p._parameters;
         return *this;
     }
 
-    function_with_2_args& operator=(function_with_2_args&& rvalue_p) noexcept
+    _FORCE_INLINE_ function_with_2_args& operator=(function_with_2_args&& rvalue_p) noexcept
     {
         this->_function = rvalue_p._function;
         this->_parameters = rvalue_p._parameters;
@@ -1540,7 +1540,7 @@ struct function_with_2_args : public task_base
 
     _NODISCARD_ virtual RETURN_TYPE execute(void* out_return_ptr_p, const char* const typename_str_ptrc_p) noexcept override
     {
-        FE_ASSERT(!::FE::algorithm::string::string_comparison<char>(typeid(return_type).name(), typename_str_ptrc_p), "ERROR: an ilegal type of data was passed", _ASSERTED_LOCATION_);
+        FE_ASSERT(!::FE::algorithm::string::string_comparison<char>(typeid(return_type).name(), typename_str_ptrc_p), "ERROR: an ilegal type of data was passed", _SOURCE_LOCATION_);
 
         *((return_type*)out_return_ptr_p) = _function
         (
@@ -1573,7 +1573,7 @@ struct method_with_2_args : public task_base
     method_with_2_args(method_with_2_args&& rvalue_p) noexcept : _method(rvalue_p._method), _object(rvalue_p._object), _parameters(rvalue_p._parameters) {}
 
 
-    method_with_2_args& operator=(method_with_2_args& other_ref_p) noexcept
+    _FORCE_INLINE_ method_with_2_args& operator=(method_with_2_args& other_ref_p) noexcept
     {
         this->_method = other_ref_p._method;
         this->_object = other_ref_p._object;
@@ -1581,7 +1581,7 @@ struct method_with_2_args : public task_base
         return *this;
     }
 
-    method_with_2_args& operator=(method_with_2_args&& rvalue_p) noexcept
+    _FORCE_INLINE_ method_with_2_args& operator=(method_with_2_args&& rvalue_p) noexcept
     {
         this->_method = rvalue_p._method;
         this->_object = rvalue_p._object;
@@ -1592,7 +1592,7 @@ struct method_with_2_args : public task_base
 
     _NODISCARD_ virtual RETURN_TYPE execute(void* out_return_ptr_p, const char* const typename_str_ptrc_p) noexcept override
     {
-        FE_ASSERT(!::FE::algorithm::string::string_comparison<char>(typeid(return_type).name(), typename_str_ptrc_p), "ERROR: an ilegal type of data was passed", _ASSERTED_LOCATION_);
+        FE_ASSERT(!::FE::algorithm::string::string_comparison<char>(typeid(return_type).name(), typename_str_ptrc_p), "ERROR: an ilegal type of data was passed", _SOURCE_LOCATION_);
 
         *((return_type*)out_return_ptr_p) = _method
         (
@@ -1620,7 +1620,7 @@ struct function_with_3_args : public task_base
     using parameter_package_type = decltype(_parameters);
 
 
-    constexpr function_with_3_args() noexcept {};
+    constexpr function_with_3_args() noexcept {}
     function_with_3_args(function_type function_p) noexcept : _function(function_p) {}
     function_with_3_args(parameter_package_type parameters_p) noexcept : _parameters(parameters_p) {}
     function_with_3_args(function_type function_p, parameter_package_type parameters_p) noexcept : _function(function_p), _parameters(parameters_p) {}
@@ -1629,14 +1629,14 @@ struct function_with_3_args : public task_base
     function_with_3_args(function_with_3_args&& rvalue_p) noexcept : _function(rvalue_p.function_p), _parameters(rvalue_p.parameters_p) {}
 
 
-    function_with_3_args& operator=(function_with_3_args& other_ref_p) noexcept
+    _FORCE_INLINE_ function_with_3_args& operator=(function_with_3_args& other_ref_p) noexcept
     {
         this->_function = other_ref_p._function;
         this->_parameters = other_ref_p._parameters;
         return *this;
     }
 
-    function_with_3_args& operator=(function_with_3_args&& rvalue_p) noexcept
+    _FORCE_INLINE_ function_with_3_args& operator=(function_with_3_args&& rvalue_p) noexcept
     {
         this->_function = rvalue_p._function;
         this->_parameters = rvalue_p._parameters;
@@ -1645,7 +1645,7 @@ struct function_with_3_args : public task_base
 
     _NODISCARD_ virtual RETURN_TYPE execute(void* out_return_ptr_p, const char* const typename_str_ptrc_p) noexcept override
     {
-        FE_ASSERT(!::FE::algorithm::string::string_comparison<char>(typeid(return_type).name(), typename_str_ptrc_p), "ERROR: an ilegal type of data was passed", _ASSERTED_LOCATION_);
+        FE_ASSERT(!::FE::algorithm::string::string_comparison<char>(typeid(return_type).name(), typename_str_ptrc_p), "ERROR: an ilegal type of data was passed", _SOURCE_LOCATION_);
 
         *((return_type*)out_return_ptr_p) = _function
         (
@@ -1681,7 +1681,7 @@ struct method_with_3_args : public task_base
     method_with_3_args(method_with_3_args&& rvalue_p) noexcept : _method(rvalue_p._method), _object(rvalue_p._object), _parameters(rvalue_p._parameters) {}
 
 
-    method_with_3_args& operator=(method_with_3_args& other_ref_p) noexcept
+    _FORCE_INLINE_ method_with_3_args& operator=(method_with_3_args& other_ref_p) noexcept
     {
         this->_method = other_ref_p._method;
         this->_object = other_ref_p._object;
@@ -1689,7 +1689,7 @@ struct method_with_3_args : public task_base
         return *this;
     }
 
-    method_with_3_args& operator=(method_with_3_args&& rvalue_p) noexcept
+    _FORCE_INLINE_ method_with_3_args& operator=(method_with_3_args&& rvalue_p) noexcept
     {
         this->_method = rvalue_p._method;
         this->_object = rvalue_p._object;
@@ -1700,7 +1700,7 @@ struct method_with_3_args : public task_base
 
     _NODISCARD_ virtual RETURN_TYPE execute(void* out_return_ptr_p, const char* const typename_str_ptrc_p) noexcept override
     {
-        FE_ASSERT(!::FE::algorithm::string::string_comparison<char>(typeid(return_type).name(), typename_str_ptrc_p), "ERROR: an ilegal type of data was passed", _ASSERTED_LOCATION_);
+        FE_ASSERT(!::FE::algorithm::string::string_comparison<char>(typeid(return_type).name(), typename_str_ptrc_p), "ERROR: an ilegal type of data was passed", _SOURCE_LOCATION_);
 
         *((return_type*)out_return_ptr_p) = _method
         (
@@ -1738,14 +1738,14 @@ struct function_with_4_args : public task_base
     function_with_4_args(function_with_4_args&& rvalue_p) noexcept : _function(rvalue_p.function_p), _parameters(rvalue_p.parameters_p) {}
 
 
-    function_with_4_args& operator=(function_with_4_args& other_ref_p) noexcept
+    _FORCE_INLINE_ function_with_4_args& operator=(function_with_4_args& other_ref_p) noexcept
     {
         this->_function = other_ref_p._function;
         this->_parameters = other_ref_p._parameters;
         return *this;
     }
 
-    function_with_4_args& operator=(function_with_4_args&& rvalue_p) noexcept
+    _FORCE_INLINE_ function_with_4_args& operator=(function_with_4_args&& rvalue_p) noexcept
     {
         this->_function = rvalue_p._function;
         this->_parameters = rvalue_p._parameters;
@@ -1755,7 +1755,7 @@ struct function_with_4_args : public task_base
 
     _NODISCARD_ virtual RETURN_TYPE execute(void* out_return_ptr_p, const char* const typename_str_ptrc_p) noexcept override
     {
-        FE_ASSERT(!::FE::algorithm::string::string_comparison<char>(typeid(return_type).name(), typename_str_ptrc_p), "ERROR: an ilegal type of data was passed", _ASSERTED_LOCATION_);
+        FE_ASSERT(!::FE::algorithm::string::string_comparison<char>(typeid(return_type).name(), typename_str_ptrc_p), "ERROR: an ilegal type of data was passed", _SOURCE_LOCATION_);
 
         *((return_type*)out_return_ptr_p) = _function
         (
@@ -1791,7 +1791,7 @@ struct method_with_4_args : public task_base
     method_with_4_args(method_with_4_args&& rvalue_p) noexcept : _method(rvalue_p._method), _object(rvalue_p._object), _parameters(rvalue_p._parameters) {}
 
 
-    method_with_4_args& operator=(method_with_4_args& other_ref_p) noexcept
+    _FORCE_INLINE_ method_with_4_args& operator=(method_with_4_args& other_ref_p) noexcept
     {
         this->_method = other_ref_p._method;
         this->_object = other_ref_p._object;
@@ -1799,7 +1799,7 @@ struct method_with_4_args : public task_base
         return *this;
     }
 
-    method_with_4_args& operator=(method_with_4_args&& rvalue_p) noexcept
+    _FORCE_INLINE_ method_with_4_args& operator=(method_with_4_args&& rvalue_p) noexcept
     {
         this->_method = rvalue_p._method;
         this->_object = rvalue_p._object;
@@ -1810,7 +1810,7 @@ struct method_with_4_args : public task_base
 
     _NODISCARD_ virtual RETURN_TYPE execute(void* out_return_ptr_p, const char* const typename_str_ptrc_p) noexcept override
     {
-        FE_ASSERT(!::FE::algorithm::string::string_comparison<char>(typeid(return_type).name(), typename_str_ptrc_p), "ERROR: an ilegal type of data was passed", _ASSERTED_LOCATION_);
+        FE_ASSERT(!::FE::algorithm::string::string_comparison<char>(typeid(return_type).name(), typename_str_ptrc_p), "ERROR: an ilegal type of data was passed", _SOURCE_LOCATION_);
 
         *((return_type*)out_return_ptr_p) = _method
         (
@@ -1849,14 +1849,14 @@ struct function_with_5_args : public task_base
     function_with_5_args(function_with_5_args&& rvalue_p) noexcept : _function(rvalue_p.function_p), _parameters(rvalue_p.parameters_p) {}
 
 
-    function_with_5_args& operator=(function_with_5_args& other_ref_p) noexcept
+    _FORCE_INLINE_ function_with_5_args& operator=(function_with_5_args& other_ref_p) noexcept
     {
         this->_function = other_ref_p._function;
         this->_parameters = other_ref_p._parameters;
         return *this;
     }
 
-    function_with_5_args& operator=(function_with_5_args&& rvalue_p) noexcept
+    _FORCE_INLINE_ function_with_5_args& operator=(function_with_5_args&& rvalue_p) noexcept
     {
         this->_function = rvalue_p._function;
         this->_parameters = rvalue_p._parameters;
@@ -1866,7 +1866,7 @@ struct function_with_5_args : public task_base
 
     _NODISCARD_ virtual RETURN_TYPE execute(void* out_return_ptr_p, const char* const typename_str_ptrc_p) noexcept override
     {
-        FE_ASSERT(!::FE::algorithm::string::string_comparison<char>(typeid(return_type).name(), typename_str_ptrc_p), "ERROR: an ilegal type of data was passed", _ASSERTED_LOCATION_);
+        FE_ASSERT(!::FE::algorithm::string::string_comparison<char>(typeid(return_type).name(), typename_str_ptrc_p), "ERROR: an ilegal type of data was passed", _SOURCE_LOCATION_);
 
         *((return_type*)out_return_ptr_p) = _function
         (
@@ -1904,7 +1904,7 @@ struct method_with_5_args : public task_base
     method_with_5_args(method_with_5_args&& rvalue_p) noexcept : _method(rvalue_p._method), _object(rvalue_p._object), _parameters(rvalue_p._parameters) {}
 
 
-    method_with_5_args& operator=(method_with_5_args& other_ref_p) noexcept
+    _FORCE_INLINE_ method_with_5_args& operator=(method_with_5_args& other_ref_p) noexcept
     {
         this->_method = other_ref_p._method;
         this->_object = other_ref_p._object;
@@ -1912,7 +1912,7 @@ struct method_with_5_args : public task_base
         return *this;
     }
 
-    method_with_5_args& operator=(method_with_5_args&& rvalue_p) noexcept
+    _FORCE_INLINE_ method_with_5_args& operator=(method_with_5_args&& rvalue_p) noexcept
     {
         this->_method = rvalue_p._method;
         this->_object = rvalue_p._object;
@@ -1923,7 +1923,7 @@ struct method_with_5_args : public task_base
 
     _NODISCARD_ virtual RETURN_TYPE execute(void* out_return_ptr_p, const char* const typename_str_ptrc_p) noexcept override
     {
-        FE_ASSERT(!::FE::algorithm::string::string_comparison<char>(typeid(return_type).name(), typename_str_ptrc_p), "ERROR: an ilegal type of data was passed", _ASSERTED_LOCATION_);
+        FE_ASSERT(!::FE::algorithm::string::string_comparison<char>(typeid(return_type).name(), typename_str_ptrc_p), "ERROR: an ilegal type of data was passed", _SOURCE_LOCATION_);
 
         *((return_type*)out_return_ptr_p) = _method
         (
@@ -1963,14 +1963,14 @@ struct function_with_6_args : public task_base
     function_with_6_args(function_with_6_args&& rvalue_p) noexcept : _function(rvalue_p.function_p), _parameters(rvalue_p.parameters_p) {}
 
 
-    function_with_6_args& operator=(function_with_6_args& other_ref_p) noexcept
+    _FORCE_INLINE_ function_with_6_args& operator=(function_with_6_args& other_ref_p) noexcept
     {
         this->_function = other_ref_p._function;
         this->_parameters = other_ref_p._parameters;
         return *this;
     }
 
-    function_with_6_args& operator=(function_with_6_args&& rvalue_p) noexcept
+    _FORCE_INLINE_ function_with_6_args& operator=(function_with_6_args&& rvalue_p) noexcept
     {
         this->_function = rvalue_p._function;
         this->_parameters = rvalue_p._parameters;
@@ -1980,7 +1980,7 @@ struct function_with_6_args : public task_base
 
     _NODISCARD_ virtual RETURN_TYPE execute(void* out_return_ptr_p, const char* const typename_str_ptrc_p) noexcept override
     {
-        FE_ASSERT(!::FE::algorithm::string::string_comparison<char>(typeid(return_type).name(), typename_str_ptrc_p), "ERROR: an ilegal type of data was passed", _ASSERTED_LOCATION_);
+        FE_ASSERT(!::FE::algorithm::string::string_comparison<char>(typeid(return_type).name(), typename_str_ptrc_p), "ERROR: an ilegal type of data was passed", _SOURCE_LOCATION_);
 
         *((return_type*)out_return_ptr_p) = _function
         (
@@ -2018,7 +2018,7 @@ struct method_with_6_args : public task_base
     method_with_6_args(method_with_6_args&& rvalue_p) noexcept : _method(rvalue_p._method), _object(rvalue_p._object), _parameters(rvalue_p._parameters) {}
 
 
-    method_with_6_args& operator=(method_with_6_args& other_ref_p) noexcept
+    _FORCE_INLINE_ method_with_6_args& operator=(method_with_6_args& other_ref_p) noexcept
     {
         this->_method = other_ref_p._method;
         this->_object = other_ref_p._object;
@@ -2026,7 +2026,7 @@ struct method_with_6_args : public task_base
         return *this;
     }
 
-    method_with_6_args& operator=(method_with_6_args&& rvalue_p) noexcept
+    _FORCE_INLINE_ method_with_6_args& operator=(method_with_6_args&& rvalue_p) noexcept
     {
         this->_method = rvalue_p._method;
         this->_object = rvalue_p._object;
@@ -2037,7 +2037,7 @@ struct method_with_6_args : public task_base
 
     _NODISCARD_ virtual RETURN_TYPE execute(void* out_return_ptr_p, const char* const typename_str_ptrc_p) noexcept override
     {
-        FE_ASSERT(!::FE::algorithm::string::string_comparison<char>(typeid(return_type).name(), typename_str_ptrc_p), "ERROR: an ilegal type of data was passed", _ASSERTED_LOCATION_);
+        FE_ASSERT(!::FE::algorithm::string::string_comparison<char>(typeid(return_type).name(), typename_str_ptrc_p), "ERROR: an ilegal type of data was passed", _SOURCE_LOCATION_);
 
         *((return_type*)out_return_ptr_p) = _method
         (
@@ -2078,14 +2078,14 @@ struct function_with_7_args : public task_base
     function_with_7_args(function_with_7_args&& rvalue_p) noexcept : _function(rvalue_p.function_p), _parameters(rvalue_p.parameters_p) {}
 
 
-    function_with_7_args& operator=(function_with_7_args& other_ref_p) noexcept
+    _FORCE_INLINE_ function_with_7_args& operator=(function_with_7_args& other_ref_p) noexcept
     {
         this->_function = other_ref_p._function;
         this->_parameters = other_ref_p._parameters;
         return *this;
     }
 
-    function_with_7_args& operator=(function_with_7_args&& rvalue_p) noexcept
+    _FORCE_INLINE_ function_with_7_args& operator=(function_with_7_args&& rvalue_p) noexcept
     {
         this->_function = rvalue_p._function;
         this->_parameters = rvalue_p._parameters;
@@ -2095,7 +2095,7 @@ struct function_with_7_args : public task_base
 
     _NODISCARD_ virtual RETURN_TYPE execute(void* out_return_ptr_p, const char* const typename_str_ptrc_p) noexcept override
     {
-        FE_ASSERT(!::FE::algorithm::string::string_comparison<char>(typeid(return_type).name(), typename_str_ptrc_p), "ERROR: an ilegal type of data was passed", _ASSERTED_LOCATION_);
+        FE_ASSERT(!::FE::algorithm::string::string_comparison<char>(typeid(return_type).name(), typename_str_ptrc_p), "ERROR: an ilegal type of data was passed", _SOURCE_LOCATION_);
 
         *((return_type*)out_return_ptr_p) = _function
         (
@@ -2135,7 +2135,7 @@ struct method_with_7_args : public task_base
     method_with_7_args(method_with_7_args&& rvalue_p) noexcept : _method(rvalue_p._method), _object(rvalue_p._object), _parameters(rvalue_p._parameters) {}
 
 
-    method_with_7_args& operator=(method_with_7_args& other_ref_p) noexcept
+    _FORCE_INLINE_ method_with_7_args& operator=(method_with_7_args& other_ref_p) noexcept
     {
         this->_method = other_ref_p._method;
         this->_object = other_ref_p._object;
@@ -2143,7 +2143,7 @@ struct method_with_7_args : public task_base
         return *this;
     }
 
-    method_with_7_args& operator=(method_with_7_args&& rvalue_p) noexcept
+    _FORCE_INLINE_ method_with_7_args& operator=(method_with_7_args&& rvalue_p) noexcept
     {
         this->_method = rvalue_p._method;
         this->_object = rvalue_p._object;
@@ -2154,7 +2154,7 @@ struct method_with_7_args : public task_base
 
     _NODISCARD_ virtual RETURN_TYPE execute(void* out_return_ptr_p, const char* const typename_str_ptrc_p) noexcept override
     {
-        FE_ASSERT(!::FE::algorithm::string::string_comparison<char>(typeid(return_type).name(), typename_str_ptrc_p), "ERROR: an ilegal type of data was passed", _ASSERTED_LOCATION_);
+        FE_ASSERT(!::FE::algorithm::string::string_comparison<char>(typeid(return_type).name(), typename_str_ptrc_p), "ERROR: an ilegal type of data was passed", _SOURCE_LOCATION_);
 
         *((return_type*)out_return_ptr_p) = _method
         (
@@ -2196,14 +2196,14 @@ struct function_with_8_args : public task_base
     function_with_8_args(function_with_8_args&& rvalue_p) noexcept : _function(rvalue_p.function_p), _parameters(rvalue_p.parameters_p) {}
 
 
-    function_with_8_args& operator=(function_with_8_args& other_ref_p) noexcept
+    _FORCE_INLINE_ function_with_8_args& operator=(function_with_8_args& other_ref_p) noexcept
     {
         this->_function = other_ref_p._function;
         this->_parameters = other_ref_p._parameters;
         return *this;
     }
 
-    function_with_8_args& operator=(function_with_8_args&& rvalue_p) noexcept
+    _FORCE_INLINE_ function_with_8_args& operator=(function_with_8_args&& rvalue_p) noexcept
     {
         this->_function = rvalue_p._function;
         this->_parameters = rvalue_p._parameters;
@@ -2213,7 +2213,7 @@ struct function_with_8_args : public task_base
 
     _NODISCARD_ virtual RETURN_TYPE execute(void* out_return_ptr_p, const char* const typename_str_ptrc_p) noexcept override
     {
-        FE_ASSERT(!::FE::algorithm::string::string_comparison<char>(typeid(return_type).name(), typename_str_ptrc_p), "ERROR: an ilegal type of data was passed", _ASSERTED_LOCATION_);
+        FE_ASSERT(!::FE::algorithm::string::string_comparison<char>(typeid(return_type).name(), typename_str_ptrc_p), "ERROR: an ilegal type of data was passed", _SOURCE_LOCATION_);
 
         *((return_type*)out_return_ptr_p) = _function
         (
@@ -2253,7 +2253,7 @@ struct method_with_8_args : public task_base
     method_with_8_args(method_with_8_args&& rvalue_p) noexcept : _method(rvalue_p._method), _object(rvalue_p._object), _parameters(rvalue_p._parameters) {}
 
 
-    method_with_8_args& operator=(method_with_8_args& other_ref_p) noexcept
+    _FORCE_INLINE_ method_with_8_args& operator=(method_with_8_args& other_ref_p) noexcept
     {
         this->_method = other_ref_p._method;
         this->_object = other_ref_p._object;
@@ -2261,7 +2261,7 @@ struct method_with_8_args : public task_base
         return *this;
     }
 
-    method_with_8_args& operator=(method_with_8_args&& rvalue_p) noexcept
+    _FORCE_INLINE_ method_with_8_args& operator=(method_with_8_args&& rvalue_p) noexcept
     {
         this->_method = rvalue_p._method;
         this->_object = rvalue_p._object;
@@ -2272,7 +2272,7 @@ struct method_with_8_args : public task_base
 
     _NODISCARD_ virtual RETURN_TYPE execute(void* out_return_ptr_p, const char* const typename_str_ptrc_p) noexcept override
     {
-        FE_ASSERT(!::FE::algorithm::string::string_comparison<char>(typeid(return_type).name(), typename_str_ptrc_p), "ERROR: an ilegal type of data was passed", _ASSERTED_LOCATION_);
+        FE_ASSERT(!::FE::algorithm::string::string_comparison<char>(typeid(return_type).name(), typename_str_ptrc_p), "ERROR: an ilegal type of data was passed", _SOURCE_LOCATION_);
 
         *((return_type*)out_return_ptr_p) = _method
         (
@@ -2316,14 +2316,14 @@ struct function_with_9_args : public task_base
     function_with_9_args(function_with_9_args&& rvalue_p) noexcept : _function(rvalue_p.function_p), _parameters(rvalue_p.parameters_p) {}
 
 
-    function_with_9_args& operator=(function_with_9_args& other_ref_p) noexcept
+    _FORCE_INLINE_ function_with_9_args& operator=(function_with_9_args& other_ref_p) noexcept
     {
         this->_function = other_ref_p._function;
         this->_parameters = other_ref_p._parameters;
         return *this;
     }
 
-    function_with_9_args& operator=(function_with_9_args&& rvalue_p) noexcept
+    _FORCE_INLINE_ function_with_9_args& operator=(function_with_9_args&& rvalue_p) noexcept
     {
         this->_function = rvalue_p._function;
         this->_parameters = rvalue_p._parameters;
@@ -2333,7 +2333,7 @@ struct function_with_9_args : public task_base
 
     _NODISCARD_ virtual RETURN_TYPE execute(void* out_return_ptr_p, const char* const typename_str_ptrc_p) noexcept override
     {
-        FE_ASSERT(!::FE::algorithm::string::string_comparison<char>(typeid(return_type).name(), typename_str_ptrc_p), "ERROR: an ilegal type of data was passed", _ASSERTED_LOCATION_);
+        FE_ASSERT(!::FE::algorithm::string::string_comparison<char>(typeid(return_type).name(), typename_str_ptrc_p), "ERROR: an ilegal type of data was passed", _SOURCE_LOCATION_);
 
         *((return_type*)out_return_ptr_p) = _function
         (
@@ -2375,7 +2375,7 @@ struct method_with_9_args : public task_base
     method_with_9_args(method_with_9_args&& rvalue_p) noexcept : _method(rvalue_p._method), _object(rvalue_p._object), _parameters(rvalue_p._parameters) {}
 
 
-    method_with_9_args& operator=(method_with_9_args& other_ref_p) noexcept
+    _FORCE_INLINE_ method_with_9_args& operator=(method_with_9_args& other_ref_p) noexcept
     {
         this->_method = other_ref_p._method;
         this->_object = other_ref_p._object;
@@ -2383,7 +2383,7 @@ struct method_with_9_args : public task_base
         return *this;
     }
 
-    method_with_9_args& operator=(method_with_9_args&& rvalue_p) noexcept
+    _FORCE_INLINE_ method_with_9_args& operator=(method_with_9_args&& rvalue_p) noexcept
     {
         this->_method = rvalue_p._method;
         this->_object = rvalue_p._object;
@@ -2394,7 +2394,7 @@ struct method_with_9_args : public task_base
 
     _NODISCARD_ virtual RETURN_TYPE execute(void* out_return_ptr_p, const char* const typename_str_ptrc_p) noexcept override
     {
-        FE_ASSERT(!::FE::algorithm::string::string_comparison<char>(typeid(return_type).name(), typename_str_ptrc_p), "ERROR: an ilegal type of data was passed", _ASSERTED_LOCATION_);
+        FE_ASSERT(!::FE::algorithm::string::string_comparison<char>(typeid(return_type).name(), typename_str_ptrc_p), "ERROR: an ilegal type of data was passed", _SOURCE_LOCATION_);
 
         *((return_type*)out_return_ptr_p) = _method
         (
@@ -2438,14 +2438,14 @@ struct function_with_10_args : public task_base
     function_with_10_args(function_with_10_args&& rvalue_p) noexcept : _function(rvalue_p.function_p), _parameters(rvalue_p.parameters_p) {}
 
 
-    function_with_10_args& operator=(function_with_10_args& other_ref_p) noexcept
+    _FORCE_INLINE_ function_with_10_args& operator=(function_with_10_args& other_ref_p) noexcept
     {
         this->_function = other_ref_p._function;
         this->_parameters = other_ref_p._parameters;
         return *this;
     }
 
-    function_with_10_args& operator=(function_with_10_args&& rvalue_p) noexcept
+    _FORCE_INLINE_ function_with_10_args& operator=(function_with_10_args&& rvalue_p) noexcept
     {
         this->_function = rvalue_p._function;
         this->_parameters = rvalue_p._parameters;
@@ -2455,7 +2455,7 @@ struct function_with_10_args : public task_base
 
     _NODISCARD_ virtual RETURN_TYPE execute(void* out_return_ptr_p, const char* const typename_str_ptrc_p) noexcept override
     {
-        FE_ASSERT(!::FE::algorithm::string::string_comparison<char>(typeid(return_type).name(), typename_str_ptrc_p), "ERROR: an ilegal type of data was passed", _ASSERTED_LOCATION_);
+        FE_ASSERT(!::FE::algorithm::string::string_comparison<char>(typeid(return_type).name(), typename_str_ptrc_p), "ERROR: an ilegal type of data was passed", _SOURCE_LOCATION_);
 
         *((return_type*)out_return_ptr_p) = _function
         (
@@ -2497,7 +2497,7 @@ struct method_with_10_args : public task_base
     method_with_10_args(method_with_10_args&& rvalue_p) noexcept : _method(rvalue_p._method), _object(rvalue_p._object), _parameters(rvalue_p._parameters) {}
 
 
-    method_with_10_args& operator=(method_with_10_args& other_ref_p) noexcept
+    _FORCE_INLINE_ method_with_10_args& operator=(method_with_10_args& other_ref_p) noexcept
     {
         this->_method = other_ref_p._method;
         this->_object = other_ref_p._object;
@@ -2505,7 +2505,7 @@ struct method_with_10_args : public task_base
         return *this;
     }
 
-    method_with_10_args& operator=(method_with_10_args&& rvalue_p) noexcept
+    _FORCE_INLINE_ method_with_10_args& operator=(method_with_10_args&& rvalue_p) noexcept
     {
         this->_method = rvalue_p._method;
         this->_object = rvalue_p._object;
@@ -2516,7 +2516,7 @@ struct method_with_10_args : public task_base
 
     _NODISCARD_ virtual RETURN_TYPE execute(void* out_return_ptr_p, const char* const typename_str_ptrc_p) noexcept override
     {
-        FE_ASSERT(!::FE::algorithm::string::string_comparison<char>(typeid(return_type).name(), typename_str_ptrc_p), "ERROR: an ilegal type of data was passed", _ASSERTED_LOCATION_);
+        FE_ASSERT(!::FE::algorithm::string::string_comparison<char>(typeid(return_type).name(), typename_str_ptrc_p), "ERROR: an ilegal type of data was passed", _SOURCE_LOCATION_);
 
         *((return_type*)out_return_ptr_p) = _method
         (

@@ -28,16 +28,16 @@ public:
 	constexpr concurrent_memory_block() noexcept : m_is_being_used(false), m_is_block_constructed(true) {}
 
 
-	_NODISCARD_ movable_scoped_ref<T> operator*() noexcept
+	_NODISCARD_ _FORCE_INLINE_ movable_scoped_ref<T> operator*() noexcept
 	{
-		FE_ASSERT(this->m_is_block_constructed.load(::std::memory_order_acquire) == false, "ERROR: Attempted to dereference an uninitialized memory block.", _ASSERTED_LOCATION_);
+		FE_ASSERT(this->m_is_block_constructed.load(::std::memory_order_acquire) == false, "ERROR: Attempted to dereference an uninitialized memory block.", _SOURCE_LOCATION_);
 
 		return ::std::move(movable_scoped_ref(&this->m_object, &this->m_is_being_used, true));
 	}
 
-	_NODISCARD_ movable_scoped_ref<T> try_access() noexcept
+	_NODISCARD_ _FORCE_INLINE_ movable_scoped_ref<T> try_access() noexcept
 	{
-		if (FE_EXCEPTION(this->m_is_block_constructed.load(::std::memory_order_acquire) == false, "WARNING: failed to access the memory block because the block is not constructed. The function will return early with a null object.", _EXCEPTION_ORIGIN_)) _UNLIKELY_
+		if (FE_EXCEPTION_LOG(this->m_is_block_constructed.load(::std::memory_order_acquire) == false, "WARNING: failed to access the memory block because the block is not constructed. The function will return early with a null object.", _SOURCE_LOCATION_)) _UNLIKELY_
 		{
 			return movable_scoped_ref(&concurrent_memory_block<T, padding_size>::tl_s_null_object, nullptr, false);
 		}

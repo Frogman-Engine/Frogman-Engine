@@ -261,4 +261,48 @@ void memset_with_avx(void* const dest_ptrc_p, int8 value_p, length_t count_to_se
 }
 
 #endif
+
+var::boolean memcmp(const void* left_bytes_ptr_p, size_t left_bytes_size_p, const void* right_bytes_ptr_p, size_t right_bytes_size_p) noexcept
+{
+    if (left_bytes_size_p != right_bytes_size_p)
+    {
+        return false;
+    }
+
+    std::size_t l_leftover_bytes = MODULO_BY_8(left_bytes_size_p);
+    
+    var::BYTE_PTR l_left_bytes_ptr = (var::BYTE_PTR)left_bytes_ptr_p;
+    var::BYTE_PTR l_right_bytes_ptr = (var::BYTE_PTR)right_bytes_ptr_p;
+
+    for (std::size_t i = 0; i < l_leftover_bytes; ++i)
+    {
+        if (*l_left_bytes_ptr != *l_right_bytes_ptr)
+        {
+            return false;
+        }
+
+        ++l_left_bytes_ptr;
+        ++l_right_bytes_ptr;
+    }
+
+
+    std::size_t l_counts_to_jump_8_bytes = DIVIDE_BY_8(left_bytes_size_p);
+
+    var::QWORD_PTR l_left_qword_ptr = (var::QWORD_PTR)l_left_bytes_ptr;
+    var::QWORD_PTR l_right_qword_ptr = (var::QWORD_PTR)l_right_bytes_ptr;
+
+    for (var::size_t i = 0; ((i < l_counts_to_jump_8_bytes) && (*l_left_qword_ptr == *l_right_qword_ptr)); ++i)
+    {
+        ++l_left_qword_ptr;
+        ++l_right_qword_ptr;
+    }
+
+    if ((var::size_t)((var::BYTE_PTR)l_left_qword_ptr - (var::BYTE_PTR)left_bytes_ptr_p) == left_bytes_size_p)
+    {
+        return true;
+    }
+
+    return false;
+}
+
 END_NAMESPACE

@@ -290,7 +290,7 @@ _FORCE_INLINE_ void copy_string(char_type* const destination_out_ptrc_p, count_t
 {
     static_assert(sizeof(char_type) <= sizeof(char32), "char_type is not a valid character type");
 
-    FE_ASSERT_WITHOUT_LOG(destination_count_p < source_count_p);
+    ABORT_IF(destination_count_p < source_count_p);
 
     FE::memcpy_s(destination_out_ptrc_p, destination_count_p, sizeof(char_type), source_ptrc_p, source_count_p, sizeof(char_type));
     destination_out_ptrc_p[source_count_p] = static_cast<char_type>('\0');
@@ -315,6 +315,22 @@ _FORCE_INLINE_ void capitalize_string(char_type* in_out_string_buffer_ptr_p) noe
     }
 }
 
+template<typename char_type>
+#if _HAS_CXX20_ == 1
+    requires character_type<char_type>
+#endif
+_FORCE_INLINE_ char_type capitalize_character(const char_type char_value_p) noexcept
+{
+    static_assert(sizeof(char_type) <= sizeof(char32), "char_type is not a valid character type");
+
+    if (_ASCII_a_ <= static_cast<uint8>(char_value_p) && static_cast<uint8>(char_value_p) <= _ASCII_z_)
+    {
+        return static_cast<char_type>(static_cast<int16>(char_value_p) - _ASCII_GAP_BETWEEN_UPPERCASE_and_lowercase_);
+    }
+
+    return char_value_p;
+}
+
 
 template<typename char_type>
 #if _HAS_CXX20_ == 1
@@ -332,6 +348,22 @@ _FORCE_INLINE_ void to_lowercase(char_type* in_out_string_buffer_ptr_p) noexcept
         }
         ++in_out_string_buffer_ptr_p;
     }
+}
+
+template<typename char_type>
+#if _HAS_CXX20_ == 1
+    requires character_type<char_type>
+#endif
+_FORCE_INLINE_ char_type to_lowercase(const char_type char_value_p) noexcept
+{
+    static_assert(sizeof(char_type) <= sizeof(char32), "char_type is not a valid character type");
+
+    if (_ASCII_A_ <= static_cast<uint8>(char_value_p) && static_cast<uint8>(char_value_p) <= _ASCII_Z_)
+    {
+        return static_cast<char_type>(static_cast<int16>(char_value_p) + _ASCII_GAP_BETWEEN_UPPERCASE_and_lowercase_);
+    }
+
+    return char_value_p;
 }
 
 
@@ -432,10 +464,8 @@ template <typename char_type>
 #if _HAS_CXX20_ == 1
     requires character_type<char_type>
 #endif
-_NODISCARD_ _FORCE_INLINE_ var::boolean compare_ranged_strings_regardless_of_capitalization(const char_type* const lstr_ptrc_p, string_range lstr_range_p, char_type* const rstr_ptrc_p, string_range rstr_range_p, size_t resize_buffer_p = 0) noexcept
+_NODISCARD_ _FORCE_INLINE_ var::boolean insensitive_ranged_string_comparison(const char_type* const lstr_ptrc_p, string_range lstr_range_p, char_type* const rstr_ptrc_p, string_range rstr_range_p) noexcept
 {
-    thread_local static std::string tl_s_left_string_buffer;
-    thread_local static std::string tl_s_right_string_buffer;
     length_t l_left_string_length = lstr_range_p._end - lstr_range_p._begin;
     length_t l_right_string_length = rstr_range_p._end - rstr_range_p._begin;
 
@@ -444,39 +474,32 @@ _NODISCARD_ _FORCE_INLINE_ var::boolean compare_ranged_strings_regardless_of_cap
         return false;
     }
 
-    if (resize_buffer_p < l_left_string_length)
+    const char_type* l_left_string_ptr = lstr_ptrc_p + lstr_range_p._begin;
+    const char_type* l_right_string_ptr = rstr_ptrc_p + rstr_range_p._begin;
+
+    const char_type* const l_end_of_left_string = lstr_ptrc_p + lstr_range_p._end;
+
+
+    while (l_left_string_ptr != l_end_of_left_string && string::capitalize_character(*l_left_string_ptr) == string::capitalize_character(*l_right_string_ptr))
     {
-        tl_s_left_string_buffer.reserve(l_left_string_length);
-        tl_s_right_string_buffer.reserve(l_right_string_length);
+        ++l_left_string_ptr;
+        ++l_right_string_ptr;
     }
-    else
+
+    if (*l_left_string_ptr == *l_right_string_ptr)
     {
-        tl_s_left_string_buffer.resize(resize_buffer_p);
-        tl_s_right_string_buffer.resize(resize_buffer_p);
+        return true;
     }
-
-    algorithm::string::copy_string(tl_s_left_string_buffer.data(), l_left_string_length, lstr_ptrc_p + lstr_range_p._begin, l_left_string_length);
-    algorithm::string::copy_string(tl_s_right_string_buffer.data(), l_right_string_length, rstr_ptrc_p + rstr_range_p._begin, l_right_string_length);
-
-    algorithm::string::capitalize_string(tl_s_left_string_buffer.data());
-    algorithm::string::capitalize_string(tl_s_right_string_buffer.data());
-
-    boolean l_is_equal = algorithm::string::string_comparison(tl_s_left_string_buffer.data(), tl_s_right_string_buffer.data());
-
-    tl_s_left_string_buffer.clear();
-    tl_s_right_string_buffer.clear();
-
-    return l_is_equal;
+   
+    return false;
 }
 
 template <typename char_type>
 #if _HAS_CXX20_ == 1
     requires character_type<char_type>
 #endif
-_NODISCARD_ _FORCE_INLINE_ var::boolean compare_ranged_strings_regardless_of_capitalization(char_type* const lstr_ptrc_p, string_range lstr_range_p, const char_type* const rstr_ptrc_p, string_range rstr_range_p, size_t resize_buffer_p = 0) noexcept
+_NODISCARD_ _FORCE_INLINE_ var::boolean insensitive_ranged_string_comparison(char_type* const lstr_ptrc_p, string_range lstr_range_p, const char_type* const rstr_ptrc_p, string_range rstr_range_p) noexcept
 {
-    thread_local static std::string tl_s_left_string_buffer;
-    thread_local static std::string tl_s_right_string_buffer;
     length_t l_left_string_length = lstr_range_p._end - lstr_range_p._begin;
     length_t l_right_string_length = rstr_range_p._end - rstr_range_p._begin;
 
@@ -485,39 +508,32 @@ _NODISCARD_ _FORCE_INLINE_ var::boolean compare_ranged_strings_regardless_of_cap
         return false;
     }
 
-    if (resize_buffer_p < l_left_string_length)
+    const char_type* l_left_string_ptr = lstr_ptrc_p + lstr_range_p._begin;
+    const char_type* l_right_string_ptr = rstr_ptrc_p + rstr_range_p._begin;
+
+    const char_type* const l_end_of_left_string = lstr_ptrc_p + lstr_range_p._end;
+
+
+    while (l_left_string_ptr != l_end_of_left_string && string::capitalize_character(*l_left_string_ptr) == string::capitalize_character(*l_right_string_ptr))
     {
-        tl_s_left_string_buffer.reserve(l_left_string_length);
-        tl_s_right_string_buffer.reserve(l_right_string_length);
+        ++l_left_string_ptr;
+        ++l_right_string_ptr;
     }
-    else
+
+    if (*l_left_string_ptr == *l_right_string_ptr)
     {
-        tl_s_left_string_buffer.resize(resize_buffer_p);
-        tl_s_right_string_buffer.resize(resize_buffer_p);
+        return true;
     }
 
-    algorithm::string::copy_string(tl_s_left_string_buffer.data(), l_left_string_length, lstr_ptrc_p + lstr_range_p._begin, l_left_string_length);
-    algorithm::string::copy_string(tl_s_right_string_buffer.data(), l_right_string_length, rstr_ptrc_p + rstr_range_p._begin, l_right_string_length);
-
-    algorithm::string::capitalize_string(tl_s_left_string_buffer.data());
-    algorithm::string::capitalize_string(tl_s_right_string_buffer.data());
-
-    boolean l_is_equal = algorithm::string::string_comparison(tl_s_left_string_buffer.data(), tl_s_right_string_buffer.data());
-
-    tl_s_left_string_buffer.clear();
-    tl_s_right_string_buffer.clear();
-
-    return l_is_equal;
+    return false;
 }
 
 template <typename char_type>
 #if _HAS_CXX20_ == 1
     requires character_type<char_type>
 #endif
-_NODISCARD_ _FORCE_INLINE_ var::boolean compare_ranged_strings_regardless_of_capitalization(char_type* const lstr_ptrc_p, string_range lstr_range_p, char_type* const rstr_ptrc_p, string_range rstr_range_p, size_t resize_buffer_p = 0) noexcept
+_NODISCARD_ _FORCE_INLINE_ var::boolean insensitive_ranged_string_comparison(char_type* const lstr_ptrc_p, string_range lstr_range_p, char_type* const rstr_ptrc_p, string_range rstr_range_p) noexcept
 {
-    thread_local static std::string tl_s_left_string_buffer;
-    thread_local static std::string tl_s_right_string_buffer;
     length_t l_left_string_length = lstr_range_p._end - lstr_range_p._begin;
     length_t l_right_string_length = rstr_range_p._end - rstr_range_p._begin;
 
@@ -526,39 +542,32 @@ _NODISCARD_ _FORCE_INLINE_ var::boolean compare_ranged_strings_regardless_of_cap
         return false;
     }
 
-    if (resize_buffer_p < l_left_string_length)
+    const char_type* l_left_string_ptr = lstr_ptrc_p + lstr_range_p._begin;
+    const char_type* l_right_string_ptr = rstr_ptrc_p + rstr_range_p._begin;
+
+    const char_type* const l_end_of_left_string = lstr_ptrc_p + lstr_range_p._end;
+
+
+    while (l_left_string_ptr != l_end_of_left_string && string::capitalize_character(*l_left_string_ptr) == string::capitalize_character(*l_right_string_ptr))
     {
-        tl_s_left_string_buffer.reserve(l_left_string_length);
-        tl_s_right_string_buffer.reserve(l_right_string_length);
+        ++l_left_string_ptr;
+        ++l_right_string_ptr;
     }
-    else
+
+    if (*l_left_string_ptr == *l_right_string_ptr)
     {
-        tl_s_left_string_buffer.resize(resize_buffer_p);
-        tl_s_right_string_buffer.resize(resize_buffer_p);
+        return true;
     }
 
-    algorithm::string::copy_string(tl_s_left_string_buffer.data(), l_left_string_length, lstr_ptrc_p + lstr_range_p._begin, l_left_string_length);
-    algorithm::string::copy_string(tl_s_right_string_buffer.data(), l_right_string_length, rstr_ptrc_p + rstr_range_p._begin, l_right_string_length);
-
-    algorithm::string::capitalize_string(tl_s_left_string_buffer.data());
-    algorithm::string::capitalize_string(tl_s_right_string_buffer.data());
-
-    boolean l_is_equal = algorithm::string::string_comparison(tl_s_left_string_buffer.data(), tl_s_right_string_buffer.data());
-
-    tl_s_left_string_buffer.clear();
-    tl_s_right_string_buffer.clear();
-
-    return l_is_equal;
+    return false;
 }
 
 template <typename char_type>
 #if _HAS_CXX20_ == 1
     requires character_type<char_type>
 #endif
-_NODISCARD_ _FORCE_INLINE_ _CONSTEXPR23_ var::boolean compare_ranged_strings_regardless_of_capitalization(const char_type* const lstr_ptrc_p, string_range lstr_range_p, const char_type* const rstr_ptrc_p, string_range rstr_range_p, size_t resize_buffer_p = 0) noexcept
+_NODISCARD_ _FORCE_INLINE_ _CONSTEXPR23_ var::boolean insensitive_ranged_string_comparison(const char_type* const lstr_ptrc_p, string_range lstr_range_p, const char_type* const rstr_ptrc_p, string_range rstr_range_p) noexcept
 {
-    thread_local static std::string tl_s_left_string_buffer;
-    thread_local static std::string tl_s_right_string_buffer;
     length_t l_left_string_length = lstr_range_p._end - lstr_range_p._begin;
     length_t l_right_string_length = rstr_range_p._end - rstr_range_p._begin;
 
@@ -567,29 +576,24 @@ _NODISCARD_ _FORCE_INLINE_ _CONSTEXPR23_ var::boolean compare_ranged_strings_reg
         return false;
     }
 
-    if (resize_buffer_p < l_left_string_length)
+    const char_type* l_left_string_ptr = lstr_ptrc_p + lstr_range_p._begin;
+    const char_type* l_right_string_ptr = rstr_ptrc_p + rstr_range_p._begin;
+
+    const char_type* const l_end_of_left_string = lstr_ptrc_p + lstr_range_p._end;
+
+
+    while (l_left_string_ptr != l_end_of_left_string && string::capitalize_character(*l_left_string_ptr) == string::capitalize_character(*l_right_string_ptr))
     {
-        tl_s_left_string_buffer.reserve(l_left_string_length);
-        tl_s_right_string_buffer.reserve(l_right_string_length);
+        ++l_left_string_ptr;
+        ++l_right_string_ptr;
     }
-    else
+
+    if (*l_left_string_ptr == *l_right_string_ptr)
     {
-        tl_s_left_string_buffer.resize(resize_buffer_p);
-        tl_s_right_string_buffer.resize(resize_buffer_p);
+        return true;
     }
 
-    algorithm::string::copy_string(tl_s_left_string_buffer.data(), l_left_string_length, lstr_ptrc_p + lstr_range_p._begin, l_left_string_length);
-    algorithm::string::copy_string(tl_s_right_string_buffer.data(), l_right_string_length, rstr_ptrc_p + rstr_range_p._begin, l_right_string_length);
-
-    algorithm::string::capitalize_string(tl_s_left_string_buffer.data());
-    algorithm::string::capitalize_string(tl_s_right_string_buffer.data());
-
-    boolean l_is_equal = algorithm::string::string_comparison(tl_s_left_string_buffer.data(), tl_s_right_string_buffer.data());
-
-    tl_s_left_string_buffer.clear();
-    tl_s_right_string_buffer.clear();
-
-    return l_is_equal;
+    return false;
 }
 
 
@@ -601,7 +605,7 @@ _FORCE_INLINE_ void string_concatenation(char_type* const destination_out_ptrc_p
 {
     static_assert(sizeof(char_type) <= sizeof(char32), "char_type is not a valid character type");
 
-    FE_ASSERT_WITHOUT_LOG(destination_total_count_p < source_total_count_p);
+    ABORT_IF(destination_total_count_p < source_total_count_p);
 
     length_t l_destination_string_length = algorithm::string::string_length<char_type>(destination_out_ptrc_p);
 
@@ -613,164 +617,92 @@ template <typename char_type>
 #if _HAS_CXX20_ == 1
     requires character_type<char_type>
 #endif
-_NODISCARD_ _FORCE_INLINE_ var::boolean compare_strings_regardless_of_capitalization(const char_type* const lstr_ptrc_p, char_type* const rstr_ptrc_p, size_t resize_buffer_p = 0) noexcept
+_NODISCARD_ _FORCE_INLINE_ var::boolean insensitive_string_comparison(const char_type* const lstr_ptrc_p, char_type* const rstr_ptrc_p) noexcept
 {
-    thread_local static std::string tl_s_left_string_buffer;
-    thread_local static std::string tl_s_right_string_buffer;
-    length_t l_left_string_length = algorithm::string::string_length(lstr_ptrc_p);
-    length_t l_right_string_length = algorithm::string::string_length(rstr_ptrc_p);
+    const char_type* l_left_string_ptr = lstr_ptrc_p;
+    const char_type* l_right_string_ptr = rstr_ptrc_p;
 
-    if (l_left_string_length != l_right_string_length)
+    while (string::capitalize_character(*l_left_string_ptr) == string::capitalize_character(*l_right_string_ptr) && *l_left_string_ptr != static_cast<char_type>('\0'))
     {
-        return false;
+        ++l_left_string_ptr;
+        ++l_right_string_ptr;
     }
 
-    if (resize_buffer_p < l_left_string_length)
+    if (*l_left_string_ptr == *l_right_string_ptr)
     {
-        tl_s_left_string_buffer.reserve(l_left_string_length);
-        tl_s_right_string_buffer.reserve(l_right_string_length);
-    }
-    else
-    {
-        tl_s_left_string_buffer.resize(resize_buffer_p);
-        tl_s_right_string_buffer.resize(resize_buffer_p);
+        return true;
     }
 
-    algorithm::string::copy_string(tl_s_left_string_buffer.data(), l_left_string_length, lstr_ptrc_p, l_left_string_length);
-    algorithm::string::copy_string(tl_s_right_string_buffer.data(), l_right_string_length, rstr_ptrc_p, l_right_string_length);
-
-    algorithm::string::capitalize_string(tl_s_left_string_buffer.data());
-    algorithm::string::capitalize_string(tl_s_right_string_buffer.data());
-
-    boolean l_is_equal = algorithm::string::string_comparison(tl_s_left_string_buffer.data(), tl_s_right_string_buffer.data());
-
-    tl_s_left_string_buffer.clear();
-    tl_s_right_string_buffer.clear();
-
-    return l_is_equal;
+    return false;
 }
 
 template <typename char_type>
 #if _HAS_CXX20_ == 1
     requires character_type<char_type>
 #endif
-_NODISCARD_ _FORCE_INLINE_ var::boolean compare_strings_regardless_of_capitalization(char_type* const lstr_ptrc_p, const char_type* const rstr_ptrc_p, size_t resize_buffer_p = 0) noexcept
+_NODISCARD_ _FORCE_INLINE_ var::boolean insensitive_string_comparison(char_type* const lstr_ptrc_p, const char_type* const rstr_ptrc_p) noexcept
 {
-    thread_local static std::string tl_s_left_string_buffer;
-    thread_local static std::string tl_s_right_string_buffer;
-    length_t l_left_string_length = algorithm::string::string_length(lstr_ptrc_p);
-    length_t l_right_string_length = algorithm::string::string_length(rstr_ptrc_p);
+    const char_type* l_left_string_ptr = lstr_ptrc_p;
+    const char_type* l_right_string_ptr = rstr_ptrc_p;
 
-    if (l_left_string_length != l_right_string_length)
+    while (string::capitalize_character(*l_left_string_ptr) == string::capitalize_character(*l_right_string_ptr) && *l_left_string_ptr != static_cast<char_type>('\0'))
     {
-        return false;
+        ++l_left_string_ptr;
+        ++l_right_string_ptr;
     }
 
-    if (resize_buffer_p < l_left_string_length)
+    if (*l_left_string_ptr == *l_right_string_ptr)
     {
-        tl_s_left_string_buffer.reserve(l_left_string_length);
-        tl_s_right_string_buffer.reserve(l_right_string_length);
-    }
-    else
-    {
-        tl_s_left_string_buffer.resize(resize_buffer_p);
-        tl_s_right_string_buffer.resize(resize_buffer_p);
+        return true;
     }
 
-    algorithm::string::copy_string(tl_s_left_string_buffer.data(), l_left_string_length, lstr_ptrc_p, l_left_string_length);
-    algorithm::string::copy_string(tl_s_right_string_buffer.data(), l_right_string_length, rstr_ptrc_p, l_right_string_length);
-
-    algorithm::string::capitalize_string(tl_s_left_string_buffer.data());
-    algorithm::string::capitalize_string(tl_s_right_string_buffer.data());
-
-    boolean l_is_equal = algorithm::string::string_comparison(tl_s_left_string_buffer.data(), tl_s_right_string_buffer.data());
-
-    tl_s_left_string_buffer.clear();
-    tl_s_right_string_buffer.clear();
-
-    return l_is_equal;
+    return false;
 }
 
 template <typename char_type>
 #if _HAS_CXX20_ == 1
     requires character_type<char_type>
 #endif
-_NODISCARD_ _FORCE_INLINE_ var::boolean compare_strings_regardless_of_capitalization(char_type* const lstr_ptrc_p, char_type* const rstr_ptrc_p, size_t resize_buffer_p = 0) noexcept
+_NODISCARD_ _FORCE_INLINE_ var::boolean insensitive_string_comparison(char_type* const lstr_ptrc_p, char_type* const rstr_ptrc_p) noexcept
 {
-    thread_local static std::string tl_s_left_string_buffer;
-    thread_local static std::string tl_s_right_string_buffer;
-    length_t l_left_string_length = algorithm::string::string_length(lstr_ptrc_p);
-    length_t l_right_string_length = algorithm::string::string_length(rstr_ptrc_p);
+    const char_type* l_left_string_ptr = lstr_ptrc_p;
+    const char_type* l_right_string_ptr = rstr_ptrc_p;
 
-    if (l_left_string_length != l_right_string_length)
+    while (string::capitalize_character(*l_left_string_ptr) == string::capitalize_character(*l_right_string_ptr) && *l_left_string_ptr != static_cast<char_type>('\0'))
     {
-        return false;
+        ++l_left_string_ptr;
+        ++l_right_string_ptr;
     }
 
-    if (resize_buffer_p < l_left_string_length)
+    if (*l_left_string_ptr == *l_right_string_ptr)
     {
-        tl_s_left_string_buffer.reserve(l_left_string_length);
-        tl_s_right_string_buffer.reserve(l_right_string_length);
-    }
-    else
-    {
-        tl_s_left_string_buffer.resize(resize_buffer_p);
-        tl_s_right_string_buffer.resize(resize_buffer_p);
+        return true;
     }
 
-    algorithm::string::copy_string(tl_s_left_string_buffer.data(), l_left_string_length, lstr_ptrc_p, l_left_string_length);
-    algorithm::string::copy_string(tl_s_right_string_buffer.data(), l_right_string_length, rstr_ptrc_p, l_right_string_length);
-
-    algorithm::string::capitalize_string(tl_s_left_string_buffer.data());
-    algorithm::string::capitalize_string(tl_s_right_string_buffer.data());
-
-    boolean l_is_equal = algorithm::string::string_comparison(tl_s_left_string_buffer.data(), tl_s_right_string_buffer.data());
-
-    tl_s_left_string_buffer.clear();
-    tl_s_right_string_buffer.clear();
-
-    return l_is_equal;
+    return false;
 }
 
 template <typename char_type>
 #if _HAS_CXX20_ == 1
     requires character_type<char_type>
 #endif
-_NODISCARD_ _FORCE_INLINE_ var::boolean compare_strings_regardless_of_capitalization(const char_type* const lstr_ptrc_p, const char_type* const rstr_ptrc_p, size_t resize_buffer_p = 0) noexcept
+_NODISCARD_ _FORCE_INLINE_ var::boolean insensitive_string_comparison(const char_type* const lstr_ptrc_p, const char_type* const rstr_ptrc_p) noexcept
 {
-    thread_local static std::string tl_s_left_string_buffer;
-    thread_local static std::string tl_s_right_string_buffer;
-    length_t l_left_string_length = algorithm::string::string_length(lstr_ptrc_p);
-    length_t l_right_string_length = algorithm::string::string_length(rstr_ptrc_p);
+    const char_type* l_left_string_ptr = lstr_ptrc_p;
+    const char_type* l_right_string_ptr = rstr_ptrc_p;
 
-    if (l_left_string_length != l_right_string_length)
+    while (string::capitalize_character(*l_left_string_ptr) == string::capitalize_character(*l_right_string_ptr) && *l_left_string_ptr != static_cast<char_type>('\0'))
     {
-        return false;
+        ++l_left_string_ptr;
+        ++l_right_string_ptr;
     }
 
-    if (resize_buffer_p < l_left_string_length)
+    if (*l_left_string_ptr == *l_right_string_ptr)
     {
-        tl_s_left_string_buffer.reserve(l_left_string_length);
-        tl_s_right_string_buffer.reserve(l_right_string_length);
-    }
-    else
-    {
-        tl_s_left_string_buffer.resize(resize_buffer_p);
-        tl_s_right_string_buffer.resize(resize_buffer_p);
+        return true;
     }
 
-    algorithm::string::copy_string(tl_s_left_string_buffer.data(), l_left_string_length, lstr_ptrc_p, l_left_string_length);
-    algorithm::string::copy_string(tl_s_right_string_buffer.data(), l_right_string_length, rstr_ptrc_p, l_right_string_length);
-
-    algorithm::string::capitalize_string(tl_s_left_string_buffer.data());
-    algorithm::string::capitalize_string(tl_s_right_string_buffer.data());
-
-    boolean l_is_equal = algorithm::string::string_comparison(tl_s_left_string_buffer.data(), tl_s_right_string_buffer.data());
-
-    tl_s_left_string_buffer.clear();
-    tl_s_right_string_buffer.clear();
-
-    return l_is_equal;
+    return false;
 }
 
 
@@ -834,7 +766,7 @@ template<typename char_type>
 #if _HAS_CXX20_ == 1
     requires character_type<char_type>
 #endif
-constexpr var::uint64 hash_string(const char_type* const string_ptrc_p) noexcept
+_FORCE_INLINE_ constexpr var::uint64 hash_string(const char_type* const string_ptrc_p) noexcept
 {
     static_assert(sizeof(char_type) <= sizeof(char32), "char_type is not a valid character type");
 
@@ -1077,7 +1009,7 @@ template<typename char_type>
 #if _HAS_CXX20_ == 1
     requires character_type<char_type>
 #endif
-void concatenate_strings(char_type* const out_string_buffer_ptrc_p, size_t string_buffer_size_p, ::std::initializer_list<const char_type* const>&& strings_p, size_t resize_buffer_p = 0) noexcept
+_FORCE_INLINE_ void concatenate_strings(char_type* const out_string_buffer_ptrc_p, size_t string_buffer_size_p, ::std::initializer_list<const char_type* const>&& strings_p, size_t resize_buffer_p = 0) noexcept
 {
     static_assert(sizeof(char_type) <= sizeof(char32), "char_type is not a valid character type");
 
@@ -1101,14 +1033,14 @@ void concatenate_strings(char_type* const out_string_buffer_ptrc_p, size_t strin
     }
 
 
-    FE_ASSERT_WITHOUT_LOG(string_buffer_size_p <= l_total_strings_length);
+    ABORT_IF(string_buffer_size_p <= l_total_strings_length);
 
 
     var::size_t l_current_begin_index = algorithm::string::string_length(out_string_buffer_ptrc_p);
 
     for (var::size_t i = 0; i < strings_p.size(); ++i)
     {
-        ::memcpy(out_string_buffer_ptrc_p + l_current_begin_index, strings_p.begin()[i], sizeof(char_type) * tl_s_string_length_buffer[i]);
+        ::std::memcpy(out_string_buffer_ptrc_p + l_current_begin_index, strings_p.begin()[i], sizeof(char_type) * tl_s_string_length_buffer[i]);
         l_current_begin_index += tl_s_string_length_buffer[i];
     }
 
@@ -1119,13 +1051,13 @@ template<typename char_type>
 #if _HAS_CXX20_ == 1
     requires character_type<char_type>
 #endif
-void concatenate_characters(char_type* const out_string_buffer_ptrc_p, size_t string_buffer_size_p, ::std::initializer_list<const char_type>&& strings_p) noexcept
+_FORCE_INLINE_ void concatenate_characters(char_type* const out_string_buffer_ptrc_p, size_t string_buffer_size_p, ::std::initializer_list<const char_type>&& strings_p) noexcept
 {
     static_assert(sizeof(char_type) <= sizeof(char32), "char_type is not a valid character type");
 
     var::length_t l_string_buffer_length = algorithm::string::string_length(out_string_buffer_ptrc_p);
 
-    FE_ASSERT_WITHOUT_LOG(string_buffer_size_p <= strings_p.size() + l_string_buffer_length);
+    ABORT_IF(string_buffer_size_p <= strings_p.size() + l_string_buffer_length);
     
     ::memcpy(out_string_buffer_ptrc_p + l_string_buffer_length, strings_p.begin(), sizeof(char_type) * strings_p.size());
 }

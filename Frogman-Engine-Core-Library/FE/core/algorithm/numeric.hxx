@@ -28,7 +28,7 @@ _NODISCARD_ _FORCE_INLINE_ var::uint8 count_integral_digit_length(integral_type 
 }
 
 template<typename integral_type>
-_NODISCARD_ constexpr var::uint8 constexpr_count_integral_digit_length(integral_type value_p) noexcept
+_NODISCARD_ _FORCE_INLINE_ constexpr var::uint8 constexpr_count_integral_digit_length(integral_type value_p) noexcept
 {
 	static_assert(::std::is_integral<integral_type>::value == true || ::std::is_floating_point<integral_type>::value == true, "the type of the template parameter integral_type is not numeric");
 
@@ -45,7 +45,7 @@ _NODISCARD_ constexpr var::uint8 constexpr_count_integral_digit_length(integral_
 
 
 template<typename integral_type, typename char_type>
-void convert_integer_to_string(char_type* const string_out_ptrc_p, length_t input_string_capacity_p, integral_type value_p) noexcept
+_FORCE_INLINE_ void convert_integer_to_string(char_type* const string_out_ptrc_p, length_t input_string_capacity_p, integral_type value_p) noexcept
 {
 	static_assert(::std::is_integral<integral_type>::value == true, "an illegal type of value_p assigned to the template argument integral_type");
 	static_assert(sizeof(char_type) <= sizeof(char32), "an illegal type of value_p assigned to the template argument char_type");
@@ -60,7 +60,7 @@ void convert_integer_to_string(char_type* const string_out_ptrc_p, length_t inpu
 		++l_integral_digits;
 	}
 
-	FE_ASSERT_WITHOUT_LOG(input_string_capacity_p <= l_integral_digits);
+	ABORT_IF(input_string_capacity_p <= l_integral_digits);
 
 	var::int8 l_idx = l_integral_digits - 1;
 	while (value_p > 0)
@@ -77,7 +77,7 @@ void convert_integer_to_string(char_type* const string_out_ptrc_p, length_t inpu
 }
 
 template<typename integral_type, typename char_type>
-constexpr void constexpr_convert_integer_to_string(char_type* const string_out_ptrc_p, length_t input_string_capacity_p, integral_type value_p) noexcept
+_FORCE_INLINE_ constexpr void constexpr_convert_integer_to_string(char_type* const string_out_ptrc_p, length_t input_string_capacity_p, integral_type value_p) noexcept
 {
 	static_assert(::std::is_integral<integral_type>::value == true, "an illegal type of value_p assigned to the template argument integral_type");
 	static_assert(sizeof(char_type) <= sizeof(char32), "an illegal type of value_p assigned to the template argument char_type");
@@ -92,7 +92,7 @@ constexpr void constexpr_convert_integer_to_string(char_type* const string_out_p
 		++l_integral_digits;
 	}
 
-	FE_ASSERT_WITHOUT_LOG(input_string_capacity_p <= l_integral_digits);
+	ABORT_IF(input_string_capacity_p <= l_integral_digits);
 
 	var::int8 l_idx = l_integral_digits - 1;
 	while (value_p > 0)
@@ -110,7 +110,7 @@ constexpr void constexpr_convert_integer_to_string(char_type* const string_out_p
 
 
 template<typename float_type, typename char_type>
-void convert_float_to_string(char_type* const string_out_ptrc_p, length_t input_string_capacity_p, float_type value_p) noexcept
+_FORCE_INLINE_ void convert_float_to_string(char_type* const string_out_ptrc_p, length_t input_string_capacity_p, float_type value_p) noexcept
 {
 	static_assert(::std::is_floating_point<float_type>::value == true, "an illegal type of value_p assigned to the template argument integral_type");
 	static_assert(sizeof(char_type) <= sizeof(char32), "an illegal type of value_p assigned to the template argument char_type");
@@ -127,13 +127,13 @@ void convert_float_to_string(char_type* const string_out_ptrc_p, length_t input_
 		l_floating_point *= 10.0f;
 	}
 
-	FE_ASSERT_WITHOUT_LOG(input_string_capacity_p <= (numeric::count_integral_digit_length<var::int64>(l_floating_point) + l_integral_part_string_length));
+	ABORT_IF(input_string_capacity_p <= (numeric::count_integral_digit_length<var::int64>(l_floating_point) + l_integral_part_string_length));
 
 	numeric::convert_integer_to_string<var::int64, char_type>(string_out_ptrc_p + l_integral_part_string_length, input_string_capacity_p, static_cast<var::int64>(l_floating_point));
 }
 
 template<typename float_type, typename char_type>
-constexpr void constexpr_convert_float_to_string(char_type* const string_out_ptrc_p, length_t input_string_capacity_p, float_type value_p) noexcept
+_FORCE_INLINE_ constexpr void constexpr_convert_float_to_string(char_type* const string_out_ptrc_p, length_t input_string_capacity_p, float_type value_p) noexcept
 {
 	static_assert(::std::is_floating_point<float_type>::value == true, "an illegal type of value_p assigned to the template argument integral_type");
 	static_assert(sizeof(char_type) <= sizeof(char32), "an illegal type of value_p assigned to the template argument char_type");
@@ -150,7 +150,7 @@ constexpr void constexpr_convert_float_to_string(char_type* const string_out_ptr
 		l_floating_point *= 10;
 	}
 
-	FE_ASSERT_WITHOUT_LOG(input_string_capacity_p <= (numeric::count_integral_digit_length<var::int64>(l_floating_point) + l_integral_part_string_length));
+	ABORT_IF(input_string_capacity_p <= (numeric::count_integral_digit_length<var::int64>(l_floating_point) + l_integral_part_string_length));
 
 	numeric::constexpr_convert_integer_to_string<var::int64, char_type>(string_out_ptrc_p + l_integral_part_string_length, input_string_capacity_p, static_cast<var::int64>(l_floating_point));
 }
@@ -165,7 +165,7 @@ _FORCE_INLINE_ const char_type* convert_boolean_to_string(boolean value_p) noexc
 }
 
 template<typename char_type>
-constexpr const char_type* constexpr_convert_boolean_to_string(boolean value_p) noexcept
+_FORCE_INLINE_ constexpr const char_type* constexpr_convert_boolean_to_string(boolean value_p) noexcept
 {
 	static_assert(sizeof(char_type) <= sizeof(char32), "an illegal type of value_p assigned to the template argument char_type");
 

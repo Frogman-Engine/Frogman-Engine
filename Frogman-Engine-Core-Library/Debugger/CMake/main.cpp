@@ -26,7 +26,8 @@
 #define _ENABLE_PRE_TEST_ true
 
 
-static ::FE::internal::engine_main_initialization_arguments s_config_args = ::FE::internal::engine_main_initialization_arguments{new ::FE::real_time_exception_history_logging_strategy};
+static ::FE::real_time_exception_history_logging_strategy s_real_time_exception_history_logging_strategy;
+static ::FE::internal::engine_main_initialization_arguments s_config_args = ::FE::internal::engine_main_initialization_arguments{&s_real_time_exception_history_logging_strategy};
 
 
 int main(int argc, char** argv)
@@ -35,7 +36,7 @@ int main(int argc, char** argv)
 
 #if _ENABLE_PRE_TEST_ == true
 #endif
-	
+
 	::testing::InitGoogleTest(&argc, argv);
 	int l_test_result = RUN_ALL_TESTS();
 	FE::internal::engine_main::shutdown_engine();

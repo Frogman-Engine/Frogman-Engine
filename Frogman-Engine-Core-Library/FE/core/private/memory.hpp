@@ -5,8 +5,11 @@
 #include <immintrin.h>
 
 
+#define DIVIDE_BY_8(input_p) (input_p >> 3)
 #define DIVIDE_BY_32(input_p) (input_p >> 5)
 #define DIVIDE_BY_64(input_p) (input_p >> 6)
+
+#define MODULO_BY_8(input_p) (input_p & 7)
 #define MODULO_BY_32(input_p) (input_p & 31)
 #define MODULO_BY_64(input_p) (input_p & 63)
 
@@ -35,6 +38,8 @@ void memset_with_avx(void* const dest_ptrc_p, int8 value_p, length_t count_to_se
 void memcpy_with_avx512(void* const dest_ptrc_p, const void* const source_ptrc_p, size_t count_to_copy_p, size_t bytes_to_copy_p) noexcept;
 void memset_with_avx512(void* const dest_ptrc_p, int8 value_p, length_t count_to_set_p, size_t bytes_to_set_p) noexcept;
 #endif
+
+var::boolean memcmp(const void* left_bytes_ptr_p, size_t left_bytes_size_p, const void* right_bytes_ptr_p, size_t right_bytes_size_p) noexcept;
 
 enum struct MEMORY_ERROR_1XX : int16
 {

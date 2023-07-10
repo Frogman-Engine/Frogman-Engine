@@ -24,7 +24,7 @@
 // FE_ASSERT can be disabled by setting this macro "true" to eliminate error-checking overhead.
 // Please NOTE that FE_ASSERT aborts when circumstances are unrecoverable and critical. Therefore, precise debugging should be placed first.
 #define _ENABLE_ASSERT_ true
-#define _ENABLE_ASSERT_WITHOUT_LOG_ true
+#define _ENABLE_ABORT_IF_ true
 
 #define _ENABLE_EXIT_ true
 

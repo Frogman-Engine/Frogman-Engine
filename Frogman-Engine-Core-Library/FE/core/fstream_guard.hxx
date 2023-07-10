@@ -16,9 +16,9 @@ private:
 public:
 	typedef fstream fstream_type;
 
-	basic_fstream_guard(fstream& file_io_ref_p) noexcept : m_fstream_ref(file_io_ref_p) {}
+	_FORCE_INLINE_ basic_fstream_guard(fstream& file_io_ref_p) noexcept : m_fstream_ref(file_io_ref_p) {}
 
-	basic_fstream_guard(fstream& file_io_ref_p, const typename fstream::char_type* cstr_ptr_p) noexcept : m_fstream_ref(file_io_ref_p)
+	_FORCE_INLINE_ basic_fstream_guard(fstream& file_io_ref_p, const typename fstream::char_type* cstr_ptr_p) noexcept : m_fstream_ref(file_io_ref_p)
 	{
 		if (this->m_fstream_ref.is_open() == false)
 		{
@@ -26,20 +26,12 @@ public:
 		}
 	}
 
-
 	basic_fstream_guard(const basic_fstream_guard& other_ref_p) noexcept = delete;
-
-
-	basic_fstream_guard(basic_fstream_guard&& move_p) noexcept = default;
-
-
+	basic_fstream_guard(basic_fstream_guard&& move_p) noexcept = delete;
 	basic_fstream_guard& operator=(const basic_fstream_guard& other_ref_p) noexcept = delete;
+	basic_fstream_guard& operator=(basic_fstream_guard&& move_p) noexcept = delete;
 
-
-	basic_fstream_guard& operator=(basic_fstream_guard&& move_p) noexcept = default;
-
-
-	~basic_fstream_guard() noexcept
+	_FORCE_INLINE_ ~basic_fstream_guard() noexcept
 	{
 		if (this->m_fstream_ref.is_open() == true)
 		{
@@ -47,12 +39,11 @@ public:
 		}
 	}
 
+	_FORCE_INLINE_ void operator<<(const typename fstream::char_type* cbuffer_ptr_p) noexcept { this->m_fstream_ref << cbuffer_ptr_p; }
 
-	void operator<<(const typename fstream::char_type* cbuffer_ptr_p) noexcept { this->m_fstream_ref << cbuffer_ptr_p; }
+	_FORCE_INLINE_ void operator<<(const typename fstream::char_type cbuffer_p) noexcept { this->m_fstream_ref << cbuffer_p; }
 
-	void operator<<(const typename fstream::char_type cbuffer_p) noexcept { this->m_fstream_ref << cbuffer_p; }
-
-	bool operator>>(typename fstream::char_type* buffer_ptr_p) noexcept
+	_FORCE_INLINE_ bool operator>>(typename fstream::char_type* buffer_ptr_p) noexcept
 	{
 		if (this->m_fstream_ref.is_open() == false) { return false; }
 
@@ -60,7 +51,7 @@ public:
 		return true;
 	}
 
-	bool operator>>(typename fstream::char_type buffer_p) noexcept
+	_FORCE_INLINE_ bool operator>>(typename fstream::char_type buffer_p) noexcept
 	{
 		if (this->m_fstream_ref.is_open() == false) { return false; }
 
@@ -74,7 +65,7 @@ public:
 	_FORCE_INLINE_ void endl() noexcept { this->m_fstream_ref << std::endl; }
 
 	template<class container>
-	bool write_a_file(container& container_p) noexcept
+	_FORCE_INLINE_ bool write_a_file(container& container_p) noexcept
 	{
 		if (this->m_fstream_ref.is_open() == false)
 		{
@@ -93,7 +84,7 @@ public:
 	}
 
 	template<class container, FE::uint64 line_buffer_max_size>
-	bool read_a_file(container& container_p) noexcept
+	_FORCE_INLINE_ bool read_a_file(container& container_p) noexcept
 	{
 		if (this->m_fstream_ref.is_open() == false)
 		{

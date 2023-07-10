@@ -24,7 +24,7 @@ private:
 
 public:
     constexpr clock() noexcept : m_starting_point(), m_ending_point(), m_delta_time() {}
-    ~clock() noexcept = default;
+    constexpr ~clock() noexcept {}
 
     void start_clock() noexcept;
 

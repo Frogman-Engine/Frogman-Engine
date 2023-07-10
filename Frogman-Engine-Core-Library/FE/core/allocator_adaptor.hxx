@@ -23,10 +23,10 @@ namespace std_style
 		typedef FE::scalable_aligned_allocator<T> allocator;
 
 
-		scalable_aligned_allocator() noexcept = default;
+		constexpr scalable_aligned_allocator() noexcept {}
 
 		template <typename U>
-		scalable_aligned_allocator(_MAYBE_UNUSED_ const scalable_aligned_allocator<U>& standard_allocator_cref_p) noexcept {};
+		constexpr scalable_aligned_allocator(_MAYBE_UNUSED_ const scalable_aligned_allocator<U>& standard_allocator_cref_p) noexcept {};
 
 
 		_NODISCARD_ _FORCE_INLINE_ T* allocate(size_t count_p) noexcept

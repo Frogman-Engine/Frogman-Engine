@@ -50,7 +50,7 @@ void FE::thread::fork(FE::task_base* const function_ptrc_p, void* const out_retu
 			::FE::exception::__construct_exception();
 			auto l_is_void = function_ptrc_p->execute(out_return_ptrc_p, typename_str_ptrc_p);
 			::FE::exception::__destruct_exception();
-			FE_ASSERT(l_is_void == FE::RETURN_TYPE::_VOID && out_return_ptrc_p != nullptr, "ERROR: a non-void function assigned to a void-return-type task object.", _ASSERTED_LOCATION_);
+			FE_ASSERT(l_is_void == FE::RETURN_TYPE::_VOID && out_return_ptrc_p != nullptr, "ERROR: a non-void function assigned to a void-return-type task object.", _SOURCE_LOCATION_);
 		}
 	);
 }

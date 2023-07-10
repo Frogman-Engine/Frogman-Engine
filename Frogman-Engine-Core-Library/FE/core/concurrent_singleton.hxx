@@ -29,8 +29,8 @@ public:
 	typedef T value_type;
 	typedef FE::concurrent_memory_block<T> memory_block_type;
 
-	_FORCE_INLINE_ concurrent_singleton() noexcept = delete;
-	_FORCE_INLINE_ ~concurrent_singleton() noexcept = delete;
+	concurrent_singleton() noexcept = delete;
+	~concurrent_singleton() noexcept = delete;
 	concurrent_singleton(const concurrent_singleton& deprecated_cref_p) noexcept = delete;
 	concurrent_singleton& operator=(const concurrent_singleton& deprecated_cref_p) noexcept = delete;
 	concurrent_singleton(concurrent_singleton&& deprecated_p) noexcept = delete;

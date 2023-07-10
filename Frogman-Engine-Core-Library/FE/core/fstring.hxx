@@ -39,7 +39,7 @@ public:
     constexpr fixed_sized_string(const char_type* const cstr_ptrc_p) noexcept 
         : m_fstring{ static_cast<const char_type>('\0') }, m_string_length(algorithm::string::string_length<char_type>(cstr_ptrc_p))
     {
-        FE_ASSERT_WITHOUT_LOG(this->m_string_length >= max_capacity);
+        ABORT_IF(this->m_string_length >= max_capacity);
         algorithm::string::copy_string( this->m_fstring, max_capacity, cstr_ptrc_p, this->m_string_length);
     }
 
@@ -60,7 +60,7 @@ public:
     {
         this->m_string_length = algorithm::string::string_length<char_type>(cstr_ptrc_p);
 
-        FE_ASSERT_WITHOUT_LOG(this->m_string_length >= max_capacity);
+        ABORT_IF(this->m_string_length >= max_capacity);
         algorithm::string::copy_string(this->m_fstring, max_capacity, cstr_ptrc_p, this->m_string_length);
         return *this;
     }
@@ -82,13 +82,13 @@ public:
 
     constexpr char_type at(index_t index_p) noexcept
     {
-        FE_ASSERT_WITHOUT_LOG(index_p >= this->m_string_length);
+        ABORT_IF(index_p >= this->m_string_length);
         return this->m_fstring[index_p];
     }
 
     constexpr char_type& operator[](index_t idx_p) noexcept
     {
-        FE_ASSERT_WITHOUT_LOG(idx_p >= this->m_string_length);
+        ABORT_IF(idx_p >= this->m_string_length);
         return this->m_fstring[idx_p];
     }
 
@@ -134,7 +134,7 @@ public:
 
     constexpr void push_back(const char_type char_type_element_p) noexcept
     {
-        FE_ASSERT_WITHOUT_LOG(this->m_string_length >= max_capacity);
+        ABORT_IF(this->m_string_length >= max_capacity);
         this->m_fstring[this->m_string_length] = char_type_element_p;
         ++(this->m_string_length);
     }

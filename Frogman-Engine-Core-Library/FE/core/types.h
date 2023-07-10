@@ -43,6 +43,7 @@ constexpr T min_value() noexcept
 
 typedef const bool boolean; // primitive types are const by default
 
+typedef const char character;  // primitive types are const by default
 typedef const signed char schar; // primitive types are const by default
 typedef const unsigned char uchar; // primitive types are const by default
 typedef const wchar_t wchar; // primitive types are const by default
@@ -97,6 +98,10 @@ concept character_type = sizeof(T) <= 4;
 		typedef bool boolean;
 		static_assert(::std::atomic<boolean>::is_always_lock_free == true, "std::atomic is not compatible with boolean.");
 		static_assert(sizeof(boolean) == 1, "The size of boolean must be one byte.");
+
+		typedef char character;
+		static_assert(::std::atomic<character>::is_always_lock_free == true, "std::atomic is not compatible with character.");
+		static_assert(sizeof(character) == 1, "The size of character must be one byte.");
 
 		typedef signed char schar;
 		static_assert(::std::atomic<schar>::is_always_lock_free == true, "std::atomic is not compatible with schar.");
@@ -183,26 +188,26 @@ concept character_type = sizeof(T) <= 4;
 		typedef ::std::ptrdiff_t ptrdiff_t;
 
 		static_assert(sizeof(nullptr) == 8, "Your system's memory address model must be 64-bit.");
-		typedef ::std::atomic_bool* ATOMIC_BYTE_PTR;
+		using ATOMIC_BYTE_PTR = ::std::atomic_bool*;
 
-		typedef bool* BYTE_PTR;
+		using BYTE_PTR = bool*;
 		static_assert(::std::atomic<BYTE_PTR>::is_always_lock_free == true, "std::atomic is not compatible with  BYTE_PTR.");
 
-		typedef unsigned short* WORD_PTR;
+		using WORD_PTR = unsigned short*;
 		static_assert(::std::atomic<WORD_PTR>::is_always_lock_free == true, "std::atomic is not compatible with  WORD_PTR.");
 
-		typedef unsigned int* DWORD_PTR;
+		using DWORD_PTR = unsigned int*;
 		static_assert(::std::atomic<DWORD_PTR>::is_always_lock_free == true, "std::atomic is not compatible with  DWORD_PTR.");
 
-		typedef unsigned long long* QWORD_PTR;
+		using QWORD_PTR = unsigned long long*;
 		static_assert(::std::atomic<QWORD_PTR>::is_always_lock_free == true, "std::atomic is not compatible with  QWORD_PTR.");
 	}
 
-	typedef ::std::atomic_bool* const ATOMIC_BYTE_PTR;
-	typedef bool* const BYTE_PTR;
-	typedef unsigned short* const WORD_PTR;
-	typedef unsigned int* const DWORD_PTR;
-	typedef unsigned long long* const QWORD_PTR;
+	using ATOMIC_BYTE_PTR = ::std::atomic_bool* const;
+	using BYTE_PTR = bool* const;
+	using WORD_PTR = unsigned short* const;
+	using DWORD_PTR = unsigned int* const;
+	using QWORD_PTR = unsigned long long* const;
 
 
 	_MAYBE_UNUSED_	constexpr FE::int8 _INT8_MAX_ = max_value<FE::int8>();
