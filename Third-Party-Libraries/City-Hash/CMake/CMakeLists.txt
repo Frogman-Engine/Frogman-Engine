@@ -21,7 +21,7 @@ SOURCE_GROUP("city_hash" FILES ${_CITY_HASH_})
 
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-message("Configurating The Build Environment for Linux X86-64 Distributions")
+MESSAGE("Configurating The Build Environment for Linux X86-64 Distributions")
 
 # Find the path to the GNU C compiler executable
 FIND_PROGRAM(GNU_C NAMES gcc)
@@ -63,16 +63,14 @@ ADD_LIBRARY(${PROJECT_NAME} STATIC
 			${_CITY_HASH_}
 			)
 
-# Set the output directory for the executable
 # Set the output directory for the executable based on build mode
-# Set the output directory for the executable based on build mode
-set_target_properties(${PROJECT_NAME} PROPERTIES ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../Binaries/Linux/Release/a)
+SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../Binaries/Linux/a)
 
 
 
 
 elseif(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-message("Configurating The Build Environment for Windows X86-64")
+MESSAGE("Configurating The Build Environment for Windows X86-64")
 
 
 ADD_LIBRARY(${PROJECT_NAME} STATIC
@@ -81,7 +79,7 @@ ADD_LIBRARY(${PROJECT_NAME} STATIC
 
 # Set the output directory for the executable
 # Set the output directory for the executable based on build mode
-set_target_properties(${PROJECT_NAME} PROPERTIES ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../Binaries/Windows)
+SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../Binaries/Windows)
 
 
 TARGET_COMPILE_OPTIONS(	${PROJECT_NAME} PRIVATE 
