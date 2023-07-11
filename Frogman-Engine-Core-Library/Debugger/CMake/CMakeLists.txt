@@ -48,6 +48,7 @@ SET(_UNIT_TEST_CODE_
 	${CMAKE_CURRENT_SOURCE_DIR}/../../../Frogman-Engine-Unit-Tests/FE-Core-Unit-Test-Cases/allocator-unit-test.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/../../../Frogman-Engine-Unit-Tests/FE-Core-Unit-Test-Cases/cstring-unit-test.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/../../../Frogman-Engine-Unit-Tests/FE-Core-Unit-Test-Cases/fstring-unit-test.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/../../../Frogman-Engine-Unit-Tests/FE-Core-Unit-Test-Cases/hash-unit-test.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/../../../Frogman-Engine-Unit-Tests/FE-Core-Unit-Test-Cases/iterator-unit-test.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/../../../Frogman-Engine-Unit-Tests/FE-Core-Unit-Test-Cases/math-unit-test.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/../../../Frogman-Engine-Unit-Tests/FE-Core-Unit-Test-Cases/memory_block-unit-test.cpp

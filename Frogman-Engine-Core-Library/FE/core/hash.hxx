@@ -20,7 +20,7 @@ public:
 	{
 		if constexpr (::std::is_pointer<T>::value == true)
 		{
-			return (var::uint64)value_p;
+			return reinterpret_cast<var::uintptr_t>(value_p);
 		}
 
 		return CityHash64((byte_array_ptr_t)&value_p, sizeof(value_type));

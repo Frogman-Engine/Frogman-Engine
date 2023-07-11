@@ -3,7 +3,7 @@
 // Copyright 2008, Google Inc. All rights reserved. Google Test is Google's intellectual property.
 
 
-#include "../core/macros/macro_definitions.h" // A Frogman API Header
+#include <FE/core/macros/macro_definitions.h>
 
 
 // Macros for Google-Testing Frogman API classes and structures

@@ -1,8 +1,7 @@
 ﻿#ifndef _FE_CORE_TYPES_H_
 #define _FE_CORE_TYPES_H_
 // Copyright © from 2023 to current, UNKNOWN STRYKER. All Rights Reserved.
-#pragma warning(disable : 4455)
-#include "../miscellaneous/configuration.h"
+#include <FE/miscellaneous/configuration.h>
 #include "macros/attributes.h"
 #include "macros/macro_definitions.h"
 #include <any>
@@ -81,6 +80,8 @@ typedef const ::std::size_t index_t; // primitive types are const by default
 typedef const ::std::size_t count_t; // primitive types are const by default
 typedef const ::std::size_t capacity_t; // primitive types are const by default
 typedef const ::std::ptrdiff_t ptrdiff_t; // primitive types are const by default
+typedef const ::std::intptr_t intptr_t; // primitive types are const by default
+typedef const ::std::uintptr_t uintptr_t; // primitive types are const by default
 
 
 #if _HAS_CXX20_ == 1
@@ -186,6 +187,8 @@ concept character_type = sizeof(T) <= 4;
 		typedef ::std::size_t count_t;
 		typedef ::std::size_t capacity_t;
 		typedef ::std::ptrdiff_t ptrdiff_t;
+		typedef ::std::intptr_t intptr_t;
+		typedef ::std::uintptr_t uintptr_t;
 
 		static_assert(sizeof(nullptr) == 8, "Your system's memory address model must be 64-bit.");
 		using ATOMIC_BYTE_PTR = ::std::atomic_bool*;

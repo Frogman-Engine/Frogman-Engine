@@ -1,5 +1,5 @@
 ﻿// Copyright © from 2023 to current, UNKNOWN STRYKER. All Rights Reserved.
-#include "../heap_utilization.hpp"
+#include <FE/core/heap_utilization.hpp>
 
 
 std::atomic_size_t FE::heap_memory_tracker::s_global_total_bytes = 0;

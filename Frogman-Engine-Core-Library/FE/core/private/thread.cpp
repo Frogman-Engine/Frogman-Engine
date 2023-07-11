@@ -1,6 +1,6 @@
 ﻿// Copyright © from 2023 to current, UNKNOWN STRYKER. All Rights Reserved.
-#include "../thread.hpp"
-#include "../algorithm/utility.hxx"
+#include <FE/core/thread.hpp>
+#include <FE/core/algorithm/utility.hxx>
 
 
 thread_local ::FE::var::uint64 FE::thread::tl_s_this_thread_id = 0;

@@ -158,8 +158,8 @@ template<typename T, class alignment = align_8bytes>
 _NODISCARD_ _FORCE_INLINE_ T* trackable_realloc(T* const memblock_ptrc_p, length_t prev_length_p, size_t prev_bytes_p, length_t new_length_p, size_t new_bytes_p) noexcept
 {
 #if _ENABLE_MEMORY_TRACKER_ == true
-	::FE::heap_utilization<T, alignment>::s_global_total_bytes_by_type::sub(prev_length_p * prev_bytes_p);
-	::FE::heap_utilization<T, alignment>::s_global_total_bytes_by_type::add(new_length_p * new_bytes_p);
+	::FE::heap_utilization<T, alignment>::sub(prev_length_p * prev_bytes_p);
+	::FE::heap_utilization<T, alignment>::add(new_length_p * new_bytes_p);
 #endif
 
 	T* l_realloc_result_ptr = (T*)::scalable_aligned_realloc(memblock_ptrc_p, new_bytes_p * new_length_p, alignment::s_size);

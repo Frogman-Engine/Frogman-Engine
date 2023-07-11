@@ -1,10 +1,10 @@
 ﻿// Copyright © from 2023 to current, UNKNOWN STRYKER. All Rights Reserved.
 #define _CRT_SECURE_NO_WARNINGS
-#include "../exception.hpp"
-#include "../algorithm/string.hxx"
-#include "../fstring.hxx"
-#include "../thread.hpp"
-#include "../clock.hpp"
+#include <FE/core/exception.hpp>
+#include <FE/core/algorithm/string.hxx>
+#include <FE/core/fstring.hxx>
+#include <FE/core/thread.hpp>
+#include <FE/core/clock.hpp>
 #include <cstdlib>
 #include <cwchar>
 #include <fstream>

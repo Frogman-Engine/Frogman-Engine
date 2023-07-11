@@ -1,7 +1,7 @@
 ﻿#ifndef _FE_CORE_LAUNCH_HPP_
 #define _FE_CORE_LAUNCH_HPP_
 // Copyright © from 2023 to current, UNKNOWN STRYKER. All Rights Reserved.
-#include "../clock.hpp"
+#include <FE/core/clock.hpp>
 
 
 int main(int argc, char** argv);

@@ -1,7 +1,7 @@
 ﻿#ifndef _FE_CORE_ALGORITHM_NUMERIC_HXX_
 #define _FE_CORE_ALGORITHM_NUMERIC_HXX_
 // Copyright © from 2023 to current, UNKNOWN STRYKER. All Rights Reserved.
-#include "../prerequisite_symbols.h"
+#include <FE/core/prerequisite_symbols.h>
 #include "string.hxx"
 
 

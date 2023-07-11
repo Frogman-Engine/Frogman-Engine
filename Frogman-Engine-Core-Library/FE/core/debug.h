@@ -1,6 +1,6 @@
 ﻿#ifndef _FE_CORE_DEBUG_H_
 #define _FE_CORE_DEBUG_H_
-#include "../miscellaneous/configuration.h"
+#include <FE/miscellaneous/configuration.h>
 #include <iostream>
 // Copyright © from 2023 to current, UNKNOWN STRYKER. All Rights Reserved.
 

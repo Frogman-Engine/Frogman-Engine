@@ -1,12 +1,11 @@
 ﻿#ifndef _FE_CORE_ALGORITHM_STRING_HXX_
 #define _FE_CORE_ALGORITHM_STRING_HXX_
 // Copyright © from 2023 to current, UNKNOWN STRYKER. All Rights Reserved.
-#include "../prerequisite_symbols.h"
-#include "../heap_utilization.hpp"
+#include <FE/core/prerequisite_symbols.h>
+#include <FE/core/heap_utilization.hpp>
 #include <utility>
 #include <optional>
 #include <vector>
-#include <iostream>
 
 
 BEGIN_NAMESPACE(FE::algorithm::string)

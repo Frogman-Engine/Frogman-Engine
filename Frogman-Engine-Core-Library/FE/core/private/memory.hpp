@@ -1,7 +1,7 @@
 ﻿#ifndef _MEMORY_HXX_
 #define _MEMORY_HXX_
 // Copyright © 2023~ UNKNOWN STRYKER. All Rights Reserved.
-#include "../prerequisite_symbols.h"
+#include <FE/core/prerequisite_symbols.h>
 #include <immintrin.h>
 
 
