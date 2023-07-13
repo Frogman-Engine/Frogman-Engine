@@ -966,7 +966,7 @@ template<typename char_type>
 #if _HAS_CXX20_ == 1
     requires character_type<char_type>
 #endif
-_NODISCARD_ _FORCE_INLINE_ ::std::optional<string_range> search_very_first_substring(char_type* const string_ptrc_p, char_type* const target_substring_ptrc_p) noexcept
+_NODISCARD_ _FORCE_INLINE_ ::std::optional<string_range> search_very_first_substring(const char_type* const string_ptrc_p, const char_type* const target_substring_ptrc_p) noexcept
 {
     static_assert(sizeof(char_type) <= sizeof(UTF32), "char_type is not a valid character type");
     ABORT_IF(string_ptrc_p == nullptr, "ERROR: string_ptrc_p is nullptr.");
@@ -1002,58 +1002,6 @@ _NODISCARD_ _FORCE_INLINE_ ::std::optional<string_range> search_very_first_subst
     return ::std::nullopt;
 }
 
-template<typename char_type>
-#if _HAS_CXX20_ == 1
-    requires character_type<char_type>
-#endif
-_NODISCARD_ _FORCE_INLINE_ constexpr ::std::optional<string_range> search_very_first_substring(const char_type* const string_ptrc_p, const char_type* const target_substring_ptrc_p) noexcept
-{
-    static_assert(sizeof(char_type) <= sizeof(UTF32), "char_type is not a valid character type");
-    ABORT_IF(string_ptrc_p == nullptr, "ERROR: string_ptrc_p is nullptr.");
-    ABORT_IF(target_substring_ptrc_p == nullptr, "ERROR: target_substring_ptrc_p is nullptr.");
-
-    const char_type* l_string_ptr = string_ptrc_p;
-    const char_type* l_target_substring_ptr = target_substring_ptrc_p;
-
-    length_t l_target_substring_length = string::string_length(target_substring_ptrc_p);
-
-    ABORT_IF(l_target_substring_length >= string::string_length(string_ptrc_p), "CRITICAL ERROR: the l_target_substring_length is greater than or equal to the string length of string_ptrc_p");
-
-    while (*l_target_substring_ptr != static_cast<char_type>('\0'))
-    {
-        if (*l_string_ptr == *l_target_substring_ptr)
-        {
-            ++l_string_ptr;
-            ++l_target_substring_ptr;
-            continue;
-        }
-        ++l_string_ptr;
-        l_target_substring_ptr = target_substring_ptrc_p;
-    }
-
-    if (l_target_substring_ptr[-1] == l_string_ptr[-1])
-    {
-        index_t l_begin = (l_string_ptr - string_ptrc_p) - l_target_substring_length;
-        index_t l_end = l_string_ptr - string_ptrc_p;
-
-        return  std::make_optional<string_range>(l_begin, l_end);
-    }
-
-    return ::std::nullopt;
-}
-
-
-template<typename char_type>
-#if _HAS_CXX20_ == 1
-    requires character_type<char_type>
-#endif
-_NODISCARD_ _FORCE_INLINE_::std::optional<string_range> search_very_last_substring(char_type* const string_ptrc_p, char_type* const target_substring_ptrc_p) noexcept
-{
-    static_assert(sizeof(char_type) <= sizeof(UTF32), "char_type is not a valid character type");
-    ABORT_IF(string_ptrc_p == nullptr, "ERROR: string_ptrc_p is nullptr.");
-    ABORT_IF(target_substring_ptrc_p == nullptr, "ERROR: target_substring_ptrc_p is nullptr.");
-
-}
 
 template<typename char_type>
 #if _HAS_CXX20_ == 1
