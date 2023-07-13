@@ -263,7 +263,7 @@ void memset_with_avx(void* const dest_ptrc_p, int8 value_p, length_t count_to_se
 #endif
 
 
-void ::FE::memset_s(void* const dest_ptrc_p, int8 value_p, length_t count_p, size_t element_bytes_p) noexcept
+void memset_s(void* const dest_ptrc_p, int8 value_p, length_t count_p, size_t element_bytes_p) noexcept
 {
     ABORT_IF(dest_ptrc_p == nullptr, "ERROR: dest_ptrc_p is nullptr.");
     ABORT_IF(count_p == 0, "ERROR: element_bytes_p is 0.");
@@ -278,7 +278,7 @@ void ::FE::memset_s(void* const dest_ptrc_p, int8 value_p, length_t count_p, siz
 #endif
 }
 
-void ::FE::memcpy_s(void* const dest_memblock_ptrc_p, length_t dest_length_p, size_t dest_element_bytes_p, const void* const source_memblock_ptrc_p, length_t source_length_p, size_t source_element_bytes_p) noexcept
+void memcpy_s(void* const dest_memblock_ptrc_p, length_t dest_length_p, size_t dest_element_bytes_p, const void* const source_memblock_ptrc_p, length_t source_length_p, size_t source_element_bytes_p) noexcept
 {
     ABORT_IF(dest_memblock_ptrc_p == nullptr, "ERROR: dest_memblock_ptrc_p is nullptr.");
     ABORT_IF(source_memblock_ptrc_p == nullptr, "ERROR: source_memblock_ptrc_p is nullptr.");
