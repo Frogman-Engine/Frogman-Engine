@@ -5,7 +5,7 @@
 #include <FE/core/iterator.hxx>
 #include <FE/core/memory>
 #include <initializer_list>
-#include <stack>
+
 
 BEGIN_NAMESPACE(FE)
 
