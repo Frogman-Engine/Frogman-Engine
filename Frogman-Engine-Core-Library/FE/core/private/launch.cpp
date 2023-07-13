@@ -1,6 +1,5 @@
 ﻿// Copyright © from 2023 to current, UNKNOWN STRYKER. All Rights Reserved.
 #include "launch.hpp"
-#include "configuration_deserializer.hpp"
 #include <csignal>
 
 
