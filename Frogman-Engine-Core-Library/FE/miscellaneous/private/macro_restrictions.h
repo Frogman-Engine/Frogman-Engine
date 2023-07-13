@@ -61,9 +61,7 @@
 #error Frogman Engine Prohibits macroizing the keyword "min_value".
 #endif
 
-#ifdef _NULL_
-#error Frogman Engine Prohibits macroizing the keyword "_NULL_".
-#endif
+
 #ifdef _NULL_f_
 #error Frogman Engine Prohibits macroizing the keyword "_NULL_f_".
 #endif
@@ -95,13 +93,13 @@
 #ifdef wchar
 #error Frogman Engine Prohibits macroizing the keyword "wchar".
 #endif
-#ifdef char8
+#ifdef UTF8
 #error Frogman Engine Prohibits macroizing the keyword "char8".
 #endif
-#ifdef char16
+#ifdef UTF16
 #error Frogman Engine Prohibits macroizing the keyword "char16".
 #endif
-#ifdef char32
+#ifdef UTF32
 #error Frogman Engine Prohibits macroizing the keyword "char32".
 #endif
 
@@ -115,7 +113,7 @@
 #ifdef binary
 #error Frogman Engine Prohibits macroizing the keyword "binary".
 #endif
-#ifdef sbyte
+#ifdef byte
 #error Frogman Engine Prohibits macroizing the keyword "sbyte".
 #endif
 #ifdef ubyte
@@ -199,7 +197,7 @@
 #ifdef exception
 #error Frogman Engine Prohibits macroizing the keyword "exception".
 #endif
-#ifdef handle_exception
+#ifdef log_exception
 #error Frogman Engine Prohibits macroizing the keyword "handle_exceptions".
 #endif
 

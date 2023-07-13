@@ -262,47 +262,54 @@ void memset_with_avx(void* const dest_ptrc_p, int8 value_p, length_t count_to_se
 
 #endif
 
-var::boolean memcmp(const void* left_bytes_ptr_p, size_t left_bytes_size_p, const void* right_bytes_ptr_p, size_t right_bytes_size_p) noexcept
+
+void ::FE::memset_s(void* const dest_ptrc_p, int8 value_p, length_t count_p, size_t element_bytes_p) noexcept
 {
-    if (left_bytes_size_p != right_bytes_size_p)
+    ABORT_IF(dest_ptrc_p == nullptr, "ERROR: dest_ptrc_p is nullptr.");
+    ABORT_IF(count_p == 0, "ERROR: element_bytes_p is 0.");
+    ABORT_IF(element_bytes_p == 0, "ERROR: element_bytes_p is 0.");
+
+#if _AVX512_ == true
+    ::FE::memset_with_avx512(dest_ptrc_p, value_p, count_p, element_bytes_p);
+#elif _AVX_ == true
+    ::FE::memset_with_avx(dest_ptrc_p, value_p, count_p, element_bytes_p);
+#else
+    ::std::memset(dest_ptrc_p, value_p, count_p * element_bytes_p);
+#endif
+}
+
+void ::FE::memcpy_s(void* const dest_memblock_ptrc_p, length_t dest_length_p, size_t dest_element_bytes_p, const void* const source_memblock_ptrc_p, length_t source_length_p, size_t source_element_bytes_p) noexcept
+{
+    ABORT_IF(dest_memblock_ptrc_p == nullptr, "ERROR: dest_memblock_ptrc_p is nullptr.");
+    ABORT_IF(source_memblock_ptrc_p == nullptr, "ERROR: source_memblock_ptrc_p is nullptr.");
+
+    ABORT_IF(dest_length_p == 0, "ERROR: dest_length_p is 0.");
+    ABORT_IF(dest_element_bytes_p == 0, "ERROR: dest_element_bytes_p is 0.");
+    ABORT_IF(source_element_bytes_p == 0, "ERROR: source_element_bytes_p is 0.");
+
+    size_t l_source_size = source_element_bytes_p * source_length_p;
+    size_t l_dest_size = dest_element_bytes_p * dest_length_p;
+
+    if (l_source_size >= l_dest_size)
     {
-        return false;
+#if _AVX512_ == true
+        ::FE::memcpy_with_avx512(dest_memblock_ptrc_p, source_memblock_ptrc_p, dest_length_p, dest_element_bytes_p);
+#elif _AVX_ == true
+        ::FE::memcpy_with_avx(dest_memblock_ptrc_p, source_memblock_ptrc_p, dest_length_p, dest_element_bytes_p);
+#else
+        ::memcpy(dest_memblock_ptrc_p, source_memblock_ptrc_p, l_dest_size);
+#endif
     }
-
-    std::size_t l_leftover_bytes = MODULO_BY_8(left_bytes_size_p);
-    
-    var::BYTE_PTR l_left_bytes_ptr = (var::BYTE_PTR)left_bytes_ptr_p;
-    var::BYTE_PTR l_right_bytes_ptr = (var::BYTE_PTR)right_bytes_ptr_p;
-
-    for (std::size_t i = 0; i < l_leftover_bytes; ++i)
+    else
     {
-        if (*l_left_bytes_ptr != *l_right_bytes_ptr)
-        {
-            return false;
-        }
-
-        ++l_left_bytes_ptr;
-        ++l_right_bytes_ptr;
+#if _AVX512_ == true
+        ::FE::memcpy_with_avx512(dest_memblock_ptrc_p, source_memblock_ptrc_p, source_length_p, source_element_bytes_p);
+#elif _AVX_ == true
+        ::FE::memcpy_with_avx(dest_memblock_ptrc_p, source_memblock_ptrc_p, source_length_p, source_element_bytes_p);
+#else
+        ::memcpy(dest_memblock_ptrc_p, source_memblock_ptrc_p, l_source_size);
+#endif
     }
-
-
-    std::size_t l_counts_to_jump_8_bytes = DIVIDE_BY_8(left_bytes_size_p);
-
-    var::QWORD_PTR l_left_qword_ptr = (var::QWORD_PTR)l_left_bytes_ptr;
-    var::QWORD_PTR l_right_qword_ptr = (var::QWORD_PTR)l_right_bytes_ptr;
-
-    for (var::size_t i = 0; ((i < l_counts_to_jump_8_bytes) && (*l_left_qword_ptr == *l_right_qword_ptr)); ++i)
-    {
-        ++l_left_qword_ptr;
-        ++l_right_qword_ptr;
-    }
-
-    if ((var::size_t)((var::BYTE_PTR)l_left_qword_ptr - (var::BYTE_PTR)left_bytes_ptr_p) == left_bytes_size_p)
-    {
-        return true;
-    }
-
-    return false;
 }
 
 END_NAMESPACE

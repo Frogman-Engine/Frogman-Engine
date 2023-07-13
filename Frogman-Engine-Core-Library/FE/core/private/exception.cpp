@@ -22,7 +22,7 @@ thread_local ::std::ofstream FE::real_time_exception_history_logging_strategy::t
 thread_local ::FE::clock FE::exception::tl_s_clock;
 
 
-bool FE::exception::handle_exception(const bool expression_p, const char* const expression_string_ptrc_p, const FE::EXCEPTION_MODE runtime_exception_mode_p, const char* message_ptr_p, const char* file_name_ptr_p, const char* function_name_ptr_p, const int line_p, const int exit_code_p) noexcept
+bool FE::exception::log_exception(const bool expression_p, const char* const expression_string_ptrc_p, const FE::EXCEPTION_MODE runtime_exception_mode_p, const char* message_ptr_p, const char* file_name_ptr_p, const char* function_name_ptr_p, const int line_p, const int exit_code_p) noexcept
 {
     return exception::s_exception_handling_strategy_ptr->__exception_handling_strategy(expression_p, expression_string_ptrc_p, runtime_exception_mode_p, message_ptr_p, file_name_ptr_p, function_name_ptr_p, line_p, exit_code_p);
 }
@@ -56,6 +56,7 @@ thread_local ::std::unique_ptr<FE::exception::char_type[]> FE::real_time_excepti
 
 bool FE::real_time_exception_history_logging_strategy::__exception_handling_strategy(const bool expression_p, const char* const expression_string_ptrc_p, const FE::EXCEPTION_MODE runtime_exception_mode_p, const char* message_ptr_p, const char* file_name_ptr_p, const char* function_name_ptr_p, const int line_p, const int exit_code_p) noexcept
 {
+    ABORT_IF(expression_string_ptrc_p == nullptr, "ERROR: expression_string_ptrc_p is nullptr.");
     switch (static_cast<int>(expression_p))
     {
     case 0:

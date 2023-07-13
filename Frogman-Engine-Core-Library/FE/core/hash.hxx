@@ -1,5 +1,7 @@
 ﻿#ifndef _HASH_HXX_
 #define _HASH_HXX_
+#pragma warning(push)
+#pragma warning(disable: 4702)
 #include <city.h> // Copyright 2011, Google Inc. All rights reserved. City Hash is Google's intellectual property.
 
 #include "prerequisite_symbols.h" // Copyright © from 2023 to current, UNKNOWN STRYKER. All Rights Reserved.
@@ -95,4 +97,5 @@ public:
 };
 
 END_NAMESPACE
+#pragma warning(pop)
 #endif

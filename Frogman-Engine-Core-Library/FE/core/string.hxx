@@ -222,15 +222,15 @@ using wstring = basic_string<var::wchar, var::uint32>;
 using warticle = basic_string<var::wchar, var::uint64>;
 
 #if _HAS_CXX20_ == 1
-using string8 = basic_string<var::char8, var::uint32>;
-using article8 = basic_string<var::char8, var::uint64>;
+using string8 = basic_string<var::UTF8, var::uint32>;
+using article8 = basic_string<var::UTF8, var::uint64>;
 #endif
 
-using string16 = basic_string<var::char16, var::uint32>;
-using article16 = basic_string<var::char16, var::uint64>;
+using string16 = basic_string<var::UTF16, var::uint32>;
+using article16 = basic_string<var::UTF16, var::uint64>;
 
-using string32 = basic_string<var::char32, var::uint32>;
-using article32 = basic_string<var::char32, var::uint64>;
+using string32 = basic_string<var::UTF32, var::uint32>;
+using article32 = basic_string<var::UTF32, var::uint64>;
 
 
 END_NAMESPACE

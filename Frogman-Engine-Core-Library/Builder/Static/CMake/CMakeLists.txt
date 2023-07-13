@@ -58,6 +58,7 @@ SET(_CONCURRENT_CONTAINERS_
 	${CMAKE_CURRENT_SOURCE_DIR}/../../../FE/core/concurrent_containers/concurrent_linked_array.hxx
 	${CMAKE_CURRENT_SOURCE_DIR}/../../../FE/core/concurrent_containers/concurrent_list.hxx 
 	${CMAKE_CURRENT_SOURCE_DIR}/../../../FE/core/concurrent_containers/concurrent_queue.hxx
+	${CMAKE_CURRENT_SOURCE_DIR}/../../../FE/core/concurrent_containers/concurrent_stack.hxx
 	)
 SOURCE_GROUP("FE\\core\\concurrent_containers" FILES ${_CONCURRENT_CONTAINERS_})
 
@@ -79,6 +80,7 @@ SET(_CONTAINERS_
 	${CMAKE_CURRENT_SOURCE_DIR}/../../../FE/core/containers/linked_array.hxx
 	${CMAKE_CURRENT_SOURCE_DIR}/../../../FE/core/containers/list.hxx 
 	${CMAKE_CURRENT_SOURCE_DIR}/../../../FE/core/containers/queue.hxx
+	${CMAKE_CURRENT_SOURCE_DIR}/../../../FE/core/containers/stack.hxx
 	)
 SOURCE_GROUP("FE\\core\\containers" FILES ${_CONTAINERS_})
 
@@ -102,13 +104,12 @@ SOURCE_GROUP("FE\\core\\memory_pool" FILES ${_MEMORY_POOL_})
 
 SET(_PRIVATE_
 	${CMAKE_CURRENT_SOURCE_DIR}/../../../FE/core/private/clock.cpp 	
-	${CMAKE_CURRENT_SOURCE_DIR}/../../../FE/core/private/configuration_deserializer.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/../../../FE/core/private/configuration_deserializer.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/../../../FE/core/private/heap_utilization.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/../../../FE/core/private/launch.cpp 
 	${CMAKE_CURRENT_SOURCE_DIR}/../../../FE/core/private/launch.hpp 
-	${CMAKE_CURRENT_SOURCE_DIR}/../../../FE/core/private/memory.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/../../../FE/core/private/memory.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/../../../FE/core/private/memory.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/../../../FE/core/private/memory.hxx
 	${CMAKE_CURRENT_SOURCE_DIR}/../../../FE/core/private/memory_metrics.cpp 
 	${CMAKE_CURRENT_SOURCE_DIR}/../../../FE/core/private/mutex.cpp 
 	${CMAKE_CURRENT_SOURCE_DIR}/../../../FE/core/private/exception.cpp 
@@ -140,8 +141,8 @@ SET(_CORE_
 	${CMAKE_CURRENT_SOURCE_DIR}/../../../FE/core/function.hxx 
 	${CMAKE_CURRENT_SOURCE_DIR}/../../../FE/core/hash.hxx 
 	${CMAKE_CURRENT_SOURCE_DIR}/../../../FE/core/iterator.hxx
+	${CMAKE_CURRENT_SOURCE_DIR}/../../../FE/core/memory
 	${CMAKE_CURRENT_SOURCE_DIR}/../../../FE/core/heap_utilization.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/../../../FE/core/math.hxx
 	${CMAKE_CURRENT_SOURCE_DIR}/../../../FE/core/memory_block.hxx 
 	${CMAKE_CURRENT_SOURCE_DIR}/../../../FE/core/memory_metrics.h 
 	${CMAKE_CURRENT_SOURCE_DIR}/../../../FE/core/movable_scoped_ref.hxx 
@@ -380,7 +381,7 @@ endif()
 ADD_COMPILE_DEFINITIONS(_USE_CMAKE_MACRO_=true)
 
 target_compile_definitions(	${PROJECT_NAME} PRIVATE 
-							$<$<CONFIG:DEBUG>:_DEBUG_MODE_=true _ENABLE_MEMORY_TRACKER_=true _ENABLE_EXCEPTION_=true _ENABLE_ASSERT_=true _ENABLE_ABORT_IF_=true _ENABLE_EXIT_=true>
-							$<$<CONFIG:RELEASE>:_DEBUG_MODE_=false _ENABLE_MEMORY_TRACKER_=false _ENABLE_EXCEPTION_=false _ENABLE_ASSERT_=false _ENABLE_ABORT_IF_=false _ENABLE_EXIT_=false>
-							$<$<CONFIG:RELWITHDEBINFO>:_DEBUG_MODE_=true _ENABLE_MEMORY_TRACKER_=true _ENABLE_EXCEPTION_=true _ENABLE_ASSERT_=true _ENABLE_ABORT_IF_=true _ENABLE_EXIT_=true>
+							$<$<CONFIG:DEBUG>:_DEBUG_MODE_=true _ENABLE_MEMORY_TRACKER_=true _ENABLE_LOG_=true _ENABLE_ASSERT_=true _ENABLE_ABORT_IF_=true _ENABLE_EXIT_=true>
+							$<$<CONFIG:RELEASE>:_DEBUG_MODE_=false _ENABLE_MEMORY_TRACKER_=false _ENABLE_LOG_=false _ENABLE_ASSERT_=false _ENABLE_ABORT_IF_=false _ENABLE_EXIT_=false>
+							$<$<CONFIG:RELWITHDEBINFO>:_DEBUG_MODE_=true _ENABLE_MEMORY_TRACKER_=true _ENABLE_LOG_=true _ENABLE_ASSERT_=true _ENABLE_ABORT_IF_=true _ENABLE_EXIT_=true>
 							)

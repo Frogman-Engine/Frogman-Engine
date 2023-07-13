@@ -39,7 +39,7 @@ public:
     constexpr fixed_sized_string(const char_type* const cstr_ptrc_p) noexcept 
         : m_fstring{ static_cast<const char_type>('\0') }, m_string_length(algorithm::string::string_length<char_type>(cstr_ptrc_p))
     {
-        ABORT_IF(this->m_string_length >= max_capacity);
+        ABORT_IF(this->m_string_length >= max_capacity, "CRITICAL ERROR: the input string length exceeds the max string capacity");
         algorithm::string::copy_string( this->m_fstring, max_capacity, cstr_ptrc_p, this->m_string_length);
     }
 
@@ -60,7 +60,7 @@ public:
     {
         this->m_string_length = algorithm::string::string_length<char_type>(cstr_ptrc_p);
 
-        ABORT_IF(this->m_string_length >= max_capacity);
+        ABORT_IF(this->m_string_length >= max_capacity, "CRITICAL ERROR: the input string length exceeds the max string capacity");
         algorithm::string::copy_string(this->m_fstring, max_capacity, cstr_ptrc_p, this->m_string_length);
         return *this;
     }
@@ -82,13 +82,13 @@ public:
 
     constexpr char_type at(index_t index_p) noexcept
     {
-        ABORT_IF(index_p >= this->m_string_length);
+        ABORT_IF(index_p >= this->m_string_length, "CRITICAL ERROR: index out of boundary");
         return this->m_fstring[index_p];
     }
 
     constexpr char_type& operator[](index_t idx_p) noexcept
     {
-        ABORT_IF(idx_p >= this->m_string_length);
+        ABORT_IF(idx_p >= this->m_string_length, "CRITICAL ERROR: index out of boundary");
         return this->m_fstring[idx_p];
     }
 
@@ -134,7 +134,7 @@ public:
 
     constexpr void push_back(const char_type char_type_element_p) noexcept
     {
-        ABORT_IF(this->m_string_length >= max_capacity);
+        ABORT_IF(this->m_string_length >= max_capacity, "CRITICAL ERROR: out of capacity");
         this->m_fstring[this->m_string_length] = char_type_element_p;
         ++(this->m_string_length);
     }
@@ -246,14 +246,14 @@ using fwstring = FE::fixed_sized_string<var::wchar, max_capacity>;
 
 #if _HAS_CXX20_ == 1
 template<uint64 max_capacity>
-using fstring8 = FE::fixed_sized_string<var::char8, max_capacity>;
+using fstring8 = FE::fixed_sized_string<var::UTF8, max_capacity>;
 #endif
 
 template<uint64 max_capacity>
-using fstring16 = FE::fixed_sized_string<var::char16, max_capacity>;
+using fstring16 = FE::fixed_sized_string<var::UTF16, max_capacity>;
 
 template<uint64 max_capacity>
-using fstring32 = FE::fixed_sized_string<var::char32, max_capacity>;
+using fstring32 = FE::fixed_sized_string<var::UTF32, max_capacity>;
 
 
 END_NAMESPACE;

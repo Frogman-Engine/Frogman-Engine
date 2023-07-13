@@ -7,10 +7,10 @@
 
 #if _ENABLE_ABORT_IF_ == true
 // It aborts if the expression is true
-#define ABORT_IF(expression) if (expression) { std::cerr << #expression << " is a false expression.\nAbort has been called from\ndirectory: " << __FILE__ << "\nfunction: " << __func__ << "()\nline number: " << __LINE__; ::std::abort(); }
+#define ABORT_IF(expression, message) if (expression) { std::cerr << #expression << " is a false expression.\nAbort has been called from\ndirectory: " << __FILE__ << "\nfunction: " << __func__ << "()\nline number: " << __LINE__ << "\nmessage: " << #message; ::std::abort(); }
 #else
 // It aborts if the expression is true
-#define ABORT_IF(expression)
+#define ABORT_IF(expression, message)
 #endif
 
 

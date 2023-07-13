@@ -38,13 +38,13 @@ template<typename P0, typename P1 = P0>
 struct two_args : public one_arg<P0>
 {
     using second_argument_type = P1;
-    using parent = one_arg<P0>;
+    using base_type = one_arg<P0>;
 
     second_argument_type _param1;
 
     
     constexpr two_args() noexcept {}
-    _FORCE_INLINE_ two_args(typename parent::first_argument_type param0_p, second_argument_type param1_p) noexcept : parent(param0_p), _param1(param1_p) {}
+    _FORCE_INLINE_ two_args(typename base_type::first_argument_type param0_p, second_argument_type param1_p) noexcept : base_type(param0_p), _param1(param1_p) {}
     constexpr ~two_args() noexcept {}
 };
 
@@ -52,13 +52,13 @@ template<typename P0, typename P1 = P0, typename P2 = P1>
 struct three_args : public two_args<P0, P1>
 {
     using third_argument_type = P2;
-    using parent = two_args<P0, P1>;
+    using base_type = two_args<P0, P1>;
 
     third_argument_type _param2;
 
 
     constexpr three_args() noexcept {}
-    _FORCE_INLINE_ three_args(typename parent::first_argument_type param0_p, typename parent::second_argument_type param1_p, third_argument_type param2_p) noexcept : parent(param0_p, param1_p), _param2(param2_p) {}
+    _FORCE_INLINE_ three_args(typename base_type::first_argument_type param0_p, typename base_type::second_argument_type param1_p, third_argument_type param2_p) noexcept : base_type(param0_p, param1_p), _param2(param2_p) {}
     constexpr ~three_args() noexcept {}
 };
 
@@ -66,13 +66,13 @@ template<typename P0, typename P1 = P0, typename P2 = P1, typename P3 = P2>
 struct four_args : public three_args<P0, P1, P2>
 {
     using fourth_argument_type = P3;
-    using parent = three_args<P0, P1, P2>;
+    using base_type = three_args<P0, P1, P2>;
 
     fourth_argument_type _param3;
 
 
     constexpr four_args() noexcept {}
-    _FORCE_INLINE_ four_args(typename parent::first_argument_type param0_p, typename parent::second_argument_type param1_p, typename parent::third_argument_type param2_p, fourth_argument_type param3_p) noexcept : parent(param0_p, param1_p, param2_p), _param3(param3_p) {}
+    _FORCE_INLINE_ four_args(typename base_type::first_argument_type param0_p, typename base_type::second_argument_type param1_p, typename base_type::third_argument_type param2_p, fourth_argument_type param3_p) noexcept : base_type(param0_p, param1_p, param2_p), _param3(param3_p) {}
     constexpr ~four_args() noexcept {}
 };
 
@@ -80,13 +80,13 @@ template<typename P0, typename P1 = P0, typename P2 = P1, typename P3 = P2, type
 struct five_args : public four_args<P0, P1, P2, P3>
 {
     using fifth_argument_type = P4;
-    using parent = four_args<P0, P1, P2, P3>;
+    using base_type = four_args<P0, P1, P2, P3>;
 
     fifth_argument_type _param4;
 
 
     constexpr five_args() noexcept {}
-    _FORCE_INLINE_ five_args(typename parent::first_argument_type param0_p, typename parent::second_argument_type param1_p, typename parent::third_argument_type param2_p, typename parent::fourth_argument_type param3_p, fifth_argument_type param4_p) noexcept : parent(param0_p, param1_p, param2_p, param3_p), _param4(param4_p) {}
+    _FORCE_INLINE_ five_args(typename base_type::first_argument_type param0_p, typename base_type::second_argument_type param1_p, typename base_type::third_argument_type param2_p, typename base_type::fourth_argument_type param3_p, fifth_argument_type param4_p) noexcept : base_type(param0_p, param1_p, param2_p, param3_p), _param4(param4_p) {}
     constexpr ~five_args() noexcept {}
 };
 
@@ -94,13 +94,13 @@ template<typename P0, typename P1 = P0, typename P2 = P1, typename P3 = P2, type
 struct six_args : public five_args<P0, P1, P2, P3, P4>
 {
     using sixth_argument_type = P5;
-    using parent = five_args<P0, P1, P2, P3, P4>;
+    using base_type = five_args<P0, P1, P2, P3, P4>;
 
     sixth_argument_type _param5;
 
 
     constexpr six_args() noexcept {}
-    _FORCE_INLINE_ six_args(typename parent::first_argument_type param0_p, typename parent::second_argument_type param1_p, typename parent::third_argument_type param2_p, typename parent::fourth_argument_type param3_p, typename parent::fifth_argument_type param4_p, sixth_argument_type param5_p) noexcept : parent(param0_p, param1_p, param2_p, param3_p, param4_p), _param5(param5_p) {}
+    _FORCE_INLINE_ six_args(typename base_type::first_argument_type param0_p, typename base_type::second_argument_type param1_p, typename base_type::third_argument_type param2_p, typename base_type::fourth_argument_type param3_p, typename base_type::fifth_argument_type param4_p, sixth_argument_type param5_p) noexcept : base_type(param0_p, param1_p, param2_p, param3_p, param4_p), _param5(param5_p) {}
     constexpr ~six_args() noexcept {}
 };
 
@@ -108,13 +108,13 @@ template<typename P0, typename P1 = P0, typename P2 = P1, typename P3 = P2, type
 struct seven_args : public six_args<P0, P1, P2, P3, P4, P5>
 {
     using seventh_argument_type = P6;
-    using parent = six_args<P0, P1, P2, P3, P4, P5>;
+    using base_type = six_args<P0, P1, P2, P3, P4, P5>;
 
     seventh_argument_type _param6;
 
 
     constexpr seven_args() noexcept {}
-    _FORCE_INLINE_ seven_args(typename parent::first_argument_type param0_p, typename parent::second_argument_type param1_p, typename parent::third_argument_type param2_p, typename parent::fourth_argument_type param3_p, typename parent::fifth_argument_type param4_p, typename parent::sixth_argument_type param5_p, seventh_argument_type param6_p) noexcept : parent(param0_p, param1_p, param2_p, param3_p, param4_p, param5_p), _param6(param6_p) {}
+    _FORCE_INLINE_ seven_args(typename base_type::first_argument_type param0_p, typename base_type::second_argument_type param1_p, typename base_type::third_argument_type param2_p, typename base_type::fourth_argument_type param3_p, typename base_type::fifth_argument_type param4_p, typename base_type::sixth_argument_type param5_p, seventh_argument_type param6_p) noexcept : base_type(param0_p, param1_p, param2_p, param3_p, param4_p, param5_p), _param6(param6_p) {}
     constexpr ~seven_args() noexcept {}
 };
 
@@ -122,13 +122,13 @@ template<typename P0, typename P1 = P0, typename P2 = P1, typename P3 = P2, type
 struct eight_args : public seven_args<P0, P1, P2, P3, P4, P5, P6>
 {
     using eighth_argument_type = P7;
-    using parent = seven_args<P0, P1, P2, P3, P4, P5, P6>;
+    using base_type = seven_args<P0, P1, P2, P3, P4, P5, P6>;
 
     eighth_argument_type _param7;
 
 
     constexpr eight_args() noexcept {}
-    _FORCE_INLINE_ eight_args(typename parent::first_argument_type param0_p, typename parent::second_argument_type param1_p, typename parent::third_argument_type param2_p, typename parent::fourth_argument_type param3_p, typename parent::fifth_argument_type param4_p, typename parent::sixth_argument_type param5_p, typename parent::seventh_argument_type param6_p, eighth_argument_type param7_p) noexcept : parent(param0_p, param1_p, param2_p, param3_p, param4_p, param5_p, param6_p), _param7(param7_p) {}
+    _FORCE_INLINE_ eight_args(typename base_type::first_argument_type param0_p, typename base_type::second_argument_type param1_p, typename base_type::third_argument_type param2_p, typename base_type::fourth_argument_type param3_p, typename base_type::fifth_argument_type param4_p, typename base_type::sixth_argument_type param5_p, typename base_type::seventh_argument_type param6_p, eighth_argument_type param7_p) noexcept : base_type(param0_p, param1_p, param2_p, param3_p, param4_p, param5_p, param6_p), _param7(param7_p) {}
     constexpr ~eight_args() noexcept {}
 };
 
@@ -136,12 +136,12 @@ template<typename P0, typename P1 = P0, typename P2 = P1, typename P3 = P2, type
 struct nine_args : public eight_args<P0, P1, P2, P3, P4, P5, P6, P7>
 {
     using nineth_argument_type = P8;
-    using parent = eight_args<P0, P1, P2, P3, P4, P5, P6, P7>;
+    using base_type = eight_args<P0, P1, P2, P3, P4, P5, P6, P7>;
 
     nineth_argument_type _param8;
 
     constexpr nine_args() noexcept {}
-    _FORCE_INLINE_ nine_args(typename parent::first_argument_type param0_p, typename parent::second_argument_type param1_p, typename parent::third_argument_type param2_p, typename parent::fourth_argument_type param3_p, typename parent::fifth_argument_type param4_p, typename parent::sixth_argument_type param5_p, typename parent::seventh_argument_type param6_p, typename parent::eighth_argument_type param7_p, nineth_argument_type param8_p) noexcept : parent(param0_p, param1_p, param2_p, param3_p, param4_p, param5_p, param6_p, param7_p), _param8(param8_p) {}
+    _FORCE_INLINE_ nine_args(typename base_type::first_argument_type param0_p, typename base_type::second_argument_type param1_p, typename base_type::third_argument_type param2_p, typename base_type::fourth_argument_type param3_p, typename base_type::fifth_argument_type param4_p, typename base_type::sixth_argument_type param5_p, typename base_type::seventh_argument_type param6_p, typename base_type::eighth_argument_type param7_p, nineth_argument_type param8_p) noexcept : base_type(param0_p, param1_p, param2_p, param3_p, param4_p, param5_p, param6_p, param7_p), _param8(param8_p) {}
     constexpr ~nine_args() noexcept {}
 };
 
@@ -149,12 +149,12 @@ template<typename P0, typename P1 = P0, typename P2 = P1, typename P3 = P2, type
 struct ten_args : public nine_args<P0, P1, P2, P3, P4, P5, P6, P7, P8>
 {
     using tenth_argument_type = P9;
-    using parent = nine_args<P0, P1, P2, P3, P4, P5, P6, P7, P8>;
+    using base_type = nine_args<P0, P1, P2, P3, P4, P5, P6, P7, P8>;
 
     tenth_argument_type _param9;
 
     constexpr ten_args() noexcept {}
-    _FORCE_INLINE_ ten_args(typename parent::first_argument_type param0_p, typename parent::second_argument_type param1_p, typename parent::third_argument_type param2_p, typename parent::fourth_argument_type param3_p, typename parent::fifth_argument_type param4_p, typename parent::sixth_argument_type param5_p, typename parent::seventh_argument_type param6_p, typename parent::eighth_argument_type param7_p, typename parent::nineth_argument_type param8_p, tenth_argument_type param9_p) noexcept : parent(param0_p, param1_p, param2_p, param3_p, param4_p, param5_p, param6_p, param7_p, param8_p), _param9(param9_p) {}
+    _FORCE_INLINE_ ten_args(typename base_type::first_argument_type param0_p, typename base_type::second_argument_type param1_p, typename base_type::third_argument_type param2_p, typename base_type::fourth_argument_type param3_p, typename base_type::fifth_argument_type param4_p, typename base_type::sixth_argument_type param5_p, typename base_type::seventh_argument_type param6_p, typename base_type::eighth_argument_type param7_p, typename base_type::nineth_argument_type param8_p, tenth_argument_type param9_p) noexcept : base_type(param0_p, param1_p, param2_p, param3_p, param4_p, param5_p, param6_p, param7_p, param8_p), _param9(param9_p) {}
     constexpr ~ten_args() noexcept {}
 };
 
@@ -1344,7 +1344,7 @@ struct function : public task_base
 
     _NODISCARD_ virtual RETURN_TYPE execute(void* out_return_ptr_p, const char* const typename_str_ptrc_p) noexcept override
     {
-        FE_ASSERT(!::FE::algorithm::string::string_comparison<char>(typeid(return_type).name(), typename_str_ptrc_p), "ERROR: an ilegal type of data was passed", _SOURCE_LOCATION_);
+        FE_ASSERT(!::FE::algorithm::string::string_comparison<char>(typeid(return_type).name(), typename_str_ptrc_p), "ERROR: an ilegal type of data was passed");
         
         *((return_type*)out_return_ptr_p) = _function();
 
@@ -1388,7 +1388,7 @@ struct method : public task_base
 
     _NODISCARD_ virtual RETURN_TYPE execute(void* out_return_ptr_p, const char* const typename_str_ptrc_p) noexcept override
     {
-        FE_ASSERT(!::FE::algorithm::string::string_comparison<char>(typeid(return_type).name(), typename_str_ptrc_p), "ERROR: an ilegal type of data was passed", _SOURCE_LOCATION_);
+        FE_ASSERT(!::FE::algorithm::string::string_comparison<char>(typeid(return_type).name(), typename_str_ptrc_p), "ERROR: an ilegal type of data was passed");
 
         *((return_type*)out_return_ptr_p) = _method(*_object);
 
@@ -1436,7 +1436,7 @@ struct function_with_1_arg : public task_base
 
     _NODISCARD_ virtual RETURN_TYPE execute(void* out_return_ptr_p, const char* const typename_str_ptrc_p) noexcept override
     {
-        FE_ASSERT(!::FE::algorithm::string::string_comparison<char>(typeid(return_type).name(), typename_str_ptrc_p), "ERROR: an ilegal type of data was passed", _SOURCE_LOCATION_);
+        FE_ASSERT(!::FE::algorithm::string::string_comparison<char>(typeid(return_type).name(), typename_str_ptrc_p), "ERROR: an ilegal type of data was passed");
 
         *((return_type*)out_return_ptr_p) = _function
         (
@@ -1488,7 +1488,7 @@ struct method_with_1_arg : public task_base
 
     _NODISCARD_ virtual RETURN_TYPE execute(void* out_return_ptr_p, const char* const typename_str_ptrc_p) noexcept override
     {
-        FE_ASSERT(!::FE::algorithm::string::string_comparison<char>(typeid(return_type).name(), typename_str_ptrc_p), "ERROR: an ilegal type of data was passed", _SOURCE_LOCATION_);
+        FE_ASSERT(!::FE::algorithm::string::string_comparison<char>(typeid(return_type).name(), typename_str_ptrc_p), "ERROR: an ilegal type of data was passed");
 
         *((return_type*)out_return_ptr_p) = _method
         (
@@ -1540,7 +1540,7 @@ struct function_with_2_args : public task_base
 
     _NODISCARD_ virtual RETURN_TYPE execute(void* out_return_ptr_p, const char* const typename_str_ptrc_p) noexcept override
     {
-        FE_ASSERT(!::FE::algorithm::string::string_comparison<char>(typeid(return_type).name(), typename_str_ptrc_p), "ERROR: an ilegal type of data was passed", _SOURCE_LOCATION_);
+        FE_ASSERT(!::FE::algorithm::string::string_comparison<char>(typeid(return_type).name(), typename_str_ptrc_p), "ERROR: an ilegal type of data was passed");
 
         *((return_type*)out_return_ptr_p) = _function
         (
@@ -1592,7 +1592,7 @@ struct method_with_2_args : public task_base
 
     _NODISCARD_ virtual RETURN_TYPE execute(void* out_return_ptr_p, const char* const typename_str_ptrc_p) noexcept override
     {
-        FE_ASSERT(!::FE::algorithm::string::string_comparison<char>(typeid(return_type).name(), typename_str_ptrc_p), "ERROR: an ilegal type of data was passed", _SOURCE_LOCATION_);
+        FE_ASSERT(!::FE::algorithm::string::string_comparison<char>(typeid(return_type).name(), typename_str_ptrc_p), "ERROR: an ilegal type of data was passed");
 
         *((return_type*)out_return_ptr_p) = _method
         (
@@ -1645,7 +1645,7 @@ struct function_with_3_args : public task_base
 
     _NODISCARD_ virtual RETURN_TYPE execute(void* out_return_ptr_p, const char* const typename_str_ptrc_p) noexcept override
     {
-        FE_ASSERT(!::FE::algorithm::string::string_comparison<char>(typeid(return_type).name(), typename_str_ptrc_p), "ERROR: an ilegal type of data was passed", _SOURCE_LOCATION_);
+        FE_ASSERT(!::FE::algorithm::string::string_comparison<char>(typeid(return_type).name(), typename_str_ptrc_p), "ERROR: an ilegal type of data was passed");
 
         *((return_type*)out_return_ptr_p) = _function
         (
@@ -1700,7 +1700,7 @@ struct method_with_3_args : public task_base
 
     _NODISCARD_ virtual RETURN_TYPE execute(void* out_return_ptr_p, const char* const typename_str_ptrc_p) noexcept override
     {
-        FE_ASSERT(!::FE::algorithm::string::string_comparison<char>(typeid(return_type).name(), typename_str_ptrc_p), "ERROR: an ilegal type of data was passed", _SOURCE_LOCATION_);
+        FE_ASSERT(!::FE::algorithm::string::string_comparison<char>(typeid(return_type).name(), typename_str_ptrc_p), "ERROR: an ilegal type of data was passed");
 
         *((return_type*)out_return_ptr_p) = _method
         (
@@ -1755,7 +1755,7 @@ struct function_with_4_args : public task_base
 
     _NODISCARD_ virtual RETURN_TYPE execute(void* out_return_ptr_p, const char* const typename_str_ptrc_p) noexcept override
     {
-        FE_ASSERT(!::FE::algorithm::string::string_comparison<char>(typeid(return_type).name(), typename_str_ptrc_p), "ERROR: an ilegal type of data was passed", _SOURCE_LOCATION_);
+        FE_ASSERT(!::FE::algorithm::string::string_comparison<char>(typeid(return_type).name(), typename_str_ptrc_p), "ERROR: an ilegal type of data was passed");
 
         *((return_type*)out_return_ptr_p) = _function
         (
@@ -1810,7 +1810,7 @@ struct method_with_4_args : public task_base
 
     _NODISCARD_ virtual RETURN_TYPE execute(void* out_return_ptr_p, const char* const typename_str_ptrc_p) noexcept override
     {
-        FE_ASSERT(!::FE::algorithm::string::string_comparison<char>(typeid(return_type).name(), typename_str_ptrc_p), "ERROR: an ilegal type of data was passed", _SOURCE_LOCATION_);
+        FE_ASSERT(!::FE::algorithm::string::string_comparison<char>(typeid(return_type).name(), typename_str_ptrc_p), "ERROR: an ilegal type of data was passed");
 
         *((return_type*)out_return_ptr_p) = _method
         (
@@ -1866,7 +1866,7 @@ struct function_with_5_args : public task_base
 
     _NODISCARD_ virtual RETURN_TYPE execute(void* out_return_ptr_p, const char* const typename_str_ptrc_p) noexcept override
     {
-        FE_ASSERT(!::FE::algorithm::string::string_comparison<char>(typeid(return_type).name(), typename_str_ptrc_p), "ERROR: an ilegal type of data was passed", _SOURCE_LOCATION_);
+        FE_ASSERT(!::FE::algorithm::string::string_comparison<char>(typeid(return_type).name(), typename_str_ptrc_p), "ERROR: an ilegal type of data was passed");
 
         *((return_type*)out_return_ptr_p) = _function
         (
@@ -1923,7 +1923,7 @@ struct method_with_5_args : public task_base
 
     _NODISCARD_ virtual RETURN_TYPE execute(void* out_return_ptr_p, const char* const typename_str_ptrc_p) noexcept override
     {
-        FE_ASSERT(!::FE::algorithm::string::string_comparison<char>(typeid(return_type).name(), typename_str_ptrc_p), "ERROR: an ilegal type of data was passed", _SOURCE_LOCATION_);
+        FE_ASSERT(!::FE::algorithm::string::string_comparison<char>(typeid(return_type).name(), typename_str_ptrc_p), "ERROR: an ilegal type of data was passed");
 
         *((return_type*)out_return_ptr_p) = _method
         (
@@ -1980,7 +1980,7 @@ struct function_with_6_args : public task_base
 
     _NODISCARD_ virtual RETURN_TYPE execute(void* out_return_ptr_p, const char* const typename_str_ptrc_p) noexcept override
     {
-        FE_ASSERT(!::FE::algorithm::string::string_comparison<char>(typeid(return_type).name(), typename_str_ptrc_p), "ERROR: an ilegal type of data was passed", _SOURCE_LOCATION_);
+        FE_ASSERT(!::FE::algorithm::string::string_comparison<char>(typeid(return_type).name(), typename_str_ptrc_p), "ERROR: an ilegal type of data was passed");
 
         *((return_type*)out_return_ptr_p) = _function
         (
@@ -2037,7 +2037,7 @@ struct method_with_6_args : public task_base
 
     _NODISCARD_ virtual RETURN_TYPE execute(void* out_return_ptr_p, const char* const typename_str_ptrc_p) noexcept override
     {
-        FE_ASSERT(!::FE::algorithm::string::string_comparison<char>(typeid(return_type).name(), typename_str_ptrc_p), "ERROR: an ilegal type of data was passed", _SOURCE_LOCATION_);
+        FE_ASSERT(!::FE::algorithm::string::string_comparison<char>(typeid(return_type).name(), typename_str_ptrc_p), "ERROR: an ilegal type of data was passed");
 
         *((return_type*)out_return_ptr_p) = _method
         (
@@ -2095,7 +2095,7 @@ struct function_with_7_args : public task_base
 
     _NODISCARD_ virtual RETURN_TYPE execute(void* out_return_ptr_p, const char* const typename_str_ptrc_p) noexcept override
     {
-        FE_ASSERT(!::FE::algorithm::string::string_comparison<char>(typeid(return_type).name(), typename_str_ptrc_p), "ERROR: an ilegal type of data was passed", _SOURCE_LOCATION_);
+        FE_ASSERT(!::FE::algorithm::string::string_comparison<char>(typeid(return_type).name(), typename_str_ptrc_p), "ERROR: an ilegal type of data was passed");
 
         *((return_type*)out_return_ptr_p) = _function
         (
@@ -2154,7 +2154,7 @@ struct method_with_7_args : public task_base
 
     _NODISCARD_ virtual RETURN_TYPE execute(void* out_return_ptr_p, const char* const typename_str_ptrc_p) noexcept override
     {
-        FE_ASSERT(!::FE::algorithm::string::string_comparison<char>(typeid(return_type).name(), typename_str_ptrc_p), "ERROR: an ilegal type of data was passed", _SOURCE_LOCATION_);
+        FE_ASSERT(!::FE::algorithm::string::string_comparison<char>(typeid(return_type).name(), typename_str_ptrc_p), "ERROR: an ilegal type of data was passed");
 
         *((return_type*)out_return_ptr_p) = _method
         (
@@ -2213,7 +2213,7 @@ struct function_with_8_args : public task_base
 
     _NODISCARD_ virtual RETURN_TYPE execute(void* out_return_ptr_p, const char* const typename_str_ptrc_p) noexcept override
     {
-        FE_ASSERT(!::FE::algorithm::string::string_comparison<char>(typeid(return_type).name(), typename_str_ptrc_p), "ERROR: an ilegal type of data was passed", _SOURCE_LOCATION_);
+        FE_ASSERT(!::FE::algorithm::string::string_comparison<char>(typeid(return_type).name(), typename_str_ptrc_p), "ERROR: an ilegal type of data was passed");
 
         *((return_type*)out_return_ptr_p) = _function
         (
@@ -2272,7 +2272,7 @@ struct method_with_8_args : public task_base
 
     _NODISCARD_ virtual RETURN_TYPE execute(void* out_return_ptr_p, const char* const typename_str_ptrc_p) noexcept override
     {
-        FE_ASSERT(!::FE::algorithm::string::string_comparison<char>(typeid(return_type).name(), typename_str_ptrc_p), "ERROR: an ilegal type of data was passed", _SOURCE_LOCATION_);
+        FE_ASSERT(!::FE::algorithm::string::string_comparison<char>(typeid(return_type).name(), typename_str_ptrc_p), "ERROR: an ilegal type of data was passed");
 
         *((return_type*)out_return_ptr_p) = _method
         (
@@ -2333,7 +2333,7 @@ struct function_with_9_args : public task_base
 
     _NODISCARD_ virtual RETURN_TYPE execute(void* out_return_ptr_p, const char* const typename_str_ptrc_p) noexcept override
     {
-        FE_ASSERT(!::FE::algorithm::string::string_comparison<char>(typeid(return_type).name(), typename_str_ptrc_p), "ERROR: an ilegal type of data was passed", _SOURCE_LOCATION_);
+        FE_ASSERT(!::FE::algorithm::string::string_comparison<char>(typeid(return_type).name(), typename_str_ptrc_p), "ERROR: an ilegal type of data was passed");
 
         *((return_type*)out_return_ptr_p) = _function
         (
@@ -2394,7 +2394,7 @@ struct method_with_9_args : public task_base
 
     _NODISCARD_ virtual RETURN_TYPE execute(void* out_return_ptr_p, const char* const typename_str_ptrc_p) noexcept override
     {
-        FE_ASSERT(!::FE::algorithm::string::string_comparison<char>(typeid(return_type).name(), typename_str_ptrc_p), "ERROR: an ilegal type of data was passed", _SOURCE_LOCATION_);
+        FE_ASSERT(!::FE::algorithm::string::string_comparison<char>(typeid(return_type).name(), typename_str_ptrc_p), "ERROR: an ilegal type of data was passed");
 
         *((return_type*)out_return_ptr_p) = _method
         (
@@ -2455,7 +2455,7 @@ struct function_with_10_args : public task_base
 
     _NODISCARD_ virtual RETURN_TYPE execute(void* out_return_ptr_p, const char* const typename_str_ptrc_p) noexcept override
     {
-        FE_ASSERT(!::FE::algorithm::string::string_comparison<char>(typeid(return_type).name(), typename_str_ptrc_p), "ERROR: an ilegal type of data was passed", _SOURCE_LOCATION_);
+        FE_ASSERT(!::FE::algorithm::string::string_comparison<char>(typeid(return_type).name(), typename_str_ptrc_p), "ERROR: an ilegal type of data was passed");
 
         *((return_type*)out_return_ptr_p) = _function
         (
@@ -2516,7 +2516,7 @@ struct method_with_10_args : public task_base
 
     _NODISCARD_ virtual RETURN_TYPE execute(void* out_return_ptr_p, const char* const typename_str_ptrc_p) noexcept override
     {
-        FE_ASSERT(!::FE::algorithm::string::string_comparison<char>(typeid(return_type).name(), typename_str_ptrc_p), "ERROR: an ilegal type of data was passed", _SOURCE_LOCATION_);
+        FE_ASSERT(!::FE::algorithm::string::string_comparison<char>(typeid(return_type).name(), typename_str_ptrc_p), "ERROR: an ilegal type of data was passed");
 
         *((return_type*)out_return_ptr_p) = _method
         (

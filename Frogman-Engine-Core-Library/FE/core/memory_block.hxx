@@ -29,14 +29,14 @@ public:
 
 	_FORCE_INLINE_ T& operator*() noexcept
 	{
-		FE_ASSERT(this->m_is_block_constructed == false, "ERROR: Attempted to dereference an uninitialized memory block.", _SOURCE_LOCATION_);
+		FE_ASSERT(this->m_is_block_constructed == false, "ERROR: Attempted to dereference an uninitialized memory block.");
 
 		return this->m_object;
 	}
 
 	_FORCE_INLINE_ T& try_dereference() noexcept
 	{
-		if (FE_EXCEPTION_LOG(this->m_is_block_constructed == false, "WARNING: failed to dereference the memory block because the block is not constructed. The function will return early with a null object.", _SOURCE_LOCATION_)) _UNLIKELY_
+		if (FE_LOG(this->m_is_block_constructed == false, "WARNING: failed to dereference the memory block because the block is not constructed. The function will return early with a null object.")) _UNLIKELY_
 		{
 			return memory_block<T, padding_size>::tl_s_null_object;
 		}
@@ -46,14 +46,14 @@ public:
 
 	_FORCE_INLINE_ T* operator->() noexcept
 	{
-		FE_ASSERT(this->m_is_block_constructed == false, "ERROR: Attempted to access an uninitialized memory block.", _SOURCE_LOCATION_);
+		FE_ASSERT(this->m_is_block_constructed == false, "ERROR: Attempted to access an uninitialized memory block.");
 
 		return &this->m_object;
 	}
 
 	_FORCE_INLINE_ T* try_access() noexcept
 	{
-		if (FE_EXCEPTION_LOG(this->m_is_block_constructed == false, "WARNING: failed to access the memory block because the block is not constructed. The function will return early with a null object.", _SOURCE_LOCATION_)) _UNLIKELY_
+		if (FE_LOG(this->m_is_block_constructed == false, "WARNING: failed to access the memory block because the block is not constructed. The function will return early with a null object.")) _UNLIKELY_
 		{
 			return &memory_block<T, padding_size>::tl_s_null_object;
 		}

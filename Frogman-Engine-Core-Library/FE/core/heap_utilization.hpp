@@ -1,8 +1,8 @@
 ﻿#ifndef _FE_CORE_HEAP_UTILIZATION_HPP_
 #define _FE_CORE_HEAP_UTILIZATION_HPP_
 // Copyright © from 2023 to current, UNKNOWN STRYKER. All Rights Reserved.
-#include <oneapi/tbb/scalable_allocator.h>
 #include "prerequisite_symbols.h"
+#include <oneapi/tbb/scalable_allocator.h>
 #include "memory_metrics.h"
 #include "private/memory.hpp"
 
@@ -21,11 +21,6 @@ class scalable_aligned_allocator;
 
 template <typename T>
 class cache_aligned_allocator;
-
-
-void memset_s(void* const dst_ptrc_p, int8 value_p, length_t count_p, size_t element_bytes_p) noexcept;
-
-void memcpy_s(void* const dest_memblock_ptrc_p, length_t dest_length_p, size_t dest_element_bytes_p, const void* const source_memblock_ptrc_p, length_t source_length_p, size_t source_element_bytes_p) noexcept;
 
 
 class heap_memory_tracker
@@ -139,7 +134,7 @@ _NODISCARD_ _FORCE_INLINE_ T* trackable_calloc(length_t count_p, size_t bytes_p)
 #endif
 	T* l_result_ptr = (T*)::scalable_aligned_malloc(count_p * bytes_p, alignment::s_size);
 	::FE::memset_s(l_result_ptr, _NULL_, count_p, bytes_p);
-	FE_ASSERT(l_result_ptr == nullptr, "UNRECOVERABLE CRITICAL ERROR!: l_result_ptr is nullptr. Failed to allocate memory from scalable_calloc()", _SOURCE_LOCATION_);
+	FE_ASSERT(l_result_ptr == nullptr, "UNRECOVERABLE CRITICAL ERROR!: l_result_ptr is nullptr. Failed to allocate memory from scalable_calloc()");
 	return l_result_ptr;
 }
 
@@ -169,7 +164,7 @@ _NODISCARD_ _FORCE_INLINE_ T* trackable_realloc(T* const memblock_ptrc_p, length
 		l_realloc_result_ptr = (T*)::scalable_aligned_malloc(new_length_p * new_bytes_p, alignment::s_size);
 		::FE::memset_s(l_realloc_result_ptr, _NULL_, new_length_p, new_bytes_p);
 
-		FE_ASSERT(l_realloc_result_ptr == nullptr, "CRITICAL ERROR: Failed to re-allocate memory", _SOURCE_LOCATION_);
+		FE_ASSERT(l_realloc_result_ptr == nullptr, "CRITICAL ERROR: Failed to re-allocate memory");
 
 		::FE::memcpy_s(l_realloc_result_ptr, new_length_p, new_bytes_p, memblock_ptrc_p, prev_length_p, prev_bytes_p);
 		::scalable_aligned_free(memblock_ptrc_p);

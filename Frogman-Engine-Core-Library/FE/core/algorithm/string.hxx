@@ -3,9 +3,10 @@
 // Copyright © from 2023 to current, UNKNOWN STRYKER. All Rights Reserved.
 #include <FE/core/prerequisite_symbols.h>
 #include <FE/core/heap_utilization.hpp>
-#include <utility>
+#include <FE/core/containers/stack.hxx>
+#include <array>
 #include <optional>
-#include <vector>
+#include <utility>
 
 
 BEGIN_NAMESPACE(FE::algorithm::string)
@@ -47,8 +48,8 @@ template <typename char_type, typename int_type>
 #endif
 _NODISCARD_ _FORCE_INLINE_ int_type ascii_number_to_integer(char_type* cstr_ptr_p) noexcept
 {
-    static_assert(sizeof(char_type) <= sizeof(char32), "char_type is not a valid character type");
-
+    static_assert(sizeof(char_type) <= sizeof(UTF32), "char_type is not a valid character type");
+    ABORT_IF(cstr_ptr_p == nullptr, "ERROR: cstr_ptr_p is nullptr.");
 
     var::int16 l_sign = 1;
     if (*cstr_ptr_p == static_cast<const char_type>('-')) { l_sign = -1; }
@@ -75,8 +76,8 @@ template <typename char_type, typename int_type>
 #endif
 _NODISCARD_ _FORCE_INLINE_ constexpr int_type ascii_number_to_integer(const char_type* cstr_ptr_p) noexcept
 {
-    static_assert(sizeof(char_type) <= sizeof(char32), "char_type is not a valid character type");
-
+    static_assert(sizeof(char_type) <= sizeof(UTF32), "char_type is not a valid character type");
+    ABORT_IF(cstr_ptr_p == nullptr, "ERROR: cstr_ptr_p is nullptr.");
 
     var::int16 l_sign = 1;
     if (*cstr_ptr_p == static_cast<const char_type>('-')) { l_sign = -1; }
@@ -104,7 +105,8 @@ template <typename char_type>
 #endif
 _NODISCARD_ _FORCE_INLINE_ var::uint64 string_length(char_type* const str_ptrc_p) noexcept
 {
-    static_assert(sizeof(char_type) <= sizeof(char32), "char_type is not a valid character type");
+    static_assert(sizeof(char_type) <= sizeof(UTF32), "char_type is not a valid character type");
+    ABORT_IF(str_ptrc_p == nullptr, "ERROR: str_ptrc_p is nullptr.");
 
     const char_type* l_iterator_ptr = str_ptrc_p;
 
@@ -129,7 +131,8 @@ template <typename char_type>
 #endif
 _NODISCARD_ _FORCE_INLINE_ constexpr var::uint64 string_length(const char_type* const str_ptrc_p) noexcept 
 {
-    static_assert(sizeof(char_type) <= sizeof(char32), "char_type is not a valid character type");
+    static_assert(sizeof(char_type) <= sizeof(UTF32), "char_type is not a valid character type");
+    ABORT_IF(str_ptrc_p == nullptr, "ERROR: str_ptrc_p is nullptr.");
 
     const char_type* l_iterator_ptr = str_ptrc_p;
 
@@ -150,6 +153,10 @@ template <typename char_type>
 #endif
 _NODISCARD_ _FORCE_INLINE_ var::boolean compare_ranged_strings(const char_type* const lstr_ptrc_p, string_range lstr_range_p, char_type* const rstr_ptrc_p, string_range rstr_range_p) noexcept
 {
+    static_assert(sizeof(char_type) <= sizeof(UTF32), "char_type is not a valid character type");
+    ABORT_IF(lstr_ptrc_p == nullptr, "ERROR: lstr_ptrc_p is nullptr.");
+    ABORT_IF(rstr_ptrc_p == nullptr, "ERROR: rstr_ptrc_p is nullptr.");
+
     length_t l_lstr_length = lstr_range_p._end - lstr_range_p._begin;
     length_t l_rstr_length = rstr_range_p._end - rstr_range_p._begin;
 
@@ -184,6 +191,10 @@ template <typename char_type>
 #endif
 _NODISCARD_ _FORCE_INLINE_ var::boolean compare_ranged_strings(char_type* const lstr_ptrc_p, string_range lstr_range_p, const char_type* const rstr_ptrc_p, string_range rstr_range_p) noexcept
 {
+    static_assert(sizeof(char_type) <= sizeof(UTF32), "char_type is not a valid character type");
+    ABORT_IF(lstr_ptrc_p == nullptr, "ERROR: lstr_ptrc_p is nullptr.");
+    ABORT_IF(rstr_ptrc_p == nullptr, "ERROR: rstr_ptrc_p is nullptr.");
+
     length_t l_lstr_length = lstr_range_p._end - lstr_range_p._begin;
     length_t l_rstr_length = rstr_range_p._end - rstr_range_p._begin;
 
@@ -218,6 +229,10 @@ template <typename char_type>
 #endif
 _NODISCARD_ _FORCE_INLINE_ var::boolean compare_ranged_strings(char_type* const lstr_ptrc_p, string_range lstr_range_p, char_type* const rstr_ptrc_p, string_range rstr_range_p) noexcept
 {
+    static_assert(sizeof(char_type) <= sizeof(UTF32), "char_type is not a valid character type");
+    ABORT_IF(lstr_ptrc_p == nullptr, "ERROR: lstr_ptrc_p is nullptr.");
+    ABORT_IF(rstr_ptrc_p == nullptr, "ERROR: rstr_ptrc_p is nullptr.");
+
     length_t l_lstr_length = lstr_range_p._end - lstr_range_p._begin;
     length_t l_rstr_length = rstr_range_p._end - rstr_range_p._begin;
 
@@ -252,6 +267,10 @@ template <typename char_type>
 #endif
 _NODISCARD_ _FORCE_INLINE_ constexpr var::boolean compare_ranged_strings(const char_type* const lstr_ptrc_p, string_range lstr_range_p, const char_type* const rstr_ptrc_p, string_range rstr_range_p) noexcept
 {
+    static_assert(sizeof(char_type) <= sizeof(UTF32), "char_type is not a valid character type");
+    ABORT_IF(lstr_ptrc_p == nullptr, "ERROR: lstr_ptrc_p is nullptr.");
+    ABORT_IF(rstr_ptrc_p == nullptr, "ERROR: rstr_ptrc_p is nullptr.");
+
     length_t l_lstr_length = lstr_range_p._end - lstr_range_p._begin;
     length_t l_rstr_length = rstr_range_p._end - rstr_range_p._begin;
 
@@ -287,9 +306,12 @@ template <typename char_type>
 #endif
 _FORCE_INLINE_ void copy_string(char_type* const destination_out_ptrc_p, count_t destination_count_p, const char_type* const source_ptrc_p, count_t source_count_p) noexcept
 {
-    static_assert(sizeof(char_type) <= sizeof(char32), "char_type is not a valid character type");
+    static_assert(sizeof(char_type) <= sizeof(UTF32), "char_type is not a valid character type");
+    ABORT_IF(destination_out_ptrc_p == nullptr, "ERROR: destination_out_ptrc_p is nullptr.");
+    ABORT_IF(source_ptrc_p == nullptr, "ERROR: source_ptrc_p is nullptr.");
 
-    ABORT_IF(destination_count_p < source_count_p);
+
+    ABORT_IF(destination_count_p < source_count_p, "CRITICAL ERROR: the source_count_p is greater than the destination_count_p");
 
     FE::memcpy_s(destination_out_ptrc_p, destination_count_p, sizeof(char_type), source_ptrc_p, source_count_p, sizeof(char_type));
     destination_out_ptrc_p[source_count_p] = static_cast<char_type>('\0');
@@ -302,7 +324,9 @@ template<typename char_type>
 #endif
 _FORCE_INLINE_ void capitalize_string(char_type* in_out_string_buffer_ptr_p) noexcept
 {
-    static_assert(sizeof(char_type) <= sizeof(char32), "char_type is not a valid character type");
+    static_assert(sizeof(char_type) <= sizeof(UTF32), "char_type is not a valid character type");
+    ABORT_IF(in_out_string_buffer_ptr_p == nullptr, "ERROR: in_out_string_buffer_ptr_p is nullptr.");
+
 
     while (*in_out_string_buffer_ptr_p != static_cast<char_type>('\0'))
     {
@@ -320,7 +344,7 @@ template<typename char_type>
 #endif
 _FORCE_INLINE_ char_type capitalize_character(const char_type char_value_p) noexcept
 {
-    static_assert(sizeof(char_type) <= sizeof(char32), "char_type is not a valid character type");
+    static_assert(sizeof(char_type) <= sizeof(UTF32), "char_type is not a valid character type");
 
     if (_ASCII_a_ <= static_cast<uint8>(char_value_p) && static_cast<uint8>(char_value_p) <= _ASCII_z_)
     {
@@ -337,7 +361,8 @@ template<typename char_type>
 #endif
 _FORCE_INLINE_ void to_lowercase(char_type* in_out_string_buffer_ptr_p) noexcept
 {
-    static_assert(sizeof(char_type) <= sizeof(char32), "char_type is not a valid character type");
+    static_assert(sizeof(char_type) <= sizeof(UTF32), "char_type is not a valid character type");
+    ABORT_IF(in_out_string_buffer_ptr_p == nullptr, "ERROR: in_out_string_buffer_ptr_p is nullptr.");
 
     while (*in_out_string_buffer_ptr_p != static_cast<char_type>('\0'))
     {
@@ -355,7 +380,7 @@ template<typename char_type>
 #endif
 _FORCE_INLINE_ char_type to_lowercase(const char_type char_value_p) noexcept
 {
-    static_assert(sizeof(char_type) <= sizeof(char32), "char_type is not a valid character type");
+    static_assert(sizeof(char_type) <= sizeof(UTF32), "char_type is not a valid character type");
 
     if (_ASCII_A_ <= static_cast<uint8>(char_value_p) && static_cast<uint8>(char_value_p) <= _ASCII_Z_)
     {
@@ -372,8 +397,9 @@ template <typename char_type>
 #endif
 _NODISCARD_ _FORCE_INLINE_ var::boolean string_comparison(const char_type* lstr_ptr_p, char_type* rstr_ptr_p) noexcept 
 {
-    static_assert(sizeof(char_type) <= sizeof(char32), "char_type is not a valid character type");
-
+    static_assert(sizeof(char_type) <= sizeof(UTF32), "char_type is not a valid character type");
+    ABORT_IF(lstr_ptr_p == nullptr, "ERROR: lstr_ptr_p is nullptr.");
+    ABORT_IF(rstr_ptr_p == nullptr, "ERROR: rstr_ptr_p is nullptr.");
 
     while ((*lstr_ptr_p != static_cast<char_type>('\0')) && (*lstr_ptr_p == *rstr_ptr_p))
     {
@@ -395,8 +421,9 @@ template <typename char_type>
 #endif
 _NODISCARD_ _FORCE_INLINE_ var::boolean string_comparison(char_type* lstr_ptr_p, const char_type* rstr_ptr_p) noexcept 
 {
-    static_assert(sizeof(char_type) <= sizeof(char32), "char_type is not a valid character type");
-
+    static_assert(sizeof(char_type) <= sizeof(UTF32), "char_type is not a valid character type");
+    ABORT_IF(lstr_ptr_p == nullptr, "ERROR: lstr_ptr_p is nullptr.");
+    ABORT_IF(rstr_ptr_p == nullptr, "ERROR: rstr_ptr_p is nullptr.");
 
     while ((*lstr_ptr_p != static_cast<char_type>('\0')) && (*lstr_ptr_p == *rstr_ptr_p))
     {
@@ -418,8 +445,9 @@ template <typename char_type>
 #endif
 _NODISCARD_ _FORCE_INLINE_ var::boolean string_comparison(char_type* lstr_ptr_p, char_type* rstr_ptr_p) noexcept 
 {
-    static_assert(sizeof(char_type) <= sizeof(char32), "char_type is not a valid character type");
-
+    static_assert(sizeof(char_type) <= sizeof(UTF32), "char_type is not a valid character type");
+    ABORT_IF(lstr_ptr_p == nullptr, "ERROR: lstr_ptr_p is nullptr.");
+    ABORT_IF(rstr_ptr_p == nullptr, "ERROR: rstr_ptr_p is nullptr.");
 
     while ((*lstr_ptr_p != static_cast<char_type>('\0')) && (*lstr_ptr_p == *rstr_ptr_p))
     {
@@ -441,8 +469,9 @@ template <typename char_type>
 #endif
 _NODISCARD_ _FORCE_INLINE_ constexpr var::boolean string_comparison(const char_type* lstr_ptr_p, const char_type* rstr_ptr_p) noexcept 
 {
-    static_assert(sizeof(char_type) <= sizeof(char32), "char_type is not a valid character type");
-
+    static_assert(sizeof(char_type) <= sizeof(UTF32), "char_type is not a valid character type");
+    ABORT_IF(lstr_ptr_p == nullptr, "ERROR: lstr_ptr_p is nullptr.");
+    ABORT_IF(rstr_ptr_p == nullptr, "ERROR: rstr_ptr_p is nullptr.");
 
     while ((*lstr_ptr_p != static_cast<char_type>('\0')) && (*lstr_ptr_p == *rstr_ptr_p))
     {
@@ -465,6 +494,10 @@ template <typename char_type>
 #endif
 _NODISCARD_ _FORCE_INLINE_ var::boolean insensitive_ranged_string_comparison(const char_type* const lstr_ptrc_p, string_range lstr_range_p, char_type* const rstr_ptrc_p, string_range rstr_range_p) noexcept
 {
+    static_assert(sizeof(char_type) <= sizeof(UTF32), "char_type is not a valid character type");
+    ABORT_IF(lstr_ptrc_p == nullptr, "ERROR: lstr_ptrc_p is nullptr.");
+    ABORT_IF(rstr_ptrc_p == nullptr, "ERROR: rstr_ptrc_p is nullptr.");
+
     length_t l_left_string_length = lstr_range_p._end - lstr_range_p._begin;
     length_t l_right_string_length = rstr_range_p._end - rstr_range_p._begin;
 
@@ -499,6 +532,10 @@ template <typename char_type>
 #endif
 _NODISCARD_ _FORCE_INLINE_ var::boolean insensitive_ranged_string_comparison(char_type* const lstr_ptrc_p, string_range lstr_range_p, const char_type* const rstr_ptrc_p, string_range rstr_range_p) noexcept
 {
+    static_assert(sizeof(char_type) <= sizeof(UTF32), "char_type is not a valid character type");
+    ABORT_IF(lstr_ptrc_p == nullptr, "ERROR: lstr_ptrc_p is nullptr.");
+    ABORT_IF(rstr_ptrc_p == nullptr, "ERROR: rstr_ptrc_p is nullptr.");
+
     length_t l_left_string_length = lstr_range_p._end - lstr_range_p._begin;
     length_t l_right_string_length = rstr_range_p._end - rstr_range_p._begin;
 
@@ -533,6 +570,10 @@ template <typename char_type>
 #endif
 _NODISCARD_ _FORCE_INLINE_ var::boolean insensitive_ranged_string_comparison(char_type* const lstr_ptrc_p, string_range lstr_range_p, char_type* const rstr_ptrc_p, string_range rstr_range_p) noexcept
 {
+    static_assert(sizeof(char_type) <= sizeof(UTF32), "char_type is not a valid character type");
+    ABORT_IF(lstr_ptrc_p == nullptr, "ERROR: lstr_ptrc_p is nullptr.");
+    ABORT_IF(rstr_ptrc_p == nullptr, "ERROR: rstr_ptrc_p is nullptr.");
+
     length_t l_left_string_length = lstr_range_p._end - lstr_range_p._begin;
     length_t l_right_string_length = rstr_range_p._end - rstr_range_p._begin;
 
@@ -567,6 +608,10 @@ template <typename char_type>
 #endif
 _NODISCARD_ _FORCE_INLINE_ _CONSTEXPR23_ var::boolean insensitive_ranged_string_comparison(const char_type* const lstr_ptrc_p, string_range lstr_range_p, const char_type* const rstr_ptrc_p, string_range rstr_range_p) noexcept
 {
+    static_assert(sizeof(char_type) <= sizeof(UTF32), "char_type is not a valid character type");
+    ABORT_IF(lstr_ptrc_p == nullptr, "ERROR: lstr_ptrc_p is nullptr.");
+    ABORT_IF(rstr_ptrc_p == nullptr, "ERROR: rstr_ptrc_p is nullptr.");
+
     length_t l_left_string_length = lstr_range_p._end - lstr_range_p._begin;
     length_t l_right_string_length = rstr_range_p._end - rstr_range_p._begin;
 
@@ -602,9 +647,11 @@ template <typename char_type>
 #endif
 _FORCE_INLINE_ void string_concatenation(char_type* const destination_out_ptrc_p, count_t destination_total_count_p, const char_type* const source_ptrc_p, count_t source_total_count_p) noexcept
 {
-    static_assert(sizeof(char_type) <= sizeof(char32), "char_type is not a valid character type");
+    static_assert(sizeof(char_type) <= sizeof(UTF32), "char_type is not a valid character type");
+    ABORT_IF(destination_out_ptrc_p == nullptr, "ERROR: destination_out_ptrc_p is nullptr.");
+    ABORT_IF(source_ptrc_p == nullptr, "ERROR: source_ptrc_p is nullptr.");
 
-    ABORT_IF(destination_total_count_p < source_total_count_p);
+    ABORT_IF(destination_total_count_p < source_total_count_p, "CRITICAL ERROR: the source_total_count_p is greater than the destination_total_count_p");
 
     length_t l_destination_string_length = algorithm::string::string_length<char_type>(destination_out_ptrc_p);
 
@@ -618,6 +665,10 @@ template <typename char_type>
 #endif
 _NODISCARD_ _FORCE_INLINE_ var::boolean insensitive_string_comparison(const char_type* const lstr_ptrc_p, char_type* const rstr_ptrc_p) noexcept
 {
+    static_assert(sizeof(char_type) <= sizeof(UTF32), "char_type is not a valid character type");
+    ABORT_IF(lstr_ptrc_p == nullptr, "ERROR: lstr_ptrc_p is nullptr.");
+    ABORT_IF(rstr_ptrc_p == nullptr, "ERROR: rstr_ptrc_p is nullptr.");
+
     const char_type* l_left_string_ptr = lstr_ptrc_p;
     const char_type* l_right_string_ptr = rstr_ptrc_p;
 
@@ -641,6 +692,10 @@ template <typename char_type>
 #endif
 _NODISCARD_ _FORCE_INLINE_ var::boolean insensitive_string_comparison(char_type* const lstr_ptrc_p, const char_type* const rstr_ptrc_p) noexcept
 {
+    static_assert(sizeof(char_type) <= sizeof(UTF32), "char_type is not a valid character type");
+    ABORT_IF(lstr_ptrc_p == nullptr, "ERROR: lstr_ptrc_p is nullptr.");
+    ABORT_IF(rstr_ptrc_p == nullptr, "ERROR: rstr_ptrc_p is nullptr.");
+
     const char_type* l_left_string_ptr = lstr_ptrc_p;
     const char_type* l_right_string_ptr = rstr_ptrc_p;
 
@@ -664,6 +719,10 @@ template <typename char_type>
 #endif
 _NODISCARD_ _FORCE_INLINE_ var::boolean insensitive_string_comparison(char_type* const lstr_ptrc_p, char_type* const rstr_ptrc_p) noexcept
 {
+    static_assert(sizeof(char_type) <= sizeof(UTF32), "char_type is not a valid character type");
+    ABORT_IF(lstr_ptrc_p == nullptr, "ERROR: lstr_ptrc_p is nullptr.");
+    ABORT_IF(rstr_ptrc_p == nullptr, "ERROR: rstr_ptrc_p is nullptr.");
+
     const char_type* l_left_string_ptr = lstr_ptrc_p;
     const char_type* l_right_string_ptr = rstr_ptrc_p;
 
@@ -687,6 +746,10 @@ template <typename char_type>
 #endif
 _NODISCARD_ _FORCE_INLINE_ var::boolean insensitive_string_comparison(const char_type* const lstr_ptrc_p, const char_type* const rstr_ptrc_p) noexcept
 {
+    static_assert(sizeof(char_type) <= sizeof(UTF32), "char_type is not a valid character type");
+    ABORT_IF(lstr_ptrc_p == nullptr, "ERROR: lstr_ptrc_p is nullptr.");
+    ABORT_IF(rstr_ptrc_p == nullptr, "ERROR: rstr_ptrc_p is nullptr.");
+
     const char_type* l_left_string_ptr = lstr_ptrc_p;
     const char_type* l_right_string_ptr = rstr_ptrc_p;
 
@@ -711,7 +774,8 @@ template<typename char_type>
 #endif
 _FORCE_INLINE_ void capitalize_every_first_letter_of_words(char_type* in_out_string_ptr_p) noexcept
 {
-    static_assert(sizeof(char_type) <= sizeof(char32), "char_type is not a valid character type");
+    static_assert(sizeof(char_type) <= sizeof(UTF32), "char_type is not a valid character type");
+    ABORT_IF(in_out_string_ptr_p == nullptr, "ERROR: in_out_string_ptr_p is nullptr.");
 
     if ((*in_out_string_ptr_p != static_cast<char_type>(' ')) || (*in_out_string_ptr_p != static_cast<char_type>('_')))
     {
@@ -740,8 +804,8 @@ template<typename char_type>
 #endif
 _FORCE_INLINE_ void invert_string(char_type* const in_out_string_ptrc_p) noexcept
 {
-    static_assert(sizeof(char_type) <= sizeof(char32), "char_type is not a valid character type");
-
+    static_assert(sizeof(char_type) <= sizeof(UTF32), "char_type is not a valid character type");
+    ABORT_IF(in_out_string_ptrc_p == nullptr, "ERROR: in_out_string_ptrc_p is nullptr.");
 
     var::index_t l_start = 0;
     var::index_t l_end = algorithm::string::string_length(in_out_string_ptrc_p);
@@ -767,7 +831,8 @@ template<typename char_type>
 #endif
 _FORCE_INLINE_ constexpr var::uint64 hash_string(const char_type* const string_ptrc_p) noexcept
 {
-    static_assert(sizeof(char_type) <= sizeof(char32), "char_type is not a valid character type");
+    static_assert(sizeof(char_type) <= sizeof(UTF32), "char_type is not a valid character type");
+    ABORT_IF(string_ptrc_p == nullptr, "ERROR: string_ptrc_p is nullptr.");
 
     uint64 l_string_length = algorithm::string::string_length(string_ptrc_p);
 
@@ -794,7 +859,8 @@ template<typename char_type>
 #endif
 _NODISCARD_ _FORCE_INLINE_ target_char_search_result<char_type> search_very_first_char(const char_type* const string_ptrc_p, const char_type target_char_p) noexcept
 {
-    static_assert(sizeof(char_type) <= sizeof(char32), "char_type is not a valid character type");
+    static_assert(sizeof(char_type) <= sizeof(UTF32), "char_type is not a valid character type");
+    ABORT_IF(string_ptrc_p == nullptr, "ERROR: string_ptrc_p is nullptr.");
 
     const char_type* l_string_ptr = string_ptrc_p;
     while (*l_string_ptr != static_cast<char_type>('\0'))
@@ -816,7 +882,8 @@ template<typename char_type>
 #endif
 _NODISCARD_ _FORCE_INLINE_ target_char_search_result<char_type> search_very_last_char(const char_type* const string_ptrc_p, const char_type target_char_p) noexcept
 {
-    static_assert(sizeof(char_type) <= sizeof(char32), "char_type is not a valid character type");
+    static_assert(sizeof(char_type) <= sizeof(UTF32), "char_type is not a valid character type");
+    ABORT_IF(string_ptrc_p == nullptr, "ERROR: string_ptrc_p is nullptr.");
 
     var::index_t l_target_char_location = 0;
 
@@ -840,8 +907,8 @@ template<typename char_type>
 #endif
 _NODISCARD_ _FORCE_INLINE_ target_char_count<char_type> search_all_corresponding_characters(char_type* string_ptr_p, const char_type target_char_p) noexcept
 {
-    static_assert(sizeof(char_type) <= sizeof(char32), "char_type is not a valid character type");
-
+    static_assert(sizeof(char_type) <= sizeof(UTF32), "char_type is not a valid character type");
+    ABORT_IF(string_ptr_p == nullptr, "ERROR: string_ptr_p is nullptr.");
 
     var::count_t l_match_count = 0;
 
@@ -870,8 +937,8 @@ template<typename char_type>
 #endif
 _NODISCARD_ _FORCE_INLINE_ constexpr target_char_count<char_type> search_all_corresponding_characters(const char_type* string_ptr_p, const char_type target_char_p) noexcept
 {
-    static_assert(sizeof(char_type) <= sizeof(char32), "char_type is not a valid character type");
-
+    static_assert(sizeof(char_type) <= sizeof(UTF32), "char_type is not a valid character type");
+    ABORT_IF(string_ptr_p == nullptr, "ERROR: string_ptr_p is nullptr.");
 
     var::count_t l_match_count = 0;
 
@@ -899,26 +966,37 @@ template<typename char_type>
 #if _HAS_CXX20_ == 1
     requires character_type<char_type>
 #endif
-_NODISCARD_ _FORCE_INLINE_ ::std::optional<string_range> search_very_first_substring(char_type* const string_ptrc_p, char_type* target_substring_ptr_p) noexcept
+_NODISCARD_ _FORCE_INLINE_ ::std::optional<string_range> search_very_first_substring(char_type* const string_ptrc_p, char_type* const target_substring_ptrc_p) noexcept
 {
-    static_assert(sizeof(char_type) <= sizeof(char32), "char_type is not a valid character type");
-
-
-    length_t l_string_length = algorithm::string::string_length(string_ptrc_p);
-    length_t l_target_letters_length = algorithm::string::string_length(target_substring_ptr_p);
+    static_assert(sizeof(char_type) <= sizeof(UTF32), "char_type is not a valid character type");
+    ABORT_IF(string_ptrc_p == nullptr, "ERROR: string_ptrc_p is nullptr.");
+    ABORT_IF(target_substring_ptrc_p == nullptr, "ERROR: target_substring_ptrc_p is nullptr.");
 
     const char_type* l_string_ptr = string_ptrc_p;
+    const char_type* l_target_substring_ptr = target_substring_ptrc_p;
 
-    if (l_string_length < l_target_letters_length) { return ::std::nullopt; }
+    length_t l_target_substring_length = string::string_length(target_substring_ptrc_p);
 
-    var::count_t l_match_count = 0;
-    for (; *target_substring_ptr_p != static_cast<char_type>('\0'); ++l_string_ptr)
+    ABORT_IF(l_target_substring_length >= string::string_length(string_ptrc_p), "CRITICAL ERROR: the l_target_substring_length is greater than or equal to the string length of string_ptrc_p");
+
+    while (*l_target_substring_ptr != static_cast<char_type>('\0'))
     {
-        if (*l_string_ptr == *target_substring_ptr_p)
+        if (*l_string_ptr == *l_target_substring_ptr)
         {
-            for (l_match_count = 0; (l_string_ptr[l_match_count] == target_substring_ptr_p[l_match_count]) && ((l_string_ptr[l_match_count] != '\0') || (target_substring_ptr_p[l_match_count] != '\0')); ++l_match_count) {}
-            if (l_match_count == l_target_letters_length) { return ::std::optional<string_range>(string_range{ static_cast<var::index_t>(l_string_ptr - string_ptrc_p), static_cast<var::index_t>((l_string_ptr - string_ptrc_p) + l_match_count) }); }
+            ++l_string_ptr;
+            ++l_target_substring_ptr;
+            continue;
         }
+        ++l_string_ptr;
+        l_target_substring_ptr = target_substring_ptrc_p;
+    }
+
+    if (l_target_substring_ptr[-1] == l_string_ptr[-1])
+    {
+        index_t l_begin = (l_string_ptr - string_ptrc_p) - l_target_substring_length;
+        index_t l_end = l_string_ptr - string_ptrc_p;
+
+        return  std::make_optional<string_range>(l_begin, l_end);
     }
 
     return ::std::nullopt;
@@ -928,25 +1006,37 @@ template<typename char_type>
 #if _HAS_CXX20_ == 1
     requires character_type<char_type>
 #endif
-_NODISCARD_ _FORCE_INLINE_ constexpr ::std::optional<string_range> search_very_first_substring(const char_type* const string_ptrc_p, const char_type* target_substring_ptr_p) noexcept
+_NODISCARD_ _FORCE_INLINE_ constexpr ::std::optional<string_range> search_very_first_substring(const char_type* const string_ptrc_p, const char_type* const target_substring_ptrc_p) noexcept
 {
-    static_assert(sizeof(char_type) <= sizeof(char32), "char_type is not a valid character type");
-
-    length_t l_string_length = algorithm::string::string_length(string_ptrc_p);
-    length_t l_target_letters_length = algorithm::string::string_length(target_substring_ptr_p);
+    static_assert(sizeof(char_type) <= sizeof(UTF32), "char_type is not a valid character type");
+    ABORT_IF(string_ptrc_p == nullptr, "ERROR: string_ptrc_p is nullptr.");
+    ABORT_IF(target_substring_ptrc_p == nullptr, "ERROR: target_substring_ptrc_p is nullptr.");
 
     const char_type* l_string_ptr = string_ptrc_p;
+    const char_type* l_target_substring_ptr = target_substring_ptrc_p;
 
-    if (l_string_length < l_target_letters_length) { return ::std::nullopt; }
+    length_t l_target_substring_length = string::string_length(target_substring_ptrc_p);
 
-    var::count_t l_match_count = 0;
-    for (; *target_substring_ptr_p != static_cast<char_type>('\0'); ++l_string_ptr)
+    ABORT_IF(l_target_substring_length >= string::string_length(string_ptrc_p), "CRITICAL ERROR: the l_target_substring_length is greater than or equal to the string length of string_ptrc_p");
+
+    while (*l_target_substring_ptr != static_cast<char_type>('\0'))
     {
-        if (*l_string_ptr == *target_substring_ptr_p)
+        if (*l_string_ptr == *l_target_substring_ptr)
         {
-            for (l_match_count = 0; (l_string_ptr[l_match_count] == target_substring_ptr_p[l_match_count]) && (l_string_ptr[l_match_count] != '\0'); ++l_match_count) {}
-            if (l_match_count == l_target_letters_length) { return ::std::optional<string_range>( string_range{static_cast<var::index_t>(l_string_ptr - string_ptrc_p), static_cast<var::index_t>((l_string_ptr - string_ptrc_p) + l_match_count)} ); }
+            ++l_string_ptr;
+            ++l_target_substring_ptr;
+            continue;
         }
+        ++l_string_ptr;
+        l_target_substring_ptr = target_substring_ptrc_p;
+    }
+
+    if (l_target_substring_ptr[-1] == l_string_ptr[-1])
+    {
+        index_t l_begin = (l_string_ptr - string_ptrc_p) - l_target_substring_length;
+        index_t l_end = l_string_ptr - string_ptrc_p;
+
+        return  std::make_optional<string_range>(l_begin, l_end);
     }
 
     return ::std::nullopt;
@@ -959,7 +1049,21 @@ template<typename char_type>
 #endif
 _NODISCARD_ _FORCE_INLINE_::std::optional<string_range> search_very_last_substring(char_type* const string_ptrc_p, char_type* const target_substring_ptrc_p) noexcept
 {
-    static_assert(sizeof(char_type) <= sizeof(char32), "char_type is not a valid character type");
+    static_assert(sizeof(char_type) <= sizeof(UTF32), "char_type is not a valid character type");
+    ABORT_IF(string_ptrc_p == nullptr, "ERROR: string_ptrc_p is nullptr.");
+    ABORT_IF(target_substring_ptrc_p == nullptr, "ERROR: target_substring_ptrc_p is nullptr.");
+
+}
+
+template<typename char_type>
+#if _HAS_CXX20_ == 1
+    requires character_type<char_type>
+#endif
+_IN_DEVELOPMENT_ _NODISCARD_ _FORCE_INLINE_::std::optional<string_range> search_very_last_substring(const char_type* const string_ptrc_p, const char_type* const target_substring_ptrc_p) noexcept
+{
+    static_assert(sizeof(char_type) <= sizeof(UTF32), "char_type is not a valid character type");
+    ABORT_IF(string_ptrc_p == nullptr, "ERROR: string_ptrc_p is nullptr.");
+    ABORT_IF(target_substring_ptrc_p == nullptr, "ERROR: target_substring_ptrc_p is nullptr.");
 
     length_t l_string_length = algorithm::string::string_length(string_ptrc_p);
     length_t l_target_letters_length = algorithm::string::string_length(target_substring_ptrc_p);
@@ -979,6 +1083,18 @@ _NODISCARD_ _FORCE_INLINE_::std::optional<string_range> search_very_last_substri
     }
 
     return ::std::nullopt;
+
+
+    //length_t l_string_length = algorithm::string::string_length(string_ptrc_p);
+    //length_t l_target_substring_length = algorithm::string::string_length(target_substring_ptrc_p);
+
+    //ABORT_IF(l_target_substring_length >= l_string_length, "CRITICAL ERROR: l_target_substring_length is greater than or equal to the l_string_length");
+
+    //const char_type* const l_string_end_ptrc = string_ptrc_p + l_string_length;
+    //const char_type* l_target_substring_begin_ptr = target_substring_ptrc_p;
+
+    //const char_type* l_string_rbegin_ptr = l_string_end_ptrc - 1;
+    //const char_type* const l_string_rend_ptrc = string_ptrc_p - 1;
 }
 
 
@@ -996,7 +1112,7 @@ template<typename char_type, typename int_type>
 #endif
 _FORCE_INLINE_ int_type ascii_character_number_to_int(char_type target_char_p) noexcept
 {
-    static_assert(sizeof(char_type) <= sizeof(char32), "char_type is not a valid character type");
+    static_assert(sizeof(char_type) <= sizeof(UTF32), "char_type is not a valid character type");
     static_assert(::std::is_integral<int_type>::value == true, "typename int_type is not an integer");
 
 
@@ -1008,42 +1124,22 @@ template<typename char_type>
 #if _HAS_CXX20_ == 1
     requires character_type<char_type>
 #endif
-_FORCE_INLINE_ void concatenate_strings(char_type* const out_string_buffer_ptrc_p, size_t string_buffer_size_p, ::std::initializer_list<const char_type* const>&& strings_p, size_t resize_buffer_p = 0) noexcept
+_FORCE_INLINE_ void concatenate_strings(char_type* const out_string_buffer_ptrc_p, size_t string_buffer_size_p, ::std::initializer_list<const char_type* const>&& strings_p) noexcept
 {
-    static_assert(sizeof(char_type) <= sizeof(char32), "char_type is not a valid character type");
-
-
-    thread_local static ::std::vector<var::size_t> tl_s_string_length_buffer;
-
-    if (resize_buffer_p <= strings_p.size())
-    {
-        tl_s_string_length_buffer.reserve(strings_p.size());
-    }
-    else
-    {
-        tl_s_string_length_buffer.resize(resize_buffer_p);
-    }
-
-    var::size_t l_total_strings_length = 0;
-    for (var::size_t i = 0; i < strings_p.size(); ++i)
-    {
-        tl_s_string_length_buffer.emplace_back( algorithm::string::string_length( strings_p.begin()[i] ) );
-        l_total_strings_length += tl_s_string_length_buffer[i];
-    }
-
-
-    ABORT_IF(string_buffer_size_p <= l_total_strings_length);
-
+    static_assert(sizeof(char_type) <= sizeof(UTF32), "char_type is not a valid character type");
+    ABORT_IF(out_string_buffer_ptrc_p == nullptr, "ERROR: out_string_buffer_ptrc_p is nullptr.");
 
     var::size_t l_current_begin_index = algorithm::string::string_length(out_string_buffer_ptrc_p);
 
     for (var::size_t i = 0; i < strings_p.size(); ++i)
     {
-        ::std::memcpy(out_string_buffer_ptrc_p + l_current_begin_index, strings_p.begin()[i], sizeof(char_type) * tl_s_string_length_buffer[i]);
-        l_current_begin_index += tl_s_string_length_buffer[i];
-    }
+        size_t l_string_length_buffer = algorithm::string::string_length(strings_p.begin()[i]);
 
-    tl_s_string_length_buffer.clear();
+        ABORT_IF(string_buffer_size_p <= l_current_begin_index, "CRITICAL ERROR: the string_buffer_size_p is smaller or equal to the l_current_begin_index");
+
+        ::FE::memcpy_s(out_string_buffer_ptrc_p + l_current_begin_index, string_buffer_size_p, sizeof(char_type), strings_p.begin()[i], l_string_length_buffer, sizeof(char_type));
+        l_current_begin_index += l_string_length_buffer;
+    }
 }
 
 template<typename char_type>
@@ -1052,11 +1148,12 @@ template<typename char_type>
 #endif
 _FORCE_INLINE_ void concatenate_characters(char_type* const out_string_buffer_ptrc_p, size_t string_buffer_size_p, ::std::initializer_list<const char_type>&& strings_p) noexcept
 {
-    static_assert(sizeof(char_type) <= sizeof(char32), "char_type is not a valid character type");
+    static_assert(sizeof(char_type) <= sizeof(UTF32), "char_type is not a valid character type");
+    ABORT_IF(out_string_buffer_ptrc_p == nullptr, "ERROR: out_string_buffer_ptrc_p is nullptr.");
 
     var::length_t l_string_buffer_length = algorithm::string::string_length(out_string_buffer_ptrc_p);
 
-    ABORT_IF(string_buffer_size_p <= strings_p.size() + l_string_buffer_length);
+    ABORT_IF(string_buffer_size_p <= strings_p.size() + l_string_buffer_length, "CRITICAL ERROR: The total input string length exceeds the destination string buffer capacity");
     
     ::memcpy(out_string_buffer_ptrc_p + l_string_buffer_length, strings_p.begin(), sizeof(char_type) * strings_p.size());
 }

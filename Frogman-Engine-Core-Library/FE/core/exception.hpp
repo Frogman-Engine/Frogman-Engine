@@ -38,7 +38,7 @@ protected:
     thread_local static ::FE::clock tl_s_clock;
 
 public:
-    static bool handle_exception(const bool expression_p, const char* const expression_string_ptrc_p, const EXCEPTION_MODE runtime_exception_mode_p, const char_type* message_ptr_p, const char_type* file_name_ptr_p, const char_type* function_name_ptr_p, const int line_p, const int exit_code_p = -1) noexcept;
+    static bool log_exception(const bool expression_p, const char* const expression_string_ptrc_p, const EXCEPTION_MODE runtime_exception_mode_p, const char_type* message_ptr_p, const char_type* file_name_ptr_p, const char_type* function_name_ptr_p, const int line_p, const int exit_code_p = -1) noexcept;
 
 private:
     static void __construct_exception_on_main_thread() noexcept;
@@ -63,26 +63,26 @@ protected:
 
 #if _ENABLE_ASSERT_ == true
 // It logs an error and aborts if the expression_p is true
-#define FE_ASSERT(expression_p, message_p, asserted_location_p) if(expression_p) _UNLIKELY_ { ::FE::exception::handle_exception(true, #expression_p, ::FE::_ABORT_IMMEDIATELY_, message_p, asserted_location_p); }
+#define FE_ASSERT(expression_p, message_p) if(expression_p) _UNLIKELY_ { ::FE::exception::log_exception(expression_p, #expression_p, ::FE::_ABORT_IMMEDIATELY_, message_p, _SOURCE_LOCATION_); }
 #else
 // It logs an error and aborts if the expression_p is true
-#define FE_ASSERT(expression_p, message_p, asserted_location_p)
+#define FE_ASSERT(expression_p, message_p)
 #endif
 
-#if _ENABLE_EXCEPTION_ == true
+#if _ENABLE_LOG_ == true
 // It logs an exception if the expression_p is true
-#define FE_EXCEPTION_LOG(expression_p, message_p, exception_origin_p) ::FE::exception::handle_exception(expression_p, #expression_p, ::FE::_LOG_EXCEPTION_HISTORY_, message_p, exception_origin_p)
+#define FE_LOG(expression_p, message_p) ::FE::exception::log_exception(expression_p, #expression_p, ::FE::_LOG_EXCEPTION_HISTORY_, message_p, _SOURCE_LOCATION_)
 #else
 // It logs an exception if the expression_p is true
-#define FE_EXCEPTION_LOG(expression_p, message_p, exception_origin_p) expression_p
+#define FE_LOG(expression_p, message_p) expression_p
 #endif
 
 #if _ENABLE_EXIT_ == true
 // It logs an error and exits if the expression_p is true
-#define FE_EXIT(expression_p, message_p, exit_location_p, exit_code_p) if(expression_p) _UNLIKELY_ { ::FE::exception::handle_exception(true, #expression_p, ::FE::_EXIT_WITH_CODE_, message_p, exit_location_p, exit_code_p); }
+#define FE_EXIT(expression_p, message_p, exit_code_p) if(expression_p) _UNLIKELY_ { ::FE::exception::log_exception(expression_p, #expression_p, ::FE::_EXIT_WITH_CODE_, message_p, _SOURCE_LOCATION_, exit_code_p); }
 #else
 // It logs an error and exits if the expression_p is true
-#define FE_EXIT(expression_p, message_p, exit_location_p, exit_code_p)
+#define FE_EXIT(expression_p, message_p, exit_code_p)
 #endif
 
 

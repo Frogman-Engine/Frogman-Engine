@@ -1,4 +1,5 @@
-#include <gtest/gtest.h>
+﻿#include <gtest/gtest.h>
+// Copyright © from 2023 to current, UNKNOWN STRYKER. All Rights Reserved.
 #include <FE/miscellaneous/google_test_extension.h>
 #include <FE/core/algorithm/string.hxx>
 using namespace FE;
@@ -263,7 +264,7 @@ TEST(FE_algorithm_string, search_very_first_substring)
 {
 	char l_string[] = "the University of Utah";
 
-	auto l_result = ::FE::algorithm::string::search_very_first_substring(l_string, "Utah");
+	auto l_result = ::FE::algorithm::string::search_very_first_substring<var::character>(l_string, "Utah");
 	
 	EXPECT_TRUE(FE::algorithm::string::string_comparison<char>(l_string + l_result->_begin, "Utah"));
 }
@@ -271,7 +272,7 @@ TEST(FE_algorithm_string, search_very_first_substring)
 TEST(FE_algorithm_string, search_very_last_substring)
 {
 	const char* l_string = "Jesus is the son of GOD";
-	auto l_result = ::FE::algorithm::string::search_very_last_substring(l_string, "son");
+	auto l_result = ::FE::algorithm::string::search_very_last_substring<var::character>(l_string, "son");
 	char l_substring[4] = "\0";
 	FE::algorithm::string::copy_string(l_substring, 4, l_string + l_result->_begin, 3);
 

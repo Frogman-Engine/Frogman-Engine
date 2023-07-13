@@ -29,7 +29,7 @@ const FE::clock::char_type* FE::clock::get_current_local_time() noexcept
 #elif _LINUX_64BIT_OS_ == 1
     ::std::strftime(tl_s_local_time_string_buffer, _GET_CURRENT_LOCAL_TIME_BUFFER_SIZE_, "%Y-%B-%d-%A  %p %Ih.%Mm.%Ss", localtime_r(&l_current_time_t, &l_time));
 #endif
-
+    ABORT_IF(tl_s_local_time_string_buffer == nullptr, "ERROR: tl_s_local_time_string_buffer is nullptr.");
     return tl_s_local_time_string_buffer;
 }
 

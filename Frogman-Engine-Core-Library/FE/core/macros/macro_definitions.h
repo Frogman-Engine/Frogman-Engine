@@ -3,9 +3,6 @@
 // Copyright © from 2023 to current, UNKNOWN STRYKER. All Rights Reserved.
 
 
-#define internal_class class
-#define internal_struct struct
-
 #define _EXIT_LOOP_ goto
 
 #define BEGIN_NAMESPACE(NAME_P) namespace NAME_P {
@@ -71,6 +68,11 @@
 #else
 #define _CONSTEXPR23_
 #endif
+
+
+#define _LOCK_FREE_ // this function is guaranteed to be lock-free
+#define _MAY_USE_LOCKS_  // this function is not guaranteed to be lock-free and may use lock/signal synchronizations
+#define _MAYBE_UNSAFE_ // this method maybe unsafe to call concurrently 
 
 
 #if _VISUAL_STUDIO_CPP_ == 1

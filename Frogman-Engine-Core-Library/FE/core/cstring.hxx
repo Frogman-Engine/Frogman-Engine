@@ -35,7 +35,7 @@ public:
     template <typename T>
     constexpr compile_time_constant_string(T* c_style_read_only_string_ptr_p) noexcept
     {
-        FE_ASSERT(typeid(decltype(c_style_read_only_string_ptr_p)).name() != typeid(const char_type*).name(), "ERROR: char* nor any another non-const char_type* types cannot be assigned to a cstring instance.", _SOURCE_LOCATION_);
+        FE_ASSERT(typeid(decltype(c_style_read_only_string_ptr_p)).name() != typeid(const char_type*).name(), "ERROR: char* nor any another non-const char_type* types cannot be assigned to a cstring instance.");
         this->m_string.emplace(c_style_read_only_string_ptr_p); 
     }
     constexpr compile_time_constant_string(compile_time_constant_string<char_type>& other_ref_p) noexcept { this->m_string.emplace(*other_ref_p.m_string); }
@@ -44,7 +44,7 @@ public:
     template <typename T>
     constexpr compile_time_constant_string<char_type>& operator=(T* c_style_read_only_string_ptr_p) noexcept
     {
-        FE_ASSERT(typeid(decltype(c_style_read_only_string_ptr_p)).name() != typeid(const char_type*).name(), "ERROR: char* nor any another non-const char_type* types cannot be assigned to a cstring instance.", _SOURCE_LOCATION_);
+        FE_ASSERT(typeid(decltype(c_style_read_only_string_ptr_p)).name() != typeid(const char_type*).name(), "ERROR: char* nor any another non-const char_type* types cannot be assigned to a cstring instance.");
 
         if (this->m_string.has_value())
         {
@@ -80,12 +80,12 @@ public:
 
     constexpr char_type at(index_t index_p) const noexcept
     {
-        FE_ASSERT(index_p >= algorithm::string::string_length(*(this->m_string)), "ERROR: an input index value passed to at() exceeded the index boundary of a cstring instance.", _SOURCE_LOCATION_);
+        FE_ASSERT(index_p >= algorithm::string::string_length(*(this->m_string)), "ERROR: an input index value passed to at() exceeded the index boundary of a cstring instance.");
         return (*this->m_string)[index_p];
     }
     constexpr char_type operator[](index_t index_p) const noexcept
     {
-        FE_ASSERT(index_p >= algorithm::string::string_length(*(this->m_string)), "ERROR: an input index value passed to operator[]() exceeded the index boundary of a cstring instance.", _SOURCE_LOCATION_);
+        FE_ASSERT(index_p >= algorithm::string::string_length(*(this->m_string)), "ERROR: an input index value passed to operator[]() exceeded the index boundary of a cstring instance.");
         return (*this->m_string)[index_p];
     }
 
@@ -114,7 +114,7 @@ public:
     constexpr var::boolean starts_with(compile_time_constant_string<char_type>& substring_ref_p) const noexcept 
     {
         length_t l_substring_length = algorithm::string::string_length(substring_ref_p.data());
-        FE_ASSERT(algorithm::string::string_length(this->data()) < l_substring_length, "ERROR: The input target sub-string instance's length is greater than the left operand string", _SOURCE_LOCATION_);
+        FE_ASSERT(algorithm::string::string_length(this->data()) < l_substring_length, "ERROR: The input target sub-string instance's length is greater than the left operand string");
         return algorithm::string::compare_ranged_strings(   this->data(), algorithm::string::string_range{0, l_substring_length}, 
                                                             substring_ref_p.data(), algorithm::string::string_range{0, l_substring_length}
                                                             );
@@ -128,7 +128,7 @@ public:
     constexpr var::boolean starts_with(const char_type* const substring_ptrc_p) const noexcept
     {
         length_t l_substring_length = algorithm::string::string_length(substring_ptrc_p);
-        FE_ASSERT(algorithm::string::string_length(this->data()) < l_substring_length, "ERROR: The input target sub-string instance's length is greater than the left operand string", _SOURCE_LOCATION_);
+        FE_ASSERT(algorithm::string::string_length(this->data()) < l_substring_length, "ERROR: The input target sub-string instance's length is greater than the left operand string");
         return algorithm::string::compare_ranged_strings(   this->data(), algorithm::string::string_range{0, l_substring_length},
                                                             substring_ptrc_p, algorithm::string::string_range{0, l_substring_length}
                                                             );
@@ -138,7 +138,7 @@ public:
     {
         length_t l_substring_length = algorithm::string::string_length(substring_ref_p.data());
         length_t l_this_string_length = algorithm::string::string_length(this->data());
-        FE_ASSERT(l_this_string_length < l_substring_length, "ERROR: The input target sub-string instance's length is greater than the left operand string", _SOURCE_LOCATION_);
+        FE_ASSERT(l_this_string_length < l_substring_length, "ERROR: The input target sub-string instance's length is greater than the left operand string");
         return algorithm::string::compare_ranged_strings(   this->data(), algorithm::string::string_range{l_this_string_length - l_substring_length, l_this_string_length},
                                                             substring_ref_p.data(), algorithm::string::string_range{0, l_substring_length}
                                                             );
@@ -155,7 +155,7 @@ public:
     {
         length_t l_substring_length = algorithm::string::string_length(substring_ptrc_p);
         length_t l_this_string_length = algorithm::string::string_length(this->data());
-        FE_ASSERT(l_this_string_length < l_substring_length, "ERROR: The input target sub-string instance's length is greater than the left operand string", _SOURCE_LOCATION_);
+        FE_ASSERT(l_this_string_length < l_substring_length, "ERROR: The input target sub-string instance's length is greater than the left operand string");
         return algorithm::string::compare_ranged_strings(   this->data(), algorithm::string::string_range{l_this_string_length - l_substring_length, l_this_string_length},
                                                             substring_ptrc_p, algorithm::string::string_range{0, l_substring_length}
                                                             );
@@ -252,11 +252,11 @@ using scstring = compile_time_constant_string<var::schar>;
 using wcstring = compile_time_constant_string<var::wchar>;
 
 #if _HAS_CXX20 == 1
-using cstring8 = compile_time_constant_string<var::char8>;
+using cstring8 = compile_time_constant_string<var::UTF8>;
 #endif
 
-using cstring16 = compile_time_constant_string<var::char16>;
-using cstring32 = compile_time_constant_string<var::char32>;
+using cstring16 = compile_time_constant_string<var::UTF16>;
+using cstring32 = compile_time_constant_string<var::UTF32>;
 
 END_NAMESPACE
 #endif

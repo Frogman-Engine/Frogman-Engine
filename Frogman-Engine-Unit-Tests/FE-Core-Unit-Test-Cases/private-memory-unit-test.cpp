@@ -1,6 +1,7 @@
-#include <gtest/gtest.h>
-#include <FE/miscellaneous/google_test_extension.h>
+﻿#include <gtest/gtest.h>
+// Copyright © from 2023 to current, UNKNOWN STRYKER. All Rights Reserved.
 #include <FE/core/heap_utilization.hpp>
+#include <vector>
 using namespace FE;
 
 
@@ -21,9 +22,9 @@ TEST(memcpy_s, _)
 TEST(memset_s, _)
 {
 	constexpr auto l_length = 40;
-	std::unique_ptr<var::sbyte[]> l_pointer_array = std::make_unique<var::sbyte[]>(l_length);
+	std::unique_ptr<var::byte[]> l_pointer_array = std::make_unique<var::byte[]>(l_length);
 	
-	FE::memset_s(l_pointer_array.get(), 100, l_length, sizeof(var::sbyte));
+	FE::memset_s(l_pointer_array.get(), 100, l_length, sizeof(var::byte));
 		
 	for (int i = 0; i < l_length; ++i)
 	{
