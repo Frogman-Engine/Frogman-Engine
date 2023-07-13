@@ -124,7 +124,7 @@ public:
 
     _FORCE_INLINE_ char_type try_pop_back() noexcept
     {
-
+	return '\0';
     }
 
     _FORCE_INLINE_ void clear() noexcept
@@ -134,7 +134,7 @@ public:
 
     _FORCE_INLINE_ boolean is_empty() const noexcept
     {
-
+	return false;
     }
 
 
@@ -145,17 +145,17 @@ public:
 
     _FORCE_INLINE_ length_type operator+=(char_type char_p) noexcept
     {
-
+	return 0;
     }
 
     _FORCE_INLINE_ length_type operator+=(const char_type* cstr_ptr_p) noexcept
     {
-
+	return 0;
     }
 
     _FORCE_INLINE_ length_type operator+=(const basic_string<char_type, max_length_type, allocator>& str_cref_p) noexcept
     {
-
+	return 0;
     }
 
     // It returns a pointer to the data
@@ -211,8 +211,8 @@ template<typename char_type, typename max_length_type, class allocator>
 char_type basic_string<char_type, max_length_type, allocator>::s_null = char_type('\0');
 
 
-using string = basic_string<char, var::uint32>;
-using article = basic_string<char, var::uint64>;
+using string = basic_string<var::character, var::uint32>;
+using article = basic_string<var::character, var::uint64>;
 using ustring = basic_string<var::uchar, var::uint32>;
 using uarticle = basic_string<var::uchar, var::uint64>;
 using sstring = basic_string<var::schar, var::uint32>;
