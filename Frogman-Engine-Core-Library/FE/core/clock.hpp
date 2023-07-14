@@ -12,7 +12,7 @@ BEGIN_NAMESPACE(FE)
 class clock final
 {
 public:
-    typedef char char_type;
+    using char_type = char;
 
     // const char* FE::clock::get_current_local_time() noexcept;
     _MAYBE_UNUSED_ static constexpr int _GET_CURRENT_LOCAL_TIME_BUFFER_SIZE_ = 64;

@@ -197,7 +197,7 @@
 #ifdef exception
 #error Frogman Engine Prohibits macroizing the keyword "exception".
 #endif
-#ifdef log_exception
+#ifdef log
 #error Frogman Engine Prohibits macroizing the keyword "handle_exceptions".
 #endif
 

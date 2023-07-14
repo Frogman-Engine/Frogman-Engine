@@ -11,25 +11,23 @@ SET(CMAKE_CXX_STANDARD 20)
 
 
 if(${CMAKE_CXX_STANDARD} EQUAL 23)
-
 ADD_COMPILE_DEFINITIONS(_HAS_CXX23_=1)
 ADD_COMPILE_DEFINITIONS(_HAS_CXX20_=1)
 ADD_COMPILE_DEFINITIONS(_HAS_CXX17_=1)
 
 elseif(${CMAKE_CXX_STANDARD} EQUAL 20)
-
 ADD_COMPILE_DEFINITIONS(_HAS_CXX23_=0)
 ADD_COMPILE_DEFINITIONS(_HAS_CXX20_=1)
 ADD_COMPILE_DEFINITIONS(_HAS_CXX17_=1)
 
 elseif(${CMAKE_CXX_STANDARD} EQUAL 17)
-
 ADD_COMPILE_DEFINITIONS(_HAS_CXX23_=0)
 ADD_COMPILE_DEFINITIONS(_HAS_CXX20_=0)
 ADD_COMPILE_DEFINITIONS(_HAS_CXX17_=1)
 
 else()
 message(FATAL_ERROR "CMAKE_CXX_STANDARD must be C++ 17 or the latest")
+
 endif()
 
 
@@ -267,12 +265,14 @@ FIND_LIBRARY(UNIT_TEST_LINUX libgtest.a PATHS ${CMAKE_CURRENT_SOURCE_DIR}/../../
 FIND_LIBRARY(CITY_HASH libCITY_HASH.a PATHS ${CMAKE_CURRENT_SOURCE_DIR}/../../../Third-Party-Libraries/City-Hash/Binaries/Linux/a)
 FIND_LIBRARY(TBB_LINUX libtbb_debug.so PATHS ${CMAKE_CURRENT_SOURCE_DIR}/../../../Third-Party-Libraries/OneAPI-TBB_2021_9_0/binaries/Linux/so/intel64/gcc4.8 PATH_SUFFIXES gcc4.8)
 FIND_LIBRARY(TBB_MALLOC_LINUX libtbbmalloc_debug.so PATHS ${CMAKE_CURRENT_SOURCE_DIR}/../../../Third-Party-Libraries/OneAPI-TBB_2021_9_0/binaries/Linux/so/intel64/gcc4.8 PATH_SUFFIXES gcc4.8)
+FIND_LIBRARY(BOOST_STACKTRACE_LINUX libboost_stacktrace_basic.a PATHS ${CMAKE_CURRENT_SOURCE_DIR}/../../../Third-Party-Libraries/Boost-Libraries_1_82_0/binaries/Linux PATH_SUFFIXES Linux)
 
 elseif(${CMAKE_BUILD_TYPE} STREQUAL "Release")
 FIND_LIBRARY(UNIT_TEST_LINUX libgtest.a PATHS ${CMAKE_CURRENT_SOURCE_DIR}/../../../Frogman-Engine-Unit-Tests/Unit-Test-Linux-Packages)
 FIND_LIBRARY(CITY_HASH libCITY_HASH.a PATHS ${CMAKE_CURRENT_SOURCE_DIR}/../../../Third-Party-Libraries/City-Hash/Binaries/Linux/a)
 FIND_LIBRARY(TBB_LINUX libtbb.so PATHS ${CMAKE_CURRENT_SOURCE_DIR}/../../../Third-Party-Libraries/OneAPI-TBB_2021_9_0/binaries/Linux/so/intel64/gcc4.8 PATH_SUFFIXES gcc4.8)
 FIND_LIBRARY(TBB_MALLOC_LINUX libtbbmalloc.so PATHS ${CMAKE_CURRENT_SOURCE_DIR}/../../../Third-Party-Libraries/OneAPI-TBB_2021_9_0/binaries/Linux/so/intel64/gcc4.8 PATH_SUFFIXES gcc4.8)
+FIND_LIBRARY(BOOST_STACKTRACE_LINUX libboost_stacktrace_basic.a PATHS ${CMAKE_CURRENT_SOURCE_DIR}/../../../Third-Party-Libraries/Boost-Libraries_1_82_0/binaries/Linux PATH_SUFFIXES Linux)
 
 else()
 message(FATAL_ERROR "Detected an invalid Build Option")
@@ -344,12 +344,14 @@ FIND_LIBRARY(UNIT_TEST_WINDOWS gtest.lib PATHS ${CMAKE_CURRENT_SOURCE_DIR}/../..
 FIND_LIBRARY(CITY_HASH CITY_HASH.lib PATHS ${CMAKE_CURRENT_SOURCE_DIR}/../../../Third-Party-Libraries/City-Hash/Binaries/Windows/Debug)
 FIND_LIBRARY(TBB_WINDOWS tbb12_debug.lib PATHS ${CMAKE_CURRENT_SOURCE_DIR}/../../../Third-Party-Libraries/OneAPI-TBB_2021_9_0/binaries/Windows/lib/intel64/vc14_uwp PATH_SUFFIXES vc14_uwp)
 FIND_LIBRARY(TBB_MALLOC_WINDOWS tbbmalloc_debug.lib PATHS ${CMAKE_CURRENT_SOURCE_DIR}/../../../Third-Party-Libraries/OneAPI-TBB_2021_9_0/binaries/Windows/lib/intel64/vc14_uwp PATH_SUFFIXES vc14_uwp)
+FIND_LIBRARY(BOOST_STACKTRACE_WINDOWS libboost_stacktrace_windbg_cached-vc143-mt-gd-x64-1_82.lib PATHS ${CMAKE_CURRENT_SOURCE_DIR}/../../../Third-Party-Libraries/Boost-Libraries_1_82_0/binaries/Windows/Visual-Studio-2022-v143-Compiler/debug PATH_SUFFIXES debug)
 
 elseif(${CMAKE_BUILD_TYPE} STREQUAL "Release")
 FIND_LIBRARY(UNIT_TEST_WINDOWS gtest.lib PATHS ${CMAKE_CURRENT_SOURCE_DIR}/../../../Frogman-Engine-Unit-Tests/Unit-Test-Windows-Packages/lib/Release)
 FIND_LIBRARY(CITY_HASH CITY_HASH.lib PATHS ${CMAKE_CURRENT_SOURCE_DIR}/../../../Third-Party-Libraries/City-Hash/Binaries/Windows/Release)
 FIND_LIBRARY(TBB_WINDOWS tbb12.lib PATHS ${CMAKE_CURRENT_SOURCE_DIR}/../../../Third-Party-Libraries/OneAPI-TBB_2021_9_0/binaries/Windows/lib/intel64/vc14_uwp PATH_SUFFIXES vc14_uwp)
 FIND_LIBRARY(TBB_MALLOC_WINDOWS tbbmalloc.lib PATHS ${CMAKE_CURRENT_SOURCE_DIR}/../../../Third-Party-Libraries/OneAPI-TBB_2021_9_0/binaries/Windows/lib/intel64/vc14_uwp PATH_SUFFIXES vc14_uwp)
+FIND_LIBRARY(BOOST_STACKTRACE_WINDOWS libboost_stacktrace_windbg_cached-vc143-mt-x64-1_82.lib PATHS ${CMAKE_CURRENT_SOURCE_DIR}/../../../Third-Party-Libraries/Boost-Libraries_1_82_0/binaries/Windows/Visual-Studio-2022-v143-Compiler/release PATH_SUFFIXES release)
 
 else()
 message(FATAL_ERROR "Detected an invalid Build Option")

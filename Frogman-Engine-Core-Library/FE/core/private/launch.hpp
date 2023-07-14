@@ -24,7 +24,7 @@ class engine_main
 	static void initialize_engine(engine_main_initialization_arguments engine_main_initialization_arguments_p) noexcept;
 
 	static void shutdown_engine() noexcept;
-	static void abnormal_shutdown_with_exit_code(int32 signal_p) noexcept;
+	_NORETURN_ static void abnormal_shutdown_with_exit_code(int32 signal_p) noexcept;
 
 	friend int ::main(int argc, char** argv);
 };
