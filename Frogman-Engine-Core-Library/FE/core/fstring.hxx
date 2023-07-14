@@ -172,15 +172,15 @@ public:
 
     constexpr algorithm::string::target_char_count<char_type> count_target_character(const char_type target_char_p) const noexcept
     {
-        return algorithm::string::search_all_corresponding_characters(this->m_fstring, target_char_p);
+        return algorithm::string::count_all_corresponding_characters(this->m_fstring, target_char_p);
     }
     constexpr algorithm::string::target_char_count<char_type> count_target_character(const char_type* const target_char_ptrc_p) const noexcept 
     {
-        return algorithm::string::search_all_corresponding_characters(this->m_fstring, *target_char_ptrc_p);
+        return algorithm::string::count_all_corresponding_characters(this->m_fstring, *target_char_ptrc_p);
     }
     constexpr algorithm::string::target_char_count<char_type> count_target_character(fixed_sized_string<char_type, max_capacity>& basic_cstring_ref_p) const noexcept
     {
-        return algorithm::string::search_all_corresponding_characters(this->m_fstring, *(basic_cstring_ref_p.m_fstring));
+        return algorithm::string::count_all_corresponding_characters(this->m_fstring, *(basic_cstring_ref_p.m_fstring));
     }
 
     constexpr var::boolean starts_with(const char_type* const cstr_ptrc_p) const noexcept { return false; }

@@ -2,9 +2,8 @@
 #define _FE_CORE_ALGORITHM_STRING_HXX_
 // Copyright © from 2023 to current, UNKNOWN STRYKER. All Rights Reserved.
 #include <FE/core/prerequisite_symbols.h>
-#include <FE/core/heap_utilization.hpp>
-#include <FE/core/containers/stack.hxx>
-#include <array>
+#include <FE/core/iterator.hxx>
+#include <FE/core/memory>
 #include <optional>
 #include <utility>
 
@@ -808,7 +807,7 @@ _FORCE_INLINE_ void invert_string(char_type* const in_out_string_ptrc_p) noexcep
     ABORT_IF(in_out_string_ptrc_p == nullptr, "ERROR: in_out_string_ptrc_p is nullptr.");
 
     var::index_t l_start = 0;
-    var::index_t l_end = algorithm::string::string_length(in_out_string_ptrc_p);
+    var::index_t l_end = string_length(in_out_string_ptrc_p);
 
     char_type l_temporary = static_cast<char_type>('\0');
     while ( l_start < l_end )
@@ -834,7 +833,7 @@ _FORCE_INLINE_ constexpr var::uint64 hash_string(const char_type* const string_p
     static_assert(sizeof(char_type) <= sizeof(UTF32), "char_type is not a valid character type");
     ABORT_IF(string_ptrc_p == nullptr, "ERROR: string_ptrc_p is nullptr.");
 
-    uint64 l_string_length = algorithm::string::string_length(string_ptrc_p);
+    length_t l_string_length = string_length(string_ptrc_p);
 
     if (l_string_length == 0)
     {
@@ -905,7 +904,7 @@ template<typename char_type>
 #if _HAS_CXX20_ == 1
     requires character_type<char_type>
 #endif
-_NODISCARD_ _FORCE_INLINE_ target_char_count<char_type> search_all_corresponding_characters(char_type* string_ptr_p, const char_type target_char_p) noexcept
+_NODISCARD_ _FORCE_INLINE_ target_char_count<char_type> count_all_corresponding_characters(char_type* string_ptr_p, const char_type target_char_p) noexcept
 {
     static_assert(sizeof(char_type) <= sizeof(UTF32), "char_type is not a valid character type");
     ABORT_IF(string_ptr_p == nullptr, "ERROR: string_ptr_p is nullptr.");
@@ -935,7 +934,7 @@ template<typename char_type>
 #if _HAS_CXX20_ == 1
     requires character_type<char_type>
 #endif
-_NODISCARD_ _FORCE_INLINE_ constexpr target_char_count<char_type> search_all_corresponding_characters(const char_type* string_ptr_p, const char_type target_char_p) noexcept
+_NODISCARD_ _FORCE_INLINE_ constexpr target_char_count<char_type> count_all_corresponding_characters(const char_type* string_ptr_p, const char_type target_char_p) noexcept
 {
     static_assert(sizeof(char_type) <= sizeof(UTF32), "char_type is not a valid character type");
     ABORT_IF(string_ptr_p == nullptr, "ERROR: string_ptr_p is nullptr.");
@@ -974,12 +973,13 @@ _NODISCARD_ _FORCE_INLINE_ ::std::optional<string_range> search_very_first_subst
 
     const char_type* l_string_ptr = string_ptrc_p;
     const char_type* l_target_substring_ptr = target_substring_ptrc_p;
+    length_t l_string_length = algorithm::string::string_length(string_ptrc_p);
+    length_t l_target_substring_length = algorithm::string::string_length(target_substring_ptrc_p);
+ 
+    ABORT_IF(l_target_substring_length >= l_string_length, "CRITICAL ERROR: the l_target_substring_length is greater than or equal to the string length of string_ptrc_p");
 
-    length_t l_target_substring_length = string::string_length(target_substring_ptrc_p);
-
-    ABORT_IF(l_target_substring_length >= string::string_length(string_ptrc_p), "CRITICAL ERROR: the l_target_substring_length is greater than or equal to the string length of string_ptrc_p");
-
-    while (*l_target_substring_ptr != static_cast<char_type>('\0'))
+    var::index_t l_string_idx = 0;
+    while (*l_target_substring_ptr != static_cast<char_type>('\0') && l_string_idx < l_string_length)
     {
         if (*l_string_ptr == *l_target_substring_ptr)
         {
@@ -989,13 +989,14 @@ _NODISCARD_ _FORCE_INLINE_ ::std::optional<string_range> search_very_first_subst
         }
         ++l_string_ptr;
         l_target_substring_ptr = target_substring_ptrc_p;
+        ++l_string_idx;
     }
 
-    if (l_target_substring_ptr[-1] == l_string_ptr[-1])
-    {
-        index_t l_begin = (l_string_ptr - string_ptrc_p) - l_target_substring_length;
-        index_t l_end = l_string_ptr - string_ptrc_p;
+    index_t l_begin = (l_string_ptr - string_ptrc_p) - (l_target_substring_ptr - target_substring_ptrc_p);
+    index_t l_end = l_string_ptr - string_ptrc_p;
 
+    if (compare_ranged_strings(string_ptrc_p, string_range{ l_begin, l_end }, target_substring_ptrc_p, string_range{ 0, l_target_substring_length }))
+    {
         return  std::make_optional<string_range>(l_begin, l_end);
     }
 
@@ -1014,35 +1015,38 @@ _IN_DEVELOPMENT_ _NODISCARD_ _FORCE_INLINE_::std::optional<string_range> search_
     ABORT_IF(target_substring_ptrc_p == nullptr, "ERROR: target_substring_ptrc_p is nullptr.");
 
     length_t l_string_length = algorithm::string::string_length(string_ptrc_p);
-    length_t l_target_letters_length = algorithm::string::string_length(target_substring_ptrc_p);
+    length_t l_target_substring_length = algorithm::string::string_length(target_substring_ptrc_p);
 
-    const char_type* l_string_ptr = string_ptrc_p + l_string_length;
+    FE::const_reverse_iterator<FE::contiguous_iterator<const char_type>> l_string_crbegin(string_ptrc_p + (l_string_length - 1));
 
-    if (l_string_length < l_target_letters_length) { return ::std::nullopt; }
+    const FE::const_reverse_iterator<FE::contiguous_iterator<const char_type>> l_target_substring_crbegin_read_only(target_substring_ptrc_p + (l_target_substring_length - 1));
+    FE::const_reverse_iterator<FE::contiguous_iterator<const char_type>> l_target_substring_crbegin = l_target_substring_crbegin_read_only;
 
-    var::count_t l_match_count = 0;
-    for (; *target_substring_ptrc_p != static_cast<char_type>('\0'); --l_string_ptr)
+    const FE::const_reverse_iterator<FE::contiguous_iterator<const char_type>> l_target_substring_crend_read_only(target_substring_ptrc_p - 1);
+
+    var::index_t l_string_idx = 0;
+    while (l_target_substring_crbegin != l_target_substring_crend_read_only && l_string_idx < l_string_length)
     {
-        if (*l_string_ptr == *target_substring_ptrc_p)
+        if (*l_string_crbegin == *l_target_substring_crbegin)
         {
-            for (l_match_count = 0; (l_string_ptr[l_match_count] == target_substring_ptrc_p[l_match_count]) && (l_string_ptr[l_match_count] != '\0'); ++l_match_count) {}
-            if (l_match_count == l_target_letters_length) { return ::std::optional<string_range>(string_range{ static_cast<var::index_t>(l_string_ptr - string_ptrc_p), static_cast<var::index_t>((l_string_ptr - string_ptrc_p) + l_match_count) }); }
+            ++l_string_crbegin;
+            ++l_target_substring_crbegin;
+            continue;
         }
+        ++l_string_crbegin;
+        l_target_substring_crbegin = l_target_substring_crbegin_read_only;
+        ++l_string_idx;
+    }
+
+    index_t l_begin = (l_string_crbegin.operator->() - string_ptrc_p) + 1;
+    index_t l_end = ((l_string_crbegin.operator->() + l_target_substring_length) - string_ptrc_p) + 1;
+
+    if ( compare_ranged_strings(string_ptrc_p, string_range{ l_begin, l_end }, target_substring_ptrc_p, string_range{0, l_target_substring_length}) )
+    {
+        return  std::make_optional<string_range>(l_begin, l_end);
     }
 
     return ::std::nullopt;
-
-
-    //length_t l_string_length = algorithm::string::string_length(string_ptrc_p);
-    //length_t l_target_substring_length = algorithm::string::string_length(target_substring_ptrc_p);
-
-    //ABORT_IF(l_target_substring_length >= l_string_length, "CRITICAL ERROR: l_target_substring_length is greater than or equal to the l_string_length");
-
-    //const char_type* const l_string_end_ptrc = string_ptrc_p + l_string_length;
-    //const char_type* l_target_substring_begin_ptr = target_substring_ptrc_p;
-
-    //const char_type* l_string_rbegin_ptr = l_string_end_ptrc - 1;
-    //const char_type* const l_string_rend_ptrc = string_ptrc_p - 1;
 }
 
 
@@ -1051,7 +1055,7 @@ _IN_DEVELOPMENT_ _NODISCARD_ _FORCE_INLINE_::std::optional<string_range> search_
 
 // search_very_first_character_within_range
 // search_very_last_character_within_range
-// search_all_corresponding_characters_within_range
+// count_all_corresponding_characters_within_range
 
 
 template<typename char_type, typename int_type>

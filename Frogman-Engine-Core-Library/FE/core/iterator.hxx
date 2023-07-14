@@ -41,6 +41,7 @@ public:
 
 	_FORCE_INLINE_ reference operator[](index_t index_p) noexcept
 	{
+		ABORT_IF(index_p == FE::max_value<index_t>(), "ERROR: negative integers cannot be assigned to an index_t variable.");
 		return implementation::index(this->m_iterator, index_p);
 	}
 
@@ -104,6 +105,11 @@ public:
 		return l_temporary;
 	}
 
+	_FORCE_INLINE_ iterator& operator=(pointer value_p) noexcept
+	{
+		this->m_iterator = value_p;
+		return *this;
+	}
 
 	_FORCE_INLINE_ iterator& operator=(const iterator& other_cref_p) noexcept
 	{
@@ -185,6 +191,7 @@ public:
 
 	_FORCE_INLINE_ reference operator[](index_t index_p) noexcept
 	{
+		ABORT_IF(index_p == FE::max_value<index_t>(), "ERROR: negative integers cannot be assigned to an index_t variable.");
 		return implementation::index(this->m_reverse_iterator, index_p);
 	}
 
@@ -248,6 +255,11 @@ public:
 		return l_temporary;
 	}
 
+	_FORCE_INLINE_ reverse_iterator& operator=(pointer value_p) noexcept
+	{
+		this->m_reverse_iterator = value_p;
+		return *this;
+	}
 
 	_FORCE_INLINE_ reverse_iterator& operator=(const reverse_iterator& other_cref_p) noexcept
 	{
@@ -311,7 +323,7 @@ private:
 public:
 	constexpr const_iterator() noexcept : m_iterator() {}
 
-	const_iterator(pointer value_p) noexcept : m_iterator(value_p) {}
+	const_iterator(const pointer value_p) noexcept : m_iterator(value_p) {}
 	const_iterator(const const_iterator& other_cref_p) noexcept : m_iterator(other_cref_p.m_iterator) {}
 	const_iterator(const_iterator&& other_p) noexcept : m_iterator(other_p.m_iterator) { other_p.m_iterator = nullptr; }
 	_CONSTEXPR20_ ~const_iterator() noexcept {}
@@ -328,6 +340,7 @@ public:
 
 	_FORCE_INLINE_ const_reference operator[](index_t index_p) noexcept
 	{
+		ABORT_IF(index_p == FE::max_value<index_t>(), "ERROR: negative integers cannot be assigned to an index_t variable.");
 		return implementation::index(this->m_iterator, index_p);
 	}
 
@@ -391,6 +404,11 @@ public:
 		return l_temporary;
 	}
 
+	_FORCE_INLINE_ const_iterator& operator=(const pointer value_p) noexcept
+	{
+		this->m_iterator = value_p;
+		return *this;
+	}
 
 	_FORCE_INLINE_ const_iterator& operator=(const const_iterator& other_cref_p) noexcept
 	{
@@ -455,7 +473,7 @@ private:
 public:
 	constexpr const_reverse_iterator() noexcept : m_reverse_iterator() {}
 
-	const_reverse_iterator(pointer value_p) noexcept : m_reverse_iterator(value_p) {}
+	const_reverse_iterator(const pointer value_p) noexcept : m_reverse_iterator(value_p) {}
 	const_reverse_iterator(const const_reverse_iterator& other_cref_p) noexcept : m_reverse_iterator(other_cref_p.m_reverse_iterator) {}
 	const_reverse_iterator(const_reverse_iterator&& other_p) noexcept : m_reverse_iterator(other_p.m_reverse_iterator) { other_p.m_reverse_iterator = nullptr; }
 	_CONSTEXPR20_ ~const_reverse_iterator() noexcept {}
@@ -472,6 +490,7 @@ public:
 
 	_FORCE_INLINE_ const_reference operator[](index_t index_p) noexcept
 	{
+		ABORT_IF(index_p == FE::max_value<index_t>(), "ERROR: negative integers cannot be assigned to an index_t variable.");
 		return implementation::index(this->m_reverse_iterator, index_p);
 	}
 
@@ -535,6 +554,11 @@ public:
 		return l_temporary;
 	}
 
+	_FORCE_INLINE_ const_reverse_iterator& operator=(const pointer value_p) noexcept
+	{
+		this->m_reverse_iterator = value_p;
+		return *this;
+	}
 
 	_FORCE_INLINE_ const_reverse_iterator& operator=(const const_reverse_iterator& other_cref_p) noexcept
 	{

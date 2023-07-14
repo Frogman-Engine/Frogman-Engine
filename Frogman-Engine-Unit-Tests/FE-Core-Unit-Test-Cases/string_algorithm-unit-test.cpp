@@ -237,11 +237,11 @@ TEST(FE_algorithm_string, search_very_last_char)
 
 
 
-TEST(FE_algorithm_string, search_all_corresponding_characters)
+TEST(FE_algorithm_string, count_all_corresponding_characters)
 {
 	char l_string[] = "Carrots contain carotene, antioxidants, etcetera.";
 
-	auto l_result = ::FE::algorithm::string::search_all_corresponding_characters(l_string, 't');
+	auto l_result = ::FE::algorithm::string::count_all_corresponding_characters(l_string, 't');
 
 	EXPECT_EQ(l_result._match_count, 7);
 	EXPECT_EQ(l_result._target_data, 't');
@@ -251,7 +251,7 @@ TEST(FE_algorithm_string, constexpr_search_all_corresponding_char)
 {
 	const char* l_string = "Carrots contain carotene, antioxidants, etcetera.";
 
-	auto l_result = ::FE::algorithm::string::search_all_corresponding_characters(l_string, 't');
+	auto l_result = ::FE::algorithm::string::count_all_corresponding_characters(l_string, 't');
 
 	EXPECT_EQ(l_result._match_count, 7);
 	EXPECT_EQ(l_result._target_data, 't');
@@ -264,8 +264,11 @@ TEST(FE_algorithm_string, search_very_first_substring)
 {
 	char l_string[] = "the University of Utah";
 
-	auto l_result = ::FE::algorithm::string::search_very_first_substring<var::character>(l_string, "Utah");
-	
+	auto l_result = ::FE::algorithm::string::search_very_first_substring<var::character>(l_string, "Orange County");
+	EXPECT_FALSE(l_result.has_value());
+
+	l_result = ::FE::algorithm::string::search_very_first_substring<var::character>(l_string, "Utah");
+
 	EXPECT_TRUE(FE::algorithm::string::string_comparison<char>(l_string + l_result->_begin, "Utah"));
 }
 
@@ -273,10 +276,19 @@ TEST(FE_algorithm_string, search_very_last_substring)
 {
 	const char* l_string = "Jesus is the son of GOD";
 	auto l_result = ::FE::algorithm::string::search_very_last_substring<var::character>(l_string, "son");
-	char l_substring[4] = "\0";
+	char l_substring[7] = "\0";
 	FE::algorithm::string::copy_string(l_substring, 4, l_string + l_result->_begin, 3);
-
 	EXPECT_TRUE(FE::algorithm::string::string_comparison<char>(l_substring, "son"));
+
+	l_string = "Third Person Spec Ops Stealth Action Shooter";
+	l_result = ::FE::algorithm::string::search_very_last_substring<var::character>(l_string, "Expects Failure");
+	EXPECT_FALSE(l_result.has_value());
+
+	l_result = ::FE::algorithm::string::search_very_last_substring<var::character>(l_string, "Action");
+	EXPECT_TRUE(l_result.has_value());
+	FE::algorithm::string::copy_string(l_substring, 7, l_string + l_result->_begin, 6);
+
+	EXPECT_TRUE(FE::algorithm::string::string_comparison<char>(l_substring, "Action"));
 }
 
 
