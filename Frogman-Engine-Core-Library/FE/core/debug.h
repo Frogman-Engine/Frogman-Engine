@@ -14,7 +14,7 @@
 #endif
 
 
-#if _DEBUG_MODE_ == true || _ENABLE_ASSERT_ == true || _ENABLE_LOG_ == true || _ENABLE_EXIT_ == true
+#if _ENABLE_ASSERT_ == true || _ENABLE_LOG_ == true || _ENABLE_EXIT_ == true
 #define IF_DEBUG_MODE(true_p, false_p) true_p
 #define ENABLE_IF_DEBUG_MODE(code_p) code_p
 #else

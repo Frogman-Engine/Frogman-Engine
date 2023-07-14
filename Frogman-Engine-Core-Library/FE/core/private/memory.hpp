@@ -99,7 +99,7 @@ struct reserve final
 // it contains memory padding size.
 struct align_null final
 {
-	_MAYBE_UNUSED_ static constexpr uint16 s_size = 2;
+	_MAYBE_UNUSED_ static constexpr uint16 s_size = 0;
 };
 
 // it contains memory padding size.

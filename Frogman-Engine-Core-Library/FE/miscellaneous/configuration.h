@@ -6,7 +6,6 @@
 // The binary files e.g. (.lib, .a, .dll, or .so) need to be rebuilt to apply changes that have been made.
 
 #if _USE_CMAKE_MACRO_ == false
-#define _DEBUG_MODE_ true
 
 // Frogman Engine Memory Tracker generates a memory utilization report over frames at the end of an app process.
 // The output file can be visualized as a graph image via Frogman Engine Memory Utilization Analyzer.
