@@ -179,14 +179,18 @@ TEST(stack, multiple_assignments_)
 TEST(stack, container_comparison_)
 {
 	FE::stack<std::string, 5> l_languages1 = { "C++", "C#", "Python", "Java", "C"};
+    EXPECT_TRUE(FE::algorithm::string::string_comparison(l_languages1.top().c_str(), "C"));
 	FE::stack<std::string, 5> l_languages2 = { "C++", "C#", "Python", "Java", "C" };
+    EXPECT_TRUE(FE::algorithm::string::string_comparison(l_languages2.top().c_str(), "C"));
 	EXPECT_TRUE(l_languages1 == l_languages2);
 
-	l_languages1.pop();
-	l_languages1.pop();
-	l_languages1.pop();
-	l_languages1.pop();
-	EXPECT_FALSE(l_languages1 == l_languages2); // C++ is not equivalent to C
+    EXPECT_TRUE(FE::algorithm::string::string_comparison(l_languages1.pop().c_str(), "C"));
+    EXPECT_TRUE(FE::algorithm::string::string_comparison(l_languages1.pop().c_str(), "Java"));
+    EXPECT_TRUE(FE::algorithm::string::string_comparison(l_languages1.pop().c_str(), "Python"));
+    EXPECT_TRUE(FE::algorithm::string::string_comparison(l_languages1.pop().c_str(), "C#"));
+    EXPECT_TRUE(FE::algorithm::string::string_comparison(l_languages2.top().c_str(), "C"));
+	std::cerr << l_languages2.top().c_str();
+    EXPECT_FALSE(l_languages1 == l_languages2); // C++ is not equivalent to C
 
 	l_languages1.push("Python");
 	l_languages2.pop();

@@ -168,6 +168,7 @@ void FE::real_time_exception_history_logging_strategy::__main_thread_exception_c
 
 #elif _LINUX_64BIT_OS_ == 1
     var::character l_date_info_string[clock::_GET_CURRENT_LOCAL_TIME_BUFFER_SIZE_] = "\0";
+    ::std::strcpy(l_date_info_string, exception::tl_s_clock.get_current_local_time());
     std::memset(l_date_info_string + (::std::strlen(l_date_info_string) - g_sec_string_length), _NULL_, g_sec_string_length * sizeof(var::character)); // to remove min sec
     ::std::filesystem::path l_path_to_log_dump_file = l_directory_name / l_date_info_string;
 
@@ -181,7 +182,7 @@ void FE::real_time_exception_history_logging_strategy::__main_thread_exception_c
             l_full_path_to_the_file,
             _FILE_NAME_MAX_LENGTH_,
             {
-                "\\thread main() @ ",
+                "/thread main() @ ",
                 l_date_info_string,
                 ".txt"
             }
@@ -252,6 +253,7 @@ void FE::real_time_exception_history_logging_strategy::__exception_construction_
     snprintf(l_thread_id, _MAX_THRED_ID_DIGIT_LENGTH_, "%llu", ::FE::thread::tl_s_this_thread_id);
 
     var::character l_date_info_string[clock::_GET_CURRENT_LOCAL_TIME_BUFFER_SIZE_] = "\0";
+    ::std::strcpy(l_date_info_string, exception::tl_s_clock.get_current_local_time());
     std::memset(l_date_info_string + (::std::strlen(l_date_info_string) - g_sec_string_length), _NULL_, g_sec_string_length * sizeof(var::character)); // to remove min sec
     ::std::filesystem::path l_path_to_log_dump_file = l_directory_name / l_date_info_string;
 
@@ -263,7 +265,7 @@ void FE::real_time_exception_history_logging_strategy::__exception_construction_
             l_full_path_to_the_file,
             _FILE_NAME_MAX_LENGTH_,
             {
-                "\\thread ",
+                "/thread ",
                 l_thread_id,
                 " @ ",
                 l_date_info_string,

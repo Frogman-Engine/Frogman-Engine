@@ -63,7 +63,6 @@ public:
 		return this->m_is_block_constructed;
 	}
 
-	template<typename T>
 	_FORCE_INLINE_ var::boolean call_copy_constructor(T& other_ref_p) noexcept
 	{
 		if (this->m_is_block_constructed == false)
@@ -74,7 +73,6 @@ public:
 		return this->m_is_block_constructed;
 	}
 
-	template<typename T>
 	_FORCE_INLINE_ var::boolean call_move_constructor(T&& rvalue_p) noexcept
 	{
 		if (this->m_is_block_constructed == false)

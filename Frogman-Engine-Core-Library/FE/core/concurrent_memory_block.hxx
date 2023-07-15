@@ -71,7 +71,6 @@ public:
 		return !l_is_constructed;
 	}
 
-	template<typename T>
 	_FORCE_INLINE_ var::boolean call_copy_constructor(T& other_ref_p) noexcept
 	{
 		boolean l_is_constructed = this->m_is_block_constructed.exchange(true, std::memory_order_acq_rel);
@@ -82,7 +81,6 @@ public:
 		return !l_is_constructed;
 	}
 
-	template<typename T>
 	_FORCE_INLINE_ var::boolean call_move_constructor(T&& rvalue_p) noexcept
 	{
 		boolean l_is_constructed = this->m_is_block_constructed.exchange(true, std::memory_order_acq_rel);
