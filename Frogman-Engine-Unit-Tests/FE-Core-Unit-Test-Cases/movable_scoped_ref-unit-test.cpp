@@ -71,7 +71,7 @@ void fn(std::promise<bool>& promise_p, FE::concurrent_memory_block<my_struct>& c
 {
 	FE::movable_scoped_ref<my_struct> l_movable_scoped_reference = *concurrent_memory_block_p;
 	promise_p.set_value(true);
-	std::this_thread::sleep_for(std::chrono::seconds(1));
+	std::this_thread::sleep_for(std::chrono::milliseconds(10));
     EXPECT_EQ(l_movable_scoped_reference.is_being_used(), true);
 }
 

@@ -61,7 +61,7 @@ _FORCE_INLINE_ void assign(T* const object_ptrc_p, OBJECT_LIFECYCLE* const bool_
 	if (*bool_mask_ptrc_p == OBJECT_LIFECYCLE::_DESTRUCTED)
 	{
 		new(object_ptrc_p) T(arguments_p...);
-        *bool_mask_ptrc_p = OBJECT_LIFECYCLE::_CONSTRUCTED;
+        *bool_mask_ptrc_p = FE::OBJECT_LIFECYCLE::_CONSTRUCTED;
 		return;
 	}
 
@@ -77,7 +77,7 @@ _FORCE_INLINE_ void copy_assign(T* const object_ptrc_p, OBJECT_LIFECYCLE* const 
 	if (*bool_mask_ptrc_p == OBJECT_LIFECYCLE::_DESTRUCTED)
 	{
 		new(object_ptrc_p) T(other_ref_p);
-        *bool_mask_ptrc_p = OBJECT_LIFECYCLE::_CONSTRUCTED;
+        *bool_mask_ptrc_p = FE::OBJECT_LIFECYCLE::_CONSTRUCTED;
 		return;
 	}
 
@@ -93,7 +93,7 @@ _FORCE_INLINE_ void move_assign(T* const object_ptrc_p, OBJECT_LIFECYCLE* const 
 	if (*bool_mask_ptrc_p == OBJECT_LIFECYCLE::_DESTRUCTED)
 	{
 		new(object_ptrc_p) T(std::move(rvalue_p));
-        *bool_mask_ptrc_p = OBJECT_LIFECYCLE::_CONSTRUCTED;
+        *bool_mask_ptrc_p = FE::OBJECT_LIFECYCLE::_CONSTRUCTED;
 		return;
 	}
 
@@ -106,31 +106,38 @@ _FORCE_INLINE_ void move_assign(T* const object_ptrc_p, OBJECT_LIFECYCLE* const 
 template <typename T>
 _FORCE_INLINE_ void construct(T* const object_ptrc_p, OBJECT_LIFECYCLE* const bool_mask_ptrc_p) noexcept
 {
-	FE_ASSERT(object_ptrc_p == nullptr, "ERROR: boolean_mask_ptrc_p is nullptr.");
-	FE_ASSERT(*bool_mask_ptrc_p == OBJECT_LIFECYCLE::_CONSTRUCTED, "ERROR: Unable to double-construct the object, that object_ptrc_p is pointing to");
+	FE_ASSERT(object_ptrc_p == nullptr, "ERROR: object_ptrc_p is nullptr.");
 
-	new(object_ptrc_p) T();
-    *bool_mask_ptrc_p = OBJECT_LIFECYCLE::_CONSTRUCTED;
+	if (*bool_mask_ptrc_p == FE::OBJECT_LIFECYCLE::_DESTRUCTED)
+	{
+		new(object_ptrc_p) T();
+		*bool_mask_ptrc_p = OBJECT_LIFECYCLE::_CONSTRUCTED;
+	}
 }
 
 template <typename T>
 _FORCE_INLINE_ void copy_construct(T* const object_ptrc_p, OBJECT_LIFECYCLE* const bool_mask_ptrc_p, T& other_ref_p) noexcept
 {
-	FE_ASSERT(object_ptrc_p == nullptr, "ERROR: boolean_mask_ptrc_p is nullptr.");
-	FE_ASSERT(*bool_mask_ptrc_p == OBJECT_LIFECYCLE::_CONSTRUCTED, "ERROR: Unable to double-construct the object, that object_ptrc_p is pointing to");
+	FE_ASSERT(object_ptrc_p == nullptr, "ERROR: object_ptrc_p is nullptr.");
 
-	new(object_ptrc_p) T(other_ref_p);
-    *bool_mask_ptrc_p = OBJECT_LIFECYCLE::_CONSTRUCTED;
+	if (*bool_mask_ptrc_p == FE::OBJECT_LIFECYCLE::_DESTRUCTED)
+	{
+		new(object_ptrc_p) T(other_ref_p);
+		*bool_mask_ptrc_p = FE::OBJECT_LIFECYCLE::_CONSTRUCTED;
+	}
 }
 
 template <typename T>
 _FORCE_INLINE_ void move_construct(T* const object_ptrc_p, OBJECT_LIFECYCLE* const bool_mask_ptrc_p, T&& rvalue_p) noexcept
 {
-	FE_ASSERT(object_ptrc_p == nullptr, "ERROR: boolean_mask_ptrc_p is nullptr.");
+	FE_ASSERT(object_ptrc_p == nullptr, "ERROR: object_ptrc_p is nullptr.");
 	FE_ASSERT(*bool_mask_ptrc_p == OBJECT_LIFECYCLE::_CONSTRUCTED, "ERROR: Unable to double-construct the object, that object_ptrc_p is pointing to");
 
-	new(object_ptrc_p) T(std::move(rvalue_p));
-    *bool_mask_ptrc_p = OBJECT_LIFECYCLE::_CONSTRUCTED;
+	if (*bool_mask_ptrc_p == FE::OBJECT_LIFECYCLE::_DESTRUCTED)
+	{
+		new(object_ptrc_p) T(std::move(rvalue_p));
+		*bool_mask_ptrc_p = FE::OBJECT_LIFECYCLE::_CONSTRUCTED;
+	}
 }
 
 
@@ -155,6 +162,7 @@ _FORCE_INLINE_ void assign(iterator begin_p, iterator end_p, OBJECT_LIFECYCLE* c
 		else
 		{
 			new(it.operator->()) T(arguments_p...);
+			*l_boolean_mask_ptr = FE::OBJECT_LIFECYCLE::_CONSTRUCTED;
 			++l_boolean_mask_ptr;
 		}
 	}
@@ -187,6 +195,7 @@ _FORCE_INLINE_ void copy_assign(iterator dest_begin_p, capacity_t dest_length_p,
 			else
 			{
 				new(l_dest_iterator_begin.operator->()) T(*l_initializer_list_begin_ptr);
+				*l_boolean_mask_ptr = FE::OBJECT_LIFECYCLE::_CONSTRUCTED;
 				++l_boolean_mask_ptr;
 				++l_initializer_list_begin_ptr;
 				++l_dest_iterator_begin;
@@ -208,6 +217,7 @@ _FORCE_INLINE_ void copy_assign(iterator dest_begin_p, capacity_t dest_length_p,
 			else
 			{
 				new(l_dest_iterator_begin.operator->()) T(*l_initializer_list_begin_ptr);
+				*l_boolean_mask_ptr = FE::OBJECT_LIFECYCLE::_CONSTRUCTED;
 				++l_boolean_mask_ptr;
 				++l_initializer_list_begin_ptr;
 				++l_dest_iterator_begin;
@@ -243,6 +253,7 @@ _FORCE_INLINE_ void move_assign(iterator dest_begin_p, capacity_t dest_length_p,
 			else
 			{
 				new(l_dest_iterator_begin.operator->()) T(std::move(*l_initializer_list_begin_ptr));
+				*l_boolean_mask_ptr = FE::OBJECT_LIFECYCLE::_CONSTRUCTED;
 				++l_boolean_mask_ptr;
 				++l_initializer_list_begin_ptr;
 				++l_dest_iterator_begin;
@@ -264,6 +275,7 @@ _FORCE_INLINE_ void move_assign(iterator dest_begin_p, capacity_t dest_length_p,
 			else
 			{
 				new(l_dest_iterator_begin.operator->()) T(std::move(*l_initializer_list_begin_ptr));
+				*l_boolean_mask_ptr = FE::OBJECT_LIFECYCLE::_CONSTRUCTED;
 				++l_boolean_mask_ptr;
 				++l_initializer_list_begin_ptr;
 				++l_dest_iterator_begin;
@@ -304,7 +316,7 @@ _FORCE_INLINE_ void copy_assign(iterator dest_begin_p, capacity_t dest_length_p,
 			else if (*l_source_bool_mask_ptr == FE::OBJECT_LIFECYCLE::_CONSTRUCTED)
 			{
 				new(l_dest_iterator_begin.operator->()) T(*l_initializer_list_begin_ptr);
-
+				*l_dest_bool_mask_ptr = FE::OBJECT_LIFECYCLE::_CONSTRUCTED;
 				++l_initializer_list_begin_ptr;
 				++l_dest_iterator_begin;
 
@@ -330,7 +342,7 @@ _FORCE_INLINE_ void copy_assign(iterator dest_begin_p, capacity_t dest_length_p,
 			else if (*l_source_bool_mask_ptr == FE::OBJECT_LIFECYCLE::_CONSTRUCTED)
 			{
 				new(l_dest_iterator_begin.operator->()) T(*l_initializer_list_begin_ptr);
-
+				*l_dest_bool_mask_ptr = FE::OBJECT_LIFECYCLE::_CONSTRUCTED;
 				++l_initializer_list_begin_ptr;
 				++l_dest_iterator_begin;
 
@@ -373,7 +385,7 @@ _FORCE_INLINE_ void move_assign(iterator dest_begin_p, capacity_t dest_length_p,
 			else if(*l_source_bool_mask_ptr == FE::OBJECT_LIFECYCLE::_CONSTRUCTED)
 			{
 				new(l_dest_iterator_begin.operator->()) T(std::move(*l_initializer_list_begin_ptr));
-
+				*l_dest_bool_mask_ptr = FE::OBJECT_LIFECYCLE::_CONSTRUCTED;
 				++l_initializer_list_begin_ptr;
 				++l_dest_iterator_begin;
 
@@ -399,7 +411,7 @@ _FORCE_INLINE_ void move_assign(iterator dest_begin_p, capacity_t dest_length_p,
 			else if(*l_source_bool_mask_ptr == FE::OBJECT_LIFECYCLE::_CONSTRUCTED)
 			{
 				new(l_dest_iterator_begin.operator->()) T(std::move(*l_initializer_list_begin_ptr));
-
+				*l_dest_bool_mask_ptr = FE::OBJECT_LIFECYCLE::_CONSTRUCTED;
 				++l_initializer_list_begin_ptr;
 				++l_dest_iterator_begin;
 
@@ -416,11 +428,14 @@ _FORCE_INLINE_ void move_assign(iterator dest_begin_p, capacity_t dest_length_p,
 template <typename T>
 _FORCE_INLINE_ void destruct(T* const object_ptrc_p, OBJECT_LIFECYCLE* const bool_mask_ptrc_p) noexcept
 {
-	FE_ASSERT(object_ptrc_p == nullptr, "ERROR: boolean_mask_ptrc_p is nullptr.");
-	FE_ASSERT(bool_mask_p == OBJECT_LIFECYCLE::_DESTRUCTED, "ERROR: Unable to double-destruct the object, that object_ptrc_p is pointing to");
+	FE_ASSERT(object_ptrc_p == nullptr, "ERROR: object_ptrc_p is nullptr.");
+	FE_ASSERT(bool_mask_ptrc_p == nullptr, "ERROR: boolean_mask_ptrc_p is nullptr.");
 
-	object_ptrc_p->~T();
-    *bool_mask_ptrc_p = OBJECT_LIFECYCLE::_DESTRUCTED;
+	if (*bool_mask_ptrc_p == FE::OBJECT_LIFECYCLE::_CONSTRUCTED)
+	{
+		object_ptrc_p->~T();
+		*bool_mask_ptrc_p = FE::OBJECT_LIFECYCLE::_DESTRUCTED;
+	}
 }
 
 template<class iterator>
@@ -438,7 +453,6 @@ _FORCE_INLINE_ void destruct(iterator begin_p, iterator end_p, OBJECT_LIFECYCLE*
 		{
 			it->~T();
 			*l_boolean_mask_ptr = FE::OBJECT_LIFECYCLE::_DESTRUCTED;
-
 			++l_boolean_mask_ptr;
 		}
 	}

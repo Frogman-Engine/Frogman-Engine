@@ -80,12 +80,12 @@ public:
 
 	_FORCE_INLINE_ FE::const_iterator<FE::contiguous_iterator<T>> cend() noexcept
 	{
-		return this->m_begin_ptrc + max_element_count;
+		return this->m_top_ptr;
 	}
 
 	_FORCE_INLINE_ FE::const_reverse_iterator<FE::contiguous_iterator<T>> crbegin() noexcept
 	{
-		return (this->m_begin_ptrc + max_element_count) - 1;
+		return this->m_top_ptr - 1;
 	}
 
 	_FORCE_INLINE_ FE::const_reverse_iterator<FE::contiguous_iterator<T>> crend() noexcept
@@ -104,13 +104,13 @@ public:
 	template<boolean is_trivially_constructible_and_destructible = FE::is_trivially_constructible_and_destructible<T>()>
 	var::boolean operator==(stack<T, max_element_count, is_trivially_constructible_and_destructible>& other_ref_p) noexcept
 	{
-		return memcmp_s(this->cbegin(), this->cend(), other_ref_p.cbegin(), other_ref_p.cend());
+		return FE::memcmp_s(this->cbegin(), this->cend(), other_ref_p.cbegin(), other_ref_p.cend());
 	}
 
 	template<boolean is_trivially_constructible_and_destructible = FE::is_trivially_constructible_and_destructible<T>()>
 	var::boolean operator!=(stack<T, max_element_count, is_trivially_constructible_and_destructible>& other_ref_p) noexcept
 	{
-		return !memcmp_s(this->cbegin(), this->cend(), other_ref_p.cbegin(), other_ref_p.cend());
+		return !FE::memcmp_s(this->cbegin(), this->cend(), other_ref_p.cbegin(), other_ref_p.cend());
 	}
 
 protected:
@@ -181,6 +181,7 @@ public:
 		FE::memcpy_s(this->m_memory, max_element_count, sizeof(value_type),
 					initializer_list_p.begin(), initializer_list_p.size(), sizeof(value_type));
 
+		this->__set_top_pointer_to_zero();
 		this->__jump_top_pointer(initializer_list_p.size());
 		return *this;
 	}
@@ -190,6 +191,7 @@ public:
 		FE::memcpy_s(this->m_memory, max_element_count, sizeof(value_type),
 					other_ref_p.m_memory, max_element_count, sizeof(value_type));
 
+		this->__set_top_pointer_to_zero();
 		this->__jump_top_pointer(other_ref_p.m_top_ptr - other_ref_p.m_begin_ptrc);
 		other_ref_p.__set_top_pointer_to_zero();
 		return *this;
@@ -202,6 +204,7 @@ public:
 
 		FE::memset_s(rvalue_p.m_memory, _NULL_, max_element_count, sizeof(value_type));
 
+		this->__set_top_pointer_to_zero();
 		this->__jump_top_pointer(rvalue_p.m_top_ptr - rvalue_p.m_begin_ptrc);
 		rvalue_p.__set_top_pointer_to_zero();
 		return *this;
@@ -300,6 +303,7 @@ public:
 
 		FE::move_assign<FE::iterator<FE::contiguous_iterator<value_type>>>(this->m_begin_ptrc, initializer_list_p.size(), this->m_bool_mask,
                                                                            const_cast<T*>(initializer_list_p.begin()), initializer_list_p.size());
+		this->__set_top_pointer_to_zero();
 		this->__jump_top_pointer(initializer_list_p.size());
 		return *this;
 	}
@@ -310,6 +314,7 @@ public:
 
 		FE::copy_assign<FE::iterator<FE::contiguous_iterator<value_type>>>(this->m_begin_ptrc, max_element_count, static_cast<OBJECT_LIFECYCLE*>(this->m_bool_mask),
                                                                            other_ref_p.m_begin_ptrc, l_other_bool_mask_length, static_cast<const OBJECT_LIFECYCLE*>(other_ref_p.m_bool_mask));
+		this->__set_top_pointer_to_zero();
 		this->__jump_top_pointer(l_other_bool_mask_length);
 		other_ref_p.__set_top_pointer_to_zero();
 		return *this;
@@ -323,7 +328,8 @@ public:
                                                                            rvalue_p.m_begin_ptrc, l_rvalue_bool_mask_length, static_cast<OBJECT_LIFECYCLE*>(rvalue_p.m_bool_mask));
 		
 		FE::destruct<FE::iterator<FE::contiguous_iterator<value_type>>>(rvalue_p.m_begin_ptrc, rvalue_p.m_begin_ptrc + (rvalue_p.m_top_ptr - rvalue_p.m_begin_ptrc), rvalue_p.m_bool_mask);
-
+		
+		this->__set_top_pointer_to_zero();
 		this->__jump_top_pointer(l_rvalue_bool_mask_length);
 		rvalue_p.__set_top_pointer_to_zero();
 		return *this;
@@ -333,7 +339,7 @@ public:
 	{
 		FE_EXIT(this->m_top_ptr >= this->m_begin_ptrc + max_element_count, "UNRECOVERABLE ERROR!: The stack top exceeded the index boundary of the underlying container", FE::MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_RANGE);
 		
-		FE::move_assign(this->m_top_ptr, this->m_bool_mask[this->m_top_ptr - this->m_begin_ptrc], std::move(value_p));
+		FE::move_assign(this->m_top_ptr, this->m_bool_mask + (this->m_top_ptr - this->m_begin_ptrc), std::move(value_p));
 		++this->m_top_ptr;
 	}
 
@@ -343,7 +349,7 @@ public:
 
 		--this->m_top_ptr;
 		T l_return_value_buffer = *this->m_top_ptr;
-		FE::destruct(this->m_top_ptr, this->m_bool_mask[this->m_top_ptr - this->m_begin_ptrc]);
+		FE::destruct(this->m_top_ptr, this->m_bool_mask + (this->m_top_ptr - this->m_begin_ptrc));
 		return l_return_value_buffer;
 	}
 	
