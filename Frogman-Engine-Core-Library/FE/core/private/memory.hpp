@@ -57,9 +57,9 @@ void memcpy_s(void* const dest_memblock_ptrc_p, length_t dest_length_p, size_t d
 enum struct MEMORY_ERROR_1XX : int16
 {
 	_NONE = 0,
-	_ERROR_INVALID_SIZE = -100,
-	_FATAL_ERROR_OUT_OF_RANGE = -101,
-	_FATAL_ERROR_NULLPTR = -102
+	_ERROR_INVALID_SIZE = 100,
+	_FATAL_ERROR_NULLPTR = 101,
+	_FATAL_ERROR_OUT_OF_RANGE = 102
 };
 
 struct total_memory_utilization_data

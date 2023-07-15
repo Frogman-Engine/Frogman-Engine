@@ -12,8 +12,10 @@ void ::FE::internal::engine_main::initialize_engine(engine_main_initialization_a
 	l_s_is_initialized = true;
 
 #if _IS_EXCEPTION_LOGGER_ENABLED_ == true
-	ABORT_IF(engine_main_initialization_arguments_p._exception_handling_strategy_ptr == nullptr, "CRITICAL ERROR: engine_main_initialization_arguments_p._exception_handling_strategy_ptr cannot be nullptr");
-	::FE::exception::s_logging_strategy_ptr = engine_main_initialization_arguments_p._exception_handling_strategy_ptr;
+	ABORT_IF(engine_main_initialization_arguments_p._exception_initialization_arguments._exception_logging_strategy_ptr == nullptr, "CRITICAL ERROR: engine_main_initialization_arguments_p._exception_initialization_arguments._exception_logging_strategy_ptr cannot be nullptr");
+	ABORT_IF(engine_main_initialization_arguments_p._exception_initialization_arguments._exception_log_buffer_size == 0, "CRITICAL ERROR: engine_main_initialization_arguments_p._exception_initialization_arguments._exception_log_buffer_size cannot be ZERO");
+	::FE::exception::s_logging_strategy_ptr = engine_main_initialization_arguments_p._exception_initialization_arguments._exception_logging_strategy_ptr;
+	::FE::exception::s_full_debug_info_buffer_size = engine_main_initialization_arguments_p._exception_initialization_arguments._exception_log_buffer_size;
 	::FE::exception::__construct_exception_on_main_thread();
 #endif
 	
@@ -34,23 +36,40 @@ void ::FE::internal::engine_main::shutdown_engine() noexcept
 _NORETURN_ void ::FE::internal::engine_main::abnormal_shutdown_with_exit_code(int32 signal_p) noexcept
 {
 	boost::stacktrace::stacktrace l_stack_frame_dumps;
-	var::length_t l_stack_depth = l_stack_frame_dumps.size();
+	var::length_t l_stack_depth = 0;
+
+#if _IS_EXCEPTION_LOGGER_ENABLED_ == true
 	exception::tl_s_file_logger << "\n-------------------------------------------------- BEGIN STACK TRACE RECORD --------------------------------------------------\n\n";
 
-	for (const auto& frame_cref : l_stack_frame_dumps)
+	auto l_crend = l_stack_frame_dumps.crend();
+	for (auto crbegin = l_stack_frame_dumps.crbegin(); crbegin != l_crend; ++crbegin)
 	{
 		exception::tl_s_file_logger << "#" << l_stack_depth << "\t";
-		exception::tl_s_file_logger << boost::stacktrace::to_string(frame_cref).data();
+		exception::tl_s_file_logger << boost::stacktrace::to_string(*crbegin).data();
 		exception::tl_s_file_logger << "\n\n";
-		--l_stack_depth;
+		++l_stack_depth;
 	}
 
 	exception::tl_s_file_logger << "-------------------------------------------------- END OF STACK TRACE RECORD --------------------------------------------------\n";
 	
-#if _IS_EXCEPTION_LOGGER_ENABLED_ == true
 	::FE::exception::__destruct_exception();
 	::std::exit(signal_p);
+
 #else
+	std::ofstream l_release_build_crash_report("Crashed thread stack frame dump.txt");
+	l_release_build_crash_report << "\n-------------------------------------------------- BEGIN STACK TRACE RECORD --------------------------------------------------\n\n";
+
+	auto l_crend = l_stack_frame_dumps.crend();
+	for (auto crbegin = l_stack_frame_dumps.crbegin(); crbegin != l_crend; ++crbegin)
+	{
+		l_release_build_crash_report << "#" << l_stack_depth << "\t";
+		l_release_build_crash_report << boost::stacktrace::to_string(*crbegin).data();
+		l_release_build_crash_report << "\n\n";
+		++l_stack_depth;
+	}
+
+	l_release_build_crash_report << "-------------------------------------------------- END OF STACK TRACE RECORD --------------------------------------------------\n";
+
 	raise(signal_p);
 #endif
 }

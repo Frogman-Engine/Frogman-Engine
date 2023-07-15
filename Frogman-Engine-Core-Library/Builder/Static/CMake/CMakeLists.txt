@@ -150,7 +150,6 @@ SET(_CORE_
 	${CMAKE_CURRENT_SOURCE_DIR}/../../../FE/core/prerequisite_symbols.h
 	${CMAKE_CURRENT_SOURCE_DIR}/../../../FE/core/random.hxx
 	${CMAKE_CURRENT_SOURCE_DIR}/../../../FE/core/exception.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/../../../FE/core/exception_mode.h 
 	${CMAKE_CURRENT_SOURCE_DIR}/../../../FE/core/singleton.hxx
 	${CMAKE_CURRENT_SOURCE_DIR}/../../../FE/core/string.hxx
 	${CMAKE_CURRENT_SOURCE_DIR}/../../../FE/core/tagged_object.hxx

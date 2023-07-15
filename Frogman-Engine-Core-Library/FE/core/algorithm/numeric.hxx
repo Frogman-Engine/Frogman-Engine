@@ -51,7 +51,7 @@ _FORCE_INLINE_ void convert_integer_to_string(char_type* const string_out_ptrc_p
 {
 	static_assert(::std::is_integral<integral_type>::value == true, "an illegal type of value_p assigned to the template argument integral_type");
 	static_assert(sizeof(char_type) <= sizeof(UTF32), "an illegal type of value_p assigned to the template argument char_type");
-	ABORT_IF(string_out_ptrc_p == nullptr, "ERROR: string_out_ptrc_p is nullptr.");
+	FE_EXIT(string_out_ptrc_p == nullptr, "NULLPTR DETECTED: string_out_ptrc_p is nullptr.", FE::MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR);
 
 	var::int8 l_integral_digits = numeric::count_integral_digit_length<integral_type>(value_p);
 	var::boolean l_is_negative = false;
@@ -63,7 +63,7 @@ _FORCE_INLINE_ void convert_integer_to_string(char_type* const string_out_ptrc_p
 		++l_integral_digits;
 	}
 
-	ABORT_IF(input_string_capacity_p <= l_integral_digits, "CRITICAL ERROR: the digit length of an integer exceeds the output string buffer capacity");
+	FE_EXIT(input_string_capacity_p <= l_integral_digits, "MEMORY BOUNDRY CHECK FAILURE: the digit length of an integer exceeds the output string buffer capacity", FE::MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_RANGE);
 
 	var::int8 l_idx = l_integral_digits - 1;
 	while (value_p > 0)
@@ -84,7 +84,7 @@ _FORCE_INLINE_ constexpr void constexpr_convert_integer_to_string(char_type* con
 {
 	static_assert(::std::is_integral<integral_type>::value == true, "an illegal type of value_p assigned to the template argument integral_type");
 	static_assert(sizeof(char_type) <= sizeof(UTF32), "an illegal type of value_p assigned to the template argument char_type");
-	ABORT_IF(string_out_ptrc_p == nullptr, "ERROR: string_out_ptrc_p is nullptr.");
+	FE_EXIT(string_out_ptrc_p == nullptr, "NULLPTR DETECTED: string_out_ptrc_p is nullptr.", FE::MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR);
 
 	var::int8 l_integral_digits = numeric::count_integral_digit_length<integral_type>(value_p);
 	var::boolean l_is_negative = false;
@@ -96,7 +96,7 @@ _FORCE_INLINE_ constexpr void constexpr_convert_integer_to_string(char_type* con
 		++l_integral_digits;
 	}
 
-	ABORT_IF(input_string_capacity_p <= l_integral_digits, "CRITICAL ERROR: the digit length of an integer exceeds the output string buffer capacity");
+	FE_EXIT(input_string_capacity_p <= l_integral_digits, "MEMORY BOUNDRY CHECK FAILURE: the digit length of an integer exceeds the output string buffer capacity", FE::MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_RANGE);
 
 	var::int8 l_idx = l_integral_digits - 1;
 	while (value_p > 0)
@@ -118,7 +118,7 @@ _FORCE_INLINE_ void convert_float_to_string(char_type* const string_out_ptrc_p, 
 {
 	static_assert(::std::is_floating_point<float_type>::value == true, "an illegal type of value_p assigned to the template argument integral_type");
 	static_assert(sizeof(char_type) <= sizeof(UTF32), "an illegal type of value_p assigned to the template argument char_type");
-	ABORT_IF(string_out_ptrc_p == nullptr, "ERROR: string_out_ptrc_p is nullptr.");
+	FE_EXIT(string_out_ptrc_p == nullptr, "NULLPTR DETECTED: string_out_ptrc_p is nullptr.", FE::MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR);
 
 	numeric::convert_integer_to_string<var::int64, char_type>(string_out_ptrc_p, input_string_capacity_p, static_cast<var::int64>(value_p));
 	
@@ -132,7 +132,7 @@ _FORCE_INLINE_ void convert_float_to_string(char_type* const string_out_ptrc_p, 
 		l_floating_point *= 10.0f;
 	}
 
-	ABORT_IF(input_string_capacity_p <= (numeric::count_integral_digit_length<var::int64>(l_floating_point) + l_integral_part_string_length), "CRITICAL ERROR: the digit length of the integral part exceeds the output string buffer capacity");
+	FE_EXIT(input_string_capacity_p <= (numeric::count_integral_digit_length<var::int64>(l_floating_point) + l_integral_part_string_length), "MEMORY BOUNDRY CHECK FAILURE: the digit length of the integral part exceeds the output string buffer capacity", FE::MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_RANGE);
 
 	numeric::convert_integer_to_string<var::int64, char_type>(string_out_ptrc_p + l_integral_part_string_length, input_string_capacity_p, static_cast<var::int64>(l_floating_point));
 }
@@ -142,7 +142,7 @@ _FORCE_INLINE_ constexpr void constexpr_convert_float_to_string(char_type* const
 {
 	static_assert(::std::is_floating_point<float_type>::value == true, "an illegal type of value_p assigned to the template argument integral_type");
 	static_assert(sizeof(char_type) <= sizeof(UTF32), "an illegal type of value_p assigned to the template argument char_type");
-	ABORT_IF(string_out_ptrc_p == nullptr, "ERROR: string_out_ptrc_p is nullptr.");
+	FE_EXIT(string_out_ptrc_p == nullptr, "NULLPTR DETECTED: string_out_ptrc_p is nullptr.", FE::MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR);
 
 	numeric::constexpr_convert_integer_to_string<var::int64, char_type>(string_out_ptrc_p, input_string_capacity_p, static_cast<var::int64>(value_p));
 
@@ -156,7 +156,7 @@ _FORCE_INLINE_ constexpr void constexpr_convert_float_to_string(char_type* const
 		l_floating_point *= 10;
 	}
 
-	ABORT_IF(input_string_capacity_p <= (numeric::count_integral_digit_length<var::int64>(l_floating_point) + l_integral_part_string_length), "CRITICAL ERROR: the digit length of the integral part exceeds the output string buffer capacity");
+	FE_EXIT(input_string_capacity_p <= (numeric::count_integral_digit_length<var::int64>(l_floating_point) + l_integral_part_string_length), "MEMORY BOUNDRY CHECK FAILURE: the digit length of the integral part exceeds the output string buffer capacity", FE::MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_RANGE);
 
 	numeric::constexpr_convert_integer_to_string<var::int64, char_type>(string_out_ptrc_p + l_integral_part_string_length, input_string_capacity_p, static_cast<var::int64>(l_floating_point));
 }

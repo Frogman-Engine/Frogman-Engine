@@ -15,7 +15,7 @@ constexpr auto _MAIN_THREAD_ID_ = -1;
 
 struct engine_main_initialization_arguments
 {
-	FE::exception* _exception_handling_strategy_ptr;
+	exception_initialization_arguments _exception_initialization_arguments;
 };
 
 

@@ -41,7 +41,7 @@ public:
 
 	_FORCE_INLINE_ reference operator[](index_t index_p) noexcept
 	{
-		ABORT_IF(index_p == FE::max_value<index_t>(), "ERROR: negative integers cannot be assigned to an index_t variable.");
+		FE_ASSERT(index_p == FE::max_value<index_t>(), "ERROR: negative integers cannot be assigned to an index_t variable.");
 		return implementation::index(this->m_iterator, index_p);
 	}
 
@@ -191,7 +191,7 @@ public:
 
 	_FORCE_INLINE_ reference operator[](index_t index_p) noexcept
 	{
-		ABORT_IF(index_p == FE::max_value<index_t>(), "ERROR: negative integers cannot be assigned to an index_t variable.");
+		FE_ASSERT(index_p == FE::max_value<index_t>(), "ERROR: negative integers cannot be assigned to an index_t variable.");
 		return implementation::index(this->m_reverse_iterator, index_p);
 	}
 
@@ -490,7 +490,7 @@ public:
 
 	_FORCE_INLINE_ const_reference operator[](index_t index_p) noexcept
 	{
-		ABORT_IF(index_p == FE::max_value<index_t>(), "ERROR: negative integers cannot be assigned to an index_t variable.");
+		FE_ASSERT(index_p == FE::max_value<index_t>(), "ERROR: negative integers cannot be assigned to an index_t variable.");
 		return implementation::index(this->m_reverse_iterator, index_p);
 	}
 

@@ -6,27 +6,29 @@
 #include <FE/core/thread.hpp>
 #include <FE/core/clock.hpp>
 #include <cstdlib>
+#include <csignal>
 #include <cwchar>
-#include <fstream>
 #include <filesystem>
 
 
 constexpr auto _FILE_NAME_MAX_LENGTH_ = 8192;
 constexpr auto _MAX_THRED_ID_DIGIT_LENGTH_ = 24;
+constexpr FE::length_t g_sec_string_length = 4;
+
 
 
 FE::exception* FE::exception::s_logging_strategy_ptr = nullptr;
 
 thread_local ::std::ofstream FE::exception::tl_s_file_logger;
 thread_local ::FE::clock FE::exception::tl_s_clock;
+thread_local ::std::string FE::exception::tl_s_full_debug_info_buffer;
+::FE::var::size_t FE::exception::s_full_debug_info_buffer_size = 0;
 
-thread_local ::std::unique_ptr<FE::exception::char_type[]> FE::exception::tl_s_source_code_line_info_buffer IF_DEBUG_MODE((new FE::exception::char_type[_LINE_INFO_BUFFER_SIZE_]{ '\0' }), = nullptr);
-thread_local ::std::unique_ptr<FE::exception::char_type[]> FE::exception::tl_s_full_debug_info_buffer IF_DEBUG_MODE((new FE::exception::char_type[_FULL_DEBUG_INFO_BUFFER_SIZE_]{ '\0' }), = nullptr);
 
 
-bool FE::exception::log(const bool expression_p, const char* const expression_string_ptrc_p, const FE::EXCEPTION_MODE runtime_exception_mode_p, const char* message_ptr_p, const char* file_name_ptr_p, const char* function_name_ptr_p, const int line_p, const int exit_code_p) noexcept
+bool FE::exception::log(const bool expression_p, const char* const expression_string_ptrc_p, const FE::EXCEPTION_MODE runtime_exception_mode_p, const char* const message_ptrc_p, const char* const file_name_ptrc_p, const char* const function_name_ptrc_p, const int line_p, const char* const exit_code_enum_ptrc_p, const int exit_code_p) noexcept
 {
-    return exception::s_logging_strategy_ptr->__logging_strategy(expression_p, expression_string_ptrc_p, runtime_exception_mode_p, message_ptr_p, file_name_ptr_p, function_name_ptr_p, line_p, exit_code_p);
+    return exception::s_logging_strategy_ptr->__logging_strategy(expression_p, expression_string_ptrc_p, runtime_exception_mode_p, message_ptrc_p, file_name_ptrc_p, function_name_ptrc_p, line_p, exit_code_enum_ptrc_p, exit_code_p);
 }
 
 void FE::exception::__construct_exception_on_main_thread() noexcept
@@ -50,33 +52,37 @@ void FE::exception::__destruct_exception() noexcept
 }
 
 
-
-
-bool FE::real_time_exception_history_logging_strategy::__logging_strategy(const bool expression_p, const char* const expression_string_ptrc_p, const FE::EXCEPTION_MODE runtime_exception_mode_p, const char* message_ptr_p, const char* file_name_ptr_p, const char* function_name_ptr_p, const int line_p, const int exit_code_p) noexcept
+bool FE::real_time_exception_history_logging_strategy::__logging_strategy(boolean expression_p, character* const expression_string_ptrc_p, const EXCEPTION_MODE runtime_exception_mode_p, character* const message_ptrc_p, character* const file_name_ptrc_p, character* const function_name_ptrc_p, int32 line_p, character* const exit_code_enum_ptrc_p, int32 exit_code_p) noexcept
 {
-    ABORT_IF(expression_string_ptrc_p == nullptr, "ERROR: expression_string_ptrc_p is nullptr.");
-    switch (static_cast<int>(expression_p))
+    switch (expression_p)
     {
-    case 0:
-        return false;
+    case true:
+        break;
+
+    case false:
+        return expression_p;
+
     default:
         break;
     }
+    
+    
+    FE::exception::buffer_type l_source_code_line_info_buffer[_LINE_INFO_BUFFER_SIZE_] = "\0";
 
 
-    ::snprintf(real_time_exception_history_logging_strategy::tl_s_source_code_line_info_buffer.get(), _LINE_INFO_BUFFER_SIZE_, "%d", line_p);
+    ::snprintf(l_source_code_line_info_buffer, _LINE_INFO_BUFFER_SIZE_, "%d", line_p);
 
-    ::FE::algorithm::string::concatenate_strings<char>
+    ::FE::algorithm::string::concatenate_strings<var::character>
         (
-            real_time_exception_history_logging_strategy::tl_s_full_debug_info_buffer.get(),
-            _FULL_DEBUG_INFO_BUFFER_SIZE_,
+            real_time_exception_history_logging_strategy::tl_s_full_debug_info_buffer.data(),
+            _DEFAULT_DEBUG_LOG_BUFFER_SIZE_,
             {
                 "Time: ", exception::tl_s_clock.get_current_local_time(), "\n",
-                "Error Message - ", message_ptr_p, "\n",
+                "Error Message - ", message_ptrc_p, "\n",
                 "Expected the expression \"", expression_string_ptrc_p, "\" to be false", "\n",
-                "File Directory: ", file_name_ptr_p, "\n",
-                "Function Name: ", function_name_ptr_p, "\n",
-                "Code Line Number: ", real_time_exception_history_logging_strategy::tl_s_source_code_line_info_buffer.get()
+                "File Directory: ", file_name_ptrc_p, "\n",
+                "Function Name: ", function_name_ptrc_p, "\n",
+                "Code Line Number: ", l_source_code_line_info_buffer
             }
     );
 
@@ -84,43 +90,44 @@ bool FE::real_time_exception_history_logging_strategy::__logging_strategy(const 
     switch (runtime_exception_mode_p)
     {
     case _LOG_EXCEPTION_HISTORY_: // store exception logs in a global container and write  exception history file right before the unsafe_end of the application.  
-        real_time_exception_history_logging_strategy::tl_s_file_logger << real_time_exception_history_logging_strategy::tl_s_full_debug_info_buffer.get() << "\n\n";
+        real_time_exception_history_logging_strategy::tl_s_file_logger << real_time_exception_history_logging_strategy::tl_s_full_debug_info_buffer.data() << "\n\n";
 
-        ::FE::memset_s(real_time_exception_history_logging_strategy::tl_s_source_code_line_info_buffer.get(), _NULL_, _LINE_INFO_BUFFER_SIZE_, sizeof(exception::char_type));
-        ::FE::memset_s(real_time_exception_history_logging_strategy::tl_s_full_debug_info_buffer.get(), _NULL_, _FULL_DEBUG_INFO_BUFFER_SIZE_, sizeof(exception::char_type));
+        ::FE::memset_s(l_source_code_line_info_buffer, _NULL_, _LINE_INFO_BUFFER_SIZE_, sizeof(exception::buffer_type));
+        ::FE::memset_s(real_time_exception_history_logging_strategy::tl_s_full_debug_info_buffer.data(), _NULL_, _DEFAULT_DEBUG_LOG_BUFFER_SIZE_, sizeof(exception::buffer_type));
         break;
 
 
     case _ABORT_IMMEDIATELY_:
-        FE::algorithm::string::string_concatenation<char>(real_time_exception_history_logging_strategy::tl_s_full_debug_info_buffer.get(), _FULL_DEBUG_INFO_BUFFER_SIZE_, "\nabort() HAS BEEN CALLED.", ::FE::algorithm::string::string_length("\tabort() HAS BEEN CALLED."));
+        FE::algorithm::string::string_concatenation<var::character>(real_time_exception_history_logging_strategy::tl_s_full_debug_info_buffer.data(), _DEFAULT_DEBUG_LOG_BUFFER_SIZE_, "\nabort() HAS BEEN CALLED.", ::FE::algorithm::string::string_length("\tabort() HAS BEEN CALLED."));
 
-        real_time_exception_history_logging_strategy::tl_s_file_logger << real_time_exception_history_logging_strategy::tl_s_full_debug_info_buffer.get() << "\n\n";
+        real_time_exception_history_logging_strategy::tl_s_file_logger << real_time_exception_history_logging_strategy::tl_s_full_debug_info_buffer.data() << "\n\n";
 
-        ::FE::memset_s(real_time_exception_history_logging_strategy::tl_s_source_code_line_info_buffer.get(), _NULL_, _LINE_INFO_BUFFER_SIZE_, sizeof(exception::char_type));
-        ::FE::memset_s(real_time_exception_history_logging_strategy::tl_s_full_debug_info_buffer.get(), _NULL_, _FULL_DEBUG_INFO_BUFFER_SIZE_, sizeof(exception::char_type));
+        ::FE::memset_s(l_source_code_line_info_buffer, _NULL_, _LINE_INFO_BUFFER_SIZE_, sizeof(exception::buffer_type));
+        ::FE::memset_s(real_time_exception_history_logging_strategy::tl_s_full_debug_info_buffer.data(), _NULL_, _DEFAULT_DEBUG_LOG_BUFFER_SIZE_, sizeof(exception::buffer_type));
 
         ::abort(); // aborts the entire processes of the application.
 
 
     case _EXIT_WITH_CODE_:
         // store exit code
-        ::snprintf(real_time_exception_history_logging_strategy::tl_s_source_code_line_info_buffer.get(), _LINE_INFO_BUFFER_SIZE_, "%d", exit_code_p);
+        ::snprintf(l_source_code_line_info_buffer, _LINE_INFO_BUFFER_SIZE_, "%d", exit_code_p);
 
-        ::FE::algorithm::string::concatenate_strings<char>
+        ::FE::algorithm::string::concatenate_strings<var::character>
             (
-                real_time_exception_history_logging_strategy::tl_s_full_debug_info_buffer.get(),
-                _FULL_DEBUG_INFO_BUFFER_SIZE_,
+                real_time_exception_history_logging_strategy::tl_s_full_debug_info_buffer.data(),
+                _DEFAULT_DEBUG_LOG_BUFFER_SIZE_,
                 {
-                    "\nexit() HAS BEEN CALLED with exit code: ", real_time_exception_history_logging_strategy::tl_s_source_code_line_info_buffer.get()
+                    "\nexit() HAS BEEN CALLED with exit code: ", l_source_code_line_info_buffer, "\n"
+                    "Exit Code Enum: ", exit_code_enum_ptrc_p
                 }
         );
 
-        real_time_exception_history_logging_strategy::tl_s_file_logger << real_time_exception_history_logging_strategy::tl_s_full_debug_info_buffer.get() << "\n\n";
+        real_time_exception_history_logging_strategy::tl_s_file_logger << real_time_exception_history_logging_strategy::tl_s_full_debug_info_buffer.data() << "\n\n";
 
-        ::FE::memset_s(real_time_exception_history_logging_strategy::tl_s_source_code_line_info_buffer.get(), _NULL_, _LINE_INFO_BUFFER_SIZE_, sizeof(exception::char_type));
-        ::FE::memset_s(real_time_exception_history_logging_strategy::tl_s_full_debug_info_buffer.get(), _NULL_, _FULL_DEBUG_INFO_BUFFER_SIZE_, sizeof(exception::char_type));
+        ::FE::memset_s(l_source_code_line_info_buffer, _NULL_, _LINE_INFO_BUFFER_SIZE_, sizeof(exception::buffer_type));
+        ::FE::memset_s(real_time_exception_history_logging_strategy::tl_s_full_debug_info_buffer.data(), _NULL_, _DEFAULT_DEBUG_LOG_BUFFER_SIZE_, sizeof(exception::buffer_type));
 
-        ::std::exit(exit_code_p);
+        ::std::raise(exit_code_p);
     }
 
     return true;
@@ -128,51 +135,68 @@ bool FE::real_time_exception_history_logging_strategy::__logging_strategy(const 
 
 void FE::real_time_exception_history_logging_strategy::__main_thread_exception_construction_strategy() noexcept
 {
-    ::std::filesystem::path l_directory_name = ::std::filesystem::current_path() / "Frogman-Engine-Exception-History-Logs\0";
+    ::std::filesystem::path l_directory_name = (::std::filesystem::current_path() / "Frogman-Engine-Exception-History-Logs\0");
     if (::std::filesystem::exists(l_directory_name) == false)
     {
         ::std::filesystem::create_directory(l_directory_name);
     }
+
+    tl_s_full_debug_info_buffer.reserve(s_full_debug_info_buffer_size);
+    FE::memset_s(tl_s_full_debug_info_buffer.data(), _NULL_, s_full_debug_info_buffer_size, sizeof(FE::exception::buffer_type));
+
 #if _WINDOWS_64BIT_OS_ == 1
-    ::FE::fwstring<clock::_GET_CURRENT_LOCAL_TIME_BUFFER_SIZE_> l_date_info_wstring;
-    ::std::mbstowcs(l_date_info_wstring.begin().operator->(), exception::tl_s_clock.get_current_local_time(), clock::_GET_CURRENT_LOCAL_TIME_BUFFER_SIZE_);
+    var::wchar l_date_info_wstring[clock::_GET_CURRENT_LOCAL_TIME_BUFFER_SIZE_] = L"\0";
+    ::std::mbstowcs(l_date_info_wstring, exception::tl_s_clock.get_current_local_time(), clock::_GET_CURRENT_LOCAL_TIME_BUFFER_SIZE_);
+    std::memset(l_date_info_wstring + (::std::wcslen(l_date_info_wstring) - g_sec_string_length), _NULL_, g_sec_string_length * sizeof(var::wchar)); // to remove seconds
 
-    if (::FE::algorithm::string::string_length((::std::filesystem::current_path() / "Frogman-Engine-Exception-History-Logs\\thread \0").c_str()) >= _FILE_NAME_MAX_LENGTH_ - clock::_GET_CURRENT_LOCAL_TIME_BUFFER_SIZE_) { ::abort(); }
+    ::std::filesystem::path l_path_to_log_dump_file = l_directory_name / l_date_info_wstring;
+    ABORT_IF(::std::wcslen(l_path_to_log_dump_file.c_str()) >= _FILE_NAME_MAX_LENGTH_ - clock::_GET_CURRENT_LOCAL_TIME_BUFFER_SIZE_, "ERROR: file name buffer overflowed.");
 
-    ::FE::fwstring<_FILE_NAME_MAX_LENGTH_> l_exception_history_file_name = (::std::filesystem::current_path() / "Frogman-Engine-Exception-History-Logs\\thread \0").c_str();
+    var::wchar l_full_path_to_the_file[_FILE_NAME_MAX_LENGTH_] = L"\0";
+    ::std::wcscpy(l_full_path_to_the_file, l_path_to_log_dump_file.c_str());
 
-    ::FE::algorithm::string::concatenate_strings<::FE::fwstring<_FILE_NAME_MAX_LENGTH_>::value_type>
+    ::FE::algorithm::string::concatenate_strings<var::wchar>
         (
-            l_exception_history_file_name.begin().operator->(),
+            l_full_path_to_the_file,
             _FILE_NAME_MAX_LENGTH_,
             {
-                L"main() @ ",
-                l_date_info_wstring.c_str(),
+                L"\\thread main() @ ",
+                l_date_info_wstring,
                 L".txt"
             }
     );
 
-    real_time_exception_history_logging_strategy::tl_s_file_logger.open(l_exception_history_file_name.c_str());
-    real_time_exception_history_logging_strategy::tl_s_file_logger << "[BEGIN RECORD]\n{\n";
 #elif _LINUX_64BIT_OS_ == 1
-    if (::FE::algorithm::string::string_length((::std::filesystem::current_path() / "Frogman-Engine-Exception-History-Logs/thread \0").c_str()) >= _FILE_NAME_MAX_LENGTH_ - clock::_GET_CURRENT_LOCAL_TIME_BUFFER_SIZE_) { ::abort(); }
+    var::character l_date_info_string[clock::_GET_CURRENT_LOCAL_TIME_BUFFER_SIZE_] = "\0";
+    std::memset(l_date_info_string + (::std::strlen(l_date_info_string) - g_sec_string_length), _NULL_, g_sec_string_length * sizeof(var::character)); // to remove min sec
+    ::std::filesystem::path l_path_to_log_dump_file = l_directory_name / l_date_info_string;
 
-    ::FE::fstring<_FILE_NAME_MAX_LENGTH_> l_exception_history_file_name = (::std::filesystem::current_path() / "Frogman-Engine-Exception-History-Logs/thread \0").c_str();
+    ABORT_IF(::std::strlen(l_path_to_log_dump_file.c_str()) >= _FILE_NAME_MAX_LENGTH_ - clock::_GET_CURRENT_LOCAL_TIME_BUFFER_SIZE_, "ERROR: file name buffer overflowed.");
 
-    ::FE::algorithm::string::concatenate_strings<::FE::fstring<_FILE_NAME_MAX_LENGTH_>::value_type>
+    var::character l_full_path_to_the_file[_FILE_NAME_MAX_LENGTH_] = "\0";
+    ::std::strcpy(l_full_path_to_the_file, l_path_to_log_dump_file.c_str());
+
+    ::FE::algorithm::string::concatenate_strings<var::character>
         (
-            l_exception_history_file_name.begin().operator->(),
+            l_full_path_to_the_file,
             _FILE_NAME_MAX_LENGTH_,
             {
-                "main() @ ",
-                exception::tl_s_clock.get_current_local_time(),
+                "\\thread main() @ ",
+                l_date_info_string,
                 ".txt"
             }
     );
 
-    real_time_exception_history_logging_strategy::tl_s_file_logger.open(l_exception_history_file_name.c_str());
-    real_time_exception_history_logging_strategy::tl_s_file_logger << "[BEGIN RECORD]\n{\n";
+
 #endif
+
+    if (::std::filesystem::exists(l_path_to_log_dump_file) == false)
+    {
+        ::std::filesystem::create_directory(l_path_to_log_dump_file);
+    }
+
+    tl_s_file_logger.open(l_full_path_to_the_file);
+    tl_s_file_logger << "[BEGIN RECORD]\n{\n";
 }
 
 void FE::real_time_exception_history_logging_strategy::__main_thread_exception_destruction_strategy() noexcept
@@ -188,55 +212,74 @@ void FE::real_time_exception_history_logging_strategy::__main_thread_exception_d
 
 void FE::real_time_exception_history_logging_strategy::__exception_construction_strategy() noexcept
 {
-    ::std::filesystem::path l_directory_name = ::std::filesystem::current_path() / "Frogman-Engine-Exception-History-Logs\0";
+    ::std::filesystem::path l_directory_name = (::std::filesystem::current_path() / "Frogman-Engine-Exception-History-Logs\0");
     if (::std::filesystem::exists(l_directory_name) == false)
     {
         ::std::filesystem::create_directory(l_directory_name);
     }
+
+    tl_s_full_debug_info_buffer.reserve(s_full_debug_info_buffer_size);
+    FE::memset_s(tl_s_full_debug_info_buffer.data(), _NULL_, s_full_debug_info_buffer_size, sizeof(FE::exception::buffer_type));
+
 #if _WINDOWS_64BIT_OS_ == 1
-    ::FE::fwstring<_MAX_THRED_ID_DIGIT_LENGTH_> l_thread_id;
-    ::swprintf(l_thread_id.begin().operator->(), _MAX_THRED_ID_DIGIT_LENGTH_, L"%llu", ::FE::thread::tl_s_this_thread_id); // hashed thread-ids from std::hash are too long and hard to read 
+    var::wchar l_thread_id[_MAX_THRED_ID_DIGIT_LENGTH_] = L"\0";
+    ::swprintf(l_thread_id, _MAX_THRED_ID_DIGIT_LENGTH_, L"%llu", ::FE::thread::tl_s_this_thread_id); // hashed thread-ids from std::hash are too long and hard to read 
 
-    ::FE::fwstring<clock::_GET_CURRENT_LOCAL_TIME_BUFFER_SIZE_> l_date_info_wstring;
-    ::std::mbstowcs(l_date_info_wstring.begin().operator->(), exception::tl_s_clock.get_current_local_time(), clock::_GET_CURRENT_LOCAL_TIME_BUFFER_SIZE_);
+    var::wchar l_date_info_wstring[clock::_GET_CURRENT_LOCAL_TIME_BUFFER_SIZE_] = L"\0";
+    ::std::mbstowcs(l_date_info_wstring, exception::tl_s_clock.get_current_local_time(), clock::_GET_CURRENT_LOCAL_TIME_BUFFER_SIZE_);
+    std::memset(l_date_info_wstring + (::std::wcslen(l_date_info_wstring) - g_sec_string_length), _NULL_, g_sec_string_length * sizeof(var::wchar)); // to remove seconds
 
-    ::FE::fwstring<_FILE_NAME_MAX_LENGTH_> l_exception_history_file_name = (::std::filesystem::current_path() / "Frogman-Engine-Exception-History-Logs\\thread \0").c_str();
+    ::std::filesystem::path l_path_to_log_dump_file = l_directory_name / l_date_info_wstring;
 
-    ::FE::algorithm::string::concatenate_strings<::FE::fwstring<_FILE_NAME_MAX_LENGTH_>::value_type>
+    var::wchar l_full_path_to_the_file[_FILE_NAME_MAX_LENGTH_] = L"\0";
+    ::std::wcscpy(l_full_path_to_the_file, l_path_to_log_dump_file.c_str());
+
+    ::FE::algorithm::string::concatenate_strings<var::wchar>
         (
-            l_exception_history_file_name.begin().operator->(),
+            l_full_path_to_the_file,
             _FILE_NAME_MAX_LENGTH_,
             {
-                l_thread_id.c_str(),
+                L"\\thread ",
+                l_thread_id,
                 L" @ ",
-                l_date_info_wstring.c_str(),
+                l_date_info_wstring,
                 L".txt"
             }
     );
 
-    real_time_exception_history_logging_strategy::tl_s_file_logger.open(l_exception_history_file_name.c_str());
-    real_time_exception_history_logging_strategy::tl_s_file_logger << "[BEGIN RECORD]\n{\n";
 #elif _LINUX_64BIT_OS_ == 1
-    ::FE::fstring<_MAX_THRED_ID_DIGIT_LENGTH_> l_thread_id;
-    snprintf(l_thread_id.begin().operator->(), _MAX_THRED_ID_DIGIT_LENGTH_, "%llu", ::FE::thread::tl_s_this_thread_id);
+    var::character l_thread_id[_MAX_THRED_ID_DIGIT_LENGTH_] = "\0";
+    snprintf(l_thread_id, _MAX_THRED_ID_DIGIT_LENGTH_, "%llu", ::FE::thread::tl_s_this_thread_id);
 
-    ::FE::fstring<_FILE_NAME_MAX_LENGTH_> l_exception_history_file_name = (::std::filesystem::current_path() / "Frogman-Engine-Exception-History-Logs/thread \0").c_str();
+    var::character l_date_info_string[clock::_GET_CURRENT_LOCAL_TIME_BUFFER_SIZE_] = "\0";
+    std::memset(l_date_info_string + (::std::strlen(l_date_info_string) - g_sec_string_length), _NULL_, g_sec_string_length * sizeof(var::character)); // to remove min sec
+    ::std::filesystem::path l_path_to_log_dump_file = l_directory_name / l_date_info_string;
 
-    ::FE::algorithm::string::concatenate_strings<::FE::fstring<_FILE_NAME_MAX_LENGTH_>::value_type>
+    var::character l_full_path_to_the_file[_FILE_NAME_MAX_LENGTH_] = "\0";
+    strcpy(l_full_path_to_the_file, l_path_to_log_dump_file.c_str());
+
+    ::FE::algorithm::string::concatenate_strings<var::character>
         (
-            l_exception_history_file_name.begin().operator->(),
+            l_full_path_to_the_file,
             _FILE_NAME_MAX_LENGTH_,
             {
-                l_thread_id.c_str(),
+                "\\thread ",
+                l_thread_id,
                 " @ ",
-                exception::tl_s_clock.get_current_local_time(),
+                l_date_info_string,
                 ".txt"
             }
     );
 
-    real_time_exception_history_logging_strategy::tl_s_file_logger.open(l_exception_history_file_name.c_str());
-    real_time_exception_history_logging_strategy::tl_s_file_logger << "[BEGIN RECORD]\n{\n";
 #endif
+
+    if (::std::filesystem::exists(l_path_to_log_dump_file) == false)
+    {
+        ::std::filesystem::create_directory(l_path_to_log_dump_file);
+    }
+
+    real_time_exception_history_logging_strategy::tl_s_file_logger.open(l_full_path_to_the_file);
+    real_time_exception_history_logging_strategy::tl_s_file_logger << "[BEGIN RECORD]\n{\n";
 }
 
 void FE::real_time_exception_history_logging_strategy::__exception_destruction_strategy() noexcept
@@ -245,16 +288,14 @@ void FE::real_time_exception_history_logging_strategy::__exception_destruction_s
     {
         real_time_exception_history_logging_strategy::tl_s_file_logger << "\n}\n[END OF HISTORY]";
 
-        ::FE::real_time_exception_history_logging_strategy::tl_s_file_logger << "\n\nThe leaked heap memory byte(s) by the thread " << ::FE::thread::tl_s_this_thread_id << " is " << heap_utilization<void>::query_all_data()._thread_local_total_bytes << " byte(s)";
+        real_time_exception_history_logging_strategy::tl_s_file_logger << "\n\nThe leaked heap memory byte(s) by the thread " << ::FE::thread::tl_s_this_thread_id << " is " << heap_utilization<void>::query_all_data()._thread_local_total_bytes << " byte(s)";
 
         real_time_exception_history_logging_strategy::tl_s_file_logger.close();
     }
 }
 
 
-
-
-bool FE::exception_history_log_buffering_strategy::__logging_strategy(const bool expression_p, const char* const expression_string_ptrc_p, const FE::EXCEPTION_MODE runtime_exception_mode_p, const char* message_ptr_p, const char* file_name_ptr_p, const char* function_name_ptr_p, const int line_p, const int exit_code_p) noexcept
+bool FE::exception_history_log_buffering_strategy::__logging_strategy(boolean expression_p, character* const expression_string_ptrc_p, const EXCEPTION_MODE runtime_exception_mode_p, character* const message_ptrc_p, character* const file_name_ptrc_p, character* const function_name_ptrc_p, int32 line_p, character* const exit_code_enum_ptrc_p, int32 exit_code_p) noexcept
 {
     return false;
 }

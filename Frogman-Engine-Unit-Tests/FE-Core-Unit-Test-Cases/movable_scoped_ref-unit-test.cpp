@@ -40,29 +40,28 @@ struct my_struct
 
 TEST(movable_scoped_ref, serial)
 {
-	FE::concurrent_memory_block<my_struct>* l_concurrent_memory_block_ptr = (FE::concurrent_memory_block<my_struct>*)calloc(1, sizeof(FE::concurrent_memory_block<my_struct>));
+	FE::concurrent_memory_block<my_struct> l_concurrent_memory_block;
 
 	{
-		l_concurrent_memory_block_ptr->call_constructor();
-		EXPECT_EQ((***l_concurrent_memory_block_ptr)._has_constructor_been_called, true);
+		l_concurrent_memory_block.call_constructor();
+		EXPECT_TRUE((**l_concurrent_memory_block)._has_constructor_been_called);
 
-
-		FE::movable_scoped_ref<my_struct> l_movable_scoped_ref = **l_concurrent_memory_block_ptr; // Critical Section. threads can not call the destructor from this point
+		FE::movable_scoped_ref<my_struct> l_movable_scoped_ref = *l_concurrent_memory_block; // Critical Section. Threads can not invoke call_destructor() of l_concurrent_memory_block from this point
 		
-		EXPECT_EQ(l_movable_scoped_ref.is_being_used(), true);
+		EXPECT_TRUE(l_movable_scoped_ref.is_being_used());
 
 		(*l_movable_scoped_ref)._field = 5; // Critical Section.
 
-		if (l_concurrent_memory_block_ptr->call_destructor() == FE::_FAILED_) // It always fail to invoke the destructor.
+		if (l_concurrent_memory_block.call_destructor() == FE::_FAILED_) // It always fail to invoke the destructor, since l_concurrent_memory_block is being referenced by l_movable_scoped_ref.
 		{
-			EXPECT_EQ((***l_concurrent_memory_block_ptr)._has_destructor_been_called, false);
+			EXPECT_FALSE((**l_concurrent_memory_block)._has_destructor_been_called);
 		}
 
-	} // The reference gets invalidated when it reaches a scope.
+	} // The l_movable_scoped_ref gets invalidated when it reaches the end of its scope.
 
-	l_concurrent_memory_block_ptr->call_destructor();
+	l_concurrent_memory_block.call_destructor();
 
-	EXPECT_EQ(l_concurrent_memory_block_ptr->is_constructed(), false); // destructed with no errors.
+	EXPECT_EQ(l_concurrent_memory_block.is_constructed(), false); // destructed with no errors.
 }
 
 
@@ -72,19 +71,19 @@ void fn(std::promise<bool>& promise_p, FE::concurrent_memory_block<my_struct>& c
 {
 	FE::movable_scoped_ref<my_struct> l_movable_scoped_reference = *concurrent_memory_block_p;
 	promise_p.set_value(true);
-	std::this_thread::sleep_for(std::chrono::milliseconds(10));
+	std::this_thread::sleep_for(std::chrono::seconds(1));
     EXPECT_EQ(l_movable_scoped_reference.is_being_used(), true);
 }
 
 TEST(movable_scoped_ref, parallel)
 {
-	FE::concurrent_memory_block<my_struct>* l_concurrent_memory_block_ptr = (FE::concurrent_memory_block<my_struct>*)calloc(1, sizeof(FE::concurrent_memory_block<my_struct>));
-	l_concurrent_memory_block_ptr->call_constructor();
+	FE::concurrent_memory_block<my_struct> l_concurrent_memory_block;
+	l_concurrent_memory_block.call_constructor();
 
 	std::promise<bool> l_promise;
 	std::future<bool> l_future = l_promise.get_future();
 
-	FE::two_args< std::promise<bool>&, FE::concurrent_memory_block<my_struct>&> l_two_args {l_promise, *l_concurrent_memory_block_ptr};
+	FE::two_args< std::promise<bool>&, FE::concurrent_memory_block<my_struct>&> l_two_args{l_promise, l_concurrent_memory_block};
 	FE::void_function_with_2_args<std::promise<bool>&, FE::concurrent_memory_block<my_struct>&> l_function_with_2_args(fn, std::move(l_two_args));
 
 	FE::thread l_worker;
@@ -92,9 +91,9 @@ TEST(movable_scoped_ref, parallel)
 
 	EXPECT_TRUE(l_future.get());
 	
-	while (l_concurrent_memory_block_ptr->call_destructor() == false) {} // The destructor is attempting to be called, but it must wait for the completion of local worker's task.
+	while (l_concurrent_memory_block.call_destructor() == false) {} // Busy waiting l_worker's job to be done 
 
-	EXPECT_EQ(l_concurrent_memory_block_ptr->is_constructed(), false);
+	EXPECT_EQ(l_concurrent_memory_block.is_constructed(), false);
 
 	l_worker.join();
 }

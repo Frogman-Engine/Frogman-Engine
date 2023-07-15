@@ -146,3 +146,49 @@ TEST(stack, push_pop)
 		EXPECT_TRUE(FE::algorithm::string::string_comparison(L_fstring_const_iterator_begin[i].c_str(), l_initializer_list.begin()[i].c_str()));
 	}
 }
+
+TEST(stack, multiple_assignments_)
+{
+	FE::stack<std::string, 5> l_stack = { "hi", ",", " ", "world", "." };
+	l_stack = { "hello", ",", " ", "C++", "." };
+	{
+		std::initializer_list<const char*> l_initializer_list = { "hello", ",", " ", "C++", "." };
+		auto l_initializer_list_cbegin = l_initializer_list.begin();
+		for (auto iterator = l_stack.cbegin(); iterator != l_stack.cend(); ++iterator)
+		{
+			EXPECT_TRUE(FE::algorithm::string::string_comparison<FE::var::character>(iterator->c_str(), *l_initializer_list_cbegin));
+			++l_initializer_list_cbegin;
+		}
+	}
+
+
+	FE::stack<std::string, 5> l_another_stack = { "hi", ",", " ", "world", "." };
+	l_stack = std::move(l_another_stack);
+	{
+		std::initializer_list<const char*> l_initializer_list = { "hi", ",", " ", "world", "." };
+		auto l_initializer_list_cbegin = l_initializer_list.begin();
+		for (auto iterator = l_stack.cbegin(); iterator != l_stack.cend(); ++iterator)
+		{
+			EXPECT_TRUE(FE::algorithm::string::string_comparison<FE::var::character>(iterator->c_str(), *l_initializer_list_cbegin));
+			++l_initializer_list_cbegin;
+		}
+	}
+	l_stack = std::move(l_another_stack);
+}
+
+TEST(stack, container_comparison_)
+{
+	FE::stack<std::string, 5> l_languages1 = { "C++", "C#", "Python", "Java", "C"};
+	FE::stack<std::string, 5> l_languages2 = { "C++", "C#", "Python", "Java", "C" };
+	EXPECT_TRUE(l_languages1 == l_languages2);
+
+	l_languages1.pop();
+	l_languages1.pop();
+	l_languages1.pop();
+	l_languages1.pop();
+	EXPECT_FALSE(l_languages1 == l_languages2); // C++ is not equivalent to C
+
+	l_languages1.push("Python");
+	l_languages2.pop();
+	EXPECT_TRUE(l_languages1 != l_languages2); // Python is not equivalent to Java
+}
