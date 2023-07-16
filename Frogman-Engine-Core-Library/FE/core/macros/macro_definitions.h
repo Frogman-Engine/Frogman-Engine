@@ -14,32 +14,24 @@
 
 
 #ifdef _MSC_VER
-#define _VISUAL_STUDIO_CPP_ 1
-#else
-#define _VISUAL_STUDIO_CPP_ 0
+#define _VISUAL_STUDIO_CPP_
 #endif
 
 #ifdef __clang__
-#define _CLANG_ 1
-#else
-#define _CLANG_ 0
+#define _CLANG_ 
 #endif
 
 #ifdef __GNUC__
-#define _GNUC_ 1
-#else
-#define _GNUC_ 0
+#define _GNUC_ 
 #endif
 
 
 #ifdef __x86_64
-#define _X64_ 1
+#define _X64_ 
 #elif defined(_M_X64)
-#define _X64_ 1
+#define _X64_ 
 #elif defined(_M_AMD64)
-#define _X64_ 1
-#else
-#define _X64_ 0
+#define _X64_ 
 #endif
 
 
