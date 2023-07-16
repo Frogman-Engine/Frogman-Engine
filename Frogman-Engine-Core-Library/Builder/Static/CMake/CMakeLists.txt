@@ -175,88 +175,88 @@ SOURCE_GROUP("FE\\miscellaneous" FILES ${_MISCELLANEOUS_})
 
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-message("Configurating The Build Environment for Linux X86-64 Distributions")
+	MESSAGE("Configurating The Build Environment for Linux X86-64 Distributions")
 
-# Find the path to the GNU C compiler executable
-FIND_PROGRAM(GNU_C NAMES gcc)
-# Find the path to the Clang C compiler executable
-FIND_PROGRAM(CLANG_C NAMES clang)
+	# Find the path to the GNU C compiler executable
+	FIND_PROGRAM(GNU_C NAMES gcc)
+	# Find the path to the Clang C compiler executable
+	FIND_PROGRAM(CLANG_C NAMES clang)
 
-if(GNU_C)
-    # Set the path to the found GNU C compiler executable
-    SET(CMAKE_C_COMPILER ${GNU_C})
-elseif(CLANG_C)
-	# Set the path to the found Clang C compiler executable
-	SET(CMAKE_C_COMPILER ${CLANG_C})
-else()
-    MESSAGE(FATAL_ERROR "Could Not Find Any of Executable GNU C compilers nor Clang C compilers")
-endif()
-
-
-# Find the path to the g++ compiler executable
-FIND_PROGRAM(GNU_CPP NAMES g++-13 g++-12 g++-11 g++)
-# Find the path to the clang++ compiler executable
-FIND_PROGRAM(CLANG_CPP NAMES clang++-16 clang++-15 clang++-14 clang++-13 clang++-12 clang++)
-
-if(GNU_CPP)
-    # Set the path to the found g++ compiler executable
-    SET(CMAKE_CXX_COMPILER ${GNU_CPP})
-elseif(CLANG_CPP)
-	# Set the path to the found Clang C compiler executable
-	SET(CMAKE_CXX_COMPILER ${CLANG_CPP})
-else()
-	MESSAGE(FATAL_ERROR "Could Not Find Any of Executable GNU C++ compilers nor Clang C++ compilers")
-endif()
+	if(GNU_C)
+		# Set the path to the found GNU C compiler executable
+		SET(CMAKE_C_COMPILER ${GNU_C})
+	elseif(CLANG_C)
+		# Set the path to the found Clang C compiler executable
+		SET(CMAKE_C_COMPILER ${CLANG_C})
+	else()
+		MESSAGE(FATAL_ERROR "Could Not Find Any of Executable GNU C compilers nor Clang C compilers")
+	endif()
 
 
-if(${SIMD_OPTION} STREQUAL "AVX-512")
-	ADD_COMPILE_OPTIONS(-mavx512)
+	# Find the path to the g++ compiler executable
+	FIND_PROGRAM(GNU_CPP NAMES g++-13 g++-12 g++-11 g++)
+	# Find the path to the clang++ compiler executable
+	FIND_PROGRAM(CLANG_CPP NAMES clang++-16 clang++-15 clang++-14 clang++-13 clang++-12 clang++)
 
-elseif(${SIMD_OPTION} STREQUAL "AVX-2")
-	ADD_COMPILE_OPTIONS(-mavx2)
-
-elseif(${SIMD_OPTION} STREQUAL "AVX")
-	ADD_COMPILE_OPTIONS(-mavx)
-
-else()
-	message(FATAL_ERROR "Detected an invalid X86-64 intrinsic SIMD option")
-
-endif()
-
-
-if(${CMAKE_BUILD_TYPE} STREQUAL "Release")
-	ADD_COMPILE_OPTIONS(-pthread -finline-functions -march=x86-64 -O3)
-
-elseif(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
-	ADD_COMPILE_OPTIONS(-pthread -g -march=x86-64 -O0)
-
-else()
-	MESSAGE(FATAL_ERROR "Detected an invalid Build Option")
-
-endif()
+	if(GNU_CPP)
+		# Set the path to the found g++ compiler executable
+		SET(CMAKE_CXX_COMPILER ${GNU_CPP})
+	elseif(CLANG_CPP)
+		# Set the path to the found Clang C compiler executable
+		SET(CMAKE_CXX_COMPILER ${CLANG_CPP})
+	else()
+		MESSAGE(FATAL_ERROR "Could Not Find Any of Executable GNU C++ compilers nor Clang C++ compilers")
+	endif()
 
 
-ADD_COMPILE_DEFINITIONS(_LINUX_64BIT_OS_=1)
-ADD_COMPILE_DEFINITIONS(_WINDOWS_64BIT_OS_=0)
+	if(${SIMD_OPTION} STREQUAL "AVX-512")
+		ADD_COMPILE_OPTIONS(-mavx512)
+
+	elseif(${SIMD_OPTION} STREQUAL "AVX-2")
+		ADD_COMPILE_OPTIONS(-mavx2)
+
+	elseif(${SIMD_OPTION} STREQUAL "AVX")
+		ADD_COMPILE_OPTIONS(-mavx)
+
+	else()
+		MESSAGE(FATAL_ERROR "Detected an invalid X86-64 intrinsic SIMD option")
+
+	endif()
 
 
-if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
-	FIND_LIBRARY(CITY_HASH libCITY_HASH.a PATHS ${CMAKE_CURRENT_SOURCE_DIR}/../../../../Third-Party-Libraries/City-Hash/Binaries/Linux/a)
-	FIND_LIBRARY(TBB_LINUX libtbb_debug.so PATHS ${CMAKE_CURRENT_SOURCE_DIR}/../../../../Third-Party-Libraries/OneAPI-TBB_2021_9_0/binaries/Linux/so/intel64/gcc4.8 PATH_SUFFIXES gcc4.8)
-	FIND_LIBRARY(TBB_MALLOC_LINUX libtbbmalloc_debug.so PATHS ${CMAKE_CURRENT_SOURCE_DIR}/../../../../Third-Party-Libraries/OneAPI-TBB_2021_9_0/binaries/Linux/so/intel64/gcc4.8 PATH_SUFFIXES gcc4.8)
+	if(${CMAKE_BUILD_TYPE} STREQUAL "Release")
+		ADD_COMPILE_OPTIONS(-pthread -finline-functions -march=x86-64 -O3)
 
-elseif(${CMAKE_BUILD_TYPE} STREQUAL "Release")
-	FIND_LIBRARY(CITY_HASH libCITY_HASH.a PATHS ${CMAKE_CURRENT_SOURCE_DIR}/../../../../Third-Party-Libraries/City-Hash/Binaries/Linux/a)
-	FIND_LIBRARY(TBB_LINUX libtbb.so PATHS ${CMAKE_CURRENT_SOURCE_DIR}/../../../../Third-Party-Libraries/OneAPI-TBB_2021_9_0/binaries/Linux/so/intel64/gcc4.8 PATH_SUFFIXES gcc4.8)
-	FIND_LIBRARY(TBB_MALLOC_LINUX libtbbmalloc.so PATHS ${CMAKE_CURRENT_SOURCE_DIR}/../../../../Third-Party-Libraries/OneAPI-TBB_2021_9_0/binaries/Linux/so/intel64/gcc4.8 PATH_SUFFIXES gcc4.8)
+	elseif(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+		ADD_COMPILE_OPTIONS(-pthread -g -march=x86-64 -O0)
 
-else()
-	MESSAGE(FATAL_ERROR "Detected an invalid Build Option")
+	else()
+		MESSAGE(FATAL_ERROR "Detected an invalid Build Option")
 
-endif()
+	endif()
 
 
-ADD_LIBRARY(${PROJECT_NAME} STATIC
+	ADD_COMPILE_DEFINITIONS(_LINUX_64BIT_OS_=1)
+	ADD_COMPILE_DEFINITIONS(_WINDOWS_64BIT_OS_=0)
+
+
+	if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+		FIND_LIBRARY(CITY_HASH libCITY_HASH.a PATHS ${CMAKE_CURRENT_SOURCE_DIR}/../../../../Third-Party-Libraries/City-Hash/Binaries/Linux/a)
+		FIND_LIBRARY(TBB_LINUX libtbb_debug.so PATHS ${CMAKE_CURRENT_SOURCE_DIR}/../../../../Third-Party-Libraries/OneAPI-TBB_2021_9_0/binaries/Linux/so/intel64/gcc4.8 PATH_SUFFIXES gcc4.8)
+		FIND_LIBRARY(TBB_MALLOC_LINUX libtbbmalloc_debug.so PATHS ${CMAKE_CURRENT_SOURCE_DIR}/../../../../Third-Party-Libraries/OneAPI-TBB_2021_9_0/binaries/Linux/so/intel64/gcc4.8 PATH_SUFFIXES gcc4.8)
+
+	elseif(${CMAKE_BUILD_TYPE} STREQUAL "Release")
+		FIND_LIBRARY(CITY_HASH libCITY_HASH.a PATHS ${CMAKE_CURRENT_SOURCE_DIR}/../../../../Third-Party-Libraries/City-Hash/Binaries/Linux/a)
+		FIND_LIBRARY(TBB_LINUX libtbb.so PATHS ${CMAKE_CURRENT_SOURCE_DIR}/../../../../Third-Party-Libraries/OneAPI-TBB_2021_9_0/binaries/Linux/so/intel64/gcc4.8 PATH_SUFFIXES gcc4.8)
+		FIND_LIBRARY(TBB_MALLOC_LINUX libtbbmalloc.so PATHS ${CMAKE_CURRENT_SOURCE_DIR}/../../../../Third-Party-Libraries/OneAPI-TBB_2021_9_0/binaries/Linux/so/intel64/gcc4.8 PATH_SUFFIXES gcc4.8)
+
+	else()
+		MESSAGE(FATAL_ERROR "Detected an invalid Build Option")
+
+	endif()
+
+
+	ADD_LIBRARY(${PROJECT_NAME} STATIC
 			${_ALGORITHM_}
 			${_CONCURRENT_CONTAINERS_}
 			${_CONCURRENT_SMART_POINTERS_}
@@ -271,11 +271,11 @@ ADD_LIBRARY(${PROJECT_NAME} STATIC
 			)
 
 # Set the output directory for the executable
-SET_TARGET_PROPERTIES(	${PROJECT_NAME} 
+	SET_TARGET_PROPERTIES(	${PROJECT_NAME} 
 						PROPERTIES ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../Linux/Release/a)
 
 # Link against the libraries
-TARGET_LINK_LIBRARIES(	${PROJECT_NAME} stdc++fs 
+	TARGET_LINK_LIBRARIES(	${PROJECT_NAME} stdc++fs 
 						${CITY_HASH}
 						${TBB_LINUX}
 						${TBB_MALLOC_LINUX}
@@ -285,29 +285,29 @@ TARGET_LINK_LIBRARIES(	${PROJECT_NAME} stdc++fs
 
 
 elseif(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-message("Configurating The Build Environment for Windows X86-64")
+	MESSAGE("Configurating The Build Environment for Windows X86-64")
 
-ADD_COMPILE_DEFINITIONS(_WINDOWS_64BIT_OS_=1)
-ADD_COMPILE_DEFINITIONS(_LINUX_64BIT_OS_=0)
-
-
-if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
-	FIND_LIBRARY(TBB_WINDOWS tbb12_debug.lib PATHS ${CMAKE_CURRENT_SOURCE_DIR}/../../../../Third-Party-Libraries/OneAPI-TBB_2021_9_0/binaries/Windows/lib/intel64/vc14_uwp PATH_SUFFIXES vc14_uwp)
-	FIND_LIBRARY(CITY_HASH CITY_HASH.lib PATHS ${CMAKE_CURRENT_SOURCE_DIR}/../../../../Third-Party-Libraries/City-Hash/Binaries/Windows/Debug)
-	FIND_LIBRARY(TBB_MALLOC_WINDOWS tbbmalloc_debug.lib PATHS ${CMAKE_CURRENT_SOURCE_DIR}/../../../../Third-Party-Libraries/OneAPI-TBB_2021_9_0/binaries/Windows/lib/intel64/vc14_uwp PATH_SUFFIXES vc14_uwp)
-
-elseif(${CMAKE_BUILD_TYPE} STREQUAL "Release")
-	FIND_LIBRARY(TBB_WINDOWS tbb12.lib PATHS ${CMAKE_CURRENT_SOURCE_DIR}/../../../../Third-Party-Libraries/OneAPI-TBB_2021_9_0/binaries/Windows/lib/intel64/vc14_uwp PATH_SUFFIXES vc14_uwp)
-	FIND_LIBRARY(CITY_HASH CITY_HASH.lib PATHS ${CMAKE_CURRENT_SOURCE_DIR}/../../../../Third-Party-Libraries/City-Hash/Binaries/Windows/Release)
-	FIND_LIBRARY(TBB_MALLOC_WINDOWS tbbmalloc.lib PATHS ${CMAKE_CURRENT_SOURCE_DIR}/../../../../Third-Party-Libraries/OneAPI-TBB_2021_9_0/binaries/Windows/lib/intel64/vc14_uwp PATH_SUFFIXES vc14_uwp)
-
-else()
-	MESSAGE(FATAL_ERROR "Detected an invalid Build Option")
-
-endif()
+	ADD_COMPILE_DEFINITIONS(_WINDOWS_64BIT_OS_=1)
+	ADD_COMPILE_DEFINITIONS(_LINUX_64BIT_OS_=0)
 
 
-ADD_LIBRARY(${PROJECT_NAME} STATIC
+	if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+		FIND_LIBRARY(TBB_WINDOWS tbb12_debug.lib PATHS ${CMAKE_CURRENT_SOURCE_DIR}/../../../../Third-Party-Libraries/OneAPI-TBB_2021_9_0/binaries/Windows/lib/intel64/vc14_uwp PATH_SUFFIXES vc14_uwp)
+		FIND_LIBRARY(CITY_HASH CITY_HASH.lib PATHS ${CMAKE_CURRENT_SOURCE_DIR}/../../../../Third-Party-Libraries/City-Hash/Binaries/Windows/Debug)
+		FIND_LIBRARY(TBB_MALLOC_WINDOWS tbbmalloc_debug.lib PATHS ${CMAKE_CURRENT_SOURCE_DIR}/../../../../Third-Party-Libraries/OneAPI-TBB_2021_9_0/binaries/Windows/lib/intel64/vc14_uwp PATH_SUFFIXES vc14_uwp)
+
+	elseif(${CMAKE_BUILD_TYPE} STREQUAL "Release")
+		FIND_LIBRARY(TBB_WINDOWS tbb12.lib PATHS ${CMAKE_CURRENT_SOURCE_DIR}/../../../../Third-Party-Libraries/OneAPI-TBB_2021_9_0/binaries/Windows/lib/intel64/vc14_uwp PATH_SUFFIXES vc14_uwp)
+		FIND_LIBRARY(CITY_HASH CITY_HASH.lib PATHS ${CMAKE_CURRENT_SOURCE_DIR}/../../../../Third-Party-Libraries/City-Hash/Binaries/Windows/Release)
+		FIND_LIBRARY(TBB_MALLOC_WINDOWS tbbmalloc.lib PATHS ${CMAKE_CURRENT_SOURCE_DIR}/../../../../Third-Party-Libraries/OneAPI-TBB_2021_9_0/binaries/Windows/lib/intel64/vc14_uwp PATH_SUFFIXES vc14_uwp)
+
+	else()
+		MESSAGE(FATAL_ERROR "Detected an invalid Build Option")
+
+	endif()
+
+
+	ADD_LIBRARY(${PROJECT_NAME} STATIC
 			${_ALGORITHM_}
 			${_CONCURRENT_CONTAINERS_}
 			${_CONCURRENT_SMART_POINTERS_}
@@ -321,38 +321,44 @@ ADD_LIBRARY(${PROJECT_NAME} STATIC
 			${_MISCELLANEOUS_}
 			)
 
-# Set the output directory for the executable
-SET_TARGET_PROPERTIES(	${PROJECT_NAME}
+	# Set the output directory for the executable	
+	SET_TARGET_PROPERTIES(	${PROJECT_NAME}
 						PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../Windows) 
 
-# Link against the libraries
-TARGET_LINK_LIBRARIES(	${PROJECT_NAME}
+	# Link against the libraries
+	TARGET_LINK_LIBRARIES(	${PROJECT_NAME}
 						${CITY_HASH}
 						${TBB_WINDOWS}
 						${TBB_MALLOC_WINDOWS}
 						)
 
 
-if(${SIMD_OPTION} STREQUAL "AVX-512")
-	ADD_COMPILE_OPTIONS(/arch:AVX512)
-
-elseif(${SIMD_OPTION} STREQUAL "AVX-2")
-	ADD_COMPILE_OPTIONS(/arch:AVX2)
-
-elseif(${SIMD_OPTION} STREQUAL "AVX")
-	ADD_COMPILE_OPTIONS(/arch:AVX)
-
-else()
-	message(FATAL_ERROR "Detected an invalid X86-64 intrinsic SIMD option")
-
-endif()
+	if(${SIMD_OPTION} STREQUAL "AVX-512")
+		TARGET_COMPILE_OPTIONS(	${PROJECT_NAME} PRIVATE 
+						$<$<CONFIG:DEBUG>:/WX- /W4 /MP /Od /Ob2 /Oi /Ot /Oy- /GT /MTd /Gy /arch:AVX512>
+						$<$<CONFIG:RELEASE>:/WX- /W4 /MP /O2 /Ob2 /Oi /Ot /Oy /GT /MT /Gy /arch:AVX512>
+						$<$<CONFIG:RELWITHDEBINFO>:/WX- /W4 /MP /O2 /Ob2 /Oi /Ot /Oy /GT /MT /Gy /arch:AVX512>
+						) 
 
 
-TARGET_COMPILE_OPTIONS(	${PROJECT_NAME} PRIVATE 
-						$<$<CONFIG:DEBUG>:/WX- /W4 /MP /Od /Ob2 /Oi /Ot /Oy- /GT /MTd /Gy>
-						$<$<CONFIG:RELEASE>:/WX- /W4 /MP /O2 /Ob2 /Oi /Ot /Oy /GT /MT /Gy>
-						$<$<CONFIG:RELWITHDEBINFO>:/WX- /W4 /MP /O2 /Ob2 /Oi /Ot /Oy /GT /MT /Gy>
+
+	elseif(${SIMD_OPTION} STREQUAL "AVX-2")
+		TARGET_COMPILE_OPTIONS(	${PROJECT_NAME} PRIVATE 
+						$<$<CONFIG:DEBUG>:/WX- /W4 /MP /Od /Ob2 /Oi /Ot /Oy- /GT /MTd /Gy /arch:AVX2>
+						$<$<CONFIG:RELEASE>:/WX- /W4 /MP /O2 /Ob2 /Oi /Ot /Oy /GT /MT /Gy /arch:AVX2
+						$<$<CONFIG:RELWITHDEBINFO>:/WX- /W4 /MP /O2 /Ob2 /Oi /Ot /Oy /GT /MT /Gy /arch:AVX2>
 						)
+
+
+	elseif(${SIMD_OPTION} STREQUAL "AVX")
+		TARGET_COMPILE_OPTIONS(	${PROJECT_NAME} PRIVATE 
+						$<$<CONFIG:DEBUG>:/WX- /W4 /MP /Od /Ob2 /Oi /Ot /Oy- /GT /MTd /Gy /arch:AVX>
+						$<$<CONFIG:RELEASE>:/WX- /W4 /MP /O2 /Ob2 /Oi /Ot /Oy /GT /MT /Gy /arch:AVX>
+						$<$<CONFIG:RELWITHDEBINFO>:/WX- /W4 /MP /O2 /Ob2 /Oi /Ot /Oy /GT /MT /Gy /arch:AVX> 
+						)
+	else()
+			MESSAGE(FATAL_ERROR "Detected an invalid X86-64 intrinsic SIMD option")
+	endif()
 
 
 endif()
