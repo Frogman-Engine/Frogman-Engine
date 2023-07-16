@@ -61,19 +61,19 @@ void aligned_memcpy_with_avx(void* const dest_ptrc_p, const void* const source_p
 #if _AVX512_ == true
 #define MEMSET(dest_ptrc_p, value_p, total_bytes_p)\
 FE_ASSERT(dest_ptrc_p == nullptr, "ERROR: dest_ptrc_p is nullptr.");\
-FE_ASSERT(total_bytes_p == 0, "ERROR: element_bytes_p is 0.".);\
+FE_ASSERT(total_bytes_p == 0, "ERROR: element_bytes_p is 0.");\
 ::FE::unaligned_memset_with_avx512(dest_ptrc_p, value_p, total_bytes_p);
 
 #elif _AVX_ == true
 #define MEMSET(dest_ptrc_p, value_p, total_bytes_p)\
 FE_ASSERT(dest_ptrc_p == nullptr, "ERROR: dest_ptrc_p is nullptr.");\
-FE_ASSERT(total_bytes_p == 0, "ERROR: element_bytes_p is 0.".);\
+FE_ASSERT(total_bytes_p == 0, "ERROR: element_bytes_p is 0.");\
 ::FE::unaligned_memset_with_avx(dest_ptrc_p, value_p, total_bytes_p);
 
 #else
 #define MEMSET(dest_ptrc_p, value_p, total_bytes_p)\
 FE_ASSERT(dest_ptrc_p == nullptr, "ERROR: dest_ptrc_p is nullptr.");\
-FE_ASSERT(total_bytes_p == 0, "ERROR: element_bytes_p is 0.".);\
+FE_ASSERT(total_bytes_p == 0, "ERROR: element_bytes_p is 0.");\
 ::std::memset(dest_ptrc_p, value_p, total_bytes_p);
 
 #endif
