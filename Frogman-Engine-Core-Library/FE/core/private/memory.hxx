@@ -107,24 +107,20 @@ template <typename T>
 _FORCE_INLINE_ void construct(T* const object_ptrc_p, OBJECT_LIFECYCLE* const bool_mask_ptrc_p) noexcept
 {
 	FE_ASSERT(object_ptrc_p == nullptr, "ERROR: object_ptrc_p is nullptr.");
+	FE_ASSERT(*bool_mask_ptrc_p == FE::OBJECT_LIFECYCLE::_CONSTRUCTED, "ERROR: unable to double-construct.");
 
-	if (*bool_mask_ptrc_p == FE::OBJECT_LIFECYCLE::_DESTRUCTED)
-	{
-		new(object_ptrc_p) T();
-		*bool_mask_ptrc_p = OBJECT_LIFECYCLE::_CONSTRUCTED;
-	}
+	new(object_ptrc_p) T();
+	*bool_mask_ptrc_p = FE::OBJECT_LIFECYCLE::_CONSTRUCTED;
 }
 
 template <typename T>
 _FORCE_INLINE_ void copy_construct(T* const object_ptrc_p, OBJECT_LIFECYCLE* const bool_mask_ptrc_p, T& other_ref_p) noexcept
 {
 	FE_ASSERT(object_ptrc_p == nullptr, "ERROR: object_ptrc_p is nullptr.");
+	FE_ASSERT(*bool_mask_ptrc_p == FE::OBJECT_LIFECYCLE::_CONSTRUCTED, "ERROR: unable to double-construct.");
 
-	if (*bool_mask_ptrc_p == FE::OBJECT_LIFECYCLE::_DESTRUCTED)
-	{
-		new(object_ptrc_p) T(other_ref_p);
-		*bool_mask_ptrc_p = FE::OBJECT_LIFECYCLE::_CONSTRUCTED;
-	}
+	new(object_ptrc_p) T(other_ref_p);
+	*bool_mask_ptrc_p = FE::OBJECT_LIFECYCLE::_CONSTRUCTED;
 }
 
 template <typename T>
@@ -132,12 +128,10 @@ _FORCE_INLINE_ void move_construct(T* const object_ptrc_p, OBJECT_LIFECYCLE* con
 {
 	FE_ASSERT(object_ptrc_p == nullptr, "ERROR: object_ptrc_p is nullptr.");
 	FE_ASSERT(*bool_mask_ptrc_p == OBJECT_LIFECYCLE::_CONSTRUCTED, "ERROR: Unable to double-construct the object, that object_ptrc_p is pointing to");
+	
 
-	if (*bool_mask_ptrc_p == FE::OBJECT_LIFECYCLE::_DESTRUCTED)
-	{
-		new(object_ptrc_p) T(std::move(rvalue_p));
-		*bool_mask_ptrc_p = FE::OBJECT_LIFECYCLE::_CONSTRUCTED;
-	}
+	new(object_ptrc_p) T(std::move(rvalue_p));
+	*bool_mask_ptrc_p = FE::OBJECT_LIFECYCLE::_CONSTRUCTED;
 }
 
 

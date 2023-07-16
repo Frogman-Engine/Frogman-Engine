@@ -1,5 +1,8 @@
 ﻿#ifndef _FE_CORE_PRIVATE_MEMORY_HPP_
 #define _FE_CORE_PRIVATE_MEMORY_HPP_
+#ifdef MEMSET
+#error MEMSET is a reserved macro keyword
+#endif
 // Copyright © 2023~ UNKNOWN STRYKER. All Rights Reserved.
 #include <FE/core/prerequisite_symbols.h>
 #include <immintrin.h>
@@ -55,9 +58,29 @@ void aligned_memcpy_with_avx(void* const dest_ptrc_p, const void* const source_p
 #endif
 
 
+#if _AVX512_ == true
+#define MEMSET(dest_ptrc_p, value_p, total_bytes_p)\
+FE_ASSERT(dest_ptrc_p == nullptr, "ERROR: dest_ptrc_p is nullptr.");\
+FE_ASSERT(total_bytes_p == 0, "ERROR: element_bytes_p is 0.".);\
+::FE::unaligned_memset_with_avx512(dest_ptrc_p, value_p, total_bytes_p);
 
-void memset(void* const dst_ptrc_p, int8 value_p, size_t total_bytes_p) noexcept;
-void memcpy_s(void* const dest_memblock_ptrc_p, length_t dest_length_p, size_t dest_element_bytes_p, const void* const source_memblock_ptrc_p, length_t source_length_p, size_t source_element_bytes_p) noexcept;
+#elif _AVX_ == true
+#define MEMSET(dest_ptrc_p, value_p, total_bytes_p)\
+FE_ASSERT(dest_ptrc_p == nullptr, "ERROR: dest_ptrc_p is nullptr.");\
+FE_ASSERT(total_bytes_p == 0, "ERROR: element_bytes_p is 0.".);\
+::FE::unaligned_memset_with_avx(dest_ptrc_p, value_p, total_bytes_p);
+
+#else
+#define MEMSET(dest_ptrc_p, value_p, total_bytes_p)\
+FE_ASSERT(dest_ptrc_p == nullptr, "ERROR: dest_ptrc_p is nullptr.");\
+FE_ASSERT(total_bytes_p == 0, "ERROR: element_bytes_p is 0.".);\
+::std::memset(dest_ptrc_p, value_p, total_bytes_p);
+
+#endif
+
+
+_FORCE_INLINE_ void memcpy_s(void* const dest_memblock_ptrc_p, length_t dest_length_p, size_t dest_element_bytes_p, const void* const source_memblock_ptrc_p, length_t source_length_p, size_t source_element_bytes_p) noexcept;
+
 
 // + bitmask_length()
 

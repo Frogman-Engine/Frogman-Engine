@@ -128,7 +128,7 @@ public:
     constexpr var::uint64 max_length() const noexcept { return max_capacity; }
     constexpr var::uint64 capacity() const noexcept { return max_capacity; }
 
-    constexpr void clear() noexcept { ::FE::memset(this->m_fstring, _NULL_, max_capacity * sizeof(char_type)); }
+    constexpr void clear() noexcept { MEMSET(this->m_fstring, _NULL_, max_capacity * sizeof(char_type)); }
     // insert
     // erase
 

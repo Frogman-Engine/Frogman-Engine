@@ -213,21 +213,7 @@ void aligned_memcpy_with_avx(void* const dest_ptrc_p, const void* const source_p
 #endif
 
 
-void memset(void* const dest_ptrc_p, int8 value_p, size_t total_bytes_p) noexcept
-{
-    ABORT_IF(dest_ptrc_p == nullptr, "ERROR: dest_ptrc_p is nullptr.");
-    ABORT_IF(total_bytes_p == 0, "ERROR: element_bytes_p is 0.");
-
-#if _AVX512_ == true
-    ::FE::unaligned_memset_with_avx512(dest_ptrc_p, value_p, total_bytes_p);
-#elif _AVX_ == true
-    ::FE::unaligned_memset_with_avx(dest_ptrc_p, value_p, total_bytes_p);
-#else
-    ::std::memset(dest_ptrc_p, value_p, total_bytes_p);
-#endif
-}
-
-void memcpy_s(void* const dest_memblock_ptrc_p, length_t dest_length_p, size_t dest_element_bytes_p, const void* const source_memblock_ptrc_p, length_t source_length_p, size_t source_element_bytes_p) noexcept
+_FORCE_INLINE_ void memcpy_s(void* const dest_memblock_ptrc_p, length_t dest_length_p, size_t dest_element_bytes_p, const void* const source_memblock_ptrc_p, length_t source_length_p, size_t source_element_bytes_p) noexcept
 {
     ABORT_IF(dest_memblock_ptrc_p == nullptr, "ERROR: dest_memblock_ptrc_p is nullptr.");
     ABORT_IF(source_memblock_ptrc_p == nullptr, "ERROR: source_memblock_ptrc_p is nullptr.");
@@ -260,5 +246,6 @@ void memcpy_s(void* const dest_memblock_ptrc_p, length_t dest_length_p, size_t d
 #endif
     }
 }
+
 
 END_NAMESPACE
