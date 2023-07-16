@@ -17,7 +17,7 @@
 #define TEST_FROGMAN_ENGINE(test_subject_class_name_p, test_case_p) TEST_F(sample_##test_subject_class_name_p, test_case_p)
 
 
-#if _VISUAL_STUDIO_CPP_ == 1
+#ifdef _VISUAL_STUDIO_CPP_
 
 
 #define DECLARE_TEST_CLASS(namespace_p, test_subject_class_name_p) \
@@ -40,7 +40,7 @@ protected: \
 }
 
 
-#elif _CLANG_ == 1 || _GNUC_ == 1
+#elif defined(_CLANG_) || defined(_GNUC_)
 
 
 #define DECLARE_TEST_CLASS(namespace_p, test_subject_class_name_p) \
