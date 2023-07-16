@@ -148,7 +148,7 @@ public:
 	{
 		FE_ASSERT(initializer_list_p.size() > max_element_count, "ERROR!: The length of std::initializer_list exceeds the max_element_count");
 
-		FE::memcpy_s(this->m_memory, max_element_count, sizeof(value_type),
+		FE::unaligned_memcpy(this->m_memory, max_element_count, sizeof(value_type),
 					initializer_list_p.begin(), initializer_list_p.size(), sizeof(value_type));
 
 		this->__jump_top_pointer(initializer_list_p.size());
@@ -156,7 +156,7 @@ public:
 
 	_FORCE_INLINE_ stack(stack& other_ref_p) noexcept : base_type()
 	{
-		FE::memcpy_s(this->m_memory, max_element_count, sizeof(value_type),
+		FE::unaligned_memcpy(this->m_memory, max_element_count, sizeof(value_type),
 					other_ref_p.m_memory, max_element_count, sizeof(value_type));
 
 		this->__jump_top_pointer(other_ref_p.m_top_ptr - other_ref_p.m_begin_ptrc);
@@ -165,10 +165,10 @@ public:
 
 	_FORCE_INLINE_ stack(stack&& rvalue_p) noexcept : base_type()
 	{
-		FE::memcpy_s(this->m_memory, max_element_count, sizeof(value_type),
+		FE::unaligned_memcpy(this->m_memory, max_element_count, sizeof(value_type),
 					rvalue_p.m_memory, max_element_count, sizeof(value_type));
 
-		MEMSET(rvalue_p.m_memory, _NULL_, max_element_count * sizeof(value_type));
+		UNALIGNED_MEMSET(rvalue_p.m_memory, _NULL_, max_element_count * sizeof(value_type));
 
 		this->__jump_top_pointer(rvalue_p.m_top_ptr - rvalue_p.m_begin_ptrc);
 		rvalue_p.__set_top_pointer_to_zero();
@@ -178,7 +178,7 @@ public:
 	{
 		FE_ASSERT(initializer_list_p.size() > max_element_count, "ERROR!: The length of std::initializer_list exceeds the max_element_count");
 
-		FE::memcpy_s(this->m_memory, max_element_count, sizeof(value_type),
+		FE::unaligned_memcpy(this->m_memory, max_element_count, sizeof(value_type),
 					initializer_list_p.begin(), initializer_list_p.size(), sizeof(value_type));
 
 		this->__set_top_pointer_to_zero();
@@ -188,7 +188,7 @@ public:
 
 	_FORCE_INLINE_ stack& operator=(stack& other_ref_p) noexcept
 	{
-		FE::memcpy_s(this->m_memory, max_element_count, sizeof(value_type),
+		FE::unaligned_memcpy(this->m_memory, max_element_count, sizeof(value_type),
 					other_ref_p.m_memory, max_element_count, sizeof(value_type));
 
 		this->__set_top_pointer_to_zero();
@@ -199,10 +199,10 @@ public:
 
 	_FORCE_INLINE_ stack& operator=(stack&& rvalue_p) noexcept
 	{
-		FE::memcpy_s(this->m_memory, max_element_count, sizeof(value_type),
+		FE::unaligned_memcpy(this->m_memory, max_element_count, sizeof(value_type),
 					rvalue_p.m_memory, max_element_count, sizeof(value_type));
 
-		MEMSET(rvalue_p.m_memory, _NULL_, max_element_count * sizeof(value_type));
+		UNALIGNED_MEMSET(rvalue_p.m_memory, _NULL_, max_element_count * sizeof(value_type));
 
 		this->__set_top_pointer_to_zero();
 		this->__jump_top_pointer(rvalue_p.m_top_ptr - rvalue_p.m_begin_ptrc);
@@ -233,7 +233,7 @@ public:
 		FE_ASSERT(this->is_empty() == true, "WARNING: It is pointless to pop empty elements.");
 
 		this->__set_top_pointer_to_zero();
-		MEMSET(this->m_begin_ptrc, _NULL_, max_element_count * sizeof(T));
+		UNALIGNED_MEMSET(this->m_begin_ptrc, _NULL_, max_element_count * sizeof(T));
 	}
 };
 

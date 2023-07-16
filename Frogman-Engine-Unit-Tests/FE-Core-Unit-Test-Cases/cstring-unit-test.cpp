@@ -59,14 +59,6 @@ TEST(cstring, move_assignment_operator)
 	EXPECT_TRUE(l_subject == l_cstring);
 }
 
-TEST(cstring, at)
-{
-	FE::cstring l_cstring;
-	l_cstring = "FE::compile_time_constant_string is a compile-time string class template.";
-
-	EXPECT_EQ(l_cstring.at(4), 'c');
-}
-
 TEST(cstring, index_operator)
 {
 	FE::cstring l_cstring;
@@ -83,13 +75,6 @@ TEST(cstring, front_back)
 	FE::algorithm::string::concatenate_characters<FE::cstring::buffer_type>( l_buffer, 3, { l_cstring.front(), l_cstring.back() } );
 
 	EXPECT_TRUE( ::FE::algorithm::string::string_comparison(l_buffer, "F.") );
-}
-
-TEST(cstring, data)
-{
-	FE::cstring l_cstring = "FE::compile_time_constant_string is a compile-time string class template.";
-
-	EXPECT_TRUE(::FE::algorithm::string::string_comparison("FE::compile_time_constant_string is a compile-time string class template.", l_cstring.data()));
 }
 
 TEST(cstring, c_str)

@@ -1,6 +1,6 @@
 ﻿#ifndef _FE_CORE_PRIVATE_MEMORY_HPP_
 #define _FE_CORE_PRIVATE_MEMORY_HPP_
-#ifdef MEMSET
+#ifdef UNALIGNED_MEMSET
 #error MEMSET is a reserved macro keyword
 #endif
 // Copyright © 2023~ UNKNOWN STRYKER. All Rights Reserved.
@@ -59,19 +59,22 @@ void aligned_memcpy_with_avx(void* const dest_ptrc_p, const void* const source_p
 
 
 #if _AVX512_ == true
-#define MEMSET(dest_ptrc_p, value_p, total_bytes_p) ::FE::unaligned_memset_with_avx512(dest_ptrc_p, value_p, total_bytes_p);
+#define UNALIGNED_MEMSET(dest_ptrc_p, value_p, total_bytes_p) ::FE::unaligned_memset_with_avx512(dest_ptrc_p, value_p, total_bytes_p);
+#define ALIGNED_MEMSET(dest_ptrc_p, value_p, total_bytes_p) ::FE::aligned_memset_with_avx512(dest_ptrc_p, value_p, total_bytes_p);
 
 #elif _AVX_ == true
-#define MEMSET(dest_ptrc_p, value_p, total_bytes_p) ::FE::unaligned_memset_with_avx(dest_ptrc_p, value_p, total_bytes_p);
+#define UNALIGNED_MEMSET(dest_ptrc_p, value_p, total_bytes_p) ::FE::unaligned_memset_with_avx(dest_ptrc_p, value_p, total_bytes_p);
+#define ALIGNED_MEMSET(dest_ptrc_p, value_p, total_bytes_p) ::FE::aligned_memset_with_avx512(dest_ptrc_p, value_p, total_bytes_p);
 
 #else
-#define MEMSET(dest_ptrc_p, value_p, total_bytes_p) ::std::memset(dest_ptrc_p, value_p, total_bytes_p);
+#define UNALIGNED_MEMSET(dest_ptrc_p, value_p, total_bytes_p) ::std::memset(dest_ptrc_p, value_p, total_bytes_p);
+#define ALIGNED_MEMSET(dest_ptrc_p, value_p, total_bytes_p) ::FE::aligned_memset_with_avx512(dest_ptrc_p, value_p, total_bytes_p);
 
 #endif
 
 
-void memcpy_s(void* const dest_memblock_ptrc_p, length_t dest_length_p, size_t dest_element_bytes_p, const void* const source_memblock_ptrc_p, length_t source_length_p, size_t source_element_bytes_p) noexcept;
-
+void unaligned_memcpy(void* const dest_memblock_ptrc_p, length_t dest_length_p, size_t dest_element_bytes_p, const void* const source_memblock_ptrc_p, length_t source_length_p, size_t source_element_bytes_p) noexcept;
+void aligned_memcpy(void* const dest_memblock_ptrc_p, length_t dest_length_p, size_t dest_element_bytes_p, const void* const source_memblock_ptrc_p, length_t source_length_p, size_t source_element_bytes_p) noexcept;
 
 // + bitmask_length()
 
@@ -112,7 +115,7 @@ _MAYBE_UNUSED_ constexpr uint8 _DWORD_SIZE_ = 4;
 _MAYBE_UNUSED_ constexpr uint8 _QWORD_SIZE_ = 8;
 
 
-// it is used when reserving memory of Frogman Engine API data containers.
+// it is used when reserving memory of Frogman Engine data containers.
 struct reserve final
 {
 	var::uint64 _length = 0;

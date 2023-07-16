@@ -43,12 +43,12 @@
 #endif
 
 
-#if _CLANG_ == 1 && _LINUX_64BIT_OS_ == 1 || _GNUC_ == 1 && _LINUX_64BIT_OS_ == 1
+#if defined(_CLANG_) && defined(_LINUX_64BIT_OS_) || defined(_GNUC_) && defined(_LINUX_64BIT_OS_)
 #define _FORCE_INLINE_ inline
 #define _STDCALL_ 
 #define _FASTCALL_
 
-#elif _VISUAL_STUDIO_CPP_ == 1
+#elif defined(_VISUAL_STUDIO_CPP_)
 #define _FORCE_INLINE_ __forceinline
 #define _STDCALL_ __stdcall
 #define _FASTCALL_ __fastcall
@@ -57,13 +57,13 @@
 #define _CDECL_ __cdecl
 
 
-#if _HAS_CXX20_ == 1
+#ifdef _HAS_CXX20_
 #define _CONSTEXPR20_ constexpr
 #else
 #define _CONSTEXPR20_
 #endif
 
-#if _HAS_CXX23_ == 1
+#ifdef _HAS_CXX23_
 #define _CONSTEXPR23_ constexpr
 #else
 #define _CONSTEXPR23_
@@ -75,7 +75,7 @@
 #define _MAYBE_UNSAFE_ // this method maybe unsafe to call concurrently 
 
 
-#if _VISUAL_STUDIO_CPP_ == 1
+#ifdef _VISUAL_STUDIO_CPP_
 #include <vcruntime.h>
 #endif
 

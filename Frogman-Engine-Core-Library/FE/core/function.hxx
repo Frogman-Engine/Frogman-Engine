@@ -1434,7 +1434,7 @@ struct function_with_1_arg : public task_base
     }
 
 
-    _NODISCARD_ virtual RETURN_TYPE execute(void* out_return_ptr_p, const char* const typename_str_ptrc_p) noexcept override
+    _NODISCARD_ virtual RETURN_TYPE execute(void* out_return_ptr_p, _MAYBE_UNUSED_ const char* const typename_str_ptrc_p) noexcept override
     {
         FE_ASSERT(!::FE::algorithm::string::string_comparison<char>(typeid(return_type).name(), typename_str_ptrc_p), "ERROR: an ilegal type of data was passed");
 

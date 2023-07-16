@@ -12,7 +12,7 @@
 #define _DEPRECATED_ [[deprecated]]
 #define _IN_DEVELOPMENT_ _DEPRECATED_
 
-#if _HAS_CXX20_ == 1
+#ifdef _HAS_CXX20_
 #define _LIKELY_ [[likely]]
 #define _UNLIKELY_ [[unlikely]]
 #else

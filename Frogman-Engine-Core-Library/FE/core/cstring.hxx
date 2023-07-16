@@ -78,11 +78,6 @@ public:
         return *this;
     }
 
-    constexpr char_type at(index_t index_p) const noexcept
-    {
-        FE_ASSERT(index_p >= algorithm::string::string_length(*(this->m_string)), "ERROR: an input index value passed to at() exceeded the index boundary of a cstring instance.");
-        return (*this->m_string)[index_p];
-    }
     constexpr char_type operator[](index_t index_p) const noexcept
     {
         FE_ASSERT(index_p >= algorithm::string::string_length(*(this->m_string)), "ERROR: an input index value passed to operator[]() exceeded the index boundary of a cstring instance.");

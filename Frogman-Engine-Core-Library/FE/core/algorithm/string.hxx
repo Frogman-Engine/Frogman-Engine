@@ -312,7 +312,7 @@ _FORCE_INLINE_ void copy_string(char_type* const destination_out_ptrc_p, count_t
 
     if(source_count_p != 0)
     { 
-        FE::memcpy_s(destination_out_ptrc_p, destination_count_p, sizeof(char_type), source_ptrc_p, source_count_p, sizeof(char_type));
+        FE::unaligned_memcpy(destination_out_ptrc_p, destination_count_p, sizeof(char_type), source_ptrc_p, source_count_p, sizeof(char_type));
     }
     destination_out_ptrc_p[source_count_p] = static_cast<char_type>('\0');
 }
@@ -655,7 +655,7 @@ _FORCE_INLINE_ void string_concatenation(char_type* const destination_out_ptrc_p
 
     length_t l_destination_string_length = algorithm::string::string_length<char_type>(destination_out_ptrc_p);
 
-    FE::memcpy_s(destination_out_ptrc_p + l_destination_string_length, destination_total_count_p, sizeof(char_type), source_ptrc_p, source_total_count_p, sizeof(char_type));
+    FE::unaligned_memcpy(destination_out_ptrc_p + l_destination_string_length, destination_total_count_p, sizeof(char_type), source_ptrc_p, source_total_count_p, sizeof(char_type));
 }
 
 
@@ -1080,7 +1080,7 @@ template<typename char_type>
 _FORCE_INLINE_ void concatenate_strings(char_type* const out_string_buffer_ptrc_p, size_t string_buffer_size_p, ::std::initializer_list<const char_type* const>&& strings_p) noexcept
 {
     static_assert(sizeof(char_type) <= sizeof(UTF32), "char_type is not a valid character type");
-    FE_EXIT(out_string_buffer_ptrc_p == nullptr, "NULLPTR DETECTED: out_string_buffer_ptrc_p is nullptr.", FE::MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR);
+    ABORT_IF(out_string_buffer_ptrc_p == nullptr, "NULLPTR DETECTED: out_string_buffer_ptrc_p is nullptr.");
 
     var::size_t l_current_begin_index = algorithm::string::string_length(out_string_buffer_ptrc_p);
 
@@ -1088,9 +1088,9 @@ _FORCE_INLINE_ void concatenate_strings(char_type* const out_string_buffer_ptrc_
     {
         size_t l_string_length_buffer = algorithm::string::string_length(strings_p.begin()[i]);
 
-        FE_EXIT(string_buffer_size_p <= l_current_begin_index, "MEMORY BOUNDARY CHECK FAILURES: the string_buffer_size_p is smaller or equal to the l_current_begin_index", FE::MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_RANGE);
+        ABORT_IF(string_buffer_size_p <= l_current_begin_index, "MEMORY BOUNDARY CHECK FAILURES: the string_buffer_size_p is smaller or equal to the l_current_begin_index");
 
-        ::FE::memcpy_s(out_string_buffer_ptrc_p + l_current_begin_index, string_buffer_size_p, sizeof(char_type), strings_p.begin()[i], l_string_length_buffer, sizeof(char_type));
+        ::FE::unaligned_memcpy(out_string_buffer_ptrc_p + l_current_begin_index, string_buffer_size_p, sizeof(char_type), strings_p.begin()[i], l_string_length_buffer, sizeof(char_type));
         l_current_begin_index += l_string_length_buffer;
     }
 }
@@ -1099,7 +1099,7 @@ template<typename char_type>
 #if _HAS_CXX20_ == 1
     requires character_type<char_type>
 #endif
-_FORCE_INLINE_ void concatenate_characters(char_type* const out_string_buffer_ptrc_p, size_t string_buffer_size_p, ::std::initializer_list<const char_type>&& strings_p) noexcept
+_FORCE_INLINE_ void concatenate_characters(char_type* const out_string_buffer_ptrc_p, _MAYBE_UNUSED_ size_t string_buffer_size_p, ::std::initializer_list<const char_type>&& strings_p) noexcept
 {
     static_assert(sizeof(char_type) <= sizeof(UTF32), "char_type is not a valid character type");
     FE_EXIT(out_string_buffer_ptrc_p == nullptr, "NULLPTR DETECTED: out_string_buffer_ptrc_p is nullptr.", FE::MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR);

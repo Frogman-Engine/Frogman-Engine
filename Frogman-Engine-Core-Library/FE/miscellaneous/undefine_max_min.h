@@ -3,7 +3,7 @@
 
 #include <FE/core/macros/macro_definitions.h>
 
-#if _VISUAL_STUDIO_CPP_ == 1 
+#ifdef _VISUAL_STUDIO_CPP_
 #ifdef max
 #undef max
 #endif

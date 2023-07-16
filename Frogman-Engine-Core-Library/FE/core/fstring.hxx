@@ -124,11 +124,11 @@ public:
         return (this->m_string_length == 0) ? true : false;
     }
 
-    constexpr var::uint64 length() const noexcept { return this->m_string_length; }
-    constexpr var::uint64 max_length() const noexcept { return max_capacity; }
-    constexpr var::uint64 capacity() const noexcept { return max_capacity; }
+    _FORCE_INLINE_ constexpr var::uint64 length() const noexcept { return this->m_string_length; }
+    _FORCE_INLINE_ constexpr var::uint64 max_length() const noexcept { return max_capacity; }
+    _FORCE_INLINE_ constexpr var::uint64 capacity() const noexcept { return max_capacity; }
 
-    constexpr void clear() noexcept { MEMSET(this->m_fstring, _NULL_, max_capacity * sizeof(char_type)); }
+    _FORCE_INLINE_ constexpr void clear() noexcept { UNALIGNED_MEMSET(this->m_fstring, _NULL_, max_capacity * sizeof(char_type)); }
     // insert
     // erase
 

@@ -21,7 +21,7 @@ struct engine_main_initialization_arguments
 
 class engine_main
 {
-	static void initialize_engine(engine_main_initialization_arguments engine_main_initialization_arguments_p) noexcept;
+	static void initialize_engine(_MAYBE_UNUSED_ engine_main_initialization_arguments engine_main_initialization_arguments_p) noexcept;
 
 	static void shutdown_engine() noexcept;
 	_NORETURN_ static void abnormal_shutdown_with_exit_code(int32 signal_p) noexcept;

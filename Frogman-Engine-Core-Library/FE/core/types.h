@@ -270,6 +270,58 @@ enum struct OBJECT_LIFECYCLE : boolean
 };
 
 
+template <typename T>
+struct lazy_const
+{
+private:
+	T _data;
+	var::boolean _is_initialized;
+
+public:
+	constexpr lazy_const() noexcept : _data(), _is_initialized(false) {}
+	constexpr lazy_const(T&& data_p) noexcept : _data(std::move(data_p)), _is_initialized(true) {}
+	constexpr ~lazy_const() noexcept {};
+
+	_FORCE_INLINE_ lazy_const(const lazy_const& other_cref_p) noexcept : _data(other_cref_p._data), _is_initialized(true) {}
+	_FORCE_INLINE_ lazy_const(lazy_const&& rvalue_p) noexcept : _data(std::move(rvalue_p._data)), _is_initialized(true) {}
+
+	_FORCE_INLINE_ lazy_const& operator=(T&& data_p) noexcept
+	{
+		if (this->_is_initialized == true)
+		{
+			::abort();
+		}
+
+		this->_data = std::move(data_p);
+		this->_is_initialized = true;
+	}
+
+	_FORCE_INLINE_ lazy_const& operator=(const lazy_const& other_cref_p) noexcept
+	{
+		if (this->_is_initialized == true)
+		{
+			::abort();
+		}
+
+		this->_data = other_cref_p._data;
+		this->_is_initialized = true;
+	}
+
+	_FORCE_INLINE_ lazy_const& operator=(lazy_const&& rvalue_p) noexcept
+	{
+		if constexpr (this->_is_initialized == true)
+		{
+			::abort();
+		}
+
+		this->_data = std::move(rvalue_p._data);
+		this->_is_initialized = true;
+	}
+
+	_FORCE_INLINE_ const T& load() noexcept { return this->_data; }
+};
+
+
 END_NAMESPACE
 
 #if _VISUAL_STUDIO_CPP_ == 1

@@ -47,7 +47,7 @@ _NODISCARD_ _FORCE_INLINE_ constexpr var::uint8 constexpr_count_integral_digit_l
 
 
 template<typename integral_type, typename char_type>
-_FORCE_INLINE_ void convert_integer_to_string(char_type* const string_out_ptrc_p, length_t input_string_capacity_p, integral_type value_p) noexcept
+_FORCE_INLINE_ void convert_integer_to_string(char_type* const string_out_ptrc_p, _MAYBE_UNUSED_ length_t input_string_capacity_p, integral_type value_p) noexcept
 {
 	static_assert(::std::is_integral<integral_type>::value == true, "an illegal type of value_p assigned to the template argument integral_type");
 	static_assert(sizeof(char_type) <= sizeof(UTF32), "an illegal type of value_p assigned to the template argument char_type");
@@ -80,7 +80,7 @@ _FORCE_INLINE_ void convert_integer_to_string(char_type* const string_out_ptrc_p
 }
 
 template<typename integral_type, typename char_type>
-_FORCE_INLINE_ constexpr void constexpr_convert_integer_to_string(char_type* const string_out_ptrc_p, length_t input_string_capacity_p, integral_type value_p) noexcept
+_FORCE_INLINE_ constexpr void constexpr_convert_integer_to_string(char_type* const string_out_ptrc_p, _MAYBE_UNUSED_ length_t input_string_capacity_p, integral_type value_p) noexcept
 {
 	static_assert(::std::is_integral<integral_type>::value == true, "an illegal type of value_p assigned to the template argument integral_type");
 	static_assert(sizeof(char_type) <= sizeof(UTF32), "an illegal type of value_p assigned to the template argument char_type");

@@ -1,6 +1,5 @@
 #ifndef _FE_CORE_MOVABLE_SCOPED_REF_HXX_
 #define _FE_CORE_MOVABLE_SCOPED_REF_HXX_
-#pragma warning(disable:4390)
 #include "prerequisite_symbols.h"
 #include "exception.hpp"
 

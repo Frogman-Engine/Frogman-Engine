@@ -4,17 +4,17 @@
 #include "../../core/types.h"
 
 
-#if _VISUAL_STUDIO_CPP_ != 1 && _GNUC_ != 1 && _CLANG_ != 1
+#if !defined(_VISUAL_STUDIO_CPP_) && !defined(_GNUC_)&& !defined(_CLANG_)
 #error Frogman Engine requires Microsoft Visual Studio 2022 C++ v143, LLVM Clang, g++ 11 ,or latest g++ to compile. Please use one of these compilers.
 #endif
-#if _WINDOWS_64BIT_OS_ != 1 && _LINUX_64BIT_OS_ != 1
+#if !defined(_WINDOWS_64BIT_OS_) && !defined(_LINUX_64BIT_OS_)
 #error An Incompatible System Environment Detected: Frogman Engine supports Windows x86-64 and Linux(Ubuntu) x86-64. Please use one of them.
 #endif
 #ifdef __APPLE__
 #error Apple platforms are not supported. Please use Windows x86-64 or Linux(Ubuntu) x84-64 Operating System.
 #endif
-#if _X64_ == 0
-#error Frogman Engine only runs on X86-64 environments.
+#ifndef _X64_
+#error Frogman Engine is only works on X86-64 environment.
 #endif
 
 #ifdef FE

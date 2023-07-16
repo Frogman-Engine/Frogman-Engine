@@ -8,19 +8,16 @@
 #include <string>
 
 
-#if _ENABLE_ASSERT_ == true || _ENABLE_LOG_ == true || _ENABLE_EXIT_ == true
-#define _IS_EXCEPTION_LOGGER_ENABLED_ true
+#if defined(_ENABLE_ASSERT_) || defined(_ENABLE_LOG_) || defined(_ENABLE_EXIT_)
+#define _IS_EXCEPTION_LOGGER_ENABLED_
 #define IF_EXCEPTION_LOGGER_ENABLED(true_p, false_p) true_p
 #define ENABLE_IF_EXCEPTION_LOGGER_ENABLED(code_p) code_p
 #else
-#define _IS_EXCEPTION_LOGGER_ENABLED_ false
 #define IF_EXCEPTION_LOGGER_ENABLED(true_p, false_p) false_p
 #define ENABLE_IF_EXCEPTION_LOGGER_ENABLED(code_p)
 #endif
 
 #define _SOURCE_CODE_LOCATION_ __FILE__, __func__, __LINE__
-
-
 
 
 BEGIN_NAMESPACE(FE)
@@ -50,7 +47,7 @@ class exception
 public:
     using buffer_type = char;
     _MAYBE_UNUSED_ static constexpr uint16 _LINE_INFO_BUFFER_SIZE_ = 32;
-    _MAYBE_UNUSED_ static constexpr uint16 _DEFAULT_DEBUG_LOG_BUFFER_SIZE_ = 512;
+    _MAYBE_UNUSED_ static constexpr uint16 _DEFAULT_DEBUG_LOG_BUFFER_SIZE_ = 1024;
     
 public:
     constexpr exception() noexcept {}
@@ -62,9 +59,10 @@ private:
 protected:
     thread_local static ::std::ofstream tl_s_file_logger;
     thread_local static ::FE::clock tl_s_clock;
-    thread_local static ::std::string tl_s_full_debug_info_buffer;
-    static var::size_t s_full_debug_info_buffer_size;
-
+    thread_local static ::std::string tl_s_log_buffer;
+    static lazy_const<var::size_t> s_log_buffer_size;
+    static lazy_const<var::uint8> s_write_operation_triggering_point;
+   
 public:
     static bool log(boolean expression_p, character* const expression_string_ptrc_p, const EXCEPTION_MODE runtime_exception_mode_p, character* const message_ptrc_p, character* const file_name_ptrc_p, character* const function_name_ptrc_p, int32 line_p, character* const exit_code_enum_ptrc_p = nullptr, int32 exit_code_p = -1) noexcept;
 
@@ -90,10 +88,11 @@ struct exception_initialization_arguments
 {
     FE::exception* _exception_logging_strategy_ptr;
     var::size_t _exception_log_buffer_size;
+    var::uint8 _write_operation_triggering_point;
 };
 
 
-#if _ENABLE_ASSERT_ == true
+#ifdef _ENABLE_ASSERT_
 // It logs an error and aborts if the expression_p is true
 #define FE_ASSERT(expression_p, message_p) if(expression_p) _UNLIKELY_ { ::FE::exception::log(expression_p, #expression_p, ::FE::_ABORT_IMMEDIATELY_, message_p, _SOURCE_CODE_LOCATION_); }
 #else
@@ -101,7 +100,7 @@ struct exception_initialization_arguments
 #define FE_ASSERT(expression_p, message_p)
 #endif
 
-#if _ENABLE_LOG_ == true
+#ifdef _ENABLE_LOG_
 // It logs an exception if the expression_p is true
 #define FE_LOG(expression_p, message_p) ::FE::exception::log(expression_p, #expression_p, ::FE::_LOG_EXCEPTION_HISTORY_, message_p, _SOURCE_CODE_LOCATION_)
 #else
@@ -109,7 +108,7 @@ struct exception_initialization_arguments
 #define FE_LOG(expression_p, message_p) expression_p
 #endif
 
-#if _ENABLE_EXIT_ == true
+#ifdef _ENABLE_EXIT_
 // It logs an error and exits if the expression_p is true
 #define FE_EXIT(expression_p, message_p, exit_code_p) if(expression_p) _UNLIKELY_ { ::FE::exception::log(expression_p, #expression_p, ::FE::_EXIT_WITH_CODE_, message_p, _SOURCE_CODE_LOCATION_, #exit_code_p, static_cast<::FE::int32>(exit_code_p)); }
 #else
