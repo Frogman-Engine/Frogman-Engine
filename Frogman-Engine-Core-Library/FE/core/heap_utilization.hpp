@@ -133,7 +133,7 @@ _NODISCARD_ _FORCE_INLINE_ T* trackable_calloc(length_t count_p, size_t bytes_p)
 	::FE::heap_utilization<T, alignment>::add(count_p * bytes_p);
 #endif
 	T* l_result_ptr = (T*)::scalable_aligned_malloc(count_p * bytes_p, alignment::s_size);
-	::FE::memset_s(l_result_ptr, _NULL_, count_p, bytes_p);
+	::FE::memset(l_result_ptr, _NULL_, count_p * bytes_p);
 	FE_ASSERT(l_result_ptr == nullptr, "UNRECOVERABLE CRITICAL ERROR!: l_result_ptr is nullptr. Failed to allocate memory from scalable_calloc()");
 	return l_result_ptr;
 }
@@ -162,7 +162,7 @@ _NODISCARD_ _FORCE_INLINE_ T* trackable_realloc(T* const memblock_ptrc_p, length
 	if (l_realloc_result_ptr == nullptr) _UNLIKELY_
 	{
 		l_realloc_result_ptr = (T*)::scalable_aligned_malloc(new_length_p * new_bytes_p, alignment::s_size);
-		::FE::memset_s(l_realloc_result_ptr, _NULL_, new_length_p, new_bytes_p);
+		::FE::memset(l_realloc_result_ptr, _NULL_, new_length_p * new_bytes_p);
 
 		FE_ASSERT(l_realloc_result_ptr == nullptr, "CRITICAL ERROR: Failed to re-allocate memory");
 

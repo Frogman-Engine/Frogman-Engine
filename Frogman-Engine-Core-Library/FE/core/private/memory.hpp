@@ -5,21 +5,21 @@
 #include <immintrin.h>
 
 
-#define DIVIDE_BY_2(input_p) (input_p >> 1)
-#define DIVIDE_BY_4(input_p) (input_p >> 2)
-#define DIVIDE_BY_8(input_p) (input_p >> 3)
-#define DIVIDE_BY_16(input_p) (input_p >> 4)
-#define DIVIDE_BY_32(input_p) (input_p >> 5)
-#define DIVIDE_BY_64(input_p) (input_p >> 6)
-#define DIVIDE_BY_128(input_p) (input_p >> 7)
+#define DIVIDE_BY_2(input_p) ((input_p) >> 1)
+#define DIVIDE_BY_4(input_p) ((input_p) >> 2)
+#define DIVIDE_BY_8(input_p) ((input_p) >> 3)
+#define DIVIDE_BY_16(input_p) ((input_p) >> 4)
+#define DIVIDE_BY_32(input_p) ((input_p) >> 5)
+#define DIVIDE_BY_64(input_p) ((input_p) >> 6)
+#define DIVIDE_BY_128(input_p) ((input_p) >> 7)
 
-#define MODULO_BY_2(input_p) (input_p & 1)
-#define MODULO_BY_4(input_p) (input_p & 3)
-#define MODULO_BY_8(input_p) (input_p & 7)
-#define MODULO_BY_16(input_p) (input_p & 15)
-#define MODULO_BY_32(input_p) (input_p & 31)
-#define MODULO_BY_64(input_p) (input_p & 63)
-#define MODULO_BY_128(input_p) (input_p & 127)
+#define MODULO_BY_2(input_p) ((input_p) & 1)
+#define MODULO_BY_4(input_p) ((input_p) & 3)
+#define MODULO_BY_8(input_p) ((input_p) & 7)
+#define MODULO_BY_16(input_p) ((input_p) & 15)
+#define MODULO_BY_32(input_p) ((input_p) & 31)
+#define MODULO_BY_64(input_p) ((input_p) & 63)
+#define MODULO_BY_128(input_p) ((input_p) & 127)
 
 
 #ifdef __AVX__
@@ -38,17 +38,25 @@
 BEGIN_NAMESPACE(FE)
 
 
-#if _AVX_ == true
-void memcpy_with_avx(void* const dest_ptrc_p, const void* const source_ptrc_p, size_t count_to_copy_p, size_t bytes_to_copy_p) noexcept;
-void memset_with_avx(void* const dest_ptrc_p, int8 value_p, length_t count_to_set_p, size_t bytes_to_set_p) noexcept;
-#endif
-
 #if _AVX512_ == true
-void memcpy_with_avx512(void* const dest_ptrc_p, const void* const source_ptrc_p, size_t count_to_copy_p, size_t bytes_to_copy_p) noexcept;
-void memset_with_avx512(void* const dest_ptrc_p, int8 value_p, length_t count_to_set_p, size_t bytes_to_set_p) noexcept;
+void unaligned_memset_with_avx512(void* const dest_ptrc_p, int8 value_p, size_t bytes_to_set_p) noexcept;
+void aligned_memset_with_avx512(void* const dest_ptrc_p, int8 value_p, size_t bytes_to_set_p) noexcept;
+
+void unaligned_memcpy_with_avx512(void* const dest_ptrc_p, const void* const source_ptrc_p, FE::size_t bytes_to_copy_p) noexcept;
+void aligned_memcpy_with_avx512(void* const dest_ptrc_p, const void* const source_ptrc_p, FE::size_t bytes_to_copy_p) noexcept;
+
+#elif _AVX_ == true
+void unaligned_memset_with_avx(void* const dest_ptrc_p, int8 value_p, size_t bytes_to_set_p) noexcept;
+void aligned_memset_with_avx(void* const dest_ptrc_p, int8 value_p, size_t bytes_to_set_p) noexcept;
+
+void unaligned_memcpy_with_avx(void* const dest_ptrc_p, const void* const source_ptrc_p, FE::size_t bytes_to_copy_p) noexcept;
+void aligned_memcpy_with_avx(void* const dest_ptrc_p, const void* const source_ptrc_p, FE::size_t bytes_to_copy_p) noexcept;
+
 #endif
 
-void memset_s(void* const dst_ptrc_p, int8 value_p, length_t count_p, size_t element_bytes_p) noexcept;
+
+
+void memset(void* const dst_ptrc_p, int8 value_p, size_t total_bytes_p) noexcept;
 void memcpy_s(void* const dest_memblock_ptrc_p, length_t dest_length_p, size_t dest_element_bytes_p, const void* const source_memblock_ptrc_p, length_t source_length_p, size_t source_element_bytes_p) noexcept;
 
 // + bitmask_length()

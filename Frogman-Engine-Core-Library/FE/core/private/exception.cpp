@@ -92,8 +92,8 @@ bool FE::real_time_exception_history_logging_strategy::__logging_strategy(boolea
     case _LOG_EXCEPTION_HISTORY_: // store exception logs in a global container and write  exception history file right before the unsafe_end of the application.  
         real_time_exception_history_logging_strategy::tl_s_file_logger << real_time_exception_history_logging_strategy::tl_s_full_debug_info_buffer.data() << "\n\n";
 
-        ::FE::memset_s(l_source_code_line_info_buffer, _NULL_, _LINE_INFO_BUFFER_SIZE_, sizeof(exception::buffer_type));
-        ::FE::memset_s(real_time_exception_history_logging_strategy::tl_s_full_debug_info_buffer.data(), _NULL_, _DEFAULT_DEBUG_LOG_BUFFER_SIZE_, sizeof(exception::buffer_type));
+        ::FE::memset(l_source_code_line_info_buffer, _NULL_, _LINE_INFO_BUFFER_SIZE_ * sizeof(exception::buffer_type));
+        ::FE::memset(real_time_exception_history_logging_strategy::tl_s_full_debug_info_buffer.data(), _NULL_, _DEFAULT_DEBUG_LOG_BUFFER_SIZE_ * sizeof(exception::buffer_type));
         break;
 
 
@@ -102,8 +102,8 @@ bool FE::real_time_exception_history_logging_strategy::__logging_strategy(boolea
 
         real_time_exception_history_logging_strategy::tl_s_file_logger << real_time_exception_history_logging_strategy::tl_s_full_debug_info_buffer.data() << "\n\n";
 
-        ::FE::memset_s(l_source_code_line_info_buffer, _NULL_, _LINE_INFO_BUFFER_SIZE_, sizeof(exception::buffer_type));
-        ::FE::memset_s(real_time_exception_history_logging_strategy::tl_s_full_debug_info_buffer.data(), _NULL_, _DEFAULT_DEBUG_LOG_BUFFER_SIZE_, sizeof(exception::buffer_type));
+        ::FE::memset(l_source_code_line_info_buffer, _NULL_, _LINE_INFO_BUFFER_SIZE_ * sizeof(exception::buffer_type));
+        ::FE::memset(real_time_exception_history_logging_strategy::tl_s_full_debug_info_buffer.data(), _NULL_, _DEFAULT_DEBUG_LOG_BUFFER_SIZE_ * sizeof(exception::buffer_type));
 
         ::abort(); // aborts the entire processes of the application.
 
@@ -124,8 +124,8 @@ bool FE::real_time_exception_history_logging_strategy::__logging_strategy(boolea
 
         real_time_exception_history_logging_strategy::tl_s_file_logger << real_time_exception_history_logging_strategy::tl_s_full_debug_info_buffer.data() << "\n\n";
 
-        ::FE::memset_s(l_source_code_line_info_buffer, _NULL_, _LINE_INFO_BUFFER_SIZE_, sizeof(exception::buffer_type));
-        ::FE::memset_s(real_time_exception_history_logging_strategy::tl_s_full_debug_info_buffer.data(), _NULL_, _DEFAULT_DEBUG_LOG_BUFFER_SIZE_, sizeof(exception::buffer_type));
+        ::FE::memset(l_source_code_line_info_buffer, _NULL_, _LINE_INFO_BUFFER_SIZE_ * sizeof(exception::buffer_type));
+        ::FE::memset(real_time_exception_history_logging_strategy::tl_s_full_debug_info_buffer.data(), _NULL_, _DEFAULT_DEBUG_LOG_BUFFER_SIZE_ * sizeof(exception::buffer_type));
 
         ::std::raise(exit_code_p);
     }
@@ -142,7 +142,7 @@ void FE::real_time_exception_history_logging_strategy::__main_thread_exception_c
     }
 
     tl_s_full_debug_info_buffer.reserve(s_full_debug_info_buffer_size);
-    FE::memset_s(tl_s_full_debug_info_buffer.data(), _NULL_, s_full_debug_info_buffer_size, sizeof(FE::exception::buffer_type));
+    FE::memset(tl_s_full_debug_info_buffer.data(), _NULL_, s_full_debug_info_buffer_size * sizeof(FE::exception::buffer_type));
 
 #if _WINDOWS_64BIT_OS_ == 1
     var::wchar l_date_info_wstring[clock::_GET_CURRENT_LOCAL_TIME_BUFFER_SIZE_] = L"\0";
@@ -220,7 +220,7 @@ void FE::real_time_exception_history_logging_strategy::__exception_construction_
     }
 
     tl_s_full_debug_info_buffer.reserve(s_full_debug_info_buffer_size);
-    FE::memset_s(tl_s_full_debug_info_buffer.data(), _NULL_, s_full_debug_info_buffer_size, sizeof(FE::exception::buffer_type));
+    FE::memset(tl_s_full_debug_info_buffer.data(), _NULL_, s_full_debug_info_buffer_size * sizeof(FE::exception::buffer_type));
 
 #if _WINDOWS_64BIT_OS_ == 1
     var::wchar l_thread_id[_MAX_THRED_ID_DIGIT_LENGTH_] = L"\0";
