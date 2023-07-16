@@ -310,7 +310,10 @@ _FORCE_INLINE_ void copy_string(char_type* const destination_out_ptrc_p, count_t
 
     FE_EXIT(destination_count_p < source_count_p, "MEMORY BOUNDARY CHECK FAILURE: the source_count_p is greater than the destination_count_p", FE::MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_RANGE);
 
-    FE::memcpy_s(destination_out_ptrc_p, destination_count_p, sizeof(char_type), source_ptrc_p, source_count_p, sizeof(char_type));
+    if(source_count_p != 0)
+    { 
+        FE::memcpy_s(destination_out_ptrc_p, destination_count_p, sizeof(char_type), source_ptrc_p, source_count_p, sizeof(char_type));
+    }
     destination_out_ptrc_p[source_count_p] = static_cast<char_type>('\0');
 }
 

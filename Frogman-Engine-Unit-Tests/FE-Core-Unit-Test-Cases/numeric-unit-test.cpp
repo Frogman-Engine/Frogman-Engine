@@ -45,7 +45,7 @@ TEST(convert_float_to_string, _)
 	char l_buffer[12] = "\0";
 	var::float32 l_pi = 3.14159f;
 	numeric::convert_float_to_string(l_buffer, 15, l_pi);
-	FE::memset(l_buffer + 7, 0, 4 * 1);
+	MEMSET(l_buffer + 7, 0, 4 * 1);
 
 	EXPECT_TRUE(string::string_comparison(l_buffer, "3.14159"));
 }
@@ -54,7 +54,7 @@ TEST(convert_float_to_string, constexpr)
 {
 	char l_buffer[12] = "\0";
 	numeric::constexpr_convert_float_to_string<var::float32, var::character>(l_buffer, 15, 356.768f);
-	FE::memset(l_buffer + 7, 0, 4 * 1);
+	MEMSET(l_buffer + 7, 0, 4 * 1);
 
 	EXPECT_TRUE(string::string_comparison(l_buffer, "356.768"));
 }

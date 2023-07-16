@@ -24,7 +24,7 @@ TEST(memset, _)
 	constexpr auto l_length = 40;
 	std::unique_ptr<var::byte[]> l_pointer_array = std::make_unique<var::byte[]>(l_length);
 	
-	FE::memset(l_pointer_array.get(), 100, l_length * sizeof(var::byte));
+	MEMSET(l_pointer_array.get(), 100, l_length * sizeof(var::byte));
 		
 	for (int i = 0; i < l_length; ++i)
 	{

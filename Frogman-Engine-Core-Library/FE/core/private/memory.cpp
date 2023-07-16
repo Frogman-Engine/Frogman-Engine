@@ -5,13 +5,16 @@ BEGIN_NAMESPACE(FE)
 
 
 #if _AVX512_ == true
-void unaligned_memset_with_avx512(void* const dest_ptrc_p, FE::int8 value_p, size_t bytes_to_set_p) noexcept
+void unaligned_memset_with_avx512(void* const dest_ptrc_p, FE::int8 value_p, size_t total_bytes_p) noexcept
 {
+    FE_ASSERT(dest_ptrc_p == nullptr, "ERROR: dest_ptrc_p is nullptr.");
+    FE_ASSERT(total_bytes_p == 0, "ERROR: element_bytes_p is 0.");
+
     __m512i* l_dest_ptr = static_cast<__m512i*>(dest_ptrc_p);
     const __m512i l_value_to_be_assigned = _mm512_set1_epi8(value_p);
 
-    size_t l_leftover_bytes = MODULO_BY_32(bytes_to_set_p);
-    FE::var::size_t l_avx_operation_count = DIVIDE_BY_32(bytes_to_set_p - l_leftover_bytes);
+    size_t l_leftover_bytes = MODULO_BY_32(total_bytes_p);
+    FE::var::size_t l_avx_operation_count = DIVIDE_BY_32(total_bytes_p - l_leftover_bytes);
 
     for (FE::var::size_t executed_operation_count = 0; executed_operation_count != l_avx_operation_count; ++executed_operation_count)
     {
@@ -30,13 +33,16 @@ void unaligned_memset_with_avx512(void* const dest_ptrc_p, FE::int8 value_p, siz
     }
 }
 
-void aligned_memset_with_avx512(void* const dest_ptrc_p, FE::int8 value_p, size_t bytes_to_set_p) noexcept
+void aligned_memset_with_avx512(void* const dest_ptrc_p, FE::int8 value_p, size_t total_bytes_p) noexcept
 {
+    FE_ASSERT(dest_ptrc_p == nullptr, "ERROR: dest_ptrc_p is nullptr.");
+    FE_ASSERT(total_bytes_p == 0, "ERROR: element_bytes_p is 0.");
+
     __m512i* l_dest_ptr = static_cast<__m512i*>(dest_ptrc_p);
     const __m512i l_value_to_be_assigned = _mm512_set1_epi8(value_p);
 
-    size_t l_leftover_bytes = MODULO_BY_32(bytes_to_set_p);
-    FE::var::size_t l_avx_operation_count = DIVIDE_BY_32(bytes_to_set_p - l_leftover_bytes);
+    size_t l_leftover_bytes = MODULO_BY_32(total_bytes_p);
+    FE::var::size_t l_avx_operation_count = DIVIDE_BY_32(total_bytes_p - l_leftover_bytes);
 
     for (FE::var::size_t executed_operation_count = 0; executed_operation_count != l_avx_operation_count; ++executed_operation_count)
     {
@@ -58,6 +64,9 @@ void aligned_memset_with_avx512(void* const dest_ptrc_p, FE::int8 value_p, size_
 
 void unaligned_memcpy_with_avx512(void* const dest_ptrc_p, const void* const source_ptrc_p, FE::size_t bytes_to_copy_p) noexcept
 {
+    FE_ASSERT(dest_ptrc_p == nullptr, "ERROR: dest_ptrc_p is nullptr.");
+    FE_ASSERT(bytes_to_copy_p == 0, "ERROR: element_bytes_p is 0.");
+
     __m512i* l_dest_ptr = static_cast<__m512i*>(dest_ptrc_p);
     const __m512i* l_source_ptr = static_cast<const __m512i* const>(source_ptrc_p);
 
@@ -84,6 +93,9 @@ void unaligned_memcpy_with_avx512(void* const dest_ptrc_p, const void* const sou
 
 void aligned_memcpy_with_avx512(void* const dest_ptrc_p, const void* const source_ptrc_p, FE::size_t bytes_to_copy_p) noexcept
 {
+    FE_ASSERT(dest_ptrc_p == nullptr, "ERROR: dest_ptrc_p is nullptr.");
+    FE_ASSERT(bytes_to_copy_p == 0, "ERROR: element_bytes_p is 0.");
+
     __m512i* l_dest_ptr = static_cast<__m512i*>(dest_ptrc_p);
     const __m512i* l_source_ptr = static_cast<const __m512i* const>(source_ptrc_p);
 
@@ -108,13 +120,16 @@ void aligned_memcpy_with_avx512(void* const dest_ptrc_p, const void* const sourc
     }
 }
 #elif _AVX_ == true
-void unaligned_memset_with_avx(void* const dest_ptrc_p, FE::int8 value_p, size_t bytes_to_set_p) noexcept
+void unaligned_memset_with_avx(void* const dest_ptrc_p, FE::int8 value_p, size_t total_bytes_p) noexcept
 {
+    FE_ASSERT(dest_ptrc_p == nullptr, "ERROR: dest_ptrc_p is nullptr.");
+    FE_ASSERT(total_bytes_p == 0, "ERROR: element_bytes_p is 0.");
+
     __m256i* l_dest_ptr = static_cast<__m256i*>(dest_ptrc_p);
     const __m256i l_value_to_be_assigned = _mm256_set1_epi8(value_p);
 
-    size_t l_leftover_bytes = MODULO_BY_32(bytes_to_set_p);
-    FE::var::size_t l_avx_operation_count = DIVIDE_BY_32(bytes_to_set_p - l_leftover_bytes);
+    size_t l_leftover_bytes = MODULO_BY_32(total_bytes_p);
+    FE::var::size_t l_avx_operation_count = DIVIDE_BY_32(total_bytes_p - l_leftover_bytes);
 
     for (FE::var::size_t executed_operation_count = 0; executed_operation_count != l_avx_operation_count; ++executed_operation_count)
     {
@@ -133,13 +148,16 @@ void unaligned_memset_with_avx(void* const dest_ptrc_p, FE::int8 value_p, size_t
     }
 }
 
-void aligned_memset_with_avx(void* const dest_ptrc_p, FE::int8 value_p, size_t bytes_to_set_p) noexcept
+void aligned_memset_with_avx(void* const dest_ptrc_p, FE::int8 value_p, size_t total_bytes_p) noexcept
 {
+    FE_ASSERT(dest_ptrc_p == nullptr, "ERROR: dest_ptrc_p is nullptr.");
+    FE_ASSERT(total_bytes_p == 0, "ERROR: element_bytes_p is 0.");
+
     __m256i* l_dest_ptr = static_cast<__m256i*>(dest_ptrc_p);
     const __m256i l_value_to_be_assigned = _mm256_set1_epi8(value_p);
 
-    size_t l_leftover_bytes = MODULO_BY_32(bytes_to_set_p);
-    FE::var::size_t l_avx_operation_count = DIVIDE_BY_32(bytes_to_set_p - l_leftover_bytes);
+    size_t l_leftover_bytes = MODULO_BY_32(total_bytes_p);
+    FE::var::size_t l_avx_operation_count = DIVIDE_BY_32(total_bytes_p - l_leftover_bytes);
 
     for (FE::var::size_t executed_operation_count = 0; executed_operation_count != l_avx_operation_count; ++executed_operation_count)
     {
@@ -161,6 +179,9 @@ void aligned_memset_with_avx(void* const dest_ptrc_p, FE::int8 value_p, size_t b
 
 void unaligned_memcpy_with_avx(void* const dest_ptrc_p, const void* const source_ptrc_p, FE::size_t bytes_to_copy_p) noexcept
 {
+    FE_ASSERT(dest_ptrc_p == nullptr, "ERROR: dest_ptrc_p is nullptr.");
+    FE_ASSERT(bytes_to_copy_p == 0, "ERROR: element_bytes_p is 0.");
+
     __m256i* l_dest_ptr = static_cast<__m256i*>(dest_ptrc_p);
     const __m256i* l_source_ptr = static_cast<const __m256i* const>(source_ptrc_p);
 
@@ -187,6 +208,9 @@ void unaligned_memcpy_with_avx(void* const dest_ptrc_p, const void* const source
 
 void aligned_memcpy_with_avx(void* const dest_ptrc_p, const void* const source_ptrc_p, FE::size_t bytes_to_copy_p) noexcept
 {
+    FE_ASSERT(dest_ptrc_p == nullptr, "ERROR: dest_ptrc_p is nullptr.");
+    FE_ASSERT(bytes_to_copy_p == 0, "ERROR: element_bytes_p is 0.");
+
     __m256i* l_dest_ptr = static_cast<__m256i*>(dest_ptrc_p);
     const __m256i* l_source_ptr = static_cast<const __m256i* const>(source_ptrc_p);
 
@@ -213,7 +237,7 @@ void aligned_memcpy_with_avx(void* const dest_ptrc_p, const void* const source_p
 #endif
 
 
-_FORCE_INLINE_ void memcpy_s(void* const dest_memblock_ptrc_p, length_t dest_length_p, size_t dest_element_bytes_p, const void* const source_memblock_ptrc_p, length_t source_length_p, size_t source_element_bytes_p) noexcept
+void memcpy_s(void* const dest_memblock_ptrc_p, length_t dest_length_p, size_t dest_element_bytes_p, const void* const source_memblock_ptrc_p, length_t source_length_p, size_t source_element_bytes_p) noexcept
 {
     ABORT_IF(dest_memblock_ptrc_p == nullptr, "ERROR: dest_memblock_ptrc_p is nullptr.");
     ABORT_IF(source_memblock_ptrc_p == nullptr, "ERROR: source_memblock_ptrc_p is nullptr.");
