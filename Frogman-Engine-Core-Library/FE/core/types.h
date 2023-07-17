@@ -13,9 +13,10 @@
 #include <string>
 #include <typeinfo>
 #include <type_traits>
+#pragma warning(push)
+#pragma warning(disable: 4715)
 
-
-#if _VISUAL_STUDIO_CPP_ == 1 
+#ifdef _VISUAL_STUDIO_CPP_
 #ifdef max
 #undef max
 #endif
@@ -49,7 +50,7 @@ typedef const unsigned char uchar; // primitive types are const by default
 typedef const wchar_t wchar; // primitive types are const by default
 
 
-#if _HAS_CXX20_ == 1
+#ifdef _HAS_CXX20_
 typedef const char8_t UTF8; // primitive types are const by default
 #endif
 
@@ -62,7 +63,12 @@ typedef const double float64; // primitive types are const by default
 
 
 typedef const bool binary; // primitive types are const by default
-typedef const bool byte; // primitive types are const by default
+typedef const ::std::uint8_t byte; // primitive types are const by default
+typedef const ::std::uint16_t word; // primitive types are const by default
+typedef const ::std::uint32_t dword; // primitive types are const by default
+typedef const ::std::uint64_t qword; // primitive types are const by default
+
+
 typedef const ::std::int8_t int8; // primitive types are const by default
 typedef const ::std::uint8_t uint8; // primitive types are const by default
 typedef const ::std::int16_t int16; // primitive types are const by default
@@ -83,7 +89,7 @@ typedef const ::std::intptr_t intptr_t; // primitive types are const by default
 typedef const ::std::uintptr_t uintptr_t; // primitive types are const by default
 
 
-#if _HAS_CXX20_ == 1
+#ifdef _HAS_CXX20_
 template <typename T>
 concept integral_type = sizeof(T) <= 8;
 
@@ -115,7 +121,7 @@ concept character_type = sizeof(T) <= 4;
 		static_assert(::std::atomic<wchar>::is_always_lock_free == true, "std::atomic is not compatible with wchar.");
 		static_assert(sizeof(wchar) <= 4, "The size of wchar must be less than or equal to four bytes.");
 
-#if _HAS_CXX20_ == 1
+#ifdef _HAS_CXX20_
 		typedef char8_t UTF8;
 		static_assert(::std::atomic<UTF8>::is_always_lock_free == true, "std::atomic is not compatible with UTF8.");
 		static_assert(sizeof(UTF8) <= 1, "The size of UTF8 must be one byte.");
@@ -140,9 +146,10 @@ concept character_type = sizeof(T) <= 4;
 		typedef bool binary;
 		static_assert(sizeof(binary) == 1, "The size of binary must be one byte.");
 
-		typedef bool byte;
-		static_assert(::std::atomic<byte>::is_always_lock_free == true, "std::atomic is not compatible with byte.");
-		static_assert(sizeof(byte) == 1, "The size of byte must be one byte.");
+		typedef ::std::uint8_t byte;
+		typedef ::std::uint16_t word; // primitive types are const by default
+		typedef ::std::uint32_t dword; // primitive types are const by default
+		typedef ::std::uint64_t qword; // primitive types are const by default
 
 		typedef ::std::int8_t int8;
 		static_assert(::std::atomic<int8>::is_always_lock_free == true, "std::atomic is not compatible with int8.");
@@ -184,28 +191,7 @@ concept character_type = sizeof(T) <= 4;
 		typedef ::std::ptrdiff_t ptrdiff_t;
 		typedef ::std::intptr_t intptr_t;
 		typedef ::std::uintptr_t uintptr_t;
-
-		static_assert(sizeof(nullptr) == 8, "Your system's memory address model must be 64-bit.");
-		using ATOMIC_BYTE_PTR = ::std::atomic_bool*;
-
-		using BYTE_PTR = bool*;
-		static_assert(::std::atomic<BYTE_PTR>::is_always_lock_free == true, "std::atomic is not compatible with  BYTE_PTR.");
-
-		using WORD_PTR = unsigned short*;
-		static_assert(::std::atomic<WORD_PTR>::is_always_lock_free == true, "std::atomic is not compatible with  WORD_PTR.");
-
-		using DWORD_PTR = unsigned int*;
-		static_assert(::std::atomic<DWORD_PTR>::is_always_lock_free == true, "std::atomic is not compatible with  DWORD_PTR.");
-
-		using QWORD_PTR = unsigned long long*;
-		static_assert(::std::atomic<QWORD_PTR>::is_always_lock_free == true, "std::atomic is not compatible with  QWORD_PTR.");
 	}
-
-	using ATOMIC_BYTE_PTR = ::std::atomic_bool* const;
-	using BYTE_PTR = var::byte* const;
-	using WORD_PTR = var::uint16* const;
-	using DWORD_PTR = var::uint32* const;
-	using QWORD_PTR = var::uint64* const;
 
 
 	_MAYBE_UNUSED_	constexpr FE::int8 _INT8_MAX_ = max_value<FE::int8>();
@@ -324,7 +310,7 @@ public:
 
 END_NAMESPACE
 
-#if _VISUAL_STUDIO_CPP_ == 1
+#ifdef _VISUAL_STUDIO_CPP_
 #ifndef max
 #define max(a,b)            (((a) > (b)) ? (a) : (b))
 #endif
@@ -333,4 +319,5 @@ END_NAMESPACE
 #endif
 #endif
 
+#pragma warning(pop)
 #endif

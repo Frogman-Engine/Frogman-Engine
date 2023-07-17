@@ -18,7 +18,7 @@ template< typename char_type = char, typename max_length_type = var::uint32, cla
 #endif
 class basic_string final
 {
-#if _VISUAL_STUDIO_CPP_ == 1
+#ifdef _VISUAL_STUDIO_CPP_
     ALLOW_ITS_FRIEND_TO_TEST(basic_string);
 #endif
 

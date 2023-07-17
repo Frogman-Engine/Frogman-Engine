@@ -57,13 +57,9 @@ void FE::exception::__destruct_exception() noexcept
 
 bool FE::real_time_exception_history_logging_strategy::__logging_strategy(boolean expression_p, character* const expression_string_ptrc_p, const EXCEPTION_MODE runtime_exception_mode_p, character* const message_ptrc_p, character* const file_name_ptrc_p, character* const function_name_ptrc_p, int32 line_p, character* const exit_code_enum_ptrc_p, int32 exit_code_p) noexcept
 {
-    switch (expression_p)
+    if (expression_p == false)
     {
-    case true:
-        break;
-
-    case false:
-        return expression_p;
+        return false;
     }
     
     
@@ -305,13 +301,9 @@ void FE::real_time_exception_history_logging_strategy::__exception_destruction_s
 
 bool FE::exception_history_log_buffering_strategy::__logging_strategy(boolean expression_p, character* const expression_string_ptrc_p, const EXCEPTION_MODE runtime_exception_mode_p, character* const message_ptrc_p, character* const file_name_ptrc_p, character* const function_name_ptrc_p, int32 line_p, character* const exit_code_enum_ptrc_p, int32 exit_code_p) noexcept
 {
-     switch (expression_p)
+    if (expression_p == false)
     {
-    case true:
-        break;
-
-    case false:
-        return expression_p;
+        return false;
     }
     
     
