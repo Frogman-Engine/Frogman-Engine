@@ -370,8 +370,8 @@ TARGET_LINK_LIBRARIES(	${PROJECT_NAME}
 	if(${SIMD_OPTION} STREQUAL "AVX-512")
 		TARGET_COMPILE_OPTIONS(	${PROJECT_NAME} PRIVATE 
 						$<$<CONFIG:DEBUG>:/WX- /W4 /MP /Od /Oi /MTd /Gy /DEBUG /arch:AVX512>
-						$<$<CONFIG:RELEASE>:/WX- /W4 /MP /O2 /Ob2 /Oi /Ot /Oy /GT /MTd /Gy /arch:AVX512>
-						$<$<CONFIG:RELWITHDEBINFO>:/WX- /W4 /MP /O2 /Ob2 /Oi /Ot /Oy /GT /MTd /Gy /arch:AVX512>
+						$<$<CONFIG:RELEASE>:/WX- /W4 /MP /Ox /Ob2 /Oi /Ot /Oy /GT /MTd /Gy /arch:AVX512>
+						$<$<CONFIG:RELWITHDEBINFO>:/WX- /W4 /MP /Ox /Ob2 /Oi /Ot /Oy /GT /MTd /Gy /arch:AVX512>
 						) 
 
 
@@ -379,16 +379,16 @@ TARGET_LINK_LIBRARIES(	${PROJECT_NAME}
 	elseif(${SIMD_OPTION} STREQUAL "AVX-2")
 		TARGET_COMPILE_OPTIONS(	${PROJECT_NAME} PRIVATE 
 						$<$<CONFIG:DEBUG>:/WX- /W4 /MP /Od /Oi /MTd /Gy /DEBUG /arch:AVX2>
-						$<$<CONFIG:RELEASE>:/WX- /W4 /MP /O2 /Ob2 /Oi /Ot /Oy /GT /MTd /Gy /arch:AVX2
-						$<$<CONFIG:RELWITHDEBINFO>:/WX- /W4 /MP /O2 /Ob2 /Oi /Ot /Oy /GT /MTd /Gy /arch:AVX2>
+						$<$<CONFIG:RELEASE>:/WX- /W4 /MP /Ox /Ob2 /Oi /Ot /Oy /GT /MTd /Gy /arch:AVX2
+						$<$<CONFIG:RELWITHDEBINFO>:/WX- /W4 /MP /Ox /Ob2 /Oi /Ot /Oy /GT /MTd /Gy /arch:AVX2>
 						)
 
 
 	elseif(${SIMD_OPTION} STREQUAL "AVX")
 		TARGET_COMPILE_OPTIONS(	${PROJECT_NAME} PRIVATE 
 						$<$<CONFIG:DEBUG>:/WX- /W4 /MP /Od /Oi /MTd /Gy /DEBUG /arch:AVX>
-						$<$<CONFIG:RELEASE>:/WX- /W4 /MP /O2 /Ob2 /Oi /Ot /Oy /GT /MTd /Gy /arch:AVX>
-						$<$<CONFIG:RELWITHDEBINFO>:/WX- /W4 /MP /O2 /Ob2 /Oi /Ot /Oy /GT /MTd /Gy /arch:AVX> 
+						$<$<CONFIG:RELEASE>:/WX- /W4 /MP /Ox /Ob2 /Oi /Ot /Oy /GT /MTd /Gy /arch:AVX>
+						$<$<CONFIG:RELWITHDEBINFO>:/WX- /W4 /MP /Ox /Ob2 /Oi /Ot /Oy /GT /MTd /Gy /arch:AVX> 
 						)
 	else()
 			MESSAGE(FATAL_ERROR "Detected an invalid X86-64 intrinsic SIMD option")
