@@ -59,7 +59,7 @@ int main(int argc, char** argv)
 
 	::testing::InitGoogleTest(&argc, argv);
 	int l_test_result = RUN_ALL_TESTS();
-	FE_ASSERT(true, "hi");
+
 	FE::internal::engine_main::shutdown_engine();
 	return l_test_result;
 }
