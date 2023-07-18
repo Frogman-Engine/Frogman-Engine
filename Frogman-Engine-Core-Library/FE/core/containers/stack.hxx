@@ -37,9 +37,9 @@ public:
 protected:
 	var::byte m_memory[sizeof(value_type) * max_element_count];
 	pointer m_top_ptr;
-	pointer const m_begin_ptrc;
+	pointer const m_absolute_begin_ptrc;
 
-	_FORCE_INLINE_ stack_base() noexcept : m_memory(), m_top_ptr(reinterpret_cast<pointer>(m_memory)), m_begin_ptrc(m_top_ptr) {}
+	_FORCE_INLINE_ stack_base() noexcept : m_memory(), m_top_ptr(reinterpret_cast<pointer>(m_memory)), m_absolute_begin_ptrc(m_top_ptr) {}
 	_FORCE_INLINE_ _CONSTEXPR20_ ~stack_base() noexcept {}
 
 public:
@@ -50,17 +50,17 @@ public:
 
 	_NODISCARD_ _FORCE_INLINE_ var::boolean is_empty() noexcept
 	{
-		return (this->m_top_ptr == this->m_begin_ptrc) ? true : false;
+		return (this->m_top_ptr == this->m_absolute_begin_ptrc) ? true : false;
 	}
 
 	_FORCE_INLINE_ length_type length() noexcept
 	{
-		return this->m_top_ptr - this->m_begin_ptrc;
+		return this->m_top_ptr - this->m_absolute_begin_ptrc;
 	}
 
 	_FORCE_INLINE_ size_type size() noexcept
 	{
-		return this->m_top_ptr - this->m_begin_ptrc;
+		return this->m_top_ptr - this->m_absolute_begin_ptrc;
 	}
 
 	_FORCE_INLINE_ constexpr size_type max_size() const noexcept
@@ -75,7 +75,7 @@ public:
 
 	_FORCE_INLINE_ FE::const_iterator<FE::contiguous_iterator<T>> cbegin() noexcept
 	{
-		return this->m_begin_ptrc;
+		return this->m_absolute_begin_ptrc;
 	}
 
 	_FORCE_INLINE_ FE::const_iterator<FE::contiguous_iterator<T>> cend() noexcept
@@ -90,7 +90,7 @@ public:
 
 	_FORCE_INLINE_ FE::const_reverse_iterator<FE::contiguous_iterator<T>> crend() noexcept
 	{
-		return this->m_begin_ptrc - 1;
+		return this->m_absolute_begin_ptrc - 1;
 	}
 
 	template<boolean is_trivially_constructible_and_destructible = FE::is_trivially_constructible_and_destructible<T>()>
@@ -121,7 +121,7 @@ protected:
 
 	_FORCE_INLINE_ void __set_top_pointer_to_zero() noexcept
 	{
-		this->m_top_ptr = this->m_begin_ptrc;
+		this->m_top_ptr = this->m_absolute_begin_ptrc;
 	}
 };
 
@@ -148,7 +148,7 @@ public:
 	{
 		FE_ASSERT(initializer_list_p.size() > max_element_count, "ERROR!: The length of std::initializer_list exceeds the max_element_count");
 
-		FE::unaligned_memcpy(this->m_memory, max_element_count, sizeof(value_type),
+		UNALIGNED_MEMCPY(this->m_memory, max_element_count, sizeof(value_type),
 					initializer_list_p.begin(), initializer_list_p.size(), sizeof(value_type));
 
 		this->__jump_top_pointer(initializer_list_p.size());
@@ -156,21 +156,20 @@ public:
 
 	_FORCE_INLINE_ stack(stack& other_ref_p) noexcept : base_type()
 	{
-		FE::unaligned_memcpy(this->m_memory, max_element_count, sizeof(value_type),
+		UNALIGNED_MEMCPY(this->m_memory, max_element_count, sizeof(value_type),
 					other_ref_p.m_memory, max_element_count, sizeof(value_type));
 
-		this->__jump_top_pointer(other_ref_p.m_top_ptr - other_ref_p.m_begin_ptrc);
-		other_ref_p.__set_top_pointer_to_zero();
+		this->__jump_top_pointer(other_ref_p.m_top_ptr - other_ref_p.m_absolute_begin_ptrc);
 	}
 
 	_FORCE_INLINE_ stack(stack&& rvalue_p) noexcept : base_type()
 	{
-		FE::unaligned_memcpy(this->m_memory, max_element_count, sizeof(value_type),
+		UNALIGNED_MEMCPY(this->m_memory, max_element_count, sizeof(value_type),
 					rvalue_p.m_memory, max_element_count, sizeof(value_type));
 
 		UNALIGNED_MEMSET(rvalue_p.m_memory, _NULL_, max_element_count * sizeof(value_type));
 
-		this->__jump_top_pointer(rvalue_p.m_top_ptr - rvalue_p.m_begin_ptrc);
+		this->__jump_top_pointer(rvalue_p.m_top_ptr - rvalue_p.m_absolute_begin_ptrc);
 		rvalue_p.__set_top_pointer_to_zero();
 	}
 
@@ -178,7 +177,7 @@ public:
 	{
 		FE_ASSERT(initializer_list_p.size() > max_element_count, "ERROR!: The length of std::initializer_list exceeds the max_element_count");
 
-		FE::unaligned_memcpy(this->m_memory, max_element_count, sizeof(value_type),
+		UNALIGNED_MEMCPY(this->m_memory, max_element_count, sizeof(value_type),
 					initializer_list_p.begin(), initializer_list_p.size(), sizeof(value_type));
 
 		this->__set_top_pointer_to_zero();
@@ -188,31 +187,30 @@ public:
 
 	_FORCE_INLINE_ stack& operator=(stack& other_ref_p) noexcept
 	{
-		FE::unaligned_memcpy(this->m_memory, max_element_count, sizeof(value_type),
+		UNALIGNED_MEMCPY(this->m_memory, max_element_count, sizeof(value_type),
 					other_ref_p.m_memory, max_element_count, sizeof(value_type));
 
 		this->__set_top_pointer_to_zero();
-		this->__jump_top_pointer(other_ref_p.m_top_ptr - other_ref_p.m_begin_ptrc);
-		other_ref_p.__set_top_pointer_to_zero();
+		this->__jump_top_pointer(other_ref_p.m_top_ptr - other_ref_p.m_absolute_begin_ptrc);
 		return *this;
 	}
 
 	_FORCE_INLINE_ stack& operator=(stack&& rvalue_p) noexcept
 	{
-		FE::unaligned_memcpy(this->m_memory, max_element_count, sizeof(value_type),
+		UNALIGNED_MEMCPY(this->m_memory, max_element_count, sizeof(value_type),
 					rvalue_p.m_memory, max_element_count, sizeof(value_type));
 
 		UNALIGNED_MEMSET(rvalue_p.m_memory, _NULL_, max_element_count * sizeof(value_type));
 
 		this->__set_top_pointer_to_zero();
-		this->__jump_top_pointer(rvalue_p.m_top_ptr - rvalue_p.m_begin_ptrc);
+		this->__jump_top_pointer(rvalue_p.m_top_ptr - rvalue_p.m_absolute_begin_ptrc);
 		rvalue_p.__set_top_pointer_to_zero();
 		return *this;
 	}
 
 	_FORCE_INLINE_ void push(value_type value_p) noexcept
 	{
-		FE_EXIT(this->m_top_ptr >= this->m_begin_ptrc + max_element_count, "UNRECOVERABLE ERROR!: The stack top exceeded the index boundary of the underlying container", FE::MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_RANGE);
+		FE_EXIT(this->m_top_ptr >= this->m_absolute_begin_ptrc + max_element_count, "UNRECOVERABLE ERROR!: The stack top exceeded the index boundary", FE::MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_RANGE);
 
 		*this->m_top_ptr = value_p;
 		++this->m_top_ptr;
@@ -232,8 +230,8 @@ public:
 	{
 		FE_ASSERT(this->is_empty() == true, "WARNING: It is pointless to pop empty elements.");
 
+		UNALIGNED_MEMSET(this->m_absolute_begin_ptrc, _NULL_, (this->m_top_ptr - this->m_absolute_begin_ptrc) * sizeof(T));
 		this->__set_top_pointer_to_zero();
-		UNALIGNED_MEMSET(this->m_begin_ptrc, _NULL_, max_element_count * sizeof(T));
 	}
 };
 
@@ -262,38 +260,33 @@ public:
 	{
 		if (this->is_empty() == true) { return; }
 
-		FE::destruct<FE::iterator<FE::contiguous_iterator<value_type>>>(this->m_begin_ptrc, this->m_begin_ptrc + FE::bool_mask_length<OBJECT_LIFECYCLE>(this->m_bool_mask, max_element_count), this->m_bool_mask);
+		FE::destruct<FE::iterator<FE::contiguous_iterator<value_type>>>(this->m_absolute_begin_ptrc, this->m_top_ptr, this->m_bool_mask);
 	}
 
 	_FORCE_INLINE_ stack(std::initializer_list<value_type>&& initializer_list_p) noexcept : base_type(), m_bool_mask()
 	{
 		FE_ASSERT(initializer_list_p.size() > max_element_count, "ERROR!: The length of std::initializer_list exceeds the max_element_count");
 
-		FE::move_construct<FE::iterator<FE::contiguous_iterator<value_type>>>(this->m_begin_ptrc, initializer_list_p.size(), this->m_bool_mask,
+		FE::move_construct<FE::iterator<FE::contiguous_iterator<value_type>>>(this->m_absolute_begin_ptrc, initializer_list_p.size(), this->m_bool_mask,
                                                                               const_cast<T*>(initializer_list_p.begin()), initializer_list_p.size());
 		this->__jump_top_pointer(initializer_list_p.size());
 	}
 
 	_FORCE_INLINE_ stack(stack& other_ref_p) noexcept : base_type(), m_bool_mask()
 	{
-		length_t l_other_bool_mask_length = FE::bool_mask_length<OBJECT_LIFECYCLE>(other_ref_p.m_bool_mask, max_element_count);
-
-		FE::copy_construct<FE::iterator<FE::contiguous_iterator<value_type>>>(this->m_begin_ptrc, max_element_count, static_cast<OBJECT_LIFECYCLE*>(this->m_bool_mask),
-                                                                              other_ref_p.m_begin_ptrc, l_other_bool_mask_length, static_cast<const OBJECT_LIFECYCLE*>(other_ref_p.m_bool_mask));
-		this->__jump_top_pointer(l_other_bool_mask_length);
-		other_ref_p.__set_top_pointer_to_zero();
+		FE::copy_construct<FE::iterator<FE::contiguous_iterator<value_type>>>(this->m_absolute_begin_ptrc, max_element_count, static_cast<OBJECT_LIFECYCLE*>(this->m_bool_mask),
+                                                                              other_ref_p.m_absolute_begin_ptrc, other_ref_p.m_top_ptr - other_ref_p.m_absolute_begin_ptrc, static_cast<const OBJECT_LIFECYCLE*>(other_ref_p.m_bool_mask));
+		this->__jump_top_pointer(other_ref_p.m_top_ptr - other_ref_p.m_absolute_begin_ptrc);
 	}
 
 	_FORCE_INLINE_ stack(stack&& rvalue_p) noexcept : base_type(), m_bool_mask()
 	{
-		length_t l_rvalue_bool_mask_length = FE::bool_mask_length<OBJECT_LIFECYCLE>(rvalue_p.m_bool_mask, max_element_count);
-
-		FE::move_construct<FE::iterator<FE::contiguous_iterator<value_type>>>(this->m_begin_ptrc, max_element_count, static_cast<OBJECT_LIFECYCLE*>(this->m_bool_mask),
-                                                                              rvalue_p.m_begin_ptrc, l_rvalue_bool_mask_length, static_cast<OBJECT_LIFECYCLE*>(rvalue_p.m_bool_mask));
+		FE::move_construct<FE::iterator<FE::contiguous_iterator<value_type>>>(this->m_absolute_begin_ptrc, max_element_count, static_cast<OBJECT_LIFECYCLE*>(this->m_bool_mask),
+                                                                              rvalue_p.m_absolute_begin_ptrc, rvalue_p.m_top_ptr - rvalue_p.m_absolute_begin_ptrc, static_cast<OBJECT_LIFECYCLE*>(rvalue_p.m_bool_mask));
 	
-		FE::destruct<FE::iterator<FE::contiguous_iterator<value_type>>>(rvalue_p.m_begin_ptrc, rvalue_p.m_begin_ptrc + (rvalue_p.m_top_ptr - rvalue_p.m_begin_ptrc), rvalue_p.m_bool_mask);
+		FE::destruct<FE::iterator<FE::contiguous_iterator<value_type>>>(rvalue_p.m_absolute_begin_ptrc, rvalue_p.m_top_ptr, rvalue_p.m_bool_mask);
 
-		this->__jump_top_pointer(l_rvalue_bool_mask_length);
+		this->__jump_top_pointer(rvalue_p.m_top_ptr - rvalue_p.m_absolute_begin_ptrc);
 		rvalue_p.__set_top_pointer_to_zero();
 	}
 
@@ -301,7 +294,7 @@ public:
 	{
 		FE_ASSERT(initializer_list_p.size() > max_element_count, "ERROR!: The length of std::initializer_list exceeds the max_element_count");
 
-		FE::move_assign<FE::iterator<FE::contiguous_iterator<value_type>>>(this->m_begin_ptrc, initializer_list_p.size(), this->m_bool_mask,
+		FE::move_assign<FE::iterator<FE::contiguous_iterator<value_type>>>(this->m_absolute_begin_ptrc, initializer_list_p.size(), this->m_bool_mask,
                                                                            const_cast<T*>(initializer_list_p.begin()), initializer_list_p.size());
 		this->__set_top_pointer_to_zero();
 		this->__jump_top_pointer(initializer_list_p.size());
@@ -310,36 +303,31 @@ public:
 
 	_FORCE_INLINE_ stack& operator=(stack& other_ref_p) noexcept
 	{
-		length_t l_other_bool_mask_length = FE::bool_mask_length<OBJECT_LIFECYCLE>(other_ref_p.m_bool_mask, max_element_count);
-
-		FE::copy_assign<FE::iterator<FE::contiguous_iterator<value_type>>>(this->m_begin_ptrc, max_element_count, static_cast<OBJECT_LIFECYCLE*>(this->m_bool_mask),
-                                                                           other_ref_p.m_begin_ptrc, l_other_bool_mask_length, static_cast<const OBJECT_LIFECYCLE*>(other_ref_p.m_bool_mask));
+		FE::copy_assign<FE::iterator<FE::contiguous_iterator<value_type>>>(this->m_absolute_begin_ptrc, max_element_count, static_cast<OBJECT_LIFECYCLE*>(this->m_bool_mask),
+                                                                           other_ref_p.m_absolute_begin_ptrc, other_ref_p.m_top_ptr - other_ref_p.m_absolute_begin_ptrc, static_cast<const OBJECT_LIFECYCLE*>(other_ref_p.m_bool_mask));
 		this->__set_top_pointer_to_zero();
-		this->__jump_top_pointer(l_other_bool_mask_length);
-		other_ref_p.__set_top_pointer_to_zero();
+		this->__jump_top_pointer(other_ref_p.m_top_ptr - other_ref_p.m_absolute_begin_ptrc);
 		return *this;
 	}
 
 	_FORCE_INLINE_ stack& operator=(stack&& rvalue_p) noexcept
 	{
-		length_t l_rvalue_bool_mask_length = FE::bool_mask_length<OBJECT_LIFECYCLE>(rvalue_p.m_bool_mask, max_element_count);
-
-		FE::move_assign<FE::iterator<FE::contiguous_iterator<value_type>>>(this->m_begin_ptrc, max_element_count, static_cast<OBJECT_LIFECYCLE*>(this->m_bool_mask),
-                                                                           rvalue_p.m_begin_ptrc, l_rvalue_bool_mask_length, static_cast<OBJECT_LIFECYCLE*>(rvalue_p.m_bool_mask));
+		FE::move_assign<FE::iterator<FE::contiguous_iterator<value_type>>>(this->m_absolute_begin_ptrc, max_element_count, static_cast<OBJECT_LIFECYCLE*>(this->m_bool_mask),
+                                                                          rvalue_p.m_absolute_begin_ptrc, rvalue_p.m_top_ptr - rvalue_p.m_absolute_begin_ptrc, static_cast<OBJECT_LIFECYCLE*>(rvalue_p.m_bool_mask));
 		
-		FE::destruct<FE::iterator<FE::contiguous_iterator<value_type>>>(rvalue_p.m_begin_ptrc, rvalue_p.m_begin_ptrc + (rvalue_p.m_top_ptr - rvalue_p.m_begin_ptrc), rvalue_p.m_bool_mask);
+		FE::destruct<FE::iterator<FE::contiguous_iterator<value_type>>>(rvalue_p.m_absolute_begin_ptrc, rvalue_p.m_top_ptr, rvalue_p.m_bool_mask);
 		
 		this->__set_top_pointer_to_zero();
-		this->__jump_top_pointer(l_rvalue_bool_mask_length);
+		this->__jump_top_pointer(rvalue_p.m_top_ptr - rvalue_p.m_absolute_begin_ptrc);
 		rvalue_p.__set_top_pointer_to_zero();
 		return *this;
 	}
 
 	_FORCE_INLINE_ void push(value_type value_p) noexcept
 	{
-		FE_EXIT(this->m_top_ptr >= this->m_begin_ptrc + max_element_count, "UNRECOVERABLE ERROR!: The stack top exceeded the index boundary of the underlying container", FE::MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_RANGE);
+		FE_EXIT(this->m_top_ptr >= this->m_absolute_begin_ptrc + max_element_count, "UNRECOVERABLE ERROR!: The stack top exceeded the index boundary", FE::MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_RANGE);
 		
-		FE::move_assign(this->m_top_ptr, this->m_bool_mask + (this->m_top_ptr - this->m_begin_ptrc), std::move(value_p));
+		FE::move_assign<FE::iterator<FE::contiguous_iterator<value_type>>>(this->m_top_ptr, this->m_bool_mask + (this->m_top_ptr - this->m_absolute_begin_ptrc), std::move(value_p));
 		++this->m_top_ptr;
 	}
 
@@ -349,7 +337,7 @@ public:
 
 		--this->m_top_ptr;
 		T l_return_value_buffer = *this->m_top_ptr;
-		FE::destruct(this->m_top_ptr, this->m_bool_mask + (this->m_top_ptr - this->m_begin_ptrc));
+		FE::destruct<FE::iterator<FE::contiguous_iterator<value_type>>>(this->m_top_ptr, this->m_bool_mask + (this->m_top_ptr - this->m_absolute_begin_ptrc));
 		return l_return_value_buffer;
 	}
 	
@@ -357,8 +345,8 @@ public:
 	{
 		FE_ASSERT(this->is_empty() == true, "WARNING: It is pointless to pop empty elements.");
 
+		FE::destruct<FE::iterator<FE::contiguous_iterator<value_type>>>(this->m_absolute_begin_ptrc, this->m_top_ptr, this->m_bool_mask);
 		this->__set_top_pointer_to_zero();
-		FE::destruct(this->m_begin_ptrc, this->m_begin_ptrc + (this->m_top_ptr - this->m_begin_ptrc), this->m_bool_mask);
 	}
 };
 
