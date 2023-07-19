@@ -334,7 +334,7 @@ TEST(FE_algorithm_string, count_all_corresponding_chars_within_range)
 {
 	char l_string[] = "Carrots contain carotene, antioxidants, etcetera.";
 
-	auto l_result = string::count_all_corresponding_chars_within_range(l_string, string::string_range{25, 50}, 't');
+	auto l_result = string::count_all_corresponding_chars_within_range(l_string, string::string_range{25, 49}, 't');
 
 	EXPECT_EQ(l_result._match_count, 4);
 	EXPECT_EQ(l_result._target_data, 't');
@@ -344,7 +344,7 @@ TEST(FE_algorithm_string, constexpr_count_all_corresponding_chars_within_range)
 {
 	char l_string[] = "Carrots contain carotene, antioxidants, etcetera.";
 
-	auto l_result = string::count_all_corresponding_chars_within_range(l_string, string::string_range{25, 50}, 't');
+	auto l_result = string::count_all_corresponding_chars_within_range(l_string, string::string_range{25, 49}, 't');
 
 	EXPECT_EQ(l_result._match_count, 4);
 	EXPECT_EQ(l_result._target_data, 't');
