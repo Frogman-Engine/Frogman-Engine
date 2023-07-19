@@ -43,6 +43,7 @@ constexpr FE::length_t g_sec_string_length = 4;
 
 FE::exception* FE::exception::s_logging_strategy_ptr = nullptr;
 
+
 thread_local ::std::ofstream FE::exception::tl_s_file_logger;
 thread_local ::FE::clock FE::exception::tl_s_clock;
 thread_local ::std::string FE::exception::tl_s_log_buffer;
@@ -124,7 +125,7 @@ bool FE::real_time_exception_history_logging_strategy::__logging_strategy(boolea
         memset(l_source_code_line_info_buffer, _NULL_, _LINE_INFO_BUFFER_SIZE_ * sizeof(exception::buffer_type));
         memset(real_time_exception_history_logging_strategy::tl_s_log_buffer.data(), _NULL_, _DEFAULT_DEBUG_LOG_BUFFER_SIZE_ * sizeof(exception::buffer_type));
 
-        ::abort(); // aborts the entire processes of the application.
+        ::std::abort(); // aborts the entire processes of the application.
 
 
     case _EXIT_WITH_CODE_:
@@ -145,8 +146,7 @@ bool FE::real_time_exception_history_logging_strategy::__logging_strategy(boolea
 
         memset(l_source_code_line_info_buffer, _NULL_, _LINE_INFO_BUFFER_SIZE_ * sizeof(exception::buffer_type));
         memset(real_time_exception_history_logging_strategy::tl_s_log_buffer.data(), _NULL_, _DEFAULT_DEBUG_LOG_BUFFER_SIZE_ * sizeof(exception::buffer_type));
-
-        ::std::raise(exit_code_p);
+        ::std::abort();
     }
 
     return true;
@@ -382,7 +382,7 @@ bool FE::exception_history_log_buffering_strategy::__logging_strategy(boolean ex
         memset(l_source_code_line_info_buffer, _NULL_, _LINE_INFO_BUFFER_SIZE_ * sizeof(exception::buffer_type));
         memset(tl_s_log_buffer.data(), _NULL_, _DEFAULT_DEBUG_LOG_BUFFER_SIZE_ * sizeof(exception::buffer_type));
 
-        ::abort(); // aborts the entire processes of the application.
+        ::std::abort(); // aborts the entire processes of the application.
 
 
     case _EXIT_WITH_CODE_:
@@ -404,7 +404,7 @@ bool FE::exception_history_log_buffering_strategy::__logging_strategy(boolean ex
         memset(l_source_code_line_info_buffer, _NULL_, _LINE_INFO_BUFFER_SIZE_ * sizeof(exception::buffer_type));
         memset(tl_s_log_buffer.data(), _NULL_, _DEFAULT_DEBUG_LOG_BUFFER_SIZE_ * sizeof(exception::buffer_type));
 
-        ::std::raise(exit_code_p);
+        ::std::abort();
     }
 
     return true;

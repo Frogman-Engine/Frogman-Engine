@@ -203,7 +203,7 @@ public:
 
     constexpr algorithm::string::target_char_count<char_type> find_all_corresponding_characters(const char_type target_character_p, index_t position_p = 0) const noexcept
     {
-        return algorithm::string::count_all_corresponding_characters(this->data() + position_p, target_character_p);
+        return algorithm::string::count_all_corresponding_chars(this->data() + position_p, target_character_p);
     }
 
     static constexpr void swap(compile_time_constant_string<char_type>& first_ref_p, compile_time_constant_string<char_type>& second_ref_p) noexcept

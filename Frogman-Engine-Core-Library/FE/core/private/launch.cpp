@@ -78,6 +78,6 @@ _NORETURN_ void ::FE::internal::engine_main::abnormal_shutdown_with_exit_code(in
 		l_release_build_crash_report << "-------------------------------------------------- END OF STACK TRACE RECORD --------------------------------------------------\n";
 
 	}
-	raise(signal_p);
+	::std::exit(signal_p);
 #endif
 }

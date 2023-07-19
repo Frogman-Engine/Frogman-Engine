@@ -148,7 +148,7 @@ template <typename char_type>
 #if _HAS_CXX20_ == 1
     requires character_type<char_type>
 #endif
-_NODISCARD_ _FORCE_INLINE_ var::boolean compare_ranged_strings(const char_type* const lstr_ptrc_p, string_range lstr_range_p, char_type* const rstr_ptrc_p, string_range rstr_range_p) noexcept
+_NODISCARD_ _FORCE_INLINE_ var::boolean compare_ranged_strings(const char_type* const lstr_ptrc_p, const string_range lstr_range_p, char_type* const rstr_ptrc_p, const string_range rstr_range_p) noexcept
 {
     static_assert(sizeof(char_type) <= sizeof(UTF32), "char_type is not a valid character type");
     FE_EXIT(lstr_ptrc_p == nullptr, "NULLPTR DETECTED: lstr_ptrc_p is nullptr.", FE::MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR);
@@ -186,7 +186,7 @@ template <typename char_type>
 #if _HAS_CXX20_ == 1
     requires character_type<char_type>
 #endif
-_NODISCARD_ _FORCE_INLINE_ var::boolean compare_ranged_strings(char_type* const lstr_ptrc_p, string_range lstr_range_p, const char_type* const rstr_ptrc_p, string_range rstr_range_p) noexcept
+_NODISCARD_ _FORCE_INLINE_ var::boolean compare_ranged_strings(char_type* const lstr_ptrc_p, const string_range lstr_range_p, const char_type* const rstr_ptrc_p, const string_range rstr_range_p) noexcept
 {
     static_assert(sizeof(char_type) <= sizeof(UTF32), "char_type is not a valid character type");
     FE_EXIT(lstr_ptrc_p == nullptr, "NULLPTR DETECTED: lstr_ptrc_p is nullptr.", FE::MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR);
@@ -224,7 +224,7 @@ template <typename char_type>
 #if _HAS_CXX20_ == 1
     requires character_type<char_type>
 #endif
-_NODISCARD_ _FORCE_INLINE_ var::boolean compare_ranged_strings(char_type* const lstr_ptrc_p, string_range lstr_range_p, char_type* const rstr_ptrc_p, string_range rstr_range_p) noexcept
+_NODISCARD_ _FORCE_INLINE_ var::boolean compare_ranged_strings(char_type* const lstr_ptrc_p, const string_range lstr_range_p, char_type* const rstr_ptrc_p, const string_range rstr_range_p) noexcept
 {
     static_assert(sizeof(char_type) <= sizeof(UTF32), "char_type is not a valid character type");
     FE_EXIT(lstr_ptrc_p == nullptr, "NULLPTR DETECTED: lstr_ptrc_p is nullptr.", FE::MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR);
@@ -262,7 +262,7 @@ template <typename char_type>
 #if _HAS_CXX20_ == 1
     requires character_type<char_type>
 #endif
-_NODISCARD_ _FORCE_INLINE_ constexpr var::boolean compare_ranged_strings(const char_type* const lstr_ptrc_p, string_range lstr_range_p, const char_type* const rstr_ptrc_p, string_range rstr_range_p) noexcept
+_NODISCARD_ _FORCE_INLINE_ constexpr var::boolean compare_ranged_strings(const char_type* const lstr_ptrc_p, const string_range lstr_range_p, const char_type* const rstr_ptrc_p, const string_range rstr_range_p) noexcept
 {
     static_assert(sizeof(char_type) <= sizeof(UTF32), "char_type is not a valid character type");
     FE_EXIT(lstr_ptrc_p == nullptr, "NULLPTR DETECTED: lstr_ptrc_p is nullptr.", FE::MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR);
@@ -492,7 +492,7 @@ template <typename char_type>
 #if _HAS_CXX20_ == 1
     requires character_type<char_type>
 #endif
-_NODISCARD_ _FORCE_INLINE_ var::boolean insensitive_ranged_string_comparison(const char_type* const lstr_ptrc_p, string_range lstr_range_p, char_type* const rstr_ptrc_p, string_range rstr_range_p) noexcept
+_NODISCARD_ _FORCE_INLINE_ var::boolean insensitive_ranged_string_comparison(const char_type* const lstr_ptrc_p, const string_range lstr_range_p, char_type* const rstr_ptrc_p, const string_range rstr_range_p) noexcept
 {
     static_assert(sizeof(char_type) <= sizeof(UTF32), "char_type is not a valid character type");
     FE_EXIT(lstr_ptrc_p == nullptr, "NULLPTR DETECTED: lstr_ptrc_p is nullptr.", FE::MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR);
@@ -530,7 +530,7 @@ template <typename char_type>
 #if _HAS_CXX20_ == 1
     requires character_type<char_type>
 #endif
-_NODISCARD_ _FORCE_INLINE_ var::boolean insensitive_ranged_string_comparison(char_type* const lstr_ptrc_p, string_range lstr_range_p, const char_type* const rstr_ptrc_p, string_range rstr_range_p) noexcept
+_NODISCARD_ _FORCE_INLINE_ var::boolean insensitive_ranged_string_comparison(char_type* const lstr_ptrc_p, const string_range lstr_range_p, const char_type* const rstr_ptrc_p, const string_range rstr_range_p) noexcept
 {
     static_assert(sizeof(char_type) <= sizeof(UTF32), "char_type is not a valid character type");
     FE_EXIT(lstr_ptrc_p == nullptr, "NULLPTR DETECTED: lstr_ptrc_p is nullptr.", FE::MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR);
@@ -568,7 +568,7 @@ template <typename char_type>
 #if _HAS_CXX20_ == 1
     requires character_type<char_type>
 #endif
-_NODISCARD_ _FORCE_INLINE_ var::boolean insensitive_ranged_string_comparison(char_type* const lstr_ptrc_p, string_range lstr_range_p, char_type* const rstr_ptrc_p, string_range rstr_range_p) noexcept
+_NODISCARD_ _FORCE_INLINE_ var::boolean insensitive_ranged_string_comparison(char_type* const lstr_ptrc_p, const string_range lstr_range_p, char_type* const rstr_ptrc_p, const string_range rstr_range_p) noexcept
 {
     static_assert(sizeof(char_type) <= sizeof(UTF32), "char_type is not a valid character type");
     FE_EXIT(lstr_ptrc_p == nullptr, "NULLPTR DETECTED: lstr_ptrc_p is nullptr.", FE::MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR);
@@ -606,7 +606,7 @@ template <typename char_type>
 #if _HAS_CXX20_ == 1
     requires character_type<char_type>
 #endif
-_NODISCARD_ _FORCE_INLINE_ _CONSTEXPR23_ var::boolean insensitive_ranged_string_comparison(const char_type* const lstr_ptrc_p, string_range lstr_range_p, const char_type* const rstr_ptrc_p, string_range rstr_range_p) noexcept
+_NODISCARD_ _FORCE_INLINE_ _CONSTEXPR23_ var::boolean insensitive_ranged_string_comparison(const char_type* const lstr_ptrc_p, const string_range lstr_range_p, const char_type* const rstr_ptrc_p, const string_range rstr_range_p) noexcept
 {
     static_assert(sizeof(char_type) <= sizeof(UTF32), "char_type is not a valid character type");
     FE_EXIT(lstr_ptrc_p == nullptr, "NULLPTR DETECTED: lstr_ptrc_p is nullptr.", FE::MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR);
@@ -822,8 +822,9 @@ _FORCE_INLINE_ void invert_string(char_type* const in_out_string_ptrc_p) noexcep
 }
 
 
-/*  This function can be useful when a string needs to be hashed during compile time.
-    TIP: collaborate this function with switch cases.
+/*  
+This function can be useful when a string needs to be hashed during compile time.
+TIP: collaborate this function with switch cases.
 */
 template<typename char_type>
 #if _HAS_CXX20_ == 1
@@ -885,19 +886,19 @@ _NODISCARD_ _FORCE_INLINE_ target_char_search_result<char_type> search_very_last
     static_assert(sizeof(char_type) <= sizeof(UTF32), "char_type is not a valid character type");
     FE_EXIT(string_ptrc_p == nullptr, "NULLPTR DETECTED: string_ptrc_p is nullptr.", FE::MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR);
 
-    var::index_t l_target_char_location = 0;
+    FE::const_reverse_iterator<FE::contiguous_iterator<const char_type>> l_string_rbegin = string_ptrc_p + (string_length(string_ptrc_p)-1);
+    FE::const_reverse_iterator<FE::contiguous_iterator<const char_type>> l_string_rend = string_ptrc_p - 1;
 
-    const char_type* l_string_ptr = string_ptrc_p;
-    while (*l_string_ptr != static_cast<char_type>('\0'))
+    while (l_string_rbegin != l_string_rend)
     {
-        if (*l_string_ptr == target_char_p)
+        if (*l_string_rbegin == target_char_p)
         {
-            l_target_char_location = l_string_ptr - string_ptrc_p;
+            return target_char_search_result<char_type>{*l_string_rbegin, static_cast<index_t>(l_string_rbegin.operator->() - string_ptrc_p) };
         }
-        ++l_string_ptr;
+        ++l_string_rbegin;
     }
 
-    return target_char_search_result<char_type>{ string_ptrc_p[l_target_char_location], l_target_char_location};
+    return target_char_search_result<char_type>{};
 }
 
 
@@ -905,7 +906,7 @@ template<typename char_type>
 #if _HAS_CXX20_ == 1
     requires character_type<char_type>
 #endif
-_NODISCARD_ _FORCE_INLINE_ target_char_count<char_type> count_all_corresponding_characters(char_type* string_ptr_p, const char_type target_char_p) noexcept
+_NODISCARD_ _FORCE_INLINE_ target_char_count<char_type> count_all_corresponding_chars(char_type* string_ptr_p, const char_type target_char_p) noexcept
 {
     static_assert(sizeof(char_type) <= sizeof(UTF32), "char_type is not a valid character type");
     FE_EXIT(string_ptr_p == nullptr, "NULLPTR DETECTED: string_ptr_p is nullptr.", FE::MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR);
@@ -935,7 +936,7 @@ template<typename char_type>
 #if _HAS_CXX20_ == 1
     requires character_type<char_type>
 #endif
-_NODISCARD_ _FORCE_INLINE_ constexpr target_char_count<char_type> count_all_corresponding_characters(const char_type* string_ptr_p, const char_type target_char_p) noexcept
+_NODISCARD_ _FORCE_INLINE_ constexpr target_char_count<char_type> count_all_corresponding_chars(const char_type* string_ptr_p, const char_type target_char_p) noexcept
 {
     static_assert(sizeof(char_type) <= sizeof(UTF32), "char_type is not a valid character type");
     FE_EXIT(string_ptr_p == nullptr, "NULLPTR DETECTED: string_ptr_p is nullptr.", FE::MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR);
@@ -974,10 +975,10 @@ _NODISCARD_ _FORCE_INLINE_ ::std::optional<string_range> search_very_first_subst
 
     const char_type* l_string_ptr = string_ptrc_p;
     const char_type* l_target_substring_ptr = target_substring_ptrc_p;
-    length_t l_string_length = algorithm::string::string_length(string_ptrc_p);
-    length_t l_target_substring_length = algorithm::string::string_length(target_substring_ptrc_p);
+    length_t l_string_length = string_length(string_ptrc_p);
+    length_t l_target_substring_length = string_length(target_substring_ptrc_p);
  
-    FE_EXIT(l_target_substring_length >= l_string_length, "CRITICAL ERROR: the l_target_substring_length is greater than or equal to the string length of string_ptrc_p", FE::MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_RANGE);
+    FE_EXIT(l_target_substring_length > l_string_length, "CRITICAL ERROR: the l_target_substring_length is greater than or equal to the string length of string_ptrc_p", FE::MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_RANGE);
 
     var::index_t l_string_idx = 0;
     while (*l_target_substring_ptr != static_cast<char_type>('\0') && l_string_idx < l_string_length)
@@ -1015,8 +1016,8 @@ _NODISCARD_ _FORCE_INLINE_::std::optional<string_range> search_very_last_substri
     FE_EXIT(string_ptrc_p == nullptr, "NULLPTR DETECTED: string_ptrc_p is nullptr.", FE::MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR);
     FE_EXIT(target_substring_ptrc_p == nullptr, "NULLPTR DETECTED: target_substring_ptrc_p is nullptr.", FE::MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR);
 
-    length_t l_string_length = algorithm::string::string_length(string_ptrc_p);
-    length_t l_target_substring_length = algorithm::string::string_length(target_substring_ptrc_p);
+    length_t l_string_length = string_length(string_ptrc_p);
+    length_t l_target_substring_length = string_length(target_substring_ptrc_p);
 
     FE::const_reverse_iterator<FE::contiguous_iterator<const char_type>> l_string_crbegin(string_ptrc_p + (l_string_length - 1));
 
@@ -1051,12 +1052,214 @@ _NODISCARD_ _FORCE_INLINE_::std::optional<string_range> search_very_last_substri
 }
 
 
-// search_very_first_substring_within_range
-// search_very_last_substring_within_range
 
-// search_very_first_character_within_range
-// search_very_last_character_within_range
-// count_all_corresponding_characters_within_range
+
+template<typename char_type>
+#if _HAS_CXX20_ == 1
+    requires character_type<char_type>
+#endif
+_NODISCARD_ _FORCE_INLINE_ target_char_search_result<char_type> search_very_first_char_within_range(const char_type* const string_ptrc_p, const string_range string_range_p, const char_type target_char_p) noexcept
+{
+    static_assert(sizeof(char_type) <= sizeof(UTF32), "char_type is not a valid character type");
+    FE_EXIT(string_ptrc_p == nullptr, "NULLPTR DETECTED: string_ptrc_p is nullptr.", FE::MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR);
+    FE_EXIT(string_range_p._begin > string_range_p._end, "INVALID RANGE DETECTED: string_range_p._begin cannot be greater than string_range_p._end.", FE::MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_RANGE);
+
+    const char_type* l_string_ptr = string_ptrc_p + string_range_p._begin;
+    while (*l_string_ptr != static_cast<char_type>('\0'))
+    {
+        if (*l_string_ptr == target_char_p)
+        {
+            return target_char_search_result<char_type>{*l_string_ptr, static_cast<index_t>(l_string_ptr - string_ptrc_p) };
+        }
+        ++l_string_ptr;
+    }
+
+    return target_char_search_result<char_type>{};
+}
+
+
+template<typename char_type>
+#if _HAS_CXX20_ == 1
+    requires character_type<char_type>
+#endif
+_NODISCARD_ _FORCE_INLINE_ target_char_search_result<char_type> search_very_last_char_within_range(const char_type* const string_ptrc_p, const string_range string_range_p, const char_type target_char_p) noexcept
+{
+    static_assert(sizeof(char_type) <= sizeof(UTF32), "char_type is not a valid character type");
+    FE_EXIT(string_ptrc_p == nullptr, "NULLPTR DETECTED: string_ptrc_p is nullptr.", FE::MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR);
+    FE_EXIT(string_range_p._begin > string_range_p._end, "INVALID RANGE DETECTED: string_range_p._begin cannot be greater than string_range_p._end.", FE::MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_RANGE);
+
+    FE::const_reverse_iterator<FE::contiguous_iterator<const char_type>> l_string_rbegin = string_ptrc_p + (string_range_p._end - 1);
+    FE::const_reverse_iterator<FE::contiguous_iterator<const char_type>> l_string_rend = string_ptrc_p + (string_range_p._begin - 1);
+
+    while (l_string_rbegin != l_string_rend)
+    {
+        if (*l_string_rbegin == target_char_p)
+        {
+            return target_char_search_result<char_type>{*l_string_rbegin, static_cast<index_t>(l_string_rbegin.operator->() - string_ptrc_p) };
+        }
+        ++l_string_rbegin;
+    }
+
+    return target_char_search_result<char_type>{};
+}
+
+
+template<typename char_type>
+#if _HAS_CXX20_ == 1
+    requires character_type<char_type>
+#endif
+_NODISCARD_ _FORCE_INLINE_ target_char_count<char_type> count_all_corresponding_chars_within_range(char_type* string_ptr_p, const string_range string_range_p, const char_type target_char_p) noexcept
+{
+    static_assert(sizeof(char_type) <= sizeof(UTF32), "char_type is not a valid character type");
+    FE_EXIT(string_ptr_p == nullptr, "NULLPTR DETECTED: string_ptr_p is nullptr.", FE::MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR);
+    FE_EXIT(string_range_p._begin > string_range_p._end, "INVALID RANGE DETECTED: string_range_p._begin cannot be greater than string_range_p._end.", FE::MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_RANGE);
+
+    var::count_t l_match_count = 0;
+    string_ptr_p += string_range_p._begin;
+
+    while (*string_ptr_p != static_cast<char_type>('\0'))
+    {
+        if (target_char_p == *string_ptr_p)
+        {
+            ++l_match_count;
+        }
+        ++string_ptr_p;
+    }
+
+    char_type l_target_char_buffer = static_cast<char_type>('\0');
+
+    if (l_match_count != 0)
+    {
+        l_target_char_buffer = target_char_p;
+    }
+
+    return target_char_count<char_type>{l_target_char_buffer, l_match_count};
+}
+
+template<typename char_type>
+#if _HAS_CXX20_ == 1
+    requires character_type<char_type>
+#endif
+_NODISCARD_ _FORCE_INLINE_ constexpr target_char_count<char_type> count_all_corresponding_chars_within_range(const char_type* string_ptr_p, const string_range string_range_p, const char_type target_char_p) noexcept
+{
+    static_assert(sizeof(char_type) <= sizeof(UTF32), "char_type is not a valid character type");
+    FE_EXIT(string_ptr_p == nullptr, "NULLPTR DETECTED: string_ptr_p is nullptr.", FE::MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR);
+    FE_EXIT(string_range_p._begin > string_range_p._end, "INVALID RANGE DETECTED: string_range_p._begin cannot be greater than string_range_p._end.", FE::MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_RANGE);
+
+    var::count_t l_match_count = 0;
+    string_ptr_p += string_range_p._begin;
+
+    while (*string_ptr_p != static_cast<char_type>('\0'))
+    {
+        if (target_char_p == *string_ptr_p)
+        {
+            ++l_match_count;
+        }
+        ++string_ptr_p;
+    }
+
+    char_type l_target_char_buffer = static_cast<char_type>('\0');
+
+    if (l_match_count != 0)
+    {
+        l_target_char_buffer = target_char_p;
+    }
+
+    return target_char_count<char_type>{l_target_char_buffer, l_match_count};
+}
+
+
+template<typename char_type>
+#if _HAS_CXX20_ == 1
+    requires character_type<char_type>
+#endif
+_NODISCARD_ _FORCE_INLINE_::std::optional<string_range> search_very_first_substring_within_range(const char_type* const string_ptrc_p, const string_range string_range_p, const char_type* const target_substring_ptrc_p) noexcept
+{
+    static_assert(sizeof(char_type) <= sizeof(UTF32), "char_type is not a valid character type");
+    FE_EXIT(string_ptrc_p == nullptr, "NULLPTR DETECTED: string_ptrc_p is nullptr.", FE::MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR);
+    FE_EXIT(string_range_p._begin > string_range_p._end, "INVALID RANGE DETECTED: string_range_p._begin cannot be greater than string_range_p._end.", FE::MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_RANGE);
+    FE_EXIT(target_substring_ptrc_p == nullptr, "NULLPTR DETECTED: target_substring_ptrc_p is nullptr.", FE::MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR);
+
+    const char_type* l_string_ptr = string_ptrc_p + string_range_p._begin;
+    const char_type* l_target_substring_ptr = target_substring_ptrc_p;
+    length_t l_string_length = string_range_p._end - string_range_p._begin;
+    length_t l_target_substring_length = string_length(target_substring_ptrc_p);
+
+    FE_EXIT(l_target_substring_length > l_string_length, "CRITICAL ERROR: the l_target_substring_length is greater than or equal to the string length of string_ptrc_p", FE::MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_RANGE);
+
+    var::index_t l_string_idx = 0;
+    while (*l_target_substring_ptr != static_cast<char_type>('\0') && l_string_idx < l_string_length)
+    {
+        if (*l_string_ptr == *l_target_substring_ptr)
+        {
+            ++l_string_ptr;
+            ++l_target_substring_ptr;
+            continue;
+        }
+        ++l_string_ptr;
+        l_target_substring_ptr = target_substring_ptrc_p;
+        ++l_string_idx;
+    }
+
+    index_t l_begin = (l_string_ptr - string_ptrc_p) - (l_target_substring_ptr - target_substring_ptrc_p);
+    index_t l_end = l_string_ptr - string_ptrc_p;
+
+    if (compare_ranged_strings(string_ptrc_p, string_range{l_begin, l_end}, target_substring_ptrc_p, string_range{0, l_target_substring_length}))
+    {
+        return  std::make_optional<string_range>(l_begin, l_end);
+    }
+
+    return ::std::nullopt;
+}
+
+
+template<typename char_type>
+#if _HAS_CXX20_ == 1
+    requires character_type<char_type>
+#endif
+_NODISCARD_ _FORCE_INLINE_::std::optional<string_range> search_very_last_substring_within_range(const char_type* const string_ptrc_p, const string_range string_range_p, const char_type* const target_substring_ptrc_p) noexcept
+{
+    static_assert(sizeof(char_type) <= sizeof(UTF32), "char_type is not a valid character type");
+    FE_EXIT(string_ptrc_p == nullptr, "NULLPTR DETECTED: string_ptrc_p is nullptr.", FE::MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR);
+    FE_EXIT(string_range_p._begin > string_range_p._end, "INVALID RANGE DETECTED: string_range_p._begin cannot be greater than string_range_p._end.", FE::MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_RANGE);
+    FE_EXIT(target_substring_ptrc_p == nullptr, "NULLPTR DETECTED: target_substring_ptrc_p is nullptr.", FE::MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR);
+
+    length_t l_string_length = string_range_p._end - string_range_p._begin;
+    length_t l_target_substring_length = algorithm::string::string_length(target_substring_ptrc_p);
+
+    FE::const_reverse_iterator<FE::contiguous_iterator<const char_type>> l_string_crbegin(string_ptrc_p + (l_string_length - 1));
+
+    const FE::const_reverse_iterator<FE::contiguous_iterator<const char_type>> l_target_substring_crbegin_read_only(target_substring_ptrc_p + (l_target_substring_length - 1));
+    FE::const_reverse_iterator<FE::contiguous_iterator<const char_type>> l_target_substring_crbegin = l_target_substring_crbegin_read_only;
+
+    const FE::const_reverse_iterator<FE::contiguous_iterator<const char_type>> l_target_substring_crend_read_only(target_substring_ptrc_p - 1);
+
+    var::index_t l_string_idx = 0;
+    while (l_target_substring_crbegin != l_target_substring_crend_read_only && l_string_idx < l_string_length)
+    {
+        if (*l_string_crbegin == *l_target_substring_crbegin)
+        {
+            ++l_string_crbegin;
+            ++l_target_substring_crbegin;
+            continue;
+        }
+        ++l_string_crbegin;
+        l_target_substring_crbegin = l_target_substring_crbegin_read_only;
+        ++l_string_idx;
+    }
+
+    index_t l_begin = (l_string_crbegin.operator->() - string_ptrc_p) + 1;
+    index_t l_end = ((l_string_crbegin.operator->() + l_target_substring_length) - string_ptrc_p) + 1;
+
+    if (compare_ranged_strings(string_ptrc_p, string_range{ l_begin, l_end }, target_substring_ptrc_p, string_range{ 0, l_target_substring_length }))
+    {
+        return  std::make_optional<string_range>(l_begin, l_end);
+    }
+
+    return ::std::nullopt;
+}
+
+
 
 
 template<typename char_type, typename int_type>
