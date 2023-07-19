@@ -11,8 +11,8 @@ BEGIN_NAMESPACE(FE)
 
 #pragma pack(push, _DWORD_SIZE_)
 
-template <typename T, class padding_size = ::FE::align_null, class string = compile_time_constant_string<char>>
-class alignas(padding_size::s_size) tagged_object final
+template <typename T, class alignment = ::FE::align_null, class string = compile_time_constant_string<char>>
+class alignas(alignment::s_size) tagged_object final
 {
 private:
 	string m_tag;
@@ -20,7 +20,7 @@ private:
 
 public:
 	typedef T value_type;
-	typedef padding_size alignment_type;
+	typedef alignment alignment_type;
 	typedef string tag_type;
 
 	constexpr tagged_object() noexcept : m_tag("\0"), m_object() {}
@@ -28,14 +28,14 @@ public:
 	_FORCE_INLINE_ tagged_object(T object_p) noexcept : m_tag("\0"), m_object(std::move(object_p)) {}
 	
 
-	_FORCE_INLINE_ tagged_object(tagged_object<T, padding_size, string>& other_ref_p) noexcept
+	_FORCE_INLINE_ tagged_object(tagged_object<T, alignment, string>& other_ref_p) noexcept
 	{
 		this->m_object = other_ref_p.m_object;
 		this->m_tag = other_ref_p.m_tag;
 	}
 
 
-	_FORCE_INLINE_ tagged_object(tagged_object<T, padding_size, string>&& rvalue_p) noexcept
+	_FORCE_INLINE_ tagged_object(tagged_object<T, alignment, string>&& rvalue_p) noexcept
 	{
 		this->m_object = rvalue_p.m_object;
 		this->m_tag = rvalue_p.m_tag;
@@ -58,14 +58,14 @@ public:
 	}
 
 
-	_FORCE_INLINE_ tagged_object& operator=(tagged_object<T, padding_size, string>& other_ref_p) noexcept
+	_FORCE_INLINE_ tagged_object& operator=(tagged_object<T, alignment, string>& other_ref_p) noexcept
 	{
 		this->m_object = other_ref_p.m_object;
 		this->m_tag = other_ref_p.m_tag;
 
 		return *this;
 	}
-	_FORCE_INLINE_ tagged_object& operator=(tagged_object<T, padding_size, string>&& rvalue_p) noexcept
+	_FORCE_INLINE_ tagged_object& operator=(tagged_object<T, alignment, string>&& rvalue_p) noexcept
 	{
 		this->m_object = rvalue_p.m_object;
 		this->m_tag = rvalue_p.m_tag;
@@ -112,40 +112,40 @@ public:
 	}
 
 
-	_FORCE_INLINE_ friend boolean operator==(T value_p, tagged_object<T, padding_size, string>& element_ref_p) noexcept
+	_FORCE_INLINE_ friend boolean operator==(T value_p, tagged_object<T, alignment, string>& element_ref_p) noexcept
 	{
 		return value_p == element_ref_p.m_object ? true : false;
 	}
-	_FORCE_INLINE_ friend boolean operator!=(T value_p, tagged_object<T, padding_size, string>& element_ref_p) noexcept
+	_FORCE_INLINE_ friend boolean operator!=(T value_p, tagged_object<T, alignment, string>& element_ref_p) noexcept
 	{
 		return value_p != element_ref_p.m_object ? true : false;
 	}
-	_FORCE_INLINE_ friend boolean operator==(T& value_ref_p, tagged_object<T, padding_size, string>& element_ref_p) noexcept
+	_FORCE_INLINE_ friend boolean operator==(T& value_ref_p, tagged_object<T, alignment, string>& element_ref_p) noexcept
 	{
 		return value_ref_p == element_ref_p.m_object ? true : false;
 	}
-	_FORCE_INLINE_ friend boolean operator!=(T& value_ref_p, tagged_object<T, padding_size, string>& element_ref_p) noexcept
+	_FORCE_INLINE_ friend boolean operator!=(T& value_ref_p, tagged_object<T, alignment, string>& element_ref_p) noexcept
 	{
 		return value_ref_p != element_ref_p.m_object ? true : false;
 	}
-	_FORCE_INLINE_ friend boolean operator==(string tag_p, tagged_object<T, padding_size, string>& element_ref_p) noexcept
+	_FORCE_INLINE_ friend boolean operator==(string tag_p, tagged_object<T, alignment, string>& element_ref_p) noexcept
 	{
 		return tag_p == element_ref_p.m_tag ? true : false;
 	}
-	_FORCE_INLINE_ friend boolean operator!=(string tag_p, tagged_object<T, padding_size, string>& element_ref_p) noexcept
+	_FORCE_INLINE_ friend boolean operator!=(string tag_p, tagged_object<T, alignment, string>& element_ref_p) noexcept
 	{
 		return tag_p != element_ref_p.m_tag ? true : false;
 	}
-	_FORCE_INLINE_ friend boolean operator==(string& tag_ref_p, tagged_object<T, padding_size, string>& element_ref_p) noexcept
+	_FORCE_INLINE_ friend boolean operator==(string& tag_ref_p, tagged_object<T, alignment, string>& element_ref_p) noexcept
 	{
 		return tag_ref_p == element_ref_p.m_tag ? true : false;
 	}
-	_FORCE_INLINE_ friend boolean operator!=(string& tag_ref_p, tagged_object<T, padding_size, string>& element_ref_p) noexcept
+	_FORCE_INLINE_ friend boolean operator!=(string& tag_ref_p, tagged_object<T, alignment, string>& element_ref_p) noexcept
 	{
 		return tag_ref_p != element_ref_p.m_tag ? true : false;
 	}
 
-	_FORCE_INLINE_ boolean operator==(tagged_object<T, padding_size, string>& element_ref_p) noexcept
+	_FORCE_INLINE_ boolean operator==(tagged_object<T, alignment, string>& element_ref_p) noexcept
 	{
 		if (this->m_object != element_ref_p.m_object)
 		{
@@ -159,7 +159,7 @@ public:
 
 		return true;
 	}
-	_FORCE_INLINE_ boolean operator!=(tagged_object<T, padding_size, string>& element_ref_p) noexcept
+	_FORCE_INLINE_ boolean operator!=(tagged_object<T, alignment, string>& element_ref_p) noexcept
 	{
 		if (this->m_object == element_ref_p.m_object)
 		{
@@ -174,9 +174,9 @@ public:
 		return true;
 	}
 
-	_FORCE_INLINE_ static void swap(tagged_object<T, padding_size, string>& left_ref_p, tagged_object<T, padding_size, string>& right_ref_p) noexcept
+	_FORCE_INLINE_ static void swap(tagged_object<T, alignment, string>& left_ref_p, tagged_object<T, alignment, string>& right_ref_p) noexcept
 	{
-		tagged_object<T, padding_size, string> l_temp = ::std::move(left_ref_p);
+		tagged_object<T, alignment, string> l_temp = ::std::move(left_ref_p);
 		left_ref_p = ::std::move(right_ref_p);
 		right_ref_p = ::std::move(l_temp);
 	}

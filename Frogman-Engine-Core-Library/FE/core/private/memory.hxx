@@ -10,6 +10,7 @@ BEGIN_NAMESPACE(FE)
 template<class iterator>
 var::boolean memcmp_s(iterator left_iterator_begin_p, iterator left_iterator_end_p, iterator right_iterator_begin_p, iterator right_iterator_end_p) noexcept
 {
+	static_assert(std::is_class<iterator>::value == true);
 	FE_ASSERT(left_iterator_begin_p == nullptr, "ERROR: left_iterator_begin_p is nullptr.");
 	FE_ASSERT(left_iterator_end_p == nullptr, "ERROR: left_iterator_end_p is nullptr.");
 	FE_ASSERT(right_iterator_begin_p == nullptr, "ERROR: right_iterator_begin_p is nullptr.");
@@ -41,7 +42,8 @@ template <class iterator, typename ... arguments>
 _FORCE_INLINE_ void assign(iterator dest_iterator_begin_p, OBJECT_LIFECYCLE* const bool_mask_ptrc_p, arguments&& ...arguments_p) noexcept
 {
 	using T = typename iterator::value_type;
-
+	static_assert(std::is_class<iterator>::value == true);
+	static_assert(std::is_assignable<T>::value == true);
 	FE_ASSERT(dest_iterator_begin_p == nullptr, "ERROR: object_ptrc_p is nullptr.");
     FE_ASSERT(bool_mask_ptrc_p == nullptr, "ERROR: bool_mask_ptrc_p is nullptr.");
 
@@ -59,7 +61,8 @@ template <class iterator>
 _FORCE_INLINE_ void copy_assign(iterator dest_iterator_begin_p, OBJECT_LIFECYCLE* const bool_mask_ptrc_p, typename iterator::value_type& other_ref_p) noexcept
 {
 	using T = typename iterator::value_type;
-
+	static_assert(std::is_class<iterator>::value == true);
+	static_assert(std::is_copy_assignable<T>::value == true);
 	FE_ASSERT(dest_iterator_begin_p == nullptr, "ERROR: object_ptrc_p is nullptr.");
     FE_ASSERT(bool_mask_ptrc_p == nullptr, "ERROR: bool_mask_ptrc_p is nullptr.");
 
@@ -77,7 +80,8 @@ template <class iterator>
 _FORCE_INLINE_ void move_assign(iterator dest_iterator_begin_p, OBJECT_LIFECYCLE* const bool_mask_ptrc_p, typename iterator::value_type&& rvalue_p) noexcept
 {
 	using T = typename iterator::value_type;
-
+	static_assert(std::is_class<iterator>::value == true);
+	static_assert(std::is_move_assignable<T>::value == true);
 	FE_ASSERT(dest_iterator_begin_p == nullptr, "ERROR: object_ptrc_p is nullptr.");
     FE_ASSERT(bool_mask_ptrc_p == nullptr, "ERROR: bool_mask_ptrc_p is nullptr.");
 
@@ -98,7 +102,8 @@ template <class iterator>
 _FORCE_INLINE_ void construct(iterator const dest_iterator_begin_p, OBJECT_LIFECYCLE* const bool_mask_ptrc_p) noexcept
 {
 	using T = typename iterator::value_type;
-
+	static_assert(std::is_class<iterator>::value == true);
+	static_assert(std::is_constructible<T>::value == true);
 	FE_ASSERT(dest_iterator_begin_p == nullptr, "ERROR: object_ptrc_p is nullptr.");
 	FE_ASSERT(*bool_mask_ptrc_p == FE::OBJECT_LIFECYCLE::_CONSTRUCTED, "ERROR: unable to double-construct.");
 
@@ -110,7 +115,8 @@ template <class iterator>
 _FORCE_INLINE_ void copy_construct(iterator dest_iterator_begin_p, OBJECT_LIFECYCLE* const bool_mask_ptrc_p, typename iterator::value_type& other_ref_p) noexcept
 {
 	using T = typename iterator::value_type;
-
+	static_assert(std::is_class<iterator>::value == true);
+	static_assert(std::is_copy_constructible<T>::value == true);
 	FE_ASSERT(dest_iterator_begin_p == nullptr, "ERROR: object_ptrc_p is nullptr.");
 	FE_ASSERT(*bool_mask_ptrc_p == FE::OBJECT_LIFECYCLE::_CONSTRUCTED, "ERROR: unable to double-construct.");
 
@@ -122,7 +128,8 @@ template <class iterator>
 _FORCE_INLINE_ void move_construct(iterator dest_iterator_begin_p, OBJECT_LIFECYCLE* const bool_mask_ptrc_p, typename iterator::value_type&& rvalue_p) noexcept
 {
 	using T = typename iterator::value_type;
-
+	static_assert(std::is_class<iterator>::value == true);
+	static_assert(std::is_move_constructible<T>::value == true);
 	FE_ASSERT(dest_iterator_begin_p == nullptr, "ERROR: object_ptrc_p is nullptr.");
 	FE_ASSERT(*bool_mask_ptrc_p == OBJECT_LIFECYCLE::_CONSTRUCTED, "ERROR: Unable to double-construct the object, that object_ptrc_p is pointing to");
 	
@@ -138,8 +145,9 @@ template <typename iterator, typename ... arguments>
 _FORCE_INLINE_ void assign(iterator begin_p, iterator end_p, OBJECT_LIFECYCLE* const boolean_mask_ptrc_p, arguments && ...arguments_p) noexcept
 {
 	using T = typename iterator::value_type;
-
-	static_assert(FE::is_trivially_constructible_and_destructible<T>() == FE::OBJECT_TRIVIALITY::_NOT_TRIVIAL, "WARNING: T must not be trivially constructible and destructible. This function call has no effect and is a waste of computing resource");
+	static_assert(std::is_class<iterator>::value == true);
+	static_assert(std::is_assignable<T>::value == true);
+	static_assert(FE::is_trivially_constructible_and_destructible<T>::_VALUE_ == FE::OBJECT_TRIVIALITY::_NOT_TRIVIAL, "WARNING: T must not be trivially constructible and destructible. This function call has no effect and is a waste of computing resource");
 	FE_ASSERT(boolean_mask_ptrc_p == nullptr, "ERROR: boolean_mask_ptrc_p is nullptr.");
 	FE_ASSERT(begin_p == nullptr, "ERROR: begin_p is nullptr.");
 	FE_ASSERT(end_p == nullptr, "ERROR: end_p is nullptr.");
@@ -166,8 +174,9 @@ template<class iterator>
 _FORCE_INLINE_ void copy_assign(iterator dest_begin_p, capacity_t dest_length_p, OBJECT_LIFECYCLE* const dest_bool_mask_ptrc_p, iterator data_source_begin_p, capacity_t source_data_length_p) noexcept
 {
 	using T = typename iterator::value_type;
-
-	static_assert(FE::is_trivially_constructible_and_destructible<T>() == FE::OBJECT_TRIVIALITY::_NOT_TRIVIAL, "WARNING: T must not be trivially constructible and destructible. This function call has no effect and is a waste of computing resource");
+	static_assert(std::is_class<iterator>::value == true);
+	static_assert(std::is_copy_assignable<T>::value == true);
+	static_assert(FE::is_trivially_constructible_and_destructible<T>::_VALUE_ == FE::OBJECT_TRIVIALITY::_NOT_TRIVIAL, "WARNING: T must not be trivially constructible and destructible. This function call has no effect and is a waste of computing resource");
 	FE_ASSERT(dest_bool_mask_ptrc_p == nullptr, "ERROR: dest_bool_mask_ptrc_p is nullptr.");
 	FE_ASSERT(data_source_begin_p == nullptr, "ERROR: data_source_begin_p is nullptr.");
 	FE_ASSERT(dest_begin_p == nullptr, "ERROR: dest_begin_p is nullptr.");
@@ -226,8 +235,9 @@ template<class iterator>
 _FORCE_INLINE_ void move_assign(iterator dest_begin_p, capacity_t dest_length_p, OBJECT_LIFECYCLE* const dest_bool_mask_ptrc_p, iterator data_source_begin_p, capacity_t source_data_length_p) noexcept
 {
 	using T = typename iterator::value_type;
-
-	static_assert(FE::is_trivially_constructible_and_destructible<T>() == FE::OBJECT_TRIVIALITY::_NOT_TRIVIAL, "WARNING: T must not be trivially constructible and destructible. This function call has no effect and is a waste of computing resource");
+	static_assert(std::is_class<iterator>::value == true);
+	static_assert(std::is_move_assignable<T>::value == true);
+	static_assert(FE::is_trivially_constructible_and_destructible<T>::_VALUE_ == FE::OBJECT_TRIVIALITY::_NOT_TRIVIAL, "WARNING: T must not be trivially constructible and destructible. This function call has no effect and is a waste of computing resource");
 	FE_ASSERT(dest_bool_mask_ptrc_p == nullptr, "ERROR: dest_bool_mask_ptrc_p is nullptr.");
 	FE_ASSERT(data_source_begin_p == nullptr, "ERROR: data_source_begin_p is nullptr.");
 	FE_ASSERT(dest_begin_p == nullptr, "ERROR: dest_begin_p is nullptr.");
@@ -286,8 +296,9 @@ template<class iterator>
 _FORCE_INLINE_ void copy_assign(iterator dest_begin_p, capacity_t dest_length_p, OBJECT_LIFECYCLE* const dest_bool_mask_ptrc_p, iterator source_data_begin_p, capacity_t source_data_length_p, const OBJECT_LIFECYCLE* const source_data_bool_mask_ptrc_p) noexcept
 {
 	using T = typename iterator::value_type;
-
-	static_assert(FE::is_trivially_constructible_and_destructible<T>() == FE::OBJECT_TRIVIALITY::_NOT_TRIVIAL, "WARNING: T must not be trivially constructible and destructible. This function call has no effect and is a waste of computing resource");
+	static_assert(std::is_class<iterator>::value == true);
+	static_assert(std::is_copy_assignable<T>::value == true);
+	static_assert(FE::is_trivially_constructible_and_destructible<T>::_VALUE_ == FE::OBJECT_TRIVIALITY::_NOT_TRIVIAL, "WARNING: T must not be trivially constructible and destructible. This function call has no effect and is a waste of computing resource");
 	FE_ASSERT(dest_bool_mask_ptrc_p == nullptr, "ERROR: dest_bool_mask_ptrc_p is nullptr.");
 	FE_ASSERT(source_data_begin_p == nullptr, "ERROR: source_data_begin_p is nullptr.");
 	FE_ASSERT(source_data_bool_mask_ptrc_p == nullptr, "ERROR: source_data_bool_mask_ptrc_p is nullptr.");
@@ -357,8 +368,9 @@ template<class iterator>
 _FORCE_INLINE_ void move_assign(iterator dest_begin_p, capacity_t dest_length_p, OBJECT_LIFECYCLE* const dest_bool_mask_ptrc_p, iterator source_data_begin_p, capacity_t source_data_length_p, OBJECT_LIFECYCLE* const source_data_bool_mask_ptrc_p) noexcept
 {
 	using T = typename iterator::value_type;
-
-	static_assert(FE::is_trivially_constructible_and_destructible<T>() == FE::OBJECT_TRIVIALITY::_NOT_TRIVIAL, "WARNING: T must not be trivially constructible and destructible. This function call has no effect and is a waste of computing resource");
+	static_assert(std::is_class<iterator>::value == true);
+	static_assert(std::is_move_assignable<T>::value == true);
+	static_assert(FE::is_trivially_constructible_and_destructible<T>::_VALUE_ == FE::OBJECT_TRIVIALITY::_NOT_TRIVIAL, "WARNING: T must not be trivially constructible and destructible. This function call has no effect and is a waste of computing resource");
 	FE_ASSERT(dest_bool_mask_ptrc_p == nullptr, "ERROR: dest_bool_mask_ptrc_p is nullptr.");
 	FE_ASSERT(source_data_begin_p == nullptr, "ERROR: source_data_begin_p is nullptr.");
 	FE_ASSERT(source_data_bool_mask_ptrc_p == nullptr, "ERROR: source_data_bool_mask_ptrc_p is nullptr.");
@@ -431,7 +443,8 @@ template <class iterator>
 _FORCE_INLINE_ void destruct(iterator dest_iterator_begin_p, OBJECT_LIFECYCLE* const bool_mask_ptrc_p) noexcept
 {
 	using T = typename iterator::value_type;
-
+	static_assert(std::is_class<iterator>::value == true);
+	static_assert(std::is_destructible<T>::value == true);
 	FE_ASSERT(dest_iterator_begin_p == nullptr, "ERROR: object_ptrc_p is nullptr.");
 	FE_ASSERT(bool_mask_ptrc_p == nullptr, "ERROR: boolean_mask_ptrc_p is nullptr.");
 
@@ -446,8 +459,9 @@ template<class iterator>
 _FORCE_INLINE_ void destruct(iterator begin_p, iterator end_p, OBJECT_LIFECYCLE* const boolean_mask_ptrc_p) noexcept
 {
 	using T = typename iterator::value_type;
-
-	static_assert(FE::is_trivially_constructible_and_destructible<T>() == FE::OBJECT_TRIVIALITY::_NOT_TRIVIAL, "WARNING: T must not be trivially constructible and destructible. This function call has no effect and is a waste of computing resource");
+	static_assert(std::is_class<iterator>::value == true);
+	static_assert(std::is_destructible<T>::value == true);
+	static_assert(FE::is_trivially_constructible_and_destructible<T>::_VALUE_ == FE::OBJECT_TRIVIALITY::_NOT_TRIVIAL, "WARNING: T must not be trivially constructible and destructible. This function call has no effect and is a waste of computing resource");
 	FE_ASSERT(boolean_mask_ptrc_p == nullptr, "ERROR: boolean_mask_ptrc_p is nullptr.");
 	FE_ASSERT(begin_p == nullptr, "ERROR: begin_p is nullptr.");
 	FE_ASSERT(end_p == nullptr, "ERROR: end_p is nullptr.");
@@ -472,8 +486,9 @@ template<class iterator>
 _FORCE_INLINE_ void copy_construct(iterator dest_begin_p, capacity_t dest_length_p, OBJECT_LIFECYCLE* const dest_bool_mask_ptrc_p, iterator data_source_begin_p, capacity_t source_data_length_p) noexcept
 {
 	using T = typename iterator::value_type;
-
-	static_assert(FE::is_trivially_constructible_and_destructible<T>() == FE::OBJECT_TRIVIALITY::_NOT_TRIVIAL, "WARNING: T must not be trivially constructible and destructible. This function call has no effect and is a waste of computing resource");
+	static_assert(std::is_class<iterator>::value == true);
+	static_assert(std::is_copy_constructible<T>::value == true);
+	static_assert(FE::is_trivially_constructible_and_destructible<T>::_VALUE_ == FE::OBJECT_TRIVIALITY::_NOT_TRIVIAL, "WARNING: T must not be trivially constructible and destructible. This function call has no effect and is a waste of computing resource");
 	FE_ASSERT(dest_bool_mask_ptrc_p == nullptr, "ERROR: dest_bool_mask_ptrc_p is nullptr.");
 	FE_ASSERT(data_source_begin_p == nullptr, "ERROR: data_source_begin_p is nullptr.");
 	FE_ASSERT(dest_begin_p == nullptr, "ERROR: dest_begin_p is nullptr.");
@@ -518,8 +533,9 @@ template<class iterator>
 _FORCE_INLINE_ void move_construct(iterator dest_begin_p, capacity_t dest_length_p, OBJECT_LIFECYCLE* const dest_bool_mask_ptrc_p, iterator data_source_begin_p, capacity_t source_data_length_p) noexcept
 {
 	using T = typename iterator::value_type;
-
-	static_assert(FE::is_trivially_constructible_and_destructible<T>() == FE::OBJECT_TRIVIALITY::_NOT_TRIVIAL, "WARNING: T must not be trivially constructible and destructible. This function call has no effect and is a waste of computing resource");
+	static_assert(std::is_class<iterator>::value == true);
+	static_assert(std::is_move_constructible<T>::value == true);
+	static_assert(FE::is_trivially_constructible_and_destructible<T>::_VALUE_ == FE::OBJECT_TRIVIALITY::_NOT_TRIVIAL, "WARNING: T must not be trivially constructible and destructible. This function call has no effect and is a waste of computing resource");
 	FE_ASSERT(dest_bool_mask_ptrc_p == nullptr, "ERROR: dest_bool_mask_ptrc_p is nullptr.");
 	FE_ASSERT(data_source_begin_p == nullptr, "ERROR: data_source_begin_p is nullptr.");
 	FE_ASSERT(dest_begin_p == nullptr, "ERROR: dest_begin_p is nullptr.");
@@ -564,8 +580,9 @@ template<class iterator>
 _FORCE_INLINE_ void copy_construct(iterator dest_begin_p, capacity_t dest_length_p, OBJECT_LIFECYCLE* const dest_bool_mask_ptrc_p, iterator source_data_begin_p, capacity_t source_data_length_p, const OBJECT_LIFECYCLE* const source_data_bool_mask_ptrc_p) noexcept
 {
 	using T = typename iterator::value_type;
-
-	static_assert(FE::is_trivially_constructible_and_destructible<T>() == FE::OBJECT_TRIVIALITY::_NOT_TRIVIAL, "WARNING: T must not be trivially constructible and destructible. This function call has no effect and is a waste of computing resource");
+	static_assert(std::is_class<iterator>::value == true);
+	static_assert(std::is_copy_constructible<T>::value == true);
+	static_assert(FE::is_trivially_constructible_and_destructible<T>::_VALUE_ == FE::OBJECT_TRIVIALITY::_NOT_TRIVIAL, "WARNING: T must not be trivially constructible and destructible. This function call has no effect and is a waste of computing resource");
 	FE_ASSERT(dest_bool_mask_ptrc_p == nullptr, "ERROR: dest_bool_mask_ptrc_p is nullptr.");
 	FE_ASSERT(source_data_begin_p == nullptr, "ERROR: source_data_begin_p is nullptr.");
 	FE_ASSERT(source_data_bool_mask_ptrc_p == nullptr, "ERROR: source_data_bool_mask_ptrc_p is nullptr.");
@@ -617,8 +634,9 @@ template<class iterator>
 _FORCE_INLINE_ void move_construct(iterator dest_begin_p, capacity_t dest_length_p, OBJECT_LIFECYCLE* const dest_bool_mask_ptrc_p, iterator source_data_begin_p, capacity_t source_data_length_p, OBJECT_LIFECYCLE* const source_data_bool_mask_ptrc_p) noexcept
 {
 	using T = typename iterator::value_type;
-
-	static_assert(FE::is_trivially_constructible_and_destructible<T>() == FE::OBJECT_TRIVIALITY::_NOT_TRIVIAL, "WARNING: T must not be trivially constructible and destructible. This function call has no effect and is a waste of computing resource");
+	static_assert(std::is_class<iterator>::value == true);
+	static_assert(std::is_move_constructible<T>::value == true);
+	static_assert(FE::is_trivially_constructible_and_destructible<T>::_VALUE_ == FE::OBJECT_TRIVIALITY::_NOT_TRIVIAL, "WARNING: T must not be trivially constructible and destructible. This function call has no effect and is a waste of computing resource");
 	FE_ASSERT(dest_bool_mask_ptrc_p == nullptr, "ERROR: dest_bool_mask_ptrc_p is nullptr.");
 	FE_ASSERT(source_data_begin_p == nullptr, "ERROR: source_data_begin_p is nullptr.");
 	FE_ASSERT(source_data_bool_mask_ptrc_p == nullptr, "ERROR: source_data_bool_mask_ptrc_p is nullptr.");

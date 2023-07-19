@@ -10,7 +10,7 @@
 BEGIN_NAMESPACE(FE)
 
 
-template<class T, size_t max_element_count = 0, FE::OBJECT_TRIVIALITY is_trivial = FE::is_trivially_constructible_and_destructible<T>()>
+template<class T, size_t max_element_count = 0, FE::OBJECT_TRIVIALITY is_trivial = FE::is_trivially_constructible_and_destructible<T>::_VALUE_>
 class queue final
 {
 public:
@@ -174,7 +174,7 @@ public:
 		return this->m_front_ptr - 1;
 	}
 
-	template<FE::OBJECT_TRIVIALITY is_trivial = FE::is_trivially_constructible_and_destructible<T>()>
+	template<FE::OBJECT_TRIVIALITY is_trivial = FE::is_trivially_constructible_and_destructible<T>::_VALUE_>
 	_FORCE_INLINE_ static void swap(queue<T, max_element_count, is_trivial>& first_ref_p, queue<T, max_element_count, is_trivial>& second_ref_p) noexcept
 	{
 		queue<T, max_element_count, is_trivial> l_temporary = std::move(first_ref_p);
@@ -182,13 +182,13 @@ public:
 		second_ref_p = std::move(l_temporary);
 	}
 
-	template<FE::OBJECT_TRIVIALITY is_trivial = FE::is_trivially_constructible_and_destructible<T>()>
+	template<FE::OBJECT_TRIVIALITY is_trivial = FE::is_trivially_constructible_and_destructible<T>::_VALUE_>
 	var::boolean operator==(queue<T, max_element_count, is_trivial>& other_ref_p) noexcept
 	{
 		return FE::memcmp_s(this->cbegin(), this->cend(), other_ref_p.cbegin(), other_ref_p.cend());
 	}
 
-	template<FE::OBJECT_TRIVIALITY is_trivial = FE::is_trivially_constructible_and_destructible<T>()>
+	template<FE::OBJECT_TRIVIALITY is_trivial = FE::is_trivially_constructible_and_destructible<T>::_VALUE_>
 	var::boolean operator!=(queue<T, max_element_count, is_trivial>& other_ref_p) noexcept
 	{
 		return !FE::memcmp_s(this->cbegin(), this->cend(), other_ref_p.cbegin(), other_ref_p.cend());

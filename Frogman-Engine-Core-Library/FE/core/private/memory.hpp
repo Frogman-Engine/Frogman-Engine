@@ -455,7 +455,6 @@ void aligned_memcpy_with_avx(void* const dest_ptrc_p, const void* const source_p
 
 #endif
 
-// + bitmask_length()
 
 enum struct MEMORY_SIZE_SCALABILITY : boolean
 {
@@ -562,8 +561,8 @@ struct align_custom_bytes final
 };
 
 
-template <typename T, class padding_size = align_null>
-struct alignas(padding_size::s_size) align
+template <typename T, class alignment = align_null>
+struct alignas(alignment::s_size) align
 {
 	T _data;
 };

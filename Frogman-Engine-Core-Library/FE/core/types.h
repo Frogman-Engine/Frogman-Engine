@@ -30,13 +30,13 @@ BEGIN_NAMESPACE(FE)
 
 
 template <typename T>
-constexpr T max_value() noexcept
+constexpr inline T max_value() noexcept
 {
 	return ::std::numeric_limits<T>::max();
 }
 
 template <typename T>
-constexpr T min_value() noexcept
+constexpr inline T min_value() noexcept
 {
 	return ::std::numeric_limits<T>::max();
 }
@@ -194,54 +194,193 @@ concept character_type = sizeof(T) <= 4;
 	}
 
 
-	_MAYBE_UNUSED_	constexpr FE::int8 _INT8_MAX_ = max_value<FE::int8>();
-	_MAYBE_UNUSED_	constexpr FE::int16 _INT16_MAX_ = max_value<FE::int16>();
-	_MAYBE_UNUSED_	constexpr FE::int32 _INT32_MAX_ = max_value<FE::int32>();
-	_MAYBE_UNUSED_	constexpr FE::int64 _INT64_MAX_ = max_value<FE::int64>();
+_MAYBE_UNUSED_	constexpr inline FE::int8 _INT8_MAX_ = max_value<FE::int8>();
+_MAYBE_UNUSED_	constexpr inline FE::int16 _INT16_MAX_ = max_value<FE::int16>();
+_MAYBE_UNUSED_	constexpr inline FE::int32 _INT32_MAX_ = max_value<FE::int32>();
+_MAYBE_UNUSED_	constexpr inline FE::int64 _INT64_MAX_ = max_value<FE::int64>();
 	
-	_MAYBE_UNUSED_	constexpr FE::uint8 _UINT8_MAX_ = max_value<FE::uint8>();
-	_MAYBE_UNUSED_	constexpr FE::uint16 _UINT16_MAX_ = max_value<FE::uint16>();
-	_MAYBE_UNUSED_	constexpr FE::uint32 _UINT32_MAX_ = max_value<FE::uint32>();
-	_MAYBE_UNUSED_	constexpr FE::uint64 _UINT64_MAX_ = max_value<FE::uint64>();
+_MAYBE_UNUSED_	constexpr inline FE::uint8 _UINT8_MAX_ = max_value<FE::uint8>();
+_MAYBE_UNUSED_	constexpr inline FE::uint16 _UINT16_MAX_ = max_value<FE::uint16>();
+_MAYBE_UNUSED_	constexpr inline FE::uint32 _UINT32_MAX_ = max_value<FE::uint32>();
+_MAYBE_UNUSED_	constexpr inline FE::uint64 _UINT64_MAX_ = max_value<FE::uint64>();
 
-	_MAYBE_UNUSED_	constexpr FE::float64 _ACCURATE_MINIMUM_FLOAT_VALUE_ = 0.000001f;
+_MAYBE_UNUSED_	constexpr inline FE::float64 _ACCURATE_MINIMUM_FLOAT_VALUE_ = 0.000001f;
 
 #define _NULL_ 0
 
-	_MAYBE_UNUSED_	constexpr FE::int8 _TRUE_ = 1;
-	_MAYBE_UNUSED_	constexpr FE::int8 _FALSE_ = 0;
+_MAYBE_UNUSED_	constexpr inline FE::int8 _TRUE_ = 1;
+_MAYBE_UNUSED_	constexpr inline FE::int8 _FALSE_ = 0;
 
-	_MAYBE_UNUSED_	constexpr FE::float32 _NULL_f_ = 0.0f;
+_MAYBE_UNUSED_	constexpr inline FE::float32 _NULL_f_ = 0.0f;
 
-	_MAYBE_UNUSED_	constexpr FE::boolean _FOUND_ = true;
-	_MAYBE_UNUSED_	constexpr FE::boolean _NOT_FOUND_ = false;
+_MAYBE_UNUSED_	constexpr inline FE::boolean _FOUND_ = true;
+_MAYBE_UNUSED_	constexpr inline FE::boolean _NOT_FOUND_ = false;
 
-	_MAYBE_UNUSED_	constexpr FE::boolean _SUCCESSFUL_ = true;
-	_MAYBE_UNUSED_	constexpr FE::boolean _FAILED_ = false;
+_MAYBE_UNUSED_	constexpr inline FE::boolean _SUCCESSFUL_ = true;
+_MAYBE_UNUSED_	constexpr inline FE::boolean _FAILED_ = false;
 
-template<typename first, typename second>
-class auto_cast final
-{
-public:
-	inline second cast_first_to_second(first object_p) noexcept { return (second)(object_p); }
+struct null_template_argument {};
 
-	inline first cast_second_to_first(second object_p) noexcept { return (first)(object_p); }
-};
 
 namespace internal
 {
 	template <bool compile_time_test_result, typename true_type, typename false_type>
-	struct select_type {};
+	struct conditional_type {};
 
 	template<typename true_type, typename false_type>
-	struct select_type<true, true_type, false_type> { using type = true_type; };
+	struct conditional_type<true, true_type, false_type> { using type = true_type; };
 
 	template<typename true_type, typename false_type>
-	struct select_type<false, true_type, false_type> { using type = false_type; };
+	struct conditional_type<false, true_type, false_type> { using type = false_type; };
 }
 
 template <bool compile_time_test_result, typename true_type, typename false_type>
-using conditional_type = internal::select_type< compile_time_test_result, true_type, false_type>;
+using conditional_type = internal::conditional_type< compile_time_test_result, true_type, false_type>;
+
+
+template<typename T>
+struct is_c_style_constant_string
+{
+	_MAYBE_UNUSED_ static constexpr inline bool _VALUE_ = false;
+};
+
+template<>
+struct is_c_style_constant_string<character*>
+{
+	_MAYBE_UNUSED_ static constexpr inline bool _VALUE_ = true;
+};
+
+template<>
+struct is_c_style_constant_string<schar*>
+{
+	_MAYBE_UNUSED_ static constexpr inline bool _VALUE_ = true;
+};
+
+template<>
+struct is_c_style_constant_string<uchar*>
+{
+	_MAYBE_UNUSED_ static constexpr inline bool _VALUE_ = true;
+};
+
+template<>
+struct is_c_style_constant_string<wchar*>
+{
+	_MAYBE_UNUSED_ static constexpr inline bool _VALUE_ = true;
+};
+
+#ifdef _HAS_CXX20_
+template<>
+struct is_c_style_constant_string<UTF8*>
+{
+	_MAYBE_UNUSED_ static constexpr inline bool _VALUE_ = true;
+};
+#endif
+
+template<>
+struct is_c_style_constant_string<UTF16*>
+{
+	_MAYBE_UNUSED_ static constexpr inline bool _VALUE_ = true;
+};
+
+template<>
+struct is_c_style_constant_string<UTF32*>
+{
+	_MAYBE_UNUSED_ static constexpr inline bool _VALUE_ = true;
+};
+
+
+template<typename T>
+struct is_character 
+{
+	_MAYBE_UNUSED_ static constexpr inline bool _VALUE_ = false;
+};
+
+template<>
+struct is_character<character>
+{
+	_MAYBE_UNUSED_ static constexpr inline bool _VALUE_ = true;
+};
+
+template<>
+struct is_character<var::character>
+{
+	_MAYBE_UNUSED_ static constexpr inline bool _VALUE_ = true;
+};
+
+template<>
+struct is_character<schar>
+{
+	_MAYBE_UNUSED_ static constexpr inline bool _VALUE_ = true;
+};
+
+template<>
+struct is_character<var::schar>
+{
+	_MAYBE_UNUSED_ static constexpr inline bool _VALUE_ = true;
+};
+
+template<>
+struct is_character<uchar>
+{
+	_MAYBE_UNUSED_ static constexpr inline bool _VALUE_ = true;
+};
+
+template<>
+struct is_character<var::uchar>
+{
+	_MAYBE_UNUSED_ static constexpr inline bool _VALUE_ = true;
+};
+
+template<>
+struct is_character<wchar>
+{
+	_MAYBE_UNUSED_ static constexpr inline bool _VALUE_ = true;
+};
+
+template<>
+struct is_character<var::wchar>
+{
+	_MAYBE_UNUSED_ static constexpr inline bool _VALUE_ = true;
+};
+
+#ifdef _HAS_CXX20_
+template<>
+struct is_character<UTF8>
+{
+	_MAYBE_UNUSED_ static constexpr inline bool _VALUE_ = true;
+};
+
+template<>
+struct is_character<var::UTF8>
+{
+	_MAYBE_UNUSED_ static constexpr inline bool _VALUE_ = true;
+};
+#endif
+
+template<>
+struct is_character<UTF16>
+{
+	_MAYBE_UNUSED_ static constexpr inline bool _VALUE_ = true;
+};
+
+template<>
+struct is_character<var::UTF16>
+{
+	_MAYBE_UNUSED_ static constexpr inline bool _VALUE_ = true;
+};
+
+template<>
+struct is_character<UTF32>
+{
+	_MAYBE_UNUSED_ static constexpr inline bool _VALUE_ = true;
+};
+
+template<>
+struct is_character<var::UTF32>
+{
+	_MAYBE_UNUSED_ static constexpr inline bool _VALUE_ = true;
+};
+
 
 enum struct OBJECT_TRIVIALITY : boolean
 {
@@ -250,10 +389,10 @@ enum struct OBJECT_TRIVIALITY : boolean
 };
 
 template <typename T>
-constexpr inline OBJECT_TRIVIALITY is_trivially_constructible_and_destructible()
+struct is_trivially_constructible_and_destructible
 {
-	return static_cast<OBJECT_TRIVIALITY>(std::is_trivially_constructible<T>::value && std::is_trivially_destructible<T>::value);
-}
+	_MAYBE_UNUSED_ static constexpr inline OBJECT_TRIVIALITY _VALUE_ = static_cast<OBJECT_TRIVIALITY>(std::is_trivially_constructible<T>::value && std::is_trivially_destructible<T>::value);
+};
 
 enum struct OBJECT_LIFECYCLE : boolean
 {
@@ -319,10 +458,8 @@ public:
 };
 
 
-struct null_template_argument{};
-
-
 END_NAMESPACE
+
 
 #ifdef _VISUAL_STUDIO_CPP_
 #ifndef max
@@ -332,6 +469,7 @@ END_NAMESPACE
 #define min(a,b)            (((a) < (b)) ? (a) : (b))
 #endif
 #endif
+
 
 #pragma warning(pop)
 #endif
