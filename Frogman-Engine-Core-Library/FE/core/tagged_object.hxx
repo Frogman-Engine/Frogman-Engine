@@ -11,7 +11,7 @@ BEGIN_NAMESPACE(FE)
 
 #pragma pack(push, _DWORD_SIZE_)
 
-template <typename T, class padding_size = ::FE::internal::align_null, class string = compile_time_constant_string<char>>
+template <typename T, class padding_size = ::FE::align_null, class string = compile_time_constant_string<char>>
 class alignas(padding_size::s_size) tagged_object final
 {
 private:

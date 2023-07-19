@@ -10,23 +10,22 @@ BEGIN_NAMESPACE(FE)
 namespace std_style 
 {
 	template<typename T>
-	class scalable_allocator // trackable scalable_allocator
+	class scalable_aligned_allocator // trackable scalable_aligned_allocator
 	{
 	public:
-
 		typedef T value_type;
 		typedef T* pointer;
 		typedef const T* const_pointer;
 		typedef T& reference;
 		typedef const T& const_reference;
 		typedef var::size_t size_type;
-		typedef FE::scalable_allocator<T> allocator;
+		typedef FE::scalable_aligned_allocator<T> allocator;
 
 
-		scalable_allocator() noexcept = default;
+		constexpr scalable_aligned_allocator() noexcept {}
 
 		template <typename U>
-		scalable_allocator(_MAYBE_UNUSED_ const scalable_allocator<U>& standard_allocator_cref_p) noexcept {};
+		constexpr scalable_aligned_allocator(_MAYBE_UNUSED_ const scalable_aligned_allocator<U>& standard_allocator_cref_p) noexcept {};
 
 
 		_NODISCARD_ _FORCE_INLINE_ T* allocate(size_t count_p) noexcept

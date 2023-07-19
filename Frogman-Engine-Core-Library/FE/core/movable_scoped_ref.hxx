@@ -1,6 +1,5 @@
 #ifndef _FE_CORE_MOVABLE_SCOPED_REF_HXX_
 #define _FE_CORE_MOVABLE_SCOPED_REF_HXX_
-#pragma warning(disable:4390)
 #include "prerequisite_symbols.h"
 #include "exception.hpp"
 
@@ -71,7 +70,7 @@ public:
 
 	var::boolean stop_using() noexcept
 	{
-		if (FE_EXCEPTION(this->m_signal_ptr == nullptr, "WARNING: The signal pointer is nullptr. This function will return early with false.", _EXCEPTION_ORIGIN_)) _LIKELY_ { return _FAILED_; }
+		if (FE_LOG(this->m_signal_ptr == nullptr, "WARNING: The signal pointer is nullptr. This function will return early with false.")) _LIKELY_ { return _FAILED_; }
 
 		this->m_signal_ptr->store(false, std::memory_order_release);
 		return _SUCCESSFUL_;
@@ -79,7 +78,7 @@ public:
 
 	T& operator*() noexcept
 	{
-		FE_ASSERT(this->m_signal_ptr == nullptr, "ERROR: The signal pointer is nullptr. Failed to acquire the data.", _EXCEPTION_ORIGIN_);
+		FE_ASSERT(this->m_signal_ptr == nullptr, "ERROR: The signal pointer is nullptr. Failed to acquire the data.");
 		return *this->m_data_ptr;
 	}
 };

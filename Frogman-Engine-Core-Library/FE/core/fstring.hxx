@@ -39,7 +39,7 @@ public:
     constexpr fixed_sized_string(const char_type* const cstr_ptrc_p) noexcept 
         : m_fstring{ static_cast<const char_type>('\0') }, m_string_length(algorithm::string::string_length<char_type>(cstr_ptrc_p))
     {
-        FE_ASSERT_WITHOUT_LOG(this->m_string_length >= max_capacity);
+        FE_ASSERT(this->m_string_length >= max_capacity, "CRITICAL ERROR: the input string length exceeds the max string capacity");
         algorithm::string::copy_string( this->m_fstring, max_capacity, cstr_ptrc_p, this->m_string_length);
     }
 
@@ -60,7 +60,7 @@ public:
     {
         this->m_string_length = algorithm::string::string_length<char_type>(cstr_ptrc_p);
 
-        FE_ASSERT_WITHOUT_LOG(this->m_string_length >= max_capacity);
+        FE_ASSERT(this->m_string_length >= max_capacity, "CRITICAL ERROR: the input string length exceeds the max string capacity");
         algorithm::string::copy_string(this->m_fstring, max_capacity, cstr_ptrc_p, this->m_string_length);
         return *this;
     }
@@ -82,13 +82,13 @@ public:
 
     constexpr char_type at(index_t index_p) noexcept
     {
-        FE_ASSERT_WITHOUT_LOG(index_p >= this->m_string_length);
+        FE_ASSERT(index_p >= this->m_string_length, "CRITICAL ERROR: index out of boundary");
         return this->m_fstring[index_p];
     }
 
     constexpr char_type& operator[](index_t idx_p) noexcept
     {
-        FE_ASSERT_WITHOUT_LOG(idx_p >= this->m_string_length);
+        FE_ASSERT(idx_p >= this->m_string_length, "CRITICAL ERROR: index out of boundary");
         return this->m_fstring[idx_p];
     }
 
@@ -124,17 +124,17 @@ public:
         return (this->m_string_length == 0) ? true : false;
     }
 
-    constexpr var::uint64 length() const noexcept { return this->m_string_length; }
-    constexpr var::uint64 max_length() const noexcept { return max_capacity; }
-    constexpr var::uint64 capacity() const noexcept { return max_capacity; }
+    _FORCE_INLINE_ constexpr var::uint64 length() const noexcept { return this->m_string_length; }
+    _FORCE_INLINE_ constexpr var::uint64 max_length() const noexcept { return max_capacity; }
+    _FORCE_INLINE_ constexpr var::uint64 capacity() const noexcept { return max_capacity; }
 
-    constexpr void clear() noexcept { ::FE::memset_s(this->m_fstring, _NULL_, max_capacity, sizeof(char_type)); }
+    _FORCE_INLINE_ constexpr void clear() noexcept { UNALIGNED_MEMSET(this->m_fstring, _NULL_, max_capacity * sizeof(char_type)); }
     // insert
     // erase
 
     constexpr void push_back(const char_type char_type_element_p) noexcept
     {
-        FE_ASSERT_WITHOUT_LOG(this->m_string_length >= max_capacity);
+        FE_ASSERT(this->m_string_length >= max_capacity, "CRITICAL ERROR: out of capacity");
         this->m_fstring[this->m_string_length] = char_type_element_p;
         ++(this->m_string_length);
     }
@@ -172,15 +172,15 @@ public:
 
     constexpr algorithm::string::target_char_count<char_type> count_target_character(const char_type target_char_p) const noexcept
     {
-        return algorithm::string::search_all_corresponding_characters(this->m_fstring, target_char_p);
+        return algorithm::string::count_all_corresponding_chars(this->m_fstring, target_char_p);
     }
     constexpr algorithm::string::target_char_count<char_type> count_target_character(const char_type* const target_char_ptrc_p) const noexcept 
     {
-        return algorithm::string::search_all_corresponding_characters(this->m_fstring, *target_char_ptrc_p);
+        return algorithm::string::count_all_corresponding_chars(this->m_fstring, *target_char_ptrc_p);
     }
     constexpr algorithm::string::target_char_count<char_type> count_target_character(fixed_sized_string<char_type, max_capacity>& basic_cstring_ref_p) const noexcept
     {
-        return algorithm::string::search_all_corresponding_characters(this->m_fstring, *(basic_cstring_ref_p.m_fstring));
+        return algorithm::string::count_all_corresponding_chars(this->m_fstring, *(basic_cstring_ref_p.m_fstring));
     }
 
     constexpr var::boolean starts_with(const char_type* const cstr_ptrc_p) const noexcept { return false; }
@@ -246,14 +246,14 @@ using fwstring = FE::fixed_sized_string<var::wchar, max_capacity>;
 
 #if _HAS_CXX20_ == 1
 template<uint64 max_capacity>
-using fstring8 = FE::fixed_sized_string<var::char8, max_capacity>;
+using fstring8 = FE::fixed_sized_string<var::UTF8, max_capacity>;
 #endif
 
 template<uint64 max_capacity>
-using fstring16 = FE::fixed_sized_string<var::char16, max_capacity>;
+using fstring16 = FE::fixed_sized_string<var::UTF16, max_capacity>;
 
 template<uint64 max_capacity>
-using fstring32 = FE::fixed_sized_string<var::char32, max_capacity>;
+using fstring32 = FE::fixed_sized_string<var::UTF32, max_capacity>;
 
 
 END_NAMESPACE;

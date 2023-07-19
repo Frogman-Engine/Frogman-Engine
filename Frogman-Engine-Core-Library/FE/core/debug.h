@@ -1,22 +1,17 @@
 ﻿#ifndef _FE_CORE_DEBUG_H_
 #define _FE_CORE_DEBUG_H_
-#include "../miscellaneous/configuration.h"
+#include <FE/miscellaneous/configuration.h>
+#include <csignal>
+#include <iostream>
 // Copyright © from 2023 to current, UNKNOWN STRYKER. All Rights Reserved.
 
-#if _ENABLE_ASSERT_WITHOUT_LOG_ == true
-// It aborts if the condition_p is true
-#define FE_ASSERT_WITHOUT_LOG(condition_p) if(condition_p) _UNLIKELY_ { ::std::abort(); }
-#else
-// It aborts if the condition_p is true
-#define FE_ASSERT_WITHOUT_LOG(condition_p)
-#endif
 
-#if _DEBUG_MODE_ == true || _ENABLE_ASSERT_ == true || _ENABLE_EXCEPTION_ == true || _ENABLE_EXIT_ == true
-#define IF_DEBUG_MODE(true_p, false_p) true_p
-#define ENABLE_IF_DEBUG_MODE(code_p) code_p
+#ifdef _ENABLE_ABORT_IF_
+// It aborts if the expression is true
+#define ABORT_IF(expression, message) if (expression) _UNLIKELY_ { std::cerr << #expression << " is a false expression.\nAbort has been called from\ndirectory: " << __FILE__ << "\nfunction: " << __func__ << "()\nline number: " << __LINE__ << "\nmessage: " << #message; ::std::abort(); }
 #else
-#define IF_DEBUG_MODE(true_p, false_p) false_p
-#define ENABLE_IF_DEBUG_MODE(code_p)
+// It aborts if the expression is true
+#define ABORT_IF(expression, message)
 #endif
 
 #endif

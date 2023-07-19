@@ -1,4 +1,4 @@
-﻿#include "../mutex.hpp"
+﻿#include <FE/core/mutex.hpp>
 // Copyright © from 2023 to current, UNKNOWN STRYKER. All Rights Reserved.
 
 
@@ -14,7 +14,7 @@ FE::mutex::mutex() noexcept : m_is_locked(false)
 
 FE::mutex::~mutex() noexcept
 {
-    FE_ASSERT(this->m_is_locked.load(std::memory_order_acquire) == true, "CRITICAL ERROR: mutex is still locked", _EXCEPTION_ORIGIN_);
+    FE_ASSERT(this->m_is_locked.load(std::memory_order_acquire) == true, "CRITICAL ERROR: mutex is still locked");
 
 #if _WINDOWS_64BIT_OS_ == 1
     CloseHandle(this->m_mutex);
@@ -82,7 +82,7 @@ FE::timed_mutex::timed_mutex() noexcept : m_is_locked(false)
 
 FE::timed_mutex::~timed_mutex() noexcept
 {
-    FE_ASSERT(this->m_is_locked.load(std::memory_order_acquire) == true, "CRITICAL ERROR: timed mutex is still locked", _EXCEPTION_ORIGIN_);
+    FE_ASSERT(this->m_is_locked.load(std::memory_order_acquire) == true, "CRITICAL ERROR: timed mutex is still locked");
 
 #if _WINDOWS_64BIT_OS_ == 1
     CloseHandle(this->m_timed_mutex);
@@ -93,6 +93,7 @@ FE::timed_mutex::~timed_mutex() noexcept
 
 void FE::timed_mutex::lock(uint32 milliseconds_p) noexcept
 {
+    ABORT_IF(milliseconds_p == 0, "ERROR: expression_string_ptrc_p is 0.");
     this->m_is_locked.store(true, std::memory_order_release);
 #if _WINDOWS_64BIT_OS_ == 1
     WaitForSingleObject(this->m_timed_mutex, milliseconds_p);
@@ -116,6 +117,7 @@ void FE::timed_mutex::unlock() noexcept
 
 FE::var::boolean FE::timed_mutex::try_lock(uint32 milliseconds_p) noexcept
 {
+    ABORT_IF(milliseconds_p == 0, "ERROR: milliseconds_p is 0.");
     if (this->m_is_locked.load(std::memory_order_acquire) == true)
     {
         return _FAILED_;

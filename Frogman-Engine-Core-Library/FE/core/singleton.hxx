@@ -28,20 +28,11 @@ public:
 	typedef T value_type;
 	typedef FE::memory_block<T> memory_block_type;
 
-	_FORCE_INLINE_ singleton() noexcept = delete;
-
-	_FORCE_INLINE_ ~singleton() noexcept = delete;
-
-
+	singleton() noexcept = delete;
+	~singleton() noexcept = delete;
 	singleton(const singleton& deprecated_cref_p) noexcept = delete;
-
-
 	singleton& operator=(const singleton& deprecated_cref_p) noexcept = delete;
-
-
 	singleton(singleton&& deprecated_p) noexcept = delete;
-
-
 	singleton& operator=(singleton&& deprecated_p) noexcept = delete;
 
 

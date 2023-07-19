@@ -1,4 +1,5 @@
-#include <gtest/gtest.h>
+﻿#include <gtest/gtest.h>
+// Copyright © from 2023 to current, UNKNOWN STRYKER. All Rights Reserved.
 #include <FE/miscellaneous/google_test_extension.h>
 #include <FE/core/private/launch.hpp>
 #include <FE/core/heap_utilization.hpp>
@@ -7,23 +8,24 @@
 #include <FE/core/thread.hpp>
 
 
-TEST(memory_block, try)
+TEST(memory_block, serial)
 {
-	FE::memory_block<std::string>* l_memblock_ptr = (FE::memory_block<std::string>*)calloc(1, sizeof(FE::memory_block<std::string>));
+	FE::memory_block<std::string> l_memory_block;
+	EXPECT_FALSE(l_memory_block.is_constructed());
 
-	_MAYBE_UNUSED_ auto l_ret1 = l_memblock_ptr->try_access()->c_str();
-	_MAYBE_UNUSED_ auto l_ret2 = l_memblock_ptr->try_dereference().c_str();
+	l_memory_block.call_constructor();
+	EXPECT_TRUE(l_memory_block.is_constructed());
 
-	EXPECT_TRUE(l_memblock_ptr->is_constructed() == false);
+	l_memory_block.call_destructor();
+	EXPECT_FALSE(l_memory_block.is_constructed());
 }
-
 
 TEST(concurrent_memory_block, concurrency)
 {
 	constexpr int l_thread_count = 4;
 	using namespace FE;
 
-	FE::concurrent_memory_block<std::string>* l_concurrent_memblock_ptr = (FE::concurrent_memory_block<std::string>*)calloc(1, sizeof(FE::concurrent_memory_block<std::string>));
+	FE::concurrent_memory_block<std::string> l_concurrent_memblock;
 	var::boolean l_was_construction_successful[l_thread_count];
 	FE::thread l_threads[l_thread_count];
 
@@ -32,7 +34,7 @@ TEST(concurrent_memory_block, concurrency)
 	{
 		l_void_fn[i]._function = [&, i]()
 		{
-			l_was_construction_successful[i] = l_concurrent_memblock_ptr->call_constructor("call_constructor");
+			l_was_construction_successful[i] = l_concurrent_memblock.call_constructor("call_constructor");
 		};
 	}
 

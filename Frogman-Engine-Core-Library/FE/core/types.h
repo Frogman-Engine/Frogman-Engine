@@ -1,21 +1,22 @@
 ﻿#ifndef _FE_CORE_TYPES_H_
 #define _FE_CORE_TYPES_H_
 // Copyright © from 2023 to current, UNKNOWN STRYKER. All Rights Reserved.
-#pragma warning(disable : 4455)
-#include "../miscellaneous/configuration.h"
+#include <FE/miscellaneous/configuration.h>
 #include "macros/attributes.h"
 #include "macros/macro_definitions.h"
 #include <any>
 #include <atomic>
-#include <climits>
+#include <cstdint>
 #include <cstring>
+#include <functional>
 #include <limits>
 #include <string>
 #include <typeinfo>
 #include <type_traits>
+#pragma warning(push)
+#pragma warning(disable: 4715)
 
-
-#if _VISUAL_STUDIO_CPP_ == 1 
+#ifdef _VISUAL_STUDIO_CPP_
 #ifdef max
 #undef max
 #endif
@@ -43,18 +44,18 @@ constexpr T min_value() noexcept
 
 typedef const bool boolean; // primitive types are const by default
 
+typedef const char character;  // primitive types are const by default
 typedef const signed char schar; // primitive types are const by default
 typedef const unsigned char uchar; // primitive types are const by default
 typedef const wchar_t wchar; // primitive types are const by default
 
 
-#if _HAS_CXX20_ == 1
-typedef const char8_t char8; // primitive types are const by default
+#ifdef _HAS_CXX20_
+typedef const char8_t UTF8; // primitive types are const by default
 #endif
 
-
-typedef const char16_t char16; // primitive types are const by default
-typedef const char32_t char32; // primitive types are const by default
+typedef const char16_t UTF16; // primitive types are const by default
+typedef const char32_t UTF32; // primitive types are const by default
 
 
 typedef const float float32; // primitive types are const by default
@@ -62,16 +63,20 @@ typedef const double float64; // primitive types are const by default
 
 
 typedef const bool binary; // primitive types are const by default
-typedef const signed char sbyte; // primitive types are const by default
-typedef const unsigned char ubyte; // primitive types are const by default
-typedef const signed char int8; // primitive types are const by default
-typedef const unsigned char uint8; // primitive types are const by default
-typedef const signed short int16; // primitive types are const by default
-typedef const unsigned short uint16; // primitive types are const by default
-typedef const signed int int32; // primitive types are const by default
-typedef const unsigned int uint32; // primitive types are const by default
-typedef const signed long long int64; // primitive types are const by default
-typedef const unsigned long long uint64; // primitive types are const by default
+typedef const ::std::uint8_t byte; // primitive types are const by default
+typedef const ::std::uint16_t word; // primitive types are const by default
+typedef const ::std::uint32_t dword; // primitive types are const by default
+typedef const ::std::uint64_t qword; // primitive types are const by default
+
+
+typedef const ::std::int8_t int8; // primitive types are const by default
+typedef const ::std::uint8_t uint8; // primitive types are const by default
+typedef const ::std::int16_t int16; // primitive types are const by default
+typedef const ::std::uint16_t uint16; // primitive types are const by default
+typedef const ::std::int32_t int32; // primitive types are const by default
+typedef const ::std::uint32_t uint32; // primitive types are const by default
+typedef const ::std::int64_t int64; // primitive types are const by default
+typedef const ::std::uint64_t uint64; // primitive types are const by default
 
 
 typedef const ::std::size_t size_t; // primitive types are const by default 
@@ -80,9 +85,11 @@ typedef const ::std::size_t index_t; // primitive types are const by default
 typedef const ::std::size_t count_t; // primitive types are const by default
 typedef const ::std::size_t capacity_t; // primitive types are const by default
 typedef const ::std::ptrdiff_t ptrdiff_t; // primitive types are const by default
+typedef const ::std::intptr_t intptr_t; // primitive types are const by default
+typedef const ::std::uintptr_t uintptr_t; // primitive types are const by default
 
 
-#if _HAS_CXX20_ == 1
+#ifdef _HAS_CXX20_
 template <typename T>
 concept integral_type = sizeof(T) <= 8;
 
@@ -98,6 +105,10 @@ concept character_type = sizeof(T) <= 4;
 		static_assert(::std::atomic<boolean>::is_always_lock_free == true, "std::atomic is not compatible with boolean.");
 		static_assert(sizeof(boolean) == 1, "The size of boolean must be one byte.");
 
+		typedef char character;
+		static_assert(::std::atomic<character>::is_always_lock_free == true, "std::atomic is not compatible with character.");
+		static_assert(sizeof(character) == 1, "The size of character must be one byte.");
+
 		typedef signed char schar;
 		static_assert(::std::atomic<schar>::is_always_lock_free == true, "std::atomic is not compatible with schar.");
 		static_assert(sizeof(schar) == 1, "The size of schar must be one byte.");
@@ -110,19 +121,19 @@ concept character_type = sizeof(T) <= 4;
 		static_assert(::std::atomic<wchar>::is_always_lock_free == true, "std::atomic is not compatible with wchar.");
 		static_assert(sizeof(wchar) <= 4, "The size of wchar must be less than or equal to four bytes.");
 
-#if _HAS_CXX20_ == 1
-		typedef char8_t char8;
-		static_assert(::std::atomic<char8>::is_always_lock_free == true, "std::atomic is not compatible with char8.");
-		static_assert(sizeof(char8) <= 1, "The size of char8 must be one byte.");
+#ifdef _HAS_CXX20_
+		typedef char8_t UTF8;
+		static_assert(::std::atomic<UTF8>::is_always_lock_free == true, "std::atomic is not compatible with UTF8.");
+		static_assert(sizeof(UTF8) <= 1, "The size of UTF8 must be one byte.");
 #endif
 
-		typedef char16_t char16;
-		static_assert(::std::atomic<char16>::is_always_lock_free == true, "std::atomic is not compatible with char16.");
-		static_assert(sizeof(char16) == 2, "The size of char16 must be two bytes.");
+		typedef char16_t UTF16;
+		static_assert(::std::atomic<UTF16>::is_always_lock_free == true, "std::atomic is not compatible with UTF16.");
+		static_assert(sizeof(UTF16) == 2, "The size of UTF16 must be two bytes.");
 
-		typedef char32_t char32;
-		static_assert(::std::atomic<char32>::is_always_lock_free == true, "std::atomic is not compatible with char32.");
-		static_assert(sizeof(char32) == 4, "The size of char32 must be four bytes.");
+		typedef char32_t UTF32;
+		static_assert(::std::atomic<UTF32>::is_always_lock_free == true, "std::atomic is not compatible with UTF32.");
+		static_assert(sizeof(UTF32) == 4, "The size of UTF32 must be four bytes.");
 
 		typedef float float32;
 		static_assert(::std::atomic<float32>::is_always_lock_free == true, "std::atomic is not compatible with float32.");
@@ -135,43 +146,40 @@ concept character_type = sizeof(T) <= 4;
 		typedef bool binary;
 		static_assert(sizeof(binary) == 1, "The size of binary must be one byte.");
 
-		typedef signed char sbyte;
-		static_assert(::std::atomic<sbyte>::is_always_lock_free == true, "std::atomic is not compatible with sbyte.");
-		static_assert(sizeof(sbyte) == 1, "The size of sbyte must be one byte.");
+		typedef ::std::uint8_t byte;
+		typedef ::std::uint16_t word; // primitive types are const by default
+		typedef ::std::uint32_t dword; // primitive types are const by default
+		typedef ::std::uint64_t qword; // primitive types are const by default
 
-		typedef unsigned char ubyte;
-		static_assert(::std::atomic<ubyte>::is_always_lock_free == true, "std::atomic is not compatible with ubyte.");
-		static_assert(sizeof(ubyte) == 1, "The size of ubyte must be one byte.");
-
-		typedef signed char int8;
+		typedef ::std::int8_t int8;
 		static_assert(::std::atomic<int8>::is_always_lock_free == true, "std::atomic is not compatible with int8.");
 		static_assert(sizeof(int8) == 1, "The size of int8 must be one byte.");
 
-		typedef unsigned char uint8;
+		typedef ::std::uint8_t uint8;
 		static_assert(::std::atomic<uint8>::is_always_lock_free == true, "std::atomic is not compatible with uint8.");
 		static_assert(sizeof(uint8) == 1, "The size of uint8 must be one byte.");
 
-		typedef signed short int16;
+		typedef ::std::int16_t int16;
 		static_assert(::std::atomic<int16>::is_always_lock_free == true, "std::atomic is not compatible with int16.");
 		static_assert(sizeof(int16) == 2, "The size of int16 must be two bytes.");
 
-		typedef unsigned short uint16;
+		typedef ::std::uint16_t uint16;
 		static_assert(::std::atomic<uint16>::is_always_lock_free == true, "std::atomic is not compatible with uint16.");
 		static_assert(sizeof(uint16) == 2, "The size of uint16 must be two bytes.");
 
-		typedef signed int int32;
+		typedef ::std::int32_t int32;
 		static_assert(::std::atomic<int32>::is_always_lock_free == true, "std::atomic is not compatible with int32.");
 		static_assert(sizeof(int32) == 4, "The size of int32 must be four bytes.");
 
-		typedef unsigned int uint32;
+		typedef ::std::uint32_t uint32;
 		static_assert(::std::atomic<uint32>::is_always_lock_free == true, "std::atomic is not compatible with uint32.");
 		static_assert(sizeof(uint32) == 4, "The size of uint32 must be four bytes.");
 
-		typedef signed long long int64;
+		typedef ::std::int64_t int64;
 		static_assert(::std::atomic<int64>::is_always_lock_free == true, "std::atomic is not compatible with int64.");
 		static_assert(sizeof(int64) == 8, "The size of int64 must be eight bytes.");
 
-		typedef unsigned long long uint64;
+		typedef ::std::uint64_t uint64;
 		static_assert(::std::atomic<uint64>::is_always_lock_free == true, "std::atomic is not compatible with uint64.");
 		static_assert(sizeof(uint64) == 8, "The size of uint64 must be eight bytes.");
 
@@ -181,28 +189,9 @@ concept character_type = sizeof(T) <= 4;
 		typedef ::std::size_t count_t;
 		typedef ::std::size_t capacity_t;
 		typedef ::std::ptrdiff_t ptrdiff_t;
-
-		static_assert(sizeof(nullptr) == 8, "Your system's memory address model must be 64-bit.");
-		typedef ::std::atomic_bool* ATOMIC_BYTE_PTR;
-
-		typedef bool* BYTE_PTR;
-		static_assert(::std::atomic<BYTE_PTR>::is_always_lock_free == true, "std::atomic is not compatible with  BYTE_PTR.");
-
-		typedef unsigned short* WORD_PTR;
-		static_assert(::std::atomic<WORD_PTR>::is_always_lock_free == true, "std::atomic is not compatible with  WORD_PTR.");
-
-		typedef unsigned int* DWORD_PTR;
-		static_assert(::std::atomic<DWORD_PTR>::is_always_lock_free == true, "std::atomic is not compatible with  DWORD_PTR.");
-
-		typedef unsigned long long* QWORD_PTR;
-		static_assert(::std::atomic<QWORD_PTR>::is_always_lock_free == true, "std::atomic is not compatible with  QWORD_PTR.");
+		typedef ::std::intptr_t intptr_t;
+		typedef ::std::uintptr_t uintptr_t;
 	}
-
-	typedef ::std::atomic_bool* const ATOMIC_BYTE_PTR;
-	typedef bool* const BYTE_PTR;
-	typedef unsigned short* const WORD_PTR;
-	typedef unsigned int* const DWORD_PTR;
-	typedef unsigned long long* const QWORD_PTR;
 
 
 	_MAYBE_UNUSED_	constexpr FE::int8 _INT8_MAX_ = max_value<FE::int8>();
@@ -217,7 +206,7 @@ concept character_type = sizeof(T) <= 4;
 
 	_MAYBE_UNUSED_	constexpr FE::float64 _ACCURATE_MINIMUM_FLOAT_VALUE_ = 0.000001f;
 
-	_MAYBE_UNUSED_	constexpr FE::int8 _NULL_ = 0;
+#define _NULL_ 0
 
 	_MAYBE_UNUSED_	constexpr FE::int8 _TRUE_ = 1;
 	_MAYBE_UNUSED_	constexpr FE::int8 _FALSE_ = 0;
@@ -230,22 +219,112 @@ concept character_type = sizeof(T) <= 4;
 	_MAYBE_UNUSED_	constexpr FE::boolean _SUCCESSFUL_ = true;
 	_MAYBE_UNUSED_	constexpr FE::boolean _FAILED_ = false;
 
-template<typename A, typename B>
+template<typename first, typename second>
 class auto_cast final
 {
 public:
-	inline B cast_A_to_B(A object_p) noexcept { return (B)(object_p); }
+	inline second cast_first_to_second(first object_p) noexcept { return (second)(object_p); }
 
-	inline A cast_B_to_A(B object_p) noexcept { return (A)(object_p); }
+	inline first cast_second_to_first(second object_p) noexcept { return (first)(object_p); }
+};
+
+namespace internal
+{
+	template <bool compile_time_test_result, typename true_type, typename false_type>
+	struct select_type {};
+
+	template<typename true_type, typename false_type>
+	struct select_type<true, true_type, false_type> { using type = true_type; };
+
+	template<typename true_type, typename false_type>
+	struct select_type<false, true_type, false_type> { using type = false_type; };
+}
+
+template <bool compile_time_test_result, typename true_type, typename false_type>
+using conditional_type = internal::select_type< compile_time_test_result, true_type, false_type>;
+
+enum struct OBJECT_TRIVIALITY : boolean
+{
+	_TRIVIAL = true,
+	_NOT_TRIVIAL = false
+};
+
+template <typename T>
+constexpr inline OBJECT_TRIVIALITY is_trivially_constructible_and_destructible()
+{
+	return static_cast<OBJECT_TRIVIALITY>(std::is_trivially_constructible<T>::value && std::is_trivially_destructible<T>::value);
+}
+
+enum struct OBJECT_LIFECYCLE : boolean
+{
+	_CONSTRUCTED = true,
+	_DESTRUCTED = false
+};
+
+template <typename T>
+struct lazy_const
+{
+private:
+	T _data;
+	var::boolean _is_initialized;
+
+public:
+	constexpr lazy_const() noexcept : _data(), _is_initialized(false) {}
+	constexpr lazy_const(T&& data_p) noexcept : _data(std::move(data_p)), _is_initialized(true) {}
+	constexpr ~lazy_const() noexcept {};
+
+	_FORCE_INLINE_ lazy_const(const lazy_const& other_cref_p) noexcept : _data(other_cref_p._data), _is_initialized(true) {}
+	_FORCE_INLINE_ lazy_const(lazy_const&& rvalue_p) noexcept : _data(std::move(rvalue_p._data)), _is_initialized(true) {}
+
+	_FORCE_INLINE_ lazy_const& operator=(T&& data_p) noexcept
+	{
+		if (this->_is_initialized == true)
+		{
+			::abort();
+		}
+
+		this->_data = std::move(data_p);
+		this->_is_initialized = true;
+		
+		return *this;
+	}
+
+	_FORCE_INLINE_ lazy_const& operator=(const lazy_const& other_cref_p) noexcept
+	{
+		if (this->_is_initialized == true)
+		{
+			::abort();
+		}
+
+		this->_data = other_cref_p._data;
+		this->_is_initialized = true;
+		
+		return *this;
+	}
+
+	_FORCE_INLINE_ lazy_const& operator=(lazy_const&& rvalue_p) noexcept
+	{
+		if constexpr (this->_is_initialized == true)
+		{
+			::abort();
+		}
+
+		this->_data = std::move(rvalue_p._data);
+		this->_is_initialized = true;
+		
+		return *this;
+	}
+
+	_FORCE_INLINE_ const T& load() noexcept { return this->_data; }
 };
 
 
-#define IF_T_IS_NOT_TRIVIALLY_CONSTRUCTIBLE_AND_DESTRUCTIBLE(T, executable_code_lines) if constexpr (!std::is_trivially_constructible<T>::value || !std::is_trivially_destructible<T>::value) {executable_code_lines}
+struct null_template_argument{};
 
 
 END_NAMESPACE
 
-#if _VISUAL_STUDIO_CPP_ == 1
+#ifdef _VISUAL_STUDIO_CPP_
 #ifndef max
 #define max(a,b)            (((a) > (b)) ? (a) : (b))
 #endif
@@ -254,4 +333,5 @@ END_NAMESPACE
 #endif
 #endif
 
+#pragma warning(pop)
 #endif

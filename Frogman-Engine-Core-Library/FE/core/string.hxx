@@ -12,13 +12,13 @@ ENABLE_TEST_FOR(basic_string);
 BEGIN_NAMESPACE(FE)
 
 
-template< typename char_type = char, typename max_length_type = var::uint32, class allocator = FE::scalable_allocator<char_type> >
+template< typename char_type = char, typename max_length_type = var::uint32, class allocator = FE::scalable_aligned_allocator<char_type> >
 #if _HAS_CXX20 == 1
     requires character_type<char_type>
 #endif
 class basic_string final
 {
-#if _VISUAL_STUDIO_CPP_ == 1
+#ifdef _VISUAL_STUDIO_CPP_
     ALLOW_ITS_FRIEND_TO_TEST(basic_string);
 #endif
 
@@ -124,7 +124,7 @@ public:
 
     _FORCE_INLINE_ char_type try_pop_back() noexcept
     {
-
+	return '\0';
     }
 
     _FORCE_INLINE_ void clear() noexcept
@@ -134,7 +134,7 @@ public:
 
     _FORCE_INLINE_ boolean is_empty() const noexcept
     {
-
+	return false;
     }
 
 
@@ -145,17 +145,17 @@ public:
 
     _FORCE_INLINE_ length_type operator+=(char_type char_p) noexcept
     {
-
+	return 0;
     }
 
     _FORCE_INLINE_ length_type operator+=(const char_type* cstr_ptr_p) noexcept
     {
-
+	return 0;
     }
 
     _FORCE_INLINE_ length_type operator+=(const basic_string<char_type, max_length_type, allocator>& str_cref_p) noexcept
     {
-
+	return 0;
     }
 
     // It returns a pointer to the data
@@ -211,8 +211,8 @@ template<typename char_type, typename max_length_type, class allocator>
 char_type basic_string<char_type, max_length_type, allocator>::s_null = char_type('\0');
 
 
-using string = basic_string<char, var::uint32>;
-using article = basic_string<char, var::uint64>;
+using string = basic_string<var::character, var::uint32>;
+using article = basic_string<var::character, var::uint64>;
 using ustring = basic_string<var::uchar, var::uint32>;
 using uarticle = basic_string<var::uchar, var::uint64>;
 using sstring = basic_string<var::schar, var::uint32>;
@@ -222,15 +222,15 @@ using wstring = basic_string<var::wchar, var::uint32>;
 using warticle = basic_string<var::wchar, var::uint64>;
 
 #if _HAS_CXX20_ == 1
-using string8 = basic_string<var::char8, var::uint32>;
-using article8 = basic_string<var::char8, var::uint64>;
+using string8 = basic_string<var::UTF8, var::uint32>;
+using article8 = basic_string<var::UTF8, var::uint64>;
 #endif
 
-using string16 = basic_string<var::char16, var::uint32>;
-using article16 = basic_string<var::char16, var::uint64>;
+using string16 = basic_string<var::UTF16, var::uint32>;
+using article16 = basic_string<var::UTF16, var::uint64>;
 
-using string32 = basic_string<var::char32, var::uint32>;
-using article32 = basic_string<var::char32, var::uint64>;
+using string32 = basic_string<var::UTF32, var::uint32>;
+using article32 = basic_string<var::UTF32, var::uint64>;
 
 
 END_NAMESPACE

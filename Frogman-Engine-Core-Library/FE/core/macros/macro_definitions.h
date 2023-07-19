@@ -3,9 +3,6 @@
 // Copyright © from 2023 to current, UNKNOWN STRYKER. All Rights Reserved.
 
 
-#define internal_class class
-#define internal_struct struct
-
 #define _EXIT_LOOP_ goto
 
 #define BEGIN_NAMESPACE(NAME_P) namespace NAME_P {
@@ -17,41 +14,33 @@
 
 
 #ifdef _MSC_VER
-#define _VISUAL_STUDIO_CPP_ 1
-#else
-#define _VISUAL_STUDIO_CPP_ 0
+#define _VISUAL_STUDIO_CPP_
 #endif
 
 #ifdef __clang__
-#define _CLANG_ 1
-#else
-#define _CLANG_ 0
+#define _CLANG_ 
 #endif
 
 #ifdef __GNUC__
-#define _GNUC_ 1
-#else
-#define _GNUC_ 0
+#define _GNUC_ 
 #endif
 
 
 #ifdef __x86_64
-#define _X64_ 1
+#define _X64_ 
 #elif defined(_M_X64)
-#define _X64_ 1
+#define _X64_ 
 #elif defined(_M_AMD64)
-#define _X64_ 1
-#else
-#define _X64_ 0
+#define _X64_ 
 #endif
 
 
-#if _CLANG_ == 1 && _LINUX_64BIT_OS_ == 1 || _GNUC_ == 1 && _LINUX_64BIT_OS_ == 1
+#if defined(_CLANG_) && defined(_LINUX_64BIT_OS_) || defined(_GNUC_) && defined(_LINUX_64BIT_OS_)
 #define _FORCE_INLINE_ inline
 #define _STDCALL_ 
 #define _FASTCALL_
 
-#elif _VISUAL_STUDIO_CPP_ == 1
+#elif defined(_VISUAL_STUDIO_CPP_)
 #define _FORCE_INLINE_ __forceinline
 #define _STDCALL_ __stdcall
 #define _FASTCALL_ __fastcall
@@ -60,20 +49,25 @@
 #define _CDECL_ __cdecl
 
 
-#if _HAS_CXX20_ == 1
+#ifdef _HAS_CXX20_
 #define _CONSTEXPR20_ constexpr
 #else
 #define _CONSTEXPR20_
 #endif
 
-#if _HAS_CXX23_ == 1
+#ifdef _HAS_CXX23_
 #define _CONSTEXPR23_ constexpr
 #else
 #define _CONSTEXPR23_
 #endif
 
 
-#if _VISUAL_STUDIO_CPP_ == 1
+#define _LOCK_FREE_ // this function is guaranteed to be lock-free
+#define _MAY_USE_LOCKS_  // this function is not guaranteed to be lock-free and may use lock/signal synchronizations
+#define _MAYBE_UNSAFE_ // this method maybe unsafe to call concurrently 
+
+
+#ifdef _VISUAL_STUDIO_CPP_
 #include <vcruntime.h>
 #endif
 

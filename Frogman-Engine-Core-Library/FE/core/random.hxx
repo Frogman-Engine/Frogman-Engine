@@ -22,14 +22,14 @@ public:
     typedef T value_type;
 
     random_int() noexcept = default;
-    random_int(T min_range_p, T max_range_p) noexcept : m_value_generator(::std::mt19937_64{ static_cast<var::uint64>(time(NULL)) }), m_uniform_int_distribution(::std::uniform_int_distribution<T>{ min_range_p, max_range_p }) {}
+    _FORCE_INLINE_ random_int(T min_range_p, T max_range_p) noexcept : m_value_generator(::std::mt19937_64{ static_cast<var::uint64>(time(NULL)) }), m_uniform_int_distribution(::std::uniform_int_distribution<T>{ min_range_p, max_range_p }) {}
 
     ~random_int() noexcept = default;
 
 
-    T ranged_random_int() noexcept { return (*this->m_uniform_int_distribution)(*this->m_value_generator); }
+    _FORCE_INLINE_ T ranged_random_int() noexcept { return (*this->m_uniform_int_distribution)(*this->m_value_generator); }
 
-    T ranged_random_int(T min_range_p, T max_range_p) noexcept
+    _FORCE_INLINE_ T ranged_random_int(T min_range_p, T max_range_p) noexcept
     {
         if (!this->m_value_generator)
         {
@@ -59,14 +59,14 @@ public:
     typedef T value_type;
 
     random_float() noexcept = default;
-    random_float(T min_range_p, T max_range_p) noexcept : m_value_generator(::std::mt19937_64{ static_cast<var::uint64>(time(NULL)) }), m_uniform_real_distribution(::std::uniform_real_distribution<T>{ min_range_p, max_range_p }) {}
+    _FORCE_INLINE_ random_float(T min_range_p, T max_range_p) noexcept : m_value_generator(::std::mt19937_64{ static_cast<var::uint64>(time(NULL)) }), m_uniform_real_distribution(::std::uniform_real_distribution<T>{ min_range_p, max_range_p }) {}
 
     ~random_float() noexcept = default;
 
 
-    T ranged_random_float() noexcept { return (*this->m_uniform_real_distribution)(*this->m_value_generator); }
+    _FORCE_INLINE_ T ranged_random_float() noexcept { return (*this->m_uniform_real_distribution)(*this->m_value_generator); }
 
-    T ranged_random_float(T min_range_p, T max_range_p) noexcept
+    _FORCE_INLINE_ T ranged_random_float(T min_range_p, T max_range_p) noexcept
     {
         if (!this->m_value_generator)
         {

@@ -1,4 +1,5 @@
-#include <gtest/gtest.h>
+﻿#include <gtest/gtest.h>
+// Copyright © from 2023 to current, UNKNOWN STRYKER. All Rights Reserved.
 #include <FE/miscellaneous/google_test_extension.h>
 #include <FE/core/singleton.hxx>
 #include <FE/core/concurrent_singleton.hxx>
@@ -45,10 +46,12 @@ private:
 TEST(singleton, instantiation)
 {
 	FE::singleton<my_singleton_class>::singleton_instance(10).m_string_table.emplace_back("FE::singleton<T>");
+	FE::singleton<my_singleton_class>::destruct_singleton();
 }
 
 
 TEST(concurrent_singleton, instantiation)
 {
 	FE::concurrent_singleton<my_concurrent_singleton_class>::singleton_instance(10).m_string_table.emplace_back("FE::concurrent_singleton<T>");
+	FE::concurrent_singleton<my_concurrent_singleton_class>::destruct_singleton();
 }

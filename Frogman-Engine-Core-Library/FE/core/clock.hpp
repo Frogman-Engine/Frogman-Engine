@@ -12,7 +12,7 @@ BEGIN_NAMESPACE(FE)
 class clock final
 {
 public:
-    typedef char char_type;
+    using char_type = char;
 
     // const char* FE::clock::get_current_local_time() noexcept;
     _MAYBE_UNUSED_ static constexpr int _GET_CURRENT_LOCAL_TIME_BUFFER_SIZE_ = 64;
@@ -24,13 +24,16 @@ private:
 
 public:
     constexpr clock() noexcept : m_starting_point(), m_ending_point(), m_delta_time() {}
-    ~clock() noexcept = default;
+    constexpr ~clock() noexcept {}
 
-    void start_clock() noexcept;
+    _FORCE_INLINE_ void start_clock() noexcept { this->m_starting_point = ::std::chrono::steady_clock::now(); }
+    _FORCE_INLINE_ void end_clock() noexcept { this->m_ending_point = ::std::chrono::steady_clock::now(); }
 
-    void end_clock() noexcept;
-
-    var::float64 get_delta_time() noexcept;
+    _FORCE_INLINE_ var::float64 get_delta_time() noexcept
+    {
+        this->m_delta_time = this->m_ending_point - this->m_starting_point;
+        return this->m_delta_time.count();
+    }
 
     const char_type* get_current_local_time() noexcept;
 };

@@ -4,17 +4,17 @@
 #include "../../core/types.h"
 
 
-#if _VISUAL_STUDIO_CPP_ != 1 && _GNUC_ != 1 && _CLANG_ != 1
+#if !defined(_VISUAL_STUDIO_CPP_) && !defined(_GNUC_)&& !defined(_CLANG_)
 #error Frogman Engine requires Microsoft Visual Studio 2022 C++ v143, LLVM Clang, g++ 11 ,or latest g++ to compile. Please use one of these compilers.
 #endif
-#if _WINDOWS_64BIT_OS_ != 1 && _LINUX_64BIT_OS_ != 1
+#if !defined(_WINDOWS_64BIT_OS_) && !defined(_LINUX_64BIT_OS_)
 #error An Incompatible System Environment Detected: Frogman Engine supports Windows x86-64 and Linux(Ubuntu) x86-64. Please use one of them.
 #endif
 #ifdef __APPLE__
 #error Apple platforms are not supported. Please use Windows x86-64 or Linux(Ubuntu) x84-64 Operating System.
 #endif
-#if _X64_ == 0
-#error Frogman Engine only runs on X86-64 environments.
+#ifndef _X64_
+#error Frogman Engine is only works on X86-64 environment.
 #endif
 
 #ifdef FE
@@ -61,9 +61,7 @@
 #error Frogman Engine Prohibits macroizing the keyword "min_value".
 #endif
 
-#ifdef _NULL_
-#error Frogman Engine Prohibits macroizing the keyword "_NULL_".
-#endif
+
 #ifdef _NULL_f_
 #error Frogman Engine Prohibits macroizing the keyword "_NULL_f_".
 #endif
@@ -95,13 +93,13 @@
 #ifdef wchar
 #error Frogman Engine Prohibits macroizing the keyword "wchar".
 #endif
-#ifdef char8
+#ifdef UTF8
 #error Frogman Engine Prohibits macroizing the keyword "char8".
 #endif
-#ifdef char16
+#ifdef UTF16
 #error Frogman Engine Prohibits macroizing the keyword "char16".
 #endif
-#ifdef char32
+#ifdef UTF32
 #error Frogman Engine Prohibits macroizing the keyword "char32".
 #endif
 
@@ -115,7 +113,7 @@
 #ifdef binary
 #error Frogman Engine Prohibits macroizing the keyword "binary".
 #endif
-#ifdef sbyte
+#ifdef byte
 #error Frogman Engine Prohibits macroizing the keyword "sbyte".
 #endif
 #ifdef ubyte
@@ -199,7 +197,7 @@
 #ifdef exception
 #error Frogman Engine Prohibits macroizing the keyword "exception".
 #endif
-#ifdef handle_exception
+#ifdef log
 #error Frogman Engine Prohibits macroizing the keyword "handle_exceptions".
 #endif
 

@@ -6,29 +6,24 @@ PROJECT(Frogma_Engine_Core_Library_Debugger)
 
 
 SET(CMAKE_BUILD_TYPE "Debug")
+SET(SIMD_OPTION "AVX")
 SET(CMAKE_CXX_STANDARD 20)
 
 
 if(${CMAKE_CXX_STANDARD} EQUAL 23)
-
-ADD_COMPILE_DEFINITIONS(_HAS_CXX23_=1)
-ADD_COMPILE_DEFINITIONS(_HAS_CXX20_=1)
-ADD_COMPILE_DEFINITIONS(_HAS_CXX17_=1)
+	ADD_COMPILE_DEFINITIONS(_HAS_CXX23_)
+	ADD_COMPILE_DEFINITIONS(_HAS_CXX20_)
+	ADD_COMPILE_DEFINITIONS(_HAS_CXX17_)
 
 elseif(${CMAKE_CXX_STANDARD} EQUAL 20)
-
-ADD_COMPILE_DEFINITIONS(_HAS_CXX23_=0)
-ADD_COMPILE_DEFINITIONS(_HAS_CXX20_=1)
-ADD_COMPILE_DEFINITIONS(_HAS_CXX17_=1)
+	ADD_COMPILE_DEFINITIONS(_HAS_CXX20_)
+	ADD_COMPILE_DEFINITIONS(_HAS_CXX17_)
 
 elseif(${CMAKE_CXX_STANDARD} EQUAL 17)
-
-ADD_COMPILE_DEFINITIONS(_HAS_CXX23_=0)
-ADD_COMPILE_DEFINITIONS(_HAS_CXX20_=0)
-ADD_COMPILE_DEFINITIONS(_HAS_CXX17_=1)
+	ADD_COMPILE_DEFINITIONS(_HAS_CXX17_)
 
 else()
-message(FATAL_ERROR "CMAKE_CXX_STANDARD must be C++ 17 or the latest")
+	message(FATAL_ERROR "CMAKE_CXX_STANDARD must be C++ 17 or the latest")
 endif()
 
 
@@ -47,13 +42,15 @@ SET(_UNIT_TEST_CODE_
 	${CMAKE_CURRENT_SOURCE_DIR}/../../../Frogman-Engine-Unit-Tests/FE-Core-Unit-Test-Cases/allocator-unit-test.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/../../../Frogman-Engine-Unit-Tests/FE-Core-Unit-Test-Cases/cstring-unit-test.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/../../../Frogman-Engine-Unit-Tests/FE-Core-Unit-Test-Cases/fstring-unit-test.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/../../../Frogman-Engine-Unit-Tests/FE-Core-Unit-Test-Cases/hash-unit-test.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/../../../Frogman-Engine-Unit-Tests/FE-Core-Unit-Test-Cases/iterator-unit-test.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/../../../Frogman-Engine-Unit-Tests/FE-Core-Unit-Test-Cases/math-unit-test.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/../../../Frogman-Engine-Unit-Tests/FE-Core-Unit-Test-Cases/memory_block-unit-test.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/../../../Frogman-Engine-Unit-Tests/FE-Core-Unit-Test-Cases/movable_scoped_ref-unit-test.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/../../../Frogman-Engine-Unit-Tests/FE-Core-Unit-Test-Cases/numeric-unit-test.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/../../../Frogman-Engine-Unit-Tests/FE-Core-Unit-Test-Cases/private-memory-unit-test.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/../../../Frogman-Engine-Unit-Tests/FE-Core-Unit-Test-Cases/singleton_templates-unit-test.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/../../../Frogman-Engine-Unit-Tests/FE-Core-Unit-Test-Cases/stack-unit-test.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/../../../Frogman-Engine-Unit-Tests/FE-Core-Unit-Test-Cases/queue-unit-test.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/../../../Frogman-Engine-Unit-Tests/FE-Core-Unit-Test-Cases/string_algorithm-unit-test.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/../../../Frogman-Engine-Unit-Tests/FE-Core-Unit-Test-Cases/string-unit-test.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/../../../Frogman-Engine-Unit-Tests/FE-Core-Unit-Test-Cases/tagged_object-unit-test.cpp
@@ -77,6 +74,7 @@ SET(_CONCURRENT_CONTAINERS_
 	${CMAKE_CURRENT_SOURCE_DIR}/../../FE/core/concurrent_containers/concurrent_linked_array.hxx
 	${CMAKE_CURRENT_SOURCE_DIR}/../../FE/core/concurrent_containers/concurrent_list.hxx 
 	${CMAKE_CURRENT_SOURCE_DIR}/../../FE/core/concurrent_containers/concurrent_queue.hxx
+	${CMAKE_CURRENT_SOURCE_DIR}/../../FE/core/concurrent_containers/concurrent_stack.hxx
 	)
 SOURCE_GROUP("FE\\core\\concurrent_containers" FILES ${_CONCURRENT_CONTAINERS_})
 
@@ -98,6 +96,7 @@ SET(_CONTAINERS_
 	${CMAKE_CURRENT_SOURCE_DIR}/../../FE/core/containers/linked_array.hxx
 	${CMAKE_CURRENT_SOURCE_DIR}/../../FE/core/containers/list.hxx 
 	${CMAKE_CURRENT_SOURCE_DIR}/../../FE/core/containers/queue.hxx
+	${CMAKE_CURRENT_SOURCE_DIR}/../../FE/core/containers/stack.hxx
 	)
 SOURCE_GROUP("FE\\core\\containers" FILES ${_CONTAINERS_})
 
@@ -121,13 +120,12 @@ SOURCE_GROUP("FE\\core\\memory_pool" FILES ${_MEMORY_POOL_})
 
 SET(_PRIVATE_
 	${CMAKE_CURRENT_SOURCE_DIR}/../../FE/core/private/clock.cpp 	
-	${CMAKE_CURRENT_SOURCE_DIR}/../../FE/core/private/configuration_deserializer.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/../../FE/core/private/configuration_deserializer.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/../../FE/core/private/heap_utilization.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/../../FE/core/private/launch.cpp 
 	${CMAKE_CURRENT_SOURCE_DIR}/../../FE/core/private/launch.hpp 
-	${CMAKE_CURRENT_SOURCE_DIR}/../../FE/core/private/memory.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/../../FE/core/private/memory.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/../../FE/core/private/memory.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/../../FE/core/private/memory.hxx
 	${CMAKE_CURRENT_SOURCE_DIR}/../../FE/core/private/memory_metrics.cpp 
 	${CMAKE_CURRENT_SOURCE_DIR}/../../FE/core/private/mutex.cpp 
 	${CMAKE_CURRENT_SOURCE_DIR}/../../FE/core/private/exception.cpp 
@@ -160,7 +158,7 @@ SET(_CORE_
 	${CMAKE_CURRENT_SOURCE_DIR}/../../FE/core/hash.hxx 
 	${CMAKE_CURRENT_SOURCE_DIR}/../../FE/core/iterator.hxx
 	${CMAKE_CURRENT_SOURCE_DIR}/../../FE/core/heap_utilization.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/../../FE/core/math.hxx
+	${CMAKE_CURRENT_SOURCE_DIR}/../../FE/core/memory
 	${CMAKE_CURRENT_SOURCE_DIR}/../../FE/core/memory_block.hxx 
 	${CMAKE_CURRENT_SOURCE_DIR}/../../FE/core/memory_metrics.h 
 	${CMAKE_CURRENT_SOURCE_DIR}/../../FE/core/movable_scoped_ref.hxx 
@@ -168,7 +166,6 @@ SET(_CORE_
 	${CMAKE_CURRENT_SOURCE_DIR}/../../FE/core/prerequisite_symbols.h
 	${CMAKE_CURRENT_SOURCE_DIR}/../../FE/core/random.hxx
 	${CMAKE_CURRENT_SOURCE_DIR}/../../FE/core/exception.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/../../FE/core/exception_mode.h 
 	${CMAKE_CURRENT_SOURCE_DIR}/../../FE/core/singleton.hxx
 	${CMAKE_CURRENT_SOURCE_DIR}/../../FE/core/string.hxx
 	${CMAKE_CURRENT_SOURCE_DIR}/../../FE/core/tagged_object.hxx
@@ -228,16 +225,55 @@ else()
 endif()
 
 
-# Add compiler options
-ADD_COMPILE_OPTIONS(-pthread -g -mavx -march=x86-64)
+if(${SIMD_OPTION} STREQUAL "AVX-512")
+ADD_COMPILE_OPTIONS(-mavx512)
 
-ADD_COMPILE_DEFINITIONS(_LINUX_64BIT_OS_=1)
-ADD_COMPILE_DEFINITIONS(_WINDOWS_64BIT_OS_=0)
+elseif(${SIMD_OPTION} STREQUAL "AVX-2")
+ADD_COMPILE_OPTIONS(-mavx2)
 
+elseif(${SIMD_OPTION} STREQUAL "AVX")
+ADD_COMPILE_OPTIONS(-mavx)
+
+else()
+message(FATAL_ERROR "Detected an invalid X86-64 intrinsic SIMD option")
+
+endif()
+
+
+if(${CMAKE_BUILD_TYPE} STREQUAL "Release")
+ADD_COMPILE_OPTIONS(-pthread -finline-functions -march=x86-64 -O3)
+
+elseif(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+ADD_COMPILE_OPTIONS(-pthread -g -march=x86-64 -O0)
+
+else()
+message(FATAL_ERROR "Detected an invalid Build Option")
+
+endif()
+
+
+ADD_COMPILE_DEFINITIONS(_LINUX_64BIT_OS_)
+
+
+if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
 FIND_LIBRARY(UNIT_TEST_LINUX libgtest.a PATHS ${CMAKE_CURRENT_SOURCE_DIR}/../../../Frogman-Engine-Unit-Tests/Unit-Test-Linux-Packages)
-FIND_LIBRARY(CITY_HASH libCITY_HASH.a PATHS ${CMAKE_CURRENT_SOURCE_DIR}/../../../Third-Party-Libraries/City-Hash/Binaries/Linux/Release/a)
+FIND_LIBRARY(CITY_HASH libCITY_HASH.a PATHS ${CMAKE_CURRENT_SOURCE_DIR}/../../../Third-Party-Libraries/City-Hash/Binaries/Linux/a)
 FIND_LIBRARY(TBB_LINUX libtbb_debug.so PATHS ${CMAKE_CURRENT_SOURCE_DIR}/../../../Third-Party-Libraries/OneAPI-TBB_2021_9_0/binaries/Linux/so/intel64/gcc4.8 PATH_SUFFIXES gcc4.8)
 FIND_LIBRARY(TBB_MALLOC_LINUX libtbbmalloc_debug.so PATHS ${CMAKE_CURRENT_SOURCE_DIR}/../../../Third-Party-Libraries/OneAPI-TBB_2021_9_0/binaries/Linux/so/intel64/gcc4.8 PATH_SUFFIXES gcc4.8)
+FIND_LIBRARY(BOOST_STACKTRACE_LINUX libboost_stacktrace_basic.a PATHS ${CMAKE_CURRENT_SOURCE_DIR}/../../../Third-Party-Libraries/Boost-Libraries_1_82_0/binaries/Linux PATH_SUFFIXES Linux)
+
+elseif(${CMAKE_BUILD_TYPE} STREQUAL "Release")
+FIND_LIBRARY(UNIT_TEST_LINUX libgtest.a PATHS ${CMAKE_CURRENT_SOURCE_DIR}/../../../Frogman-Engine-Unit-Tests/Unit-Test-Linux-Packages)
+FIND_LIBRARY(CITY_HASH libCITY_HASH.a PATHS ${CMAKE_CURRENT_SOURCE_DIR}/../../../Third-Party-Libraries/City-Hash/Binaries/Linux/a)
+FIND_LIBRARY(TBB_LINUX libtbb.so PATHS ${CMAKE_CURRENT_SOURCE_DIR}/../../../Third-Party-Libraries/OneAPI-TBB_2021_9_0/binaries/Linux/so/intel64/gcc4.8 PATH_SUFFIXES gcc4.8)
+FIND_LIBRARY(TBB_MALLOC_LINUX libtbbmalloc.so PATHS ${CMAKE_CURRENT_SOURCE_DIR}/../../../Third-Party-Libraries/OneAPI-TBB_2021_9_0/binaries/Linux/so/intel64/gcc4.8 PATH_SUFFIXES gcc4.8)
+FIND_LIBRARY(BOOST_STACKTRACE_LINUX libboost_stacktrace_basic.a PATHS ${CMAKE_CURRENT_SOURCE_DIR}/../../../Third-Party-Libraries/Boost-Libraries_1_82_0/binaries/Linux PATH_SUFFIXES Linux)
+
+else()
+message(FATAL_ERROR "Detected an invalid Build Option")
+
+endif()
+
 
 # Add the executable target
 ADD_EXECUTABLE(	${PROJECT_NAME} 
@@ -277,18 +313,29 @@ TARGET_LINK_LIBRARIES(	${PROJECT_NAME} stdc++fs
 elseif(CMAKE_SYSTEM_NAME STREQUAL "Windows")
 message("Configurating The Build Environment for Windows X86-64")
 
-ADD_COMPILE_DEFINITIONS(_WINDOWS_64BIT_OS_=1)
-ADD_COMPILE_DEFINITIONS(_LINUX_64BIT_OS_=0)
+ADD_COMPILE_DEFINITIONS(_WINDOWS_64BIT_OS_)
 
-# Add compiler options 
-ADD_COMPILE_OPTIONS(/WX- /W4 /MP /Od /Oi /MTd /Gy /arch:AVX /DEBUG)
 
+if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
 FIND_LIBRARY(UNIT_TEST_WINDOWS gtest.lib PATHS ${CMAKE_CURRENT_SOURCE_DIR}/../../../Frogman-Engine-Unit-Tests/Unit-Test-Windows-Packages/lib/Debug)
 FIND_LIBRARY(CITY_HASH CITY_HASH.lib PATHS ${CMAKE_CURRENT_SOURCE_DIR}/../../../Third-Party-Libraries/City-Hash/Binaries/Windows/Debug)
-FIND_LIBRARY(TBB_WINDOWS tbb12_debug.lib PATHS ${CMAKE_CURRENT_SOURCE_DIR}/../../../Third-Party-Libraries/OneAPI-TBB_2021_9_0/binaries/Windows/lib/intel64/vc14_uwp/debug PATH_SUFFIXES debug)
-FIND_LIBRARY(TBB_MALLOC_WINDOWS tbbmalloc_debug.lib PATHS ${CMAKE_CURRENT_SOURCE_DIR}/../../../Third-Party-Libraries/OneAPI-TBB_2021_9_0/binaries/Windows/lib/intel64/vc14_uwp/debug PATH_SUFFIXES debug)
+FIND_LIBRARY(TBB_WINDOWS tbb12_debug.lib PATHS ${CMAKE_CURRENT_SOURCE_DIR}/../../../Third-Party-Libraries/OneAPI-TBB_2021_9_0/binaries/Windows/lib/intel64/vc14_uwp PATH_SUFFIXES vc14_uwp)
+FIND_LIBRARY(TBB_MALLOC_WINDOWS tbbmalloc_debug.lib PATHS ${CMAKE_CURRENT_SOURCE_DIR}/../../../Third-Party-Libraries/OneAPI-TBB_2021_9_0/binaries/Windows/lib/intel64/vc14_uwp PATH_SUFFIXES vc14_uwp)
+FIND_LIBRARY(BOOST_STACKTRACE_WINDOWS libboost_stacktrace_windbg_cached-vc143-mt-gd-x64-1_82.lib PATHS ${CMAKE_CURRENT_SOURCE_DIR}/../../../Third-Party-Libraries/Boost-Libraries_1_82_0/binaries/Windows/Visual-Studio-2022-v143-Compiler/debug PATH_SUFFIXES debug)
 
-# Add the executable target
+elseif(${CMAKE_BUILD_TYPE} STREQUAL "Release")
+FIND_LIBRARY(UNIT_TEST_WINDOWS gtest.lib PATHS ${CMAKE_CURRENT_SOURCE_DIR}/../../../Frogman-Engine-Unit-Tests/Unit-Test-Windows-Packages/lib/Release)
+FIND_LIBRARY(CITY_HASH CITY_HASH.lib PATHS ${CMAKE_CURRENT_SOURCE_DIR}/../../../Third-Party-Libraries/City-Hash/Binaries/Windows/Release)
+FIND_LIBRARY(TBB_WINDOWS tbb12.lib PATHS ${CMAKE_CURRENT_SOURCE_DIR}/../../../Third-Party-Libraries/OneAPI-TBB_2021_9_0/binaries/Windows/lib/intel64/vc14_uwp PATH_SUFFIXES vc14_uwp)
+FIND_LIBRARY(TBB_MALLOC_WINDOWS tbbmalloc.lib PATHS ${CMAKE_CURRENT_SOURCE_DIR}/../../../Third-Party-Libraries/OneAPI-TBB_2021_9_0/binaries/Windows/lib/intel64/vc14_uwp PATH_SUFFIXES vc14_uwp)
+FIND_LIBRARY(BOOST_STACKTRACE_WINDOWS libboost_stacktrace_windbg_cached-vc143-mt-x64-1_82.lib PATHS ${CMAKE_CURRENT_SOURCE_DIR}/../../../Third-Party-Libraries/Boost-Libraries_1_82_0/binaries/Windows/Visual-Studio-2022-v143-Compiler/debug PATH_SUFFIXES debug)
+
+else()
+message(FATAL_ERROR "Detected an invalid Build Option")
+
+endif()
+
+
 ADD_EXECUTABLE(	${PROJECT_NAME} 
 				main.cpp
 				${_ALGORITHM_}
@@ -319,6 +366,36 @@ TARGET_LINK_LIBRARIES(	${PROJECT_NAME}
 						${TBB_WINDOWS}
 						${TBB_MALLOC_WINDOWS}
 						)
+
+
+	if(${SIMD_OPTION} STREQUAL "AVX-512")
+		TARGET_COMPILE_OPTIONS(	${PROJECT_NAME} PRIVATE 
+						$<$<CONFIG:DEBUG>:/WX- /W4 /MP /Od /Oi /MTd /Gy /DEBUG /arch:AVX512>
+						$<$<CONFIG:RELEASE>:/WX- /W4 /MP /Ox /Ob2 /Oi /Ot /Oy /GT /MTd /Gy /arch:AVX512>
+						$<$<CONFIG:RELWITHDEBINFO>:/WX- /W4 /MP /Ox /Ob2 /Oi /Ot /Oy /GT /MTd /Gy /arch:AVX512>
+						) 
+
+
+
+	elseif(${SIMD_OPTION} STREQUAL "AVX-2")
+		TARGET_COMPILE_OPTIONS(	${PROJECT_NAME} PRIVATE 
+						$<$<CONFIG:DEBUG>:/WX- /W4 /MP /Od /Oi /MTd /Gy /DEBUG /arch:AVX2>
+						$<$<CONFIG:RELEASE>:/WX- /W4 /MP /Ox /Ob2 /Oi /Ot /Oy /GT /MTd /Gy /arch:AVX2
+						$<$<CONFIG:RELWITHDEBINFO>:/WX- /W4 /MP /Ox /Ob2 /Oi /Ot /Oy /GT /MTd /Gy /arch:AVX2>
+						)
+
+
+	elseif(${SIMD_OPTION} STREQUAL "AVX")
+		TARGET_COMPILE_OPTIONS(	${PROJECT_NAME} PRIVATE 
+						$<$<CONFIG:DEBUG>:/WX- /W4 /MP /Od /Oi /MTd /Gy /DEBUG /arch:AVX>
+						$<$<CONFIG:RELEASE>:/WX- /W4 /MP /Ox /Ob2 /Oi /Ot /Oy /GT /MTd /Gy /arch:AVX>
+						$<$<CONFIG:RELWITHDEBINFO>:/WX- /W4 /MP /Ox /Ob2 /Oi /Ot /Oy /GT /MTd /Gy /arch:AVX> 
+						)
+	else()
+			MESSAGE(FATAL_ERROR "Detected an invalid X86-64 intrinsic SIMD option")
+	endif()
+
+
 endif()
 
 
@@ -343,7 +420,9 @@ endif()
 
 ADD_COMPILE_DEFINITIONS(_USE_CMAKE_MACRO_=true)
 
-target_compile_definitions(	${PROJECT_NAME} PRIVATE 
-							$<$<CONFIG:DEBUG>:_DEBUG_MODE_=true _ENABLE_MEMORY_TRACKER_=true _ENABLE_EXCEPTION_=true _ENABLE_ASSERT_=true _ENABLE_ASSERT_WITHOUT_LOG_=true _ENABLE_EXIT_=true>
-							$<$<CONFIG:RELEASE>:_DEBUG_MODE_=false _ENABLE_MEMORY_TRACKER_=false _ENABLE_EXCEPTION_=false _ENABLE_ASSERT_=false _ENABLE_ASSERT_WITHOUT_LOG_=false _ENABLE_EXIT_=false>
+
+TARGET_COMPILE_DEFINITIONS(	${PROJECT_NAME} PRIVATE 
+							$<$<CONFIG:DEBUG>:_DEBUG_ _ENABLE_MEMORY_TRACKER_ _ENABLE_LOG_ _ENABLE_ASSERT_ _ENABLE_ABORT_IF_ _ENABLE_EXIT_>
+							$<$<CONFIG:RELEASE>:_RELEASE_>
+							$<$<CONFIG:RELWITHDEBINFO>:_RELWITHDEBINFO_ _ENABLE_LOG_ _ENABLE_ASSERT_ _ENABLE_EXIT_>
 							)

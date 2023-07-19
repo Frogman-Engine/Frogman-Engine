@@ -1,13 +1,13 @@
 ﻿#ifndef _FE_CORE_ALGORITHM_UTILITY_HXX_
 #define _FE_CORE_ALGORITHM_UTILITY_HXX_
 // Copyright © from 2023 to current, UNKNOWN STRYKER. All Rights Reserved.
-#include "../prerequisite_symbols.h"
+#include <FE/core/prerequisite_symbols.h>
 
 
 BEGIN_NAMESPACE(FE::algorithm::utility)
 
 template<typename T>
-constexpr void swap(T& first_in_out_ref_p, T& second_in_out_ref_p) noexcept
+_FORCE_INLINE_ constexpr void swap(T& first_in_out_ref_p, T& second_in_out_ref_p) noexcept
 {
 	T l_temporary = ::std::move(first_in_out_ref_p);
 
@@ -16,7 +16,7 @@ constexpr void swap(T& first_in_out_ref_p, T& second_in_out_ref_p) noexcept
 }
 
 template<class container, typename T>
-void push_target_values_to_back(container& container_in_out_ref_p, const T& target_value_cref_p) noexcept
+_FORCE_INLINE_ void push_target_values_to_back(container& container_in_out_ref_p, const T& target_value_cref_p) noexcept
 {
 	auto l_begin_of_container = container_in_out_ref_p.begin();
 	auto l_end_of_container = container_in_out_ref_p.end();
@@ -45,7 +45,7 @@ void push_target_values_to_back(container& container_in_out_ref_p, const T& targ
 
 
 template<class container, typename T>
-void push_target_values_to_front(container& container_in_out_ref_p, const T& target_value_cref_p) noexcept
+_FORCE_INLINE_ void push_target_values_to_front(container& container_in_out_ref_p, const T& target_value_cref_p) noexcept
 {
 	auto l_begin_of_container = container_in_out_ref_p.begin();
 	auto l_end_of_container = container_in_out_ref_p.end();
