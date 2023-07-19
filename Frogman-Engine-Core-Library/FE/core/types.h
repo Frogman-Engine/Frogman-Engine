@@ -285,6 +285,8 @@ public:
 
 		this->_data = std::move(data_p);
 		this->_is_initialized = true;
+		
+		return *this;
 	}
 
 	_FORCE_INLINE_ lazy_const& operator=(const lazy_const& other_cref_p) noexcept
@@ -296,6 +298,8 @@ public:
 
 		this->_data = other_cref_p._data;
 		this->_is_initialized = true;
+		
+		return *this;
 	}
 
 	_FORCE_INLINE_ lazy_const& operator=(lazy_const&& rvalue_p) noexcept
@@ -307,6 +311,8 @@ public:
 
 		this->_data = std::move(rvalue_p._data);
 		this->_is_initialized = true;
+		
+		return *this;
 	}
 
 	_FORCE_INLINE_ const T& load() noexcept { return this->_data; }
