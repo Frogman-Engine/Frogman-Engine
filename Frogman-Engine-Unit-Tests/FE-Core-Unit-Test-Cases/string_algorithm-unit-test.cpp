@@ -374,7 +374,7 @@ TEST(FE_algorithm_string, search_very_last_substring_within_range)
 	EXPECT_TRUE(FE::algorithm::string::string_comparison<char>(l_substring, "love"));
 
 	l_string = "1 Corinthians 13:4-8\n";
-	l_result = ::FE::algorithm::string::search_very_last_substring_within_range<var::character>(l_string, string::string_range{0, 45}, "9");
+	l_result = ::FE::algorithm::string::search_very_last_substring_within_range<var::character>(l_string, string::string_range{0, 13}, "9");
 	EXPECT_FALSE(l_result.has_value());
 
 	l_result = ::FE::algorithm::string::search_very_last_substring_within_range<var::character>(l_string, string::string_range{2, 13}, "i");
