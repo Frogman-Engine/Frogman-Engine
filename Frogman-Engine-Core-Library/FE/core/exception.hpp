@@ -94,7 +94,7 @@ struct exception_initialization_arguments
 
 #ifdef _ENABLE_ASSERT_
 // It logs an error and aborts if the expression_p is true
-#define FE_ASSERT(expression_p, message_p) if(expression_p) _UNLIKELY_ { ::FE::exception::log(expression_p, #expression_p, ::FE::_ABORT_IMMEDIATELY_, message_p, _SOURCE_CODE_LOCATION_); }
+#define FE_ASSERT(expression_p, message_p) if(expression_p) _UNLIKELY_ { ::FE::exception::log(true, #expression_p, ::FE::_ABORT_IMMEDIATELY_, message_p, _SOURCE_CODE_LOCATION_); }
 #else
 // It logs an error and aborts if the expression_p is true
 #define FE_ASSERT(expression_p, message_p)
@@ -110,7 +110,7 @@ struct exception_initialization_arguments
 
 #ifdef _ENABLE_EXIT_
 // It logs an error and exits if the expression_p is true
-#define FE_EXIT(expression_p, message_p, exit_code_p) if(expression_p) _UNLIKELY_ { ::FE::exception::log(expression_p, #expression_p, ::FE::_EXIT_WITH_CODE_, message_p, _SOURCE_CODE_LOCATION_, #exit_code_p, static_cast<::FE::int32>(exit_code_p)); }
+#define FE_EXIT(expression_p, message_p, exit_code_p) if(expression_p) _UNLIKELY_ { ::FE::exception::log(true, #expression_p, ::FE::_EXIT_WITH_CODE_, message_p, _SOURCE_CODE_LOCATION_, #exit_code_p, static_cast<::FE::int32>(exit_code_p)); }
 #else
 // It logs an error and exits if the expression_p is true
 #define FE_EXIT(expression_p, message_p, exit_code_p)

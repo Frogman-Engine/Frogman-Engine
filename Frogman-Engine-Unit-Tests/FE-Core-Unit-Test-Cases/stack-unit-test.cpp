@@ -19,7 +19,7 @@ TEST(stack, trivially_constructible_and_destructible)
 		FE::stack<int, 10> l_copied_stack = l_stack;
 		FE::stack<int, 10>::const_iterator l_const_copied_stack_iterator_begin = l_copied_stack.cbegin();
 		FE::stack<int, 10>::const_iterator l_const_copied_stack_iterator_end = l_copied_stack.cend();
-
+		
 		int l_expected_value = 0;
 		while(l_const_stack_iterator_begin != l_const_stack_iterator_end)
 		{

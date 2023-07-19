@@ -13,7 +13,6 @@ namespace std_style
 	class scalable_aligned_allocator // trackable scalable_aligned_allocator
 	{
 	public:
-
 		typedef T value_type;
 		typedef T* pointer;
 		typedef const T* const_pointer;

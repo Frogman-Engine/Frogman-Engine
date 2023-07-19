@@ -13,6 +13,29 @@
 #pragma warning(disable: 4127)
 
 
+namespace internal
+{
+    _NODISCARD_ _FORCE_INLINE_ constexpr FE::var::uint64 strlen(const char* const str_ptrc_p) noexcept
+    {
+        const char* l_iterator_ptr = str_ptrc_p;
+
+        switch (*str_ptrc_p)
+        {
+        case  '\0':
+            return 0;
+
+        default:
+            break;
+        }
+
+        while (*(++l_iterator_ptr) != '\0') _LIKELY_{}
+
+        return (l_iterator_ptr - str_ptrc_p);
+    }
+
+}
+
+
 constexpr auto _FILE_NAME_MAX_LENGTH_ = 8192;
 constexpr auto _MAX_THRED_ID_DIGIT_LENGTH_ = 24;
 constexpr FE::length_t g_sec_string_length = 4;
@@ -94,7 +117,7 @@ bool FE::real_time_exception_history_logging_strategy::__logging_strategy(boolea
 
 
     case _ABORT_IMMEDIATELY_:
-        strncat(real_time_exception_history_logging_strategy::tl_s_log_buffer.data(), "\nabort() HAS BEEN CALLED.", strlen("\tabort() HAS BEEN CALLED."));
+        strncat(real_time_exception_history_logging_strategy::tl_s_log_buffer.data(), "\nabort() HAS BEEN CALLED.", ::internal::strlen("\tabort() HAS BEEN CALLED."));
 
         real_time_exception_history_logging_strategy::tl_s_file_logger << real_time_exception_history_logging_strategy::tl_s_log_buffer.data() << "\n\n";
 
@@ -352,7 +375,7 @@ bool FE::exception_history_log_buffering_strategy::__logging_strategy(boolean ex
 
 
     case _ABORT_IMMEDIATELY_:
-        strncat(tl_s_log_buffer.data(), "\nabort() HAS BEEN CALLED.", strlen("\tabort() HAS BEEN CALLED."));
+        strncat(tl_s_log_buffer.data(), "\nabort() HAS BEEN CALLED.", ::internal::strlen("\tabort() HAS BEEN CALLED."));
 
         tl_s_file_logger << tl_s_log_buffer.data() << "\n\n";
 

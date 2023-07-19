@@ -10,7 +10,7 @@
 BEGIN_NAMESPACE(FE)
 
 
-template<class T, count_t max_element_count, boolean is_trivially_constructible_and_destructible = FE::is_trivially_constructible_and_destructible<T>()>
+template<class T, size_t max_element_count = 0, FE::OBJECT_TRIVIALITY is_trivial = FE::is_trivially_constructible_and_destructible<T>()>
 class queue final
 {
 public:
@@ -19,8 +19,82 @@ public:
 };
 
 
-template<class T, count_t max_element_count>
-class queue_base
+
+
+template<class T>
+class dynamic_queue_base
+{
+public:
+	using container_type = T;
+	using pointer = typename T::pointer;
+	using difference_type = typename T::difference_type;
+	using const_pointer = typename T::const_pointer;
+	using const_iterator = typename T::const_iterator;
+	using const_reverse_iterator = typename T::const_reverse_iterator;
+	using reference = typename T::reference;
+	using const_reference = typename T::const_reference;
+	using length_type = typename T::length_type;
+	using size_type = typename T::size_type;
+	using value_type = typename T::value_type;
+	using alignment = typename T::alignment;
+	using allocator_type = typename T::allocator;
+
+protected:
+	_FORCE_INLINE_ dynamic_queue_base() noexcept {}
+	_FORCE_INLINE_ _CONSTEXPR20_ ~dynamic_queue_base() noexcept {}
+};
+
+
+template<class T>
+class queue<T, 0, FE::OBJECT_TRIVIALITY::_TRIVIAL> final : dynamic_queue_base<T>
+{
+public:
+	using base_type = dynamic_queue_base<T>;
+	using container_type = typename base_type::container_type;
+	using pointer = typename base_type::pointer;
+	using difference_type = typename base_type::difference_type;
+	using const_pointer = typename base_type::const_pointer;
+	using const_iterator = typename base_type::const_iterator;
+	using const_reverse_iterator = typename base_type::const_reverse_iterator;
+	using reference = typename base_type::reference;
+	using const_reference = typename base_type::const_reference;
+	using length_type = typename base_type::length_type;
+	using size_type = typename base_type::size_type;
+	using value_type = typename base_type::value_type;
+	using alignment = typename base_type::alignment;
+	using allocator_type = typename base_type::allocator;
+
+	container_type _underlying_container;
+};
+
+
+template<class T>
+class queue<T, 0, FE::OBJECT_TRIVIALITY::_NOT_TRIVIAL> final : dynamic_queue_base<T>
+{
+public:
+	using base_type = dynamic_queue_base<T>;
+	using container_type = typename base_type::container_type;
+	using pointer = typename base_type::pointer;
+	using difference_type = typename base_type::difference_type;
+	using const_pointer = typename base_type::const_pointer;
+	using const_iterator = typename base_type::const_iterator;
+	using const_reverse_iterator = typename base_type::const_reverse_iterator;
+	using reference = typename base_type::reference;
+	using const_reference = typename base_type::const_reference;
+	using length_type = typename base_type::length_type;
+	using size_type = typename base_type::size_type;
+	using value_type = typename base_type::value_type;
+	using alignment = typename base_type::alignment;
+	using allocator_type = typename base_type::allocator;
+
+	container_type _underlying_container;
+};
+
+
+
+
+template<class T, size_t max_element_count>
+class static_queue_base
 {
 public:
 	using value_type = T;
@@ -41,8 +115,8 @@ protected:
 
 	pointer const m_absolute_begin_ptrc;
 
-	_FORCE_INLINE_ queue_base() noexcept : m_memory(), m_front_ptr(reinterpret_cast<pointer>(m_memory)), m_back_ptr(m_front_ptr), m_absolute_begin_ptrc(m_front_ptr) {}
-	_FORCE_INLINE_ _CONSTEXPR20_ ~queue_base() noexcept {}
+	_FORCE_INLINE_ static_queue_base() noexcept : m_memory(), m_front_ptr(reinterpret_cast<pointer>(m_memory)), m_back_ptr(m_front_ptr), m_absolute_begin_ptrc(m_front_ptr) {}
+	_FORCE_INLINE_ _CONSTEXPR20_ ~static_queue_base() noexcept {}
 
 public:
 	_FORCE_INLINE_ const_reference front() const noexcept
@@ -100,22 +174,22 @@ public:
 		return this->m_front_ptr - 1;
 	}
 
-	template<boolean is_trivially_constructible_and_destructible = FE::is_trivially_constructible_and_destructible<T>()>
-	_FORCE_INLINE_ static void swap(queue<T, max_element_count, is_trivially_constructible_and_destructible>& first_ref_p, queue<T, max_element_count, is_trivially_constructible_and_destructible>& second_ref_p) noexcept
+	template<FE::OBJECT_TRIVIALITY is_trivial = FE::is_trivially_constructible_and_destructible<T>()>
+	_FORCE_INLINE_ static void swap(queue<T, max_element_count, is_trivial>& first_ref_p, queue<T, max_element_count, is_trivial>& second_ref_p) noexcept
 	{
-		queue<T, max_element_count, is_trivially_constructible_and_destructible> l_temporary = std::move(first_ref_p);
+		queue<T, max_element_count, is_trivial> l_temporary = std::move(first_ref_p);
 		first_ref_p = std::move(second_ref_p);
 		second_ref_p = std::move(l_temporary);
 	}
 
-	template<boolean is_trivially_constructible_and_destructible = FE::is_trivially_constructible_and_destructible<T>()>
-	var::boolean operator==(queue<T, max_element_count, is_trivially_constructible_and_destructible>& other_ref_p) noexcept
+	template<FE::OBJECT_TRIVIALITY is_trivial = FE::is_trivially_constructible_and_destructible<T>()>
+	var::boolean operator==(queue<T, max_element_count, is_trivial>& other_ref_p) noexcept
 	{
 		return FE::memcmp_s(this->cbegin(), this->cend(), other_ref_p.cbegin(), other_ref_p.cend());
 	}
 
-	template<boolean is_trivially_constructible_and_destructible = FE::is_trivially_constructible_and_destructible<T>()>
-	var::boolean operator!=(queue<T, max_element_count, is_trivially_constructible_and_destructible>& other_ref_p) noexcept
+	template<FE::OBJECT_TRIVIALITY is_trivial = FE::is_trivially_constructible_and_destructible<T>()>
+	var::boolean operator!=(queue<T, max_element_count, is_trivial>& other_ref_p) noexcept
 	{
 		return !FE::memcmp_s(this->cbegin(), this->cend(), other_ref_p.cbegin(), other_ref_p.cend());
 	}
@@ -142,11 +216,12 @@ protected:
 	}
 };
 
+
 template<class T, count_t max_element_count>
-class queue<T, max_element_count, true> final : public queue_base<T, max_element_count>
+class queue<T, max_element_count, FE::OBJECT_TRIVIALITY::_TRIVIAL> final : public static_queue_base<T, max_element_count>
 {
 public:
-	using base_type = queue_base<T, max_element_count>;
+	using base_type = static_queue_base<T, max_element_count>;
 	using value_type = typename base_type::value_type;
 	using length_type = typename base_type::length_type;
 	using size_type = typename base_type::size_type;
@@ -273,12 +348,12 @@ public:
 
 
 template<class T, count_t max_element_count>
-class queue<T, max_element_count, false> final : public queue_base<T, max_element_count>
+class queue<T, max_element_count, FE::OBJECT_TRIVIALITY::_NOT_TRIVIAL> final : public static_queue_base<T, max_element_count>
 {
 	OBJECT_LIFECYCLE m_bool_mask[max_element_count];
 
 public:
-	using base_type = queue_base<T, max_element_count>;
+	using base_type = static_queue_base<T, max_element_count>;
 	using value_type = typename base_type::value_type;
 	using length_type = typename base_type::length_type;
 	using size_type = typename base_type::size_type;

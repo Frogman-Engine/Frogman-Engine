@@ -243,10 +243,16 @@ namespace internal
 template <bool compile_time_test_result, typename true_type, typename false_type>
 using conditional_type = internal::select_type< compile_time_test_result, true_type, false_type>;
 
-template <typename T>
-constexpr inline bool is_trivially_constructible_and_destructible() 
+enum struct OBJECT_TRIVIALITY : boolean
 {
-	return std::is_trivially_constructible<T>::value && std::is_trivially_destructible<T>::value;
+	_TRIVIAL = true,
+	_NOT_TRIVIAL = false
+};
+
+template <typename T>
+constexpr inline OBJECT_TRIVIALITY is_trivially_constructible_and_destructible()
+{
+	return static_cast<OBJECT_TRIVIALITY>(std::is_trivially_constructible<T>::value && std::is_trivially_destructible<T>::value);
 }
 
 enum struct OBJECT_LIFECYCLE : boolean
@@ -254,7 +260,6 @@ enum struct OBJECT_LIFECYCLE : boolean
 	_CONSTRUCTED = true,
 	_DESTRUCTED = false
 };
-
 
 template <typename T>
 struct lazy_const
@@ -306,6 +311,9 @@ public:
 
 	_FORCE_INLINE_ const T& load() noexcept { return this->_data; }
 };
+
+
+struct null_template_argument{};
 
 
 END_NAMESPACE

@@ -139,7 +139,7 @@ _FORCE_INLINE_ void assign(iterator begin_p, iterator end_p, OBJECT_LIFECYCLE* c
 {
 	using T = typename iterator::value_type;
 
-	static_assert(FE::is_trivially_constructible_and_destructible<T>() == false, "WARNING: T must not be trivially constructible and destructible. This function call has no effect and is a waste of computing resource");
+	static_assert(FE::is_trivially_constructible_and_destructible<T>() == FE::OBJECT_TRIVIALITY::_NOT_TRIVIAL, "WARNING: T must not be trivially constructible and destructible. This function call has no effect and is a waste of computing resource");
 	FE_ASSERT(boolean_mask_ptrc_p == nullptr, "ERROR: boolean_mask_ptrc_p is nullptr.");
 	FE_ASSERT(begin_p == nullptr, "ERROR: begin_p is nullptr.");
 	FE_ASSERT(end_p == nullptr, "ERROR: end_p is nullptr.");
@@ -167,7 +167,7 @@ _FORCE_INLINE_ void copy_assign(iterator dest_begin_p, capacity_t dest_length_p,
 {
 	using T = typename iterator::value_type;
 
-	static_assert(FE::is_trivially_constructible_and_destructible<T>() == false, "WARNING: T must not be trivially constructible and destructible. This function call has no effect and is a waste of computing resource");
+	static_assert(FE::is_trivially_constructible_and_destructible<T>() == FE::OBJECT_TRIVIALITY::_NOT_TRIVIAL, "WARNING: T must not be trivially constructible and destructible. This function call has no effect and is a waste of computing resource");
 	FE_ASSERT(dest_bool_mask_ptrc_p == nullptr, "ERROR: dest_bool_mask_ptrc_p is nullptr.");
 	FE_ASSERT(data_source_begin_p == nullptr, "ERROR: data_source_begin_p is nullptr.");
 	FE_ASSERT(dest_begin_p == nullptr, "ERROR: dest_begin_p is nullptr.");
@@ -227,7 +227,7 @@ _FORCE_INLINE_ void move_assign(iterator dest_begin_p, capacity_t dest_length_p,
 {
 	using T = typename iterator::value_type;
 
-	static_assert(FE::is_trivially_constructible_and_destructible<T>() == false, "WARNING: T must not be trivially constructible and destructible. This function call has no effect and is a waste of computing resource");
+	static_assert(FE::is_trivially_constructible_and_destructible<T>() == FE::OBJECT_TRIVIALITY::_NOT_TRIVIAL, "WARNING: T must not be trivially constructible and destructible. This function call has no effect and is a waste of computing resource");
 	FE_ASSERT(dest_bool_mask_ptrc_p == nullptr, "ERROR: dest_bool_mask_ptrc_p is nullptr.");
 	FE_ASSERT(data_source_begin_p == nullptr, "ERROR: data_source_begin_p is nullptr.");
 	FE_ASSERT(dest_begin_p == nullptr, "ERROR: dest_begin_p is nullptr.");
@@ -287,7 +287,7 @@ _FORCE_INLINE_ void copy_assign(iterator dest_begin_p, capacity_t dest_length_p,
 {
 	using T = typename iterator::value_type;
 
-	static_assert(FE::is_trivially_constructible_and_destructible<T>() == false, "WARNING: T must not be trivially constructible and destructible. This function call has no effect and is a waste of computing resource");
+	static_assert(FE::is_trivially_constructible_and_destructible<T>() == FE::OBJECT_TRIVIALITY::_NOT_TRIVIAL, "WARNING: T must not be trivially constructible and destructible. This function call has no effect and is a waste of computing resource");
 	FE_ASSERT(dest_bool_mask_ptrc_p == nullptr, "ERROR: dest_bool_mask_ptrc_p is nullptr.");
 	FE_ASSERT(source_data_begin_p == nullptr, "ERROR: source_data_begin_p is nullptr.");
 	FE_ASSERT(source_data_bool_mask_ptrc_p == nullptr, "ERROR: source_data_bool_mask_ptrc_p is nullptr.");
@@ -358,7 +358,7 @@ _FORCE_INLINE_ void move_assign(iterator dest_begin_p, capacity_t dest_length_p,
 {
 	using T = typename iterator::value_type;
 
-	static_assert(FE::is_trivially_constructible_and_destructible<T>() == false, "WARNING: T must not be trivially constructible and destructible. This function call has no effect and is a waste of computing resource");
+	static_assert(FE::is_trivially_constructible_and_destructible<T>() == FE::OBJECT_TRIVIALITY::_NOT_TRIVIAL, "WARNING: T must not be trivially constructible and destructible. This function call has no effect and is a waste of computing resource");
 	FE_ASSERT(dest_bool_mask_ptrc_p == nullptr, "ERROR: dest_bool_mask_ptrc_p is nullptr.");
 	FE_ASSERT(source_data_begin_p == nullptr, "ERROR: source_data_begin_p is nullptr.");
 	FE_ASSERT(source_data_bool_mask_ptrc_p == nullptr, "ERROR: source_data_bool_mask_ptrc_p is nullptr.");
@@ -447,7 +447,7 @@ _FORCE_INLINE_ void destruct(iterator begin_p, iterator end_p, OBJECT_LIFECYCLE*
 {
 	using T = typename iterator::value_type;
 
-	static_assert(FE::is_trivially_constructible_and_destructible<T>() == false, "WARNING: T must not be trivially constructible and destructible. This function call has no effect and is a waste of computing resource");
+	static_assert(FE::is_trivially_constructible_and_destructible<T>() == FE::OBJECT_TRIVIALITY::_NOT_TRIVIAL, "WARNING: T must not be trivially constructible and destructible. This function call has no effect and is a waste of computing resource");
 	FE_ASSERT(boolean_mask_ptrc_p == nullptr, "ERROR: boolean_mask_ptrc_p is nullptr.");
 	FE_ASSERT(begin_p == nullptr, "ERROR: begin_p is nullptr.");
 	FE_ASSERT(end_p == nullptr, "ERROR: end_p is nullptr.");
@@ -473,7 +473,7 @@ _FORCE_INLINE_ void copy_construct(iterator dest_begin_p, capacity_t dest_length
 {
 	using T = typename iterator::value_type;
 
-	static_assert(FE::is_trivially_constructible_and_destructible<T>() == false, "WARNING: T must not be trivially constructible and destructible. This function call has no effect and is a waste of computing resource");
+	static_assert(FE::is_trivially_constructible_and_destructible<T>() == FE::OBJECT_TRIVIALITY::_NOT_TRIVIAL, "WARNING: T must not be trivially constructible and destructible. This function call has no effect and is a waste of computing resource");
 	FE_ASSERT(dest_bool_mask_ptrc_p == nullptr, "ERROR: dest_bool_mask_ptrc_p is nullptr.");
 	FE_ASSERT(data_source_begin_p == nullptr, "ERROR: data_source_begin_p is nullptr.");
 	FE_ASSERT(dest_begin_p == nullptr, "ERROR: dest_begin_p is nullptr.");
@@ -519,7 +519,7 @@ _FORCE_INLINE_ void move_construct(iterator dest_begin_p, capacity_t dest_length
 {
 	using T = typename iterator::value_type;
 
-	static_assert(FE::is_trivially_constructible_and_destructible<T>() == false, "WARNING: T must not be trivially constructible and destructible. This function call has no effect and is a waste of computing resource");
+	static_assert(FE::is_trivially_constructible_and_destructible<T>() == FE::OBJECT_TRIVIALITY::_NOT_TRIVIAL, "WARNING: T must not be trivially constructible and destructible. This function call has no effect and is a waste of computing resource");
 	FE_ASSERT(dest_bool_mask_ptrc_p == nullptr, "ERROR: dest_bool_mask_ptrc_p is nullptr.");
 	FE_ASSERT(data_source_begin_p == nullptr, "ERROR: data_source_begin_p is nullptr.");
 	FE_ASSERT(dest_begin_p == nullptr, "ERROR: dest_begin_p is nullptr.");
@@ -565,7 +565,7 @@ _FORCE_INLINE_ void copy_construct(iterator dest_begin_p, capacity_t dest_length
 {
 	using T = typename iterator::value_type;
 
-	static_assert(FE::is_trivially_constructible_and_destructible<T>() == false, "WARNING: T must not be trivially constructible and destructible. This function call has no effect and is a waste of computing resource");
+	static_assert(FE::is_trivially_constructible_and_destructible<T>() == FE::OBJECT_TRIVIALITY::_NOT_TRIVIAL, "WARNING: T must not be trivially constructible and destructible. This function call has no effect and is a waste of computing resource");
 	FE_ASSERT(dest_bool_mask_ptrc_p == nullptr, "ERROR: dest_bool_mask_ptrc_p is nullptr.");
 	FE_ASSERT(source_data_begin_p == nullptr, "ERROR: source_data_begin_p is nullptr.");
 	FE_ASSERT(source_data_bool_mask_ptrc_p == nullptr, "ERROR: source_data_bool_mask_ptrc_p is nullptr.");
@@ -618,7 +618,7 @@ _FORCE_INLINE_ void move_construct(iterator dest_begin_p, capacity_t dest_length
 {
 	using T = typename iterator::value_type;
 
-	static_assert(FE::is_trivially_constructible_and_destructible<T>() == false, "WARNING: T must not be trivially constructible and destructible. This function call has no effect and is a waste of computing resource");
+	static_assert(FE::is_trivially_constructible_and_destructible<T>() == FE::OBJECT_TRIVIALITY::_NOT_TRIVIAL, "WARNING: T must not be trivially constructible and destructible. This function call has no effect and is a waste of computing resource");
 	FE_ASSERT(dest_bool_mask_ptrc_p == nullptr, "ERROR: dest_bool_mask_ptrc_p is nullptr.");
 	FE_ASSERT(source_data_begin_p == nullptr, "ERROR: source_data_begin_p is nullptr.");
 	FE_ASSERT(source_data_bool_mask_ptrc_p == nullptr, "ERROR: source_data_bool_mask_ptrc_p is nullptr.");

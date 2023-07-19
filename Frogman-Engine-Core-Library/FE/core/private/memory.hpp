@@ -457,6 +457,11 @@ void aligned_memcpy_with_avx(void* const dest_ptrc_p, const void* const source_p
 
 // + bitmask_length()
 
+enum struct MEMORY_SIZE_SCALABILITY : boolean
+{
+    _STATICALLY_SIZED = false,
+    _DYNAMICALLY_SIZED = true
+};
 
 enum struct MEMORY_ERROR_1XX : int16
 {
