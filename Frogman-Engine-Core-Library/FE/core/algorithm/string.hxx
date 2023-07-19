@@ -1063,7 +1063,8 @@ _NODISCARD_ _FORCE_INLINE_ target_char_search_result<char_type> search_very_firs
     static_assert(sizeof(char_type) <= sizeof(UTF32), "char_type is not a valid character type");
     FE_EXIT(string_ptrc_p == nullptr, "NULLPTR DETECTED: string_ptrc_p is nullptr.", FE::MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR);
     FE_EXIT(string_range_p._begin > string_range_p._end, "INVALID RANGE DETECTED: string_range_p._begin cannot be greater than string_range_p._end.", FE::MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_RANGE);
-
+    FE_EXIT(string_length(string_ptrc_p) < string_range_p._end, "INVALID RANGE DETECTED: string_range_p._end cannot be greater than the length of string_ptrc_p.", FE::MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_RANGE);
+    
     const char_type* l_string_ptr = string_ptrc_p + string_range_p._begin;
     while (*l_string_ptr != static_cast<char_type>('\0'))
     {
@@ -1087,6 +1088,7 @@ _NODISCARD_ _FORCE_INLINE_ target_char_search_result<char_type> search_very_last
     static_assert(sizeof(char_type) <= sizeof(UTF32), "char_type is not a valid character type");
     FE_EXIT(string_ptrc_p == nullptr, "NULLPTR DETECTED: string_ptrc_p is nullptr.", FE::MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR);
     FE_EXIT(string_range_p._begin > string_range_p._end, "INVALID RANGE DETECTED: string_range_p._begin cannot be greater than string_range_p._end.", FE::MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_RANGE);
+    FE_EXIT(string_length(string_ptrc_p) < string_range_p._end, "INVALID RANGE DETECTED: string_range_p._end cannot be greater than the length of string_ptrc_p.", FE::MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_RANGE);
 
     FE::const_reverse_iterator<FE::contiguous_iterator<const char_type>> l_string_rbegin = string_ptrc_p + (string_range_p._end - 1);
     FE::const_reverse_iterator<FE::contiguous_iterator<const char_type>> l_string_rend = string_ptrc_p + (string_range_p._begin - 1);
@@ -1113,6 +1115,7 @@ _NODISCARD_ _FORCE_INLINE_ target_char_count<char_type> count_all_corresponding_
     static_assert(sizeof(char_type) <= sizeof(UTF32), "char_type is not a valid character type");
     FE_EXIT(string_ptr_p == nullptr, "NULLPTR DETECTED: string_ptr_p is nullptr.", FE::MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR);
     FE_EXIT(string_range_p._begin > string_range_p._end, "INVALID RANGE DETECTED: string_range_p._begin cannot be greater than string_range_p._end.", FE::MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_RANGE);
+    FE_EXIT(string_length(string_ptr_p) < string_range_p._end, "INVALID RANGE DETECTED: string_range_p._end cannot be greater than the length of string_ptrc_p.", FE::MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_RANGE);
 
     var::count_t l_match_count = 0;
     string_ptr_p += string_range_p._begin;
@@ -1145,6 +1148,7 @@ _NODISCARD_ _FORCE_INLINE_ constexpr target_char_count<char_type> count_all_corr
     static_assert(sizeof(char_type) <= sizeof(UTF32), "char_type is not a valid character type");
     FE_EXIT(string_ptr_p == nullptr, "NULLPTR DETECTED: string_ptr_p is nullptr.", FE::MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR);
     FE_EXIT(string_range_p._begin > string_range_p._end, "INVALID RANGE DETECTED: string_range_p._begin cannot be greater than string_range_p._end.", FE::MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_RANGE);
+    FE_EXIT(string_length(string_ptr_p) < string_range_p._end, "INVALID RANGE DETECTED: string_range_p._end cannot be greater than the length of string_ptrc_p.", FE::MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_RANGE);
 
     var::count_t l_match_count = 0;
     string_ptr_p += string_range_p._begin;
@@ -1179,6 +1183,7 @@ _NODISCARD_ _FORCE_INLINE_::std::optional<string_range> search_very_first_substr
     FE_EXIT(string_ptrc_p == nullptr, "NULLPTR DETECTED: string_ptrc_p is nullptr.", FE::MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR);
     FE_EXIT(string_range_p._begin > string_range_p._end, "INVALID RANGE DETECTED: string_range_p._begin cannot be greater than string_range_p._end.", FE::MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_RANGE);
     FE_EXIT(target_substring_ptrc_p == nullptr, "NULLPTR DETECTED: target_substring_ptrc_p is nullptr.", FE::MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR);
+    FE_EXIT(string_length(string_ptrc_p) < string_range_p._end, "INVALID RANGE DETECTED: string_range_p._end cannot be greater than the length of string_ptrc_p.", FE::MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_RANGE);
 
     const char_type* l_string_ptr = string_ptrc_p + string_range_p._begin;
     const char_type* l_target_substring_ptr = target_substring_ptrc_p;
@@ -1223,6 +1228,7 @@ _NODISCARD_ _FORCE_INLINE_::std::optional<string_range> search_very_last_substri
     FE_EXIT(string_ptrc_p == nullptr, "NULLPTR DETECTED: string_ptrc_p is nullptr.", FE::MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR);
     FE_EXIT(string_range_p._begin > string_range_p._end, "INVALID RANGE DETECTED: string_range_p._begin cannot be greater than string_range_p._end.", FE::MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_RANGE);
     FE_EXIT(target_substring_ptrc_p == nullptr, "NULLPTR DETECTED: target_substring_ptrc_p is nullptr.", FE::MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR);
+    FE_EXIT(string_length(string_ptrc_p) < string_range_p._end, "INVALID RANGE DETECTED: string_range_p._end cannot be greater than the length of string_ptrc_p.", FE::MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_RANGE);
 
     length_t l_string_length = string_range_p._end - string_range_p._begin;
     length_t l_target_substring_length = algorithm::string::string_length(target_substring_ptrc_p);
