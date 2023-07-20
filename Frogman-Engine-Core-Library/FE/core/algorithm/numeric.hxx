@@ -50,7 +50,7 @@ template<typename integral_type, typename char_type>
 _FORCE_INLINE_ void convert_integer_to_string(char_type* const string_out_ptrc_p, _MAYBE_UNUSED_ length_t input_string_capacity_p, integral_type value_p) noexcept
 {
 	static_assert(::std::is_integral<integral_type>::value == true, "an illegal type of value_p assigned to the template argument integral_type");
-	static_assert(sizeof(char_type) <= sizeof(UTF32), "an illegal type of value_p assigned to the template argument char_type");
+	static_assert(FE::is_character<char_type>::_VALUE_, "an illegal type of value_p assigned to the template argument char_type");
 	FE_EXIT(string_out_ptrc_p == nullptr, "NULLPTR DETECTED: string_out_ptrc_p is nullptr.", FE::MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR);
 
 	var::int8 l_integral_digits = numeric::count_integral_digit_length<integral_type>(value_p);
@@ -83,7 +83,7 @@ template<typename integral_type, typename char_type>
 _FORCE_INLINE_ constexpr void constexpr_convert_integer_to_string(char_type* const string_out_ptrc_p, _MAYBE_UNUSED_ length_t input_string_capacity_p, integral_type value_p) noexcept
 {
 	static_assert(::std::is_integral<integral_type>::value == true, "an illegal type of value_p assigned to the template argument integral_type");
-	static_assert(sizeof(char_type) <= sizeof(UTF32), "an illegal type of value_p assigned to the template argument char_type");
+	static_assert(FE::is_character<char_type>::_VALUE_, "an illegal type of value_p assigned to the template argument char_type");
 	FE_EXIT(string_out_ptrc_p == nullptr, "NULLPTR DETECTED: string_out_ptrc_p is nullptr.", FE::MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR);
 
 	var::int8 l_integral_digits = numeric::count_integral_digit_length<integral_type>(value_p);
@@ -117,7 +117,7 @@ template<typename float_type, typename char_type>
 _FORCE_INLINE_ void convert_float_to_string(char_type* const string_out_ptrc_p, length_t input_string_capacity_p, float_type value_p) noexcept
 {
 	static_assert(::std::is_floating_point<float_type>::value == true, "an illegal type of value_p assigned to the template argument integral_type");
-	static_assert(sizeof(char_type) <= sizeof(UTF32), "an illegal type of value_p assigned to the template argument char_type");
+	static_assert(FE::is_character<char_type>::_VALUE_, "an illegal type of value_p assigned to the template argument char_type");
 	FE_EXIT(string_out_ptrc_p == nullptr, "NULLPTR DETECTED: string_out_ptrc_p is nullptr.", FE::MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR);
 
 	numeric::convert_integer_to_string<var::int64, char_type>(string_out_ptrc_p, input_string_capacity_p, static_cast<var::int64>(value_p));
@@ -141,7 +141,7 @@ template<typename float_type, typename char_type>
 _FORCE_INLINE_ constexpr void constexpr_convert_float_to_string(char_type* const string_out_ptrc_p, length_t input_string_capacity_p, float_type value_p) noexcept
 {
 	static_assert(::std::is_floating_point<float_type>::value == true, "an illegal type of value_p assigned to the template argument integral_type");
-	static_assert(sizeof(char_type) <= sizeof(UTF32), "an illegal type of value_p assigned to the template argument char_type");
+	static_assert(FE::is_character<char_type>::_VALUE_, "an illegal type of value_p assigned to the template argument char_type");
 	FE_EXIT(string_out_ptrc_p == nullptr, "NULLPTR DETECTED: string_out_ptrc_p is nullptr.", FE::MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR);
 
 	numeric::constexpr_convert_integer_to_string<var::int64, char_type>(string_out_ptrc_p, input_string_capacity_p, static_cast<var::int64>(value_p));
@@ -165,7 +165,7 @@ _FORCE_INLINE_ constexpr void constexpr_convert_float_to_string(char_type* const
 template<typename char_type>
 _FORCE_INLINE_ const char_type* convert_boolean_to_string(boolean value_p) noexcept
 {
-	static_assert(sizeof(char_type) <= sizeof(UTF32), "an illegal type of value_p assigned to the template argument char_type");
+	static_assert(FE::is_character<char_type>::_VALUE_, "an illegal type of value_p assigned to the template argument char_type");
 
 	return (value_p == true) ? static_cast<const char_type*>("true") : static_cast <const char_type*>("false");
 }
@@ -173,7 +173,7 @@ _FORCE_INLINE_ const char_type* convert_boolean_to_string(boolean value_p) noexc
 template<typename char_type>
 _FORCE_INLINE_ constexpr const char_type* constexpr_convert_boolean_to_string(boolean value_p) noexcept
 {
-	static_assert(sizeof(char_type) <= sizeof(UTF32), "an illegal type of value_p assigned to the template argument char_type");
+	static_assert(FE::is_character<char_type>::_VALUE_, "an illegal type of value_p assigned to the template argument char_type");
 
 	return (value_p == true) ? static_cast<const char_type *>("true") : static_cast < const char_type*>("false");
 }

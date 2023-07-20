@@ -9,8 +9,8 @@ BEGIN_NAMESPACE(FE)
 
 
 #pragma pack(push, _DWORD_SIZE_)
-template<typename T, class padding_size = FE::align_null>
-class alignas(padding_size::s_size) memory_block final
+template<typename T, class alignment = FE::align_null>
+class alignas(alignment::s_size) memory_block final
 {
 private:
 	var::boolean m_is_block_constructed;
@@ -19,7 +19,7 @@ private:
 
 public:
 	typedef T value_type;
-	typedef padding_size alignment_type;
+	typedef alignment alignment_type;
 	
 	constexpr memory_block() noexcept : m_is_block_constructed(), m_memory(), m_memory_ptrc(reinterpret_cast<T*>(m_memory)) {}
 

@@ -10,8 +10,8 @@ BEGIN_NAMESPACE(FE)
 
 #pragma pack(push, _DWORD_SIZE_)
 // construction and destruction operations are lock-free and thread-safe but the instance may not be safe from data race condition.
-template<typename T, class padding_size = FE::align_null>
-class alignas(padding_size::s_size) concurrent_memory_block final
+template<typename T, class alignment = FE::align_null>
+class alignas(alignment::s_size) concurrent_memory_block final
 {
 private:
 	internal::IN_USE m_is_being_used;
@@ -23,7 +23,7 @@ private:
 
 public: 
 	typedef T value_type;
-	typedef padding_size alignment_type;
+	typedef alignment alignment_type;
 
 	constexpr concurrent_memory_block() noexcept : m_is_being_used(false), m_is_block_constructed(false), m_memory(), m_memory_ptrc(reinterpret_cast<T*>(m_memory)) {}
 
@@ -52,7 +52,7 @@ public:
 	{
 		if (FE_LOG(this->m_is_block_constructed.load() == false, "WARNING: failed to access the memory block because the block is not constructed. The function will return early with a null object."))
 		{
-			return movable_scoped_ref(&concurrent_memory_block<T, padding_size>::tl_s_null_object, nullptr, false);
+			return movable_scoped_ref(&concurrent_memory_block<T, alignment>::tl_s_null_object, nullptr, false);
 		}
 
 		return ::std::move(movable_scoped_ref(this->m_memory_ptrc, &this->m_is_being_used, true));
@@ -119,8 +119,8 @@ public:
 
 };
 
-template<typename T, class padding_size>
-thread_local T concurrent_memory_block<T, padding_size>::tl_s_null_object;
+template<typename T, class alignment>
+thread_local T concurrent_memory_block<T, alignment>::tl_s_null_object;
 
 #pragma pack(pop, _DWORD_SIZE_)
 

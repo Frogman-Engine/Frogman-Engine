@@ -18,7 +18,8 @@ template< typename char_type = char >
 #endif
 class compile_time_constant_string final
 {
-    static_assert(sizeof(char_type) <= sizeof(int32), "char_type is not a valid character type");
+    static_assert(FE::is_character<char_type>::_VALUE_ == true, "char_type is not a valid character type");
+    static_assert(FE::is_trivially_constructible_and_destructible<char_type>::_VALUE_ == FE::OBJECT_TRIVIALITY::_TRIVIAL, "char_type is not a valid character type");
 
 public:
     typedef const char_type* value_type;
@@ -35,7 +36,8 @@ public:
     template <typename T>
     constexpr compile_time_constant_string(T* c_style_read_only_string_ptr_p) noexcept
     {
-        FE_ASSERT(typeid(decltype(c_style_read_only_string_ptr_p)).name() != typeid(const char_type*).name(), "ERROR: char* nor any another non-const char_type* types cannot be assigned to a cstring instance.");
+        static_assert(FE::is_c_style_constant_string<T*>::_VALUE_ == true, "ERROR: char* nor any another non-const char_type* types cannot be assigned to a cstring instance.");
+
         this->m_string.emplace(c_style_read_only_string_ptr_p); 
     }
     constexpr compile_time_constant_string(compile_time_constant_string<char_type>& other_ref_p) noexcept { this->m_string.emplace(*other_ref_p.m_string); }
@@ -44,7 +46,7 @@ public:
     template <typename T>
     constexpr compile_time_constant_string<char_type>& operator=(T* c_style_read_only_string_ptr_p) noexcept
     {
-        FE_ASSERT(typeid(decltype(c_style_read_only_string_ptr_p)).name() != typeid(const char_type*).name(), "ERROR: char* nor any another non-const char_type* types cannot be assigned to a cstring instance.");
+        static_assert(FE::is_c_style_constant_string<T*>::_VALUE_ == true, "ERROR: char* nor any another non-const char_type* types cannot be assigned to a cstring instance.");
 
         if (this->m_string.has_value())
         {

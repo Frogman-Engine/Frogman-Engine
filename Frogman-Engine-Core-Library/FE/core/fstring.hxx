@@ -10,18 +10,12 @@
 BEGIN_NAMESPACE(FE)
 
 
-template<typename char_type>
-class fixed_sized_string_base
-{
-
-};
-
-
 template<typename char_type, uint64 max_capacity>
-class fixed_sized_string : fixed_sized_string_base<char_type>
+class fixed_sized_string 
 {
-    static_assert(sizeof(char_type) <= sizeof(int32), "char_type is not a valid character type");
-
+    static_assert(FE::is_character<char_type>::_VALUE_ == true, "char_type is not a valid character type");
+    static_assert(FE::is_trivially_constructible_and_destructible<char_type>::_VALUE_ == FE::OBJECT_TRIVIALITY::_TRIVIAL, "char_type is not a valid character type");
+   
     char_type m_fstring[max_capacity];
     var::uint64 m_string_length;
 

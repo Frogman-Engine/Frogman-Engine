@@ -6,209 +6,52 @@
 #include "iterator.hxx"
 
 
-ENABLE_TEST_FOR(basic_string);
-
-
 BEGIN_NAMESPACE(FE)
 
 
-template< typename char_type = char, typename max_length_type = var::uint32, class allocator = FE::scalable_aligned_allocator<char_type> >
+template< typename char_type = char, class allocator = FE::scalable_aligned_allocator<char_type>, typename integral_length_type = var::uint32>
 #if _HAS_CXX20 == 1
     requires character_type<char_type>
 #endif
 class basic_string final
 {
-#ifdef _VISUAL_STUDIO_CPP_
-    ALLOW_ITS_FRIEND_TO_TEST(basic_string);
-#endif
-
-    static_assert(::std::is_integral<max_length_type>::value, "max_length_type is not a valid numeric type");
-    static_assert(sizeof(char_type) <= sizeof(int32), "char_type is not a valid character type");
+    static_assert(FE::is_character<char_type>::_VALUE_ == true, "char_type is not a valid character type");
+    static_assert(FE::is_trivially_constructible_and_destructible<char_type>::_VALUE_ == FE::OBJECT_TRIVIALITY::_TRIVIAL, "char_type is not a valid character type");
+    static_assert(std::is_class<allocator>::value == true, "allocator is not a valid class nor struct type");
+    static_assert(std::is_integral<integral_length_type>::value, "length_type is not a valid integral type");
 
 public:
-    typedef char_type value_type;
-    typedef allocator allocator_type;
-    typedef char_type& reference;
-    typedef const char_type& const_reference;
-    typedef char_type* pointer;
-    typedef const char_type* const_pointer;
-    typedef max_length_type length_type;
-
+    using value_type = char_type;
+    using allocator_type = allocator;
+    using size_type = integral_length_type;
+    using length_type = integral_length_type;
+    using difference_type = var::ptrdiff_t;
+    using reference = char_type&;
+    using const_reference = const char_type&;
+    using pointer = char_type*;
+    using const_pointer = const char_type*;
+    using iterator = FE::iterator<FE::contiguous_iterator<char_type>>;
+    using const_iterator = FE::const_iterator<FE::contiguous_iterator<char_type>>;
+    using reverse_iterator = FE::reverse_iterator<FE::contiguous_iterator<char_type>>;
+    using const_reverse_iterator = FE::const_reverse_iterator<FE::contiguous_iterator<char_type>>;
+   
 private:
-    char_type* m_string_ptr;
+    value_type* m_string_ptr;
     length_type m_string_length;
-    length_type m_total_string_length;
-
-    static char_type s_null;
+    size_type m_capacity;
 
 public:
-    _FORCE_INLINE_ basic_string() noexcept : m_string_length(), m_total_string_length() {}
+    _FORCE_INLINE_ constexpr basic_string() noexcept : m_string_ptr(), m_string_length(), m_capacity() {}
+    _FORCE_INLINE_ constexpr ~basic_string() noexcept {}
 
-    _FORCE_INLINE_ ~basic_string() noexcept
+    _FORCE_INLINE_ basic_string(const basic_string& other_cref_p) noexcept : m_string_ptr(), m_string_length(other_cref_p.m_string_length), m_capacity(other_cref_p.m_capacity) {}
+    _FORCE_INLINE_ basic_string(basic_string&& rvalue_reference_p) noexcept : m_string_ptr(rvalue_reference_p.m_string_ptr), m_string_length(rvalue_reference_p.m_string_length), m_capacity(rvalue_reference_p.m_capacity) 
     {
-
-    }
-
-
-    _FORCE_INLINE_ basic_string(const char_type* cstr_ptr_p) noexcept : m_string_length(::FE::algorithm::string::string_length<char_type>(cstr_ptr_p))
-    {
-
-    }
-
-
-    _FORCE_INLINE_ basic_string(const basic_string<char_type, max_length_type, allocator>& copy_other_ref_p) noexcept
-    {
-
-    }
-
-
-    _FORCE_INLINE_ basic_string(basic_string<char_type, max_length_type, allocator>&& move_p) noexcept
-    {
-    }
-
-
-    _FORCE_INLINE_ basic_string<char_type, max_length_type, allocator>& operator=(const char_type* cstr_ptr_p) noexcept
-    {
-        return *this;
-    }
-
-
-    _FORCE_INLINE_ basic_string<char_type, max_length_type, allocator>& operator=(const basic_string<char_type, max_length_type, allocator>& copy_other_ref_p) noexcept
-    {
-        return *this;
-    }
-
-
-    _FORCE_INLINE_ basic_string<char_type, max_length_type, allocator>& operator=(basic_string<char_type, max_length_type, allocator>&& move_p) noexcept
-    {
-        return *this;
-    }
-
-
-    constexpr iterator<contiguous_iterator<char_type>> begin() const noexcept { return this->m_string_ptr; }
-    constexpr iterator<contiguous_iterator<char_type>> end() const noexcept { return this->m_string_ptr + this->m_string_length; }
-
-    constexpr iterator<contiguous_iterator<char_type>> rbegin() const noexcept { return this->m_string_ptr + (this->m_string_length - 1); }
-    constexpr iterator<contiguous_iterator<char_type>> rend() const noexcept { return this->m_string_ptr - 1; }
-
-    _FORCE_INLINE_ char_type front() const noexcept { return *this->m_string_ptr; }
-    _FORCE_INLINE_ char_type back() const noexcept { return this->m_string_ptr[this->m_string_length - 1]; }
-
-    _FORCE_INLINE_ length_type length() const noexcept { return this->m_string_length; }
-    _FORCE_INLINE_ length_type capacity() const noexcept { return this->m_total_string_length; }
-    constexpr length_type max_length() noexcept { return FE::max_value<length_type>(); }
-
-    _FORCE_INLINE_ void reserve(length_type new_size_p) noexcept
-    {
-    }
-
-    _FORCE_INLINE_ void shrink_to_fit() noexcept
-    {
-
-    }
-
-    _FORCE_INLINE_ void insert(length_type index_p, const char_type* cstr_ptr_p) noexcept
-    {
-
-    }
-
-    _FORCE_INLINE_ void insert(length_type index_p, const basic_string<char_type, max_length_type, allocator>& str_ref_p) noexcept
-    {
-
-    }
-
-    _FORCE_INLINE_ void try_pop_at(length_type index_p) noexcept
-    {
-
-    }
-
-    _FORCE_INLINE_ char_type try_pop_back() noexcept
-    {
-	return '\0';
-    }
-
-    _FORCE_INLINE_ void clear() noexcept
-    {
-
-    }
-
-    _FORCE_INLINE_ boolean is_empty() const noexcept
-    {
-	return false;
-    }
-
-
-    _FORCE_INLINE_ char_type& operator[](length_type index_p) noexcept
-    {
-        return this->m_string_ptr[index_p];
-    }
-
-    _FORCE_INLINE_ length_type operator+=(char_type char_p) noexcept
-    {
-	return 0;
-    }
-
-    _FORCE_INLINE_ length_type operator+=(const char_type* cstr_ptr_p) noexcept
-    {
-	return 0;
-    }
-
-    _FORCE_INLINE_ length_type operator+=(const basic_string<char_type, max_length_type, allocator>& str_cref_p) noexcept
-    {
-	return 0;
-    }
-
-    // It returns a pointer to the data
-    constexpr char_type* data() noexcept { return this->m_string_ptr; }
-
-    // It returns a pointer to a traditional c-style read-only string
-    constexpr const char_type* c_str() noexcept { return this->m_string_ptr; }
-
-    // It returns a standard string
-    constexpr ::std::basic_string<char_type> std_str() noexcept { return this->m_string_ptr; }
-
-
-    boolean operator==(basic_string<char_type>& other_ref_p) noexcept
-    {
-        return algorithm::string::string_comparison(this->m_string_ptr, other_ref_p.m_string_ptr);
-    }
-    boolean operator==(const char_type* const cstr_ptrc_p) noexcept
-    {
-        return algorithm::string::string_comparison(this->m_string_ptr, cstr_ptrc_p);
-    }
-
-    boolean operator!=(basic_string<char_type>& other_ref_p) noexcept
-    {
-        return !algorithm::string::string_comparison(this->m_string_ptr, other_ref_p.m_string_ptr);
-    }
-    boolean operator!=(const char_type* const cstr_ptrc_p) noexcept
-    {
-        return !algorithm::string::string_comparison(this->m_string_ptr, cstr_ptrc_p);
-    }
-
-    friend boolean operator==(const char_type* const cstr_ptrc_p, basic_string<char_type>& string_ref_p) noexcept
-    {
-        return algorithm::string::string_comparison(cstr_ptrc_p, string_ref_p.m_string_ptr);
-    }
-    friend boolean operator!=(const char_type* const cstr_ptrc_p, basic_string<char_type>& string_ref_p) noexcept
-    {
-        return !algorithm::string::string_comparison(cstr_ptrc_p, string_ref_p.m_string_ptr);
-    }
-
-
-    _FORCE_INLINE_ static void swap(basic_string<char_type, max_length_type, allocator>& left_ref_p, basic_string<char_type, max_length_type, allocator>& right_ref_p) noexcept
-    {
-        basic_string<char_type, max_length_type, allocator> l_temp = std::move(left_ref_p);
-        left_ref_p = ::std::move(right_ref_p);
-        right_ref_p = ::std::move(l_temp);
+        rvalue_reference_p.m_string_ptr = nullptr;
+        rvalue_reference_p.m_string_length = 0;
+        rvalue_reference_p.m_capacity = 0;
     }
 };
-
-template<typename char_type, typename max_length_type, class allocator>
-#if _HAS_CXX20 == 1
-    requires character_type<char_type>
-#endif
-char_type basic_string<char_type, max_length_type, allocator>::s_null = char_type('\0');
 
 
 using string = basic_string<var::character, var::uint32>;
