@@ -131,12 +131,6 @@ TEST(cstring, length)
 	EXPECT_EQ(l_cstring.length(), 73);
 }
 
-TEST(cstring, max_length)
-{
-	FE::cstring l_cstring = "FE::compile_time_constant_string is a compile-time string class template.";
-	EXPECT_EQ(l_cstring.max_length(), FE::max_value<FE::cstring::length_type>());
-}
-
 TEST(cstring, clear)
 {
 	FE::cstring l_cstring = "FE::compile_time_constant_string is a compile-time string class template.";

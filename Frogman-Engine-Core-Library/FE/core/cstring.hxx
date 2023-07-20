@@ -24,8 +24,8 @@ class compile_time_constant_string final
 public:
     using value_type = const char_type*;
     using buffer_type = char_type;
-    using const_iterator = FE::const_iterator<FE::contiguous_iterator<char_type>>;
-    using const_reverse_iterator = FE::const_reverse_iterator<FE::contiguous_iterator<char_type>>;
+    using const_iterator = FE::const_iterator<FE::contiguous_iterator<const char_type>>;
+    using const_reverse_iterator = FE::const_reverse_iterator<FE::contiguous_iterator<const char_type>>;
 
 private:
     ::std::optional<const char_type*> m_string;

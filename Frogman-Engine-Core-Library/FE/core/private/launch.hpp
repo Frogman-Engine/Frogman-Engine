@@ -16,6 +16,7 @@ constexpr auto _MAIN_THREAD_ID_ = -1;
 struct engine_main_initialization_arguments
 {
 	exception_initialization_arguments _exception_initialization_arguments;
+	var::size_t _initial_function_table_size;
 };
 
 

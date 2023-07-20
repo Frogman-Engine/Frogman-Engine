@@ -1,7 +1,8 @@
 ﻿// Copyright © from 2023 to current, UNKNOWN STRYKER. All Rights Reserved.
 #include "launch.hpp"
 #include <FE/core/fstream_guard.hxx>
-#include <boost/stacktrace/stacktrace.hpp>
+#include <FE/core/function_table.hpp>
+#include <boost/stacktrace.hpp>
 #include <csignal>
 
 
@@ -28,6 +29,8 @@ void ::FE::internal::engine_main::initialize_engine(_MAYBE_UNUSED_ engine_main_i
 	::std::signal(SIGILL, abnormal_shutdown_with_exit_code);
 	::std::signal(SIGABRT, abnormal_shutdown_with_exit_code);
 	::std::signal(SIGFPE, abnormal_shutdown_with_exit_code);
+
+	FE::function_table::tl_s_hash_map.reserve(engine_main_initialization_arguments_p._initial_function_table_size);
 }
 
 void ::FE::internal::engine_main::shutdown_engine() noexcept

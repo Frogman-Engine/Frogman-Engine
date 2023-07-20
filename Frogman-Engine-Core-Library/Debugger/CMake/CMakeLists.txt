@@ -129,6 +129,7 @@ SET(_PRIVATE_
 	${CMAKE_CURRENT_SOURCE_DIR}/../../FE/core/private/memory_metrics.cpp 
 	${CMAKE_CURRENT_SOURCE_DIR}/../../FE/core/private/mutex.cpp 
 	${CMAKE_CURRENT_SOURCE_DIR}/../../FE/core/private/exception.cpp 
+	${CMAKE_CURRENT_SOURCE_DIR}/../../FE/core/private/function_table.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/../../FE/core/private/thread.cpp
 	)
 SOURCE_GROUP("FE\\core\\private" FILES ${_PRIVATE_})
@@ -155,6 +156,7 @@ SET(_CORE_
 	${CMAKE_CURRENT_SOURCE_DIR}/../../FE/core/fstream_guard.hxx
 	${CMAKE_CURRENT_SOURCE_DIR}/../../FE/core/fstring.hxx 
 	${CMAKE_CURRENT_SOURCE_DIR}/../../FE/core/function.hxx 
+	${CMAKE_CURRENT_SOURCE_DIR}/../../FE/core/function_table.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/../../FE/core/hash.hxx 
 	${CMAKE_CURRENT_SOURCE_DIR}/../../FE/core/iterator.hxx
 	${CMAKE_CURRENT_SOURCE_DIR}/../../FE/core/heap_utilization.hpp

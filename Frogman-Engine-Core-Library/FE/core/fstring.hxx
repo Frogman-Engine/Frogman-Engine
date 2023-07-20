@@ -96,7 +96,7 @@ public:
     constexpr const char_type* c_str() const noexcept { return this->m_fstring; }
 
     // It returns a standard string
-    constexpr std::basic_string<char_type>&& std_str() const noexcept { return this->m_fstring; }
+    constexpr std::basic_string<char_type> std_str() const noexcept { return this->m_fstring; }
 
     constexpr iterator begin() noexcept { return this->m_fstring; }
     constexpr iterator end() noexcept { return this->m_fstring + this->m_string_length; }

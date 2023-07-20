@@ -1,3 +1,4 @@
+﻿// Copyright © from 2023 to current, UNKNOWN STRYKER. All Rights Reserved.
 #include <gtest/gtest.h>
 #include <FE/miscellaneous/configuration.h>
 
@@ -8,9 +9,8 @@
 #include <FE/core/concurrent_memory_block.hxx>
 #include <FE/core/heap_utilization.hpp>
 #include <FE/core/allocator_adaptor.hxx>
-#include <FE/core/function.hxx>
+#include <FE/core/function_table.hpp>
 #include <FE/core/thread.hpp>
-#include <FE/core/hash.hxx>
 
 #include <FE/core/exception.hpp>
 #include <FE/core/private/launch.hpp>
@@ -28,8 +28,16 @@ static ::FE::internal::engine_main_initialization_arguments s_config_args = ::FE
 		&s_exception_history_log_buffering_strategy,
 		FE::exception::_DEFAULT_DEBUG_LOG_BUFFER_SIZE_,
 		50
-	}
+	},
+
+	1000
 };
+
+
+void fn() noexcept
+{
+	std::cout << "Jesus loves you";
+}
 
 
 int main(int argc, char** argv)
@@ -59,6 +67,12 @@ int main(int argc, char** argv)
 
 	::testing::InitGoogleTest(&argc, argv);
 	int l_test_result = RUN_ALL_TESTS();
+
+	FE::void_function l_fn{&fn};
+	FE::function_table::register_method(std::make_pair("void fn() noexcept", &l_fn));
+	FE::function_table::invoke("void fn() noexcept"); //Now, functions can be registered onto heap memory and called without function type restrictions.
+	// It can also be useful when enqueuing a function as a task to a job system task scheduler.
+	// It is one of the necessary components for Task-based parallel programming!
 
 	FE::internal::engine_main::shutdown_engine();
 	return l_test_result;
