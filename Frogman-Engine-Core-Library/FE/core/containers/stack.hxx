@@ -147,22 +147,22 @@ public:
 		return max_element_count;
 	}
 
-	_FORCE_INLINE_ FE::const_iterator<FE::contiguous_iterator<T>> cbegin() noexcept
+	_FORCE_INLINE_ const_iterator cbegin() noexcept
 	{
 		return this->m_absolute_begin_ptrc;
 	}
 
-	_FORCE_INLINE_ FE::const_iterator<FE::contiguous_iterator<T>> cend() noexcept
+	_FORCE_INLINE_ const_iterator cend() noexcept
 	{
 		return this->m_top_ptr;
 	}
 
-	_FORCE_INLINE_ FE::const_reverse_iterator<FE::contiguous_iterator<T>> crbegin() noexcept
+	_FORCE_INLINE_ const_reverse_iterator crbegin() noexcept
 	{
 		return this->m_top_ptr - 1;
 	}
 
-	_FORCE_INLINE_ FE::const_reverse_iterator<FE::contiguous_iterator<T>> crend() noexcept
+	_FORCE_INLINE_ const_reverse_iterator crend() noexcept
 	{
 		return this->m_absolute_begin_ptrc - 1;
 	}

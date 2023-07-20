@@ -36,7 +36,7 @@ namespace internal
 }
 
 
-constexpr auto _FILE_NAME_MAX_LENGTH_ = 8192;
+constexpr auto _FILE_NAME_MAX_LENGTH_ = 1024;
 constexpr auto _MAX_THRED_ID_DIGIT_LENGTH_ = 24;
 constexpr FE::length_t g_sec_string_length = 4;
 

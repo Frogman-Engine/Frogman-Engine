@@ -172,7 +172,7 @@ TEST(fstring, concatenation)
 TEST(fstring, find)
 {
 	FE::fstring<_UNIT_TEST_FSTRING_LENGTH_> l_fstring = "FE::fstring<_UNIT_TEST_FSTRING_LENGTH_> is a fixed sized string class template.";
-	::std::optional<string::string_range> l_search_result = l_fstring.find("string");
+	::std::optional<string::range> l_search_result = l_fstring.find("string");
 	EXPECT_EQ(l_search_result.has_value(), true);
 
 	FE::fstring<_UNIT_TEST_FSTRING_LENGTH_>::value_type l_buffer[13] = "\0";
@@ -183,7 +183,7 @@ TEST(fstring, find)
 TEST(fstring, count_target_character)
 {
 	FE::fstring<_UNIT_TEST_FSTRING_LENGTH_> l_fstring = "FE::fstring<_UNIT_TEST_FSTRING_LENGTH_> is a fixed sized string class template.";
-	string::target_char_count l_first_search_result = l_fstring.count_target_character('f');
+	string::char_count l_first_search_result = l_fstring.count_target_character('f');
 	EXPECT_EQ(l_first_search_result._match_count, 2);
 	EXPECT_EQ(l_first_search_result._target_data, 'f');
 }
