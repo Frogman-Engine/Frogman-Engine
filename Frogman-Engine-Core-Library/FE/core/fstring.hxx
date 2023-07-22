@@ -4,7 +4,7 @@
 #include "algorithm/string.hxx"
 #include "iterator.hxx"
 #include "private/memory.hpp"
-#include "heap_utilization.hpp"
+#include "heap_memory_tracker.hpp"
 
 
 BEGIN_NAMESPACE(FE)
@@ -20,33 +20,39 @@ class fixed_sized_string
     var::uint64 m_string_length;
 
 public:
-    typedef char_type value_type;
-    typedef char_type& reference;
-    typedef const char_type& const_reference;
-    typedef char_type* pointer;
-    typedef const char_type* const_pointer;
-    typedef uint64 length_type;
+    using value_type = char_type;
+    using size_type = var::uint64;
+    using length_type = var::uint64;
+    using difference_type = var::ptrdiff_t;
+    using reference = char_type&;
+    using const_reference = const char_type&;
+    using iterator = FE::iterator<FE::contiguous_iterator<char_type>>;
+    using const_iterator = FE::const_iterator<FE::contiguous_iterator<char_type>>;
+    using reverse_iterator = FE::reverse_iterator<FE::contiguous_iterator<char_type>>;
+    using const_reverse_iterator = FE::const_reverse_iterator<FE::contiguous_iterator<char_type>>;
 
     constexpr fixed_sized_string() noexcept 
-        : m_fstring{ static_cast<const char_type>('\0') }, m_string_length() {}
+        : m_fstring{ _NULL_ }, m_string_length() {}
 
     constexpr fixed_sized_string(const char_type* const cstr_ptrc_p) noexcept 
-        : m_fstring{ static_cast<const char_type>('\0') }, m_string_length(algorithm::string::string_length<char_type>(cstr_ptrc_p))
+        : m_fstring{ _NULL_ }, m_string_length(algorithm::string::string_length<char_type>(cstr_ptrc_p))
     {
         FE_ASSERT(this->m_string_length >= max_capacity, "CRITICAL ERROR: the input string length exceeds the max string capacity");
         algorithm::string::copy_string( this->m_fstring, max_capacity, cstr_ptrc_p, this->m_string_length);
     }
 
-
     constexpr fixed_sized_string(const fixed_sized_string<char_type, max_capacity>& other_cref_p) noexcept 
-        : m_fstring{ static_cast<const char_type>('\0') }, m_string_length(other_cref_p.m_string_length)
+        : m_fstring{ _NULL_ }, m_string_length(other_cref_p.m_string_length)
     {
         algorithm::string::copy_string(this->m_fstring, max_capacity, other_cref_p.m_fstring, max_capacity);
     }
 
-    constexpr fixed_sized_string(fixed_sized_string<char_type, max_capacity>&& move_other_p) noexcept : m_fstring{ static_cast<const char_type>('\0') }, m_string_length(move_other_p.m_string_length)
+    constexpr fixed_sized_string(fixed_sized_string<char_type, max_capacity>&& rvalue_reference_p) noexcept 
+        : m_fstring{ _NULL_ }, m_string_length(rvalue_reference_p.m_string_length)
     {
-        algorithm::string::copy_string(this->m_fstring, max_capacity, move_other_p.m_fstring, max_capacity);
+        algorithm::string::copy_string(this->m_fstring, max_capacity, rvalue_reference_p.m_fstring, max_capacity);
+        UNALIGNED_MEMSET(rvalue_reference_p.m_fstring, _NULL_, rvalue_reference_p.m_string_length * sizeof(char_type));
+        rvalue_reference_p.m_string_length = 0;
     }
 
 
@@ -61,23 +67,17 @@ public:
 
     constexpr fixed_sized_string<char_type, max_capacity>& operator=(const fixed_sized_string<char_type, max_capacity>& other_cref_p) noexcept
     {
+        this->m_string_length = other_cref_p.m_string_length;
         algorithm::string::copy_string(this->m_fstring, max_capacity, other_cref_p.m_fstring, max_capacity);
-
         return *this;
     }
 
-    constexpr fixed_sized_string<char_type, max_capacity>& operator=(fixed_sized_string<char_type, max_capacity>&& move_other_p) noexcept
+    constexpr fixed_sized_string<char_type, max_capacity>& operator=(fixed_sized_string<char_type, max_capacity>&& rvalue_reference_p) noexcept
     {
-        algorithm::string::copy_string(this->m_fstring, max_capacity, move_other_p.m_fstring, max_capacity);
-
+        algorithm::string::copy_string(this->m_fstring, max_capacity, rvalue_reference_p.m_fstring, max_capacity);
+        UNALIGNED_MEMSET(rvalue_reference_p.m_fstring, _NULL_, rvalue_reference_p.m_string_length * sizeof(char_type));
+        rvalue_reference_p.m_string_length = 0;
         return *this;
-    }
-
-
-    constexpr char_type at(index_t index_p) noexcept
-    {
-        FE_ASSERT(index_p >= this->m_string_length, "CRITICAL ERROR: index out of boundary");
-        return this->m_fstring[index_p];
     }
 
     constexpr char_type& operator[](index_t idx_p) noexcept
@@ -87,7 +87,7 @@ public:
     }
 
     constexpr char_type front() const noexcept { return *this->m_fstring; }
-    constexpr  char_type back() const noexcept { return this->m_fstring[this->m_string_length - 1]; }
+    constexpr char_type back() const noexcept { return this->m_fstring[this->m_string_length - 1]; }
 
     // It returns a pointer to the data
     constexpr char_type* data() noexcept { return this->m_fstring; }
@@ -98,29 +98,23 @@ public:
     // It returns a standard string
     constexpr std::basic_string<char_type> std_str() const noexcept { return this->m_fstring; }
 
-    constexpr iterator<contiguous_iterator<char_type>> begin() noexcept { return this->m_fstring; }
-    constexpr iterator<contiguous_iterator<char_type>> end() noexcept
-    {
-        return this->m_fstring + this->m_string_length;
-    }
-
-    constexpr reverse_iterator<contiguous_iterator<char_type>> rbegin() noexcept 
-    {
-        return this->m_fstring + (this->m_string_length - 1);
-    }
-    constexpr reverse_iterator<contiguous_iterator<char_type>> rend() noexcept
-    {
-        return this->m_fstring - 1;
-    }
+    constexpr iterator begin() noexcept { return this->m_fstring; }
+    constexpr iterator end() noexcept { return this->m_fstring + this->m_string_length; }
+    constexpr reverse_iterator rbegin() noexcept { return this->m_fstring + (this->m_string_length - 1); }
+    constexpr reverse_iterator rend() noexcept { return this->m_fstring - 1; }
+    constexpr const_iterator cbegin() noexcept { return this->m_fstring; }
+    constexpr const_iterator cend() noexcept { return this->m_fstring + this->m_string_length; }
+    constexpr const_reverse_iterator crbegin() noexcept { return this->m_fstring + (this->m_string_length - 1); }
+    constexpr const_reverse_iterator crend() noexcept { return this->m_fstring - 1; }
 
     constexpr bool is_empty() const noexcept
     {
         return (this->m_string_length == 0) ? true : false;
     }
 
-    _FORCE_INLINE_ constexpr var::uint64 length() const noexcept { return this->m_string_length; }
-    _FORCE_INLINE_ constexpr var::uint64 max_length() const noexcept { return max_capacity; }
-    _FORCE_INLINE_ constexpr var::uint64 capacity() const noexcept { return max_capacity; }
+    _FORCE_INLINE_ constexpr length_type length() const noexcept { return this->m_string_length; }
+    _FORCE_INLINE_ constexpr length_type max_length() const noexcept { return max_capacity; }
+    _FORCE_INLINE_ constexpr size_type capacity() const noexcept { return max_capacity; }
 
     _FORCE_INLINE_ constexpr void clear() noexcept { UNALIGNED_MEMSET(this->m_fstring, _NULL_, max_capacity * sizeof(char_type)); }
     // insert
@@ -155,26 +149,13 @@ public:
         return *this;
     }
 
-    constexpr std::optional<algorithm::string::string_range> find(const char_type* const cstr_ptrc_p) const noexcept
+    constexpr std::optional<algorithm::string::range> find(const char_type* const cstr_ptrc_p) const noexcept
     {
         return algorithm::string::search_very_first_substring(this->m_fstring, cstr_ptrc_p);
     }
-    constexpr std::optional<algorithm::string::string_range> find(fixed_sized_string<char_type, max_capacity>& sub_basic_cstring_ref_p) const noexcept
+    constexpr std::optional<algorithm::string::range> find(fixed_sized_string<char_type, max_capacity>& sub_basic_cstring_ref_p) const noexcept
     {
         return algorithm::string::search_very_first_substring(this->m_fstring, sub_basic_cstring_ref_p.m_fstring);
-    }
-
-    constexpr algorithm::string::target_char_count<char_type> count_target_character(const char_type target_char_p) const noexcept
-    {
-        return algorithm::string::count_all_corresponding_chars(this->m_fstring, target_char_p);
-    }
-    constexpr algorithm::string::target_char_count<char_type> count_target_character(const char_type* const target_char_ptrc_p) const noexcept 
-    {
-        return algorithm::string::count_all_corresponding_chars(this->m_fstring, *target_char_ptrc_p);
-    }
-    constexpr algorithm::string::target_char_count<char_type> count_target_character(fixed_sized_string<char_type, max_capacity>& basic_cstring_ref_p) const noexcept
-    {
-        return algorithm::string::count_all_corresponding_chars(this->m_fstring, *(basic_cstring_ref_p.m_fstring));
     }
 
     constexpr var::boolean starts_with(const char_type* const cstr_ptrc_p) const noexcept { return false; }

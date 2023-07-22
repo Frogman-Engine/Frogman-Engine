@@ -1,5 +1,6 @@
-#ifndef _FE_CORE_MOVABLE_SCOPED_REF_HXX_
+﻿#ifndef _FE_CORE_MOVABLE_SCOPED_REF_HXX_
 #define _FE_CORE_MOVABLE_SCOPED_REF_HXX_
+// Copyright © from 2023 to current, UNKNOWN STRYKER. All Rights Reserved.
 #include "prerequisite_symbols.h"
 #include "exception.hpp"
 
@@ -70,7 +71,7 @@ public:
 
 	var::boolean stop_using() noexcept
 	{
-		if (FE_LOG(this->m_signal_ptr == nullptr, "WARNING: The signal pointer is nullptr. This function will return early with false.")) _LIKELY_ { return _FAILED_; }
+		if (FE_EXCEPTION_LOG(this->m_signal_ptr == nullptr, "WARNING: The signal pointer is nullptr. This function will return early with false.")) _LIKELY_ { return _FAILED_; }
 
 		this->m_signal_ptr->store(false, std::memory_order_release);
 		return _SUCCESSFUL_;

@@ -1,9 +1,14 @@
 ﻿#ifndef _FE_CONFIGURATION_H_
 #define _FE_CONFIGURATION_H_
+// Copyright © from 2023 to current, UNKNOWN STRYKER. All Rights Reserved.
 // To enable or disable a certain feature, modify the macro definition to true or false.
 // 
 // Modifying the macro will not immediately affect your project.
 // The binary files e.g. (.lib, .a, .dll, or .so) need to be rebuilt to apply changes that have been made.
+
+
+constexpr inline auto _FULL_PATH_TO_FILE_MAX_LENGTH_ = 1024;
+
 
 #ifndef _USE_CMAKE_MACRO_
 

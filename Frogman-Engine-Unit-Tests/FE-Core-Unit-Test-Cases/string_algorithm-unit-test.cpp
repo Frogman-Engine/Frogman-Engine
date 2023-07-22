@@ -49,8 +49,8 @@ TEST(FE_algorithm_string, compare_ranged_strings)
 {
 	std::string l_left_string = "* Apple Mango *";
 	std::string l_right_string = "- Mango -";
-	algorithm::string::string_range left_substring_range{8, 13};
-	algorithm::string::string_range right_substring_range{2, 7};
+	algorithm::string::range left_substring_range{8, 13};
+	algorithm::string::range right_substring_range{2, 7};
 
 	EXPECT_TRUE(algorithm::string::compare_ranged_strings(l_left_string.c_str(), left_substring_range, l_right_string.data(), right_substring_range));
 	EXPECT_TRUE(algorithm::string::compare_ranged_strings(l_left_string.data(), left_substring_range, l_right_string.c_str(), right_substring_range));
@@ -162,8 +162,8 @@ TEST(FE_algorithm_string, insensitive_ranged_string_comparison)
 {
 	std::string l_left_string = "* Apple MANGO *";
 	std::string l_right_string = "- Mango -";
-	algorithm::string::string_range left_substring_range{8, 13};
-	algorithm::string::string_range right_substring_range{2, 7};
+	algorithm::string::range left_substring_range{8, 13};
+	algorithm::string::range right_substring_range{2, 7};
 
 	EXPECT_TRUE(algorithm::string::insensitive_ranged_string_comparison(l_left_string.c_str(), left_substring_range, l_right_string.data(), right_substring_range));
 	EXPECT_TRUE(algorithm::string::insensitive_ranged_string_comparison(l_left_string.data(), left_substring_range, l_right_string.c_str(), right_substring_range));
@@ -308,7 +308,7 @@ TEST(FE_algorithm_string, search_very_first_char_within_range)
 {
 	char l_string[] = "Carrots contain carotene, antioxidants, etcetera.";
 
-	auto l_result = ::FE::algorithm::string::search_very_first_char_within_range(l_string, FE::algorithm::string::string_range{7, 15}, 'c');
+	auto l_result = ::FE::algorithm::string::search_very_first_char_within_range(l_string, FE::algorithm::string::range{7, 15}, 'c');
 
 	EXPECT_EQ(l_result._target_data, 'c');
 	EXPECT_EQ(l_result._target_data_location, 8);
@@ -321,7 +321,7 @@ TEST(FE_algorithm_string, search_very_last_char_within_range)
 {
 	char l_string[] = "Carrots contain carotene, antioxidants, etcetera.";
 
-	auto l_result = ::FE::algorithm::string::search_very_last_char_within_range(l_string, FE::algorithm::string::string_range{41, 49}, 'c');
+	auto l_result = ::FE::algorithm::string::search_very_last_char_within_range(l_string, FE::algorithm::string::range{41, 49}, 'c');
 
 	EXPECT_EQ(l_result._target_data, 'c');
 	EXPECT_EQ(l_result._target_data_location, 42);
@@ -334,7 +334,7 @@ TEST(FE_algorithm_string, count_all_corresponding_chars_within_range)
 {
 	char l_string[] = "Carrots contain carotene, antioxidants, etcetera.";
 
-	auto l_result = string::count_all_corresponding_chars_within_range(l_string, string::string_range{25, 49}, 't');
+	auto l_result = string::count_all_corresponding_chars_within_range(l_string, string::range{25, 49}, 't');
 
 	EXPECT_EQ(l_result._match_count, 4);
 	EXPECT_EQ(l_result._target_data, 't');
@@ -344,7 +344,7 @@ TEST(FE_algorithm_string, constexpr_count_all_corresponding_chars_within_range)
 {
 	char l_string[] = "Carrots contain carotene, antioxidants, etcetera.";
 
-	auto l_result = string::count_all_corresponding_chars_within_range(l_string, string::string_range{25, 49}, 't');
+	auto l_result = string::count_all_corresponding_chars_within_range(l_string, string::range{25, 49}, 't');
 
 	EXPECT_EQ(l_result._match_count, 4);
 	EXPECT_EQ(l_result._target_data, 't');
@@ -357,27 +357,27 @@ TEST(FE_algorithm_string, search_very_first_substring_within_range)
 {
 	char l_string[] = "Love never fails. But where there are prophecies, they will cease; where there are tongues, they will be stilled; where there is knowledge, it will pass away.";
 
-	auto l_result = ::FE::algorithm::string::search_very_first_substring_within_range<var::character>(l_string, string::string_range{0, 17}, "Love never fails.");
+	auto l_result = ::FE::algorithm::string::search_very_first_substring_within_range<var::character>(l_string, string::range{0, 17}, "Love never fails.");
 	EXPECT_TRUE(l_result.has_value());
 
-	l_result = ::FE::algorithm::string::search_very_first_substring_within_range<var::character>(l_string, string::string_range{0, 120}, "will");
+	l_result = ::FE::algorithm::string::search_very_first_substring_within_range<var::character>(l_string, string::range{0, 120}, "will");
 
-	EXPECT_TRUE(FE::algorithm::string::compare_ranged_strings<char>(l_string, string::string_range{l_result->_begin, l_result->_end}, "will", string::string_range{0, 4}));
+	EXPECT_TRUE(FE::algorithm::string::compare_ranged_strings<char>(l_string, string::range{l_result->_begin, l_result->_end}, "will", string::range{0, 4}));
 }
 
 TEST(FE_algorithm_string, search_very_last_substring_within_range)
 {
 	const char* l_string = "Love is patient, love is kind. It does not envy, it does not boast, it is not proud. 5 It does not dishonor others, it is not self-seeking, it is not easily angered, it keeps no record of wrongs. 6 Love does not delight in evil but rejoices with the truth. 7 It always protects, always trusts, always hopes, always perseveres.\n";
-	auto l_result = ::FE::algorithm::string::search_very_last_substring_within_range<var::character>(l_string, string::string_range{0, 21}, "love");
+	auto l_result = ::FE::algorithm::string::search_very_last_substring_within_range<var::character>(l_string, string::range{0, 21}, "love");
 	char l_substring[7] = "\0";
 	FE::algorithm::string::copy_string(l_substring, 7, l_string + l_result->_begin, 4);
 	EXPECT_TRUE(FE::algorithm::string::string_comparison<char>(l_substring, "love"));
 
 	l_string = "1 Corinthians 13:4-8\n";
-	l_result = ::FE::algorithm::string::search_very_last_substring_within_range<var::character>(l_string, string::string_range{0, 13}, "9");
+	l_result = ::FE::algorithm::string::search_very_last_substring_within_range<var::character>(l_string, string::range{0, 13}, "9");
 	EXPECT_FALSE(l_result.has_value());
 
-	l_result = ::FE::algorithm::string::search_very_last_substring_within_range<var::character>(l_string, string::string_range{2, 13}, "i");
+	l_result = ::FE::algorithm::string::search_very_last_substring_within_range<var::character>(l_string, string::range{2, 13}, "i");
 	EXPECT_TRUE(l_result.has_value());
 	FE::algorithm::string::copy_string(l_substring, 7, l_string + l_result->_begin, 1);
 

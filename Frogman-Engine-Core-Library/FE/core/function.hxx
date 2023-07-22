@@ -1,8 +1,12 @@
-#ifndef _FE_CORE_FUNCTION_HXX_
+﻿#ifndef _FE_CORE_FUNCTION_HXX_
 #define _FE_CORE_FUNCTION_HXX_
+// Copyright © from 2023 to current, UNKNOWN STRYKER. All Rights Reserved.
 #include "prerequisite_symbols.h"
 #include "algorithm/string.hxx"
 #include <functional>
+
+
+#define PASS_RETURN_BUFFER(return_buffer) &return_buffer, typeid(return_buffer).name()
 
 
 BEGIN_NAMESPACE(FE)
@@ -17,7 +21,7 @@ enum struct RETURN_TYPE : bool
 
 struct task_base
 {
-    _NODISCARD_ virtual RETURN_TYPE execute(_MAYBE_UNUSED_ void* out_return_ptr_p = nullptr, _MAYBE_UNUSED_ const char* const typename_str_ptrc_p = nullptr) noexcept = 0;
+    _NODISCARD_ virtual RETURN_TYPE execute(_MAYBE_UNUSED_ void* out_return_ptr_p = nullptr, _MAYBE_UNUSED_ const char* const return_typename_ptrc_p = nullptr) noexcept = 0;
 };
 
 
@@ -189,8 +193,10 @@ struct void_function : public task_base
     }
 
 
-    _NODISCARD_ virtual RETURN_TYPE execute(_MAYBE_UNUSED_ void* out_return_ptr_p = nullptr, _MAYBE_UNUSED_ const char* const typename_str_ptrc_p = nullptr) noexcept override
+    _NODISCARD_ virtual RETURN_TYPE execute(_MAYBE_UNUSED_ void* out_return_ptr_p = nullptr, _MAYBE_UNUSED_ const char* const return_typename_ptrc_p = nullptr) noexcept override
     {
+        FE_ASSERT((out_return_ptr_p != nullptr) || (return_typename_ptrc_p != nullptr), "ERROR!: out_return_ptr_p must be nullptr. A return buffer address assigned to a void function object.");
+
         _function();
 
         return RETURN_TYPE::_VOID;
@@ -231,8 +237,10 @@ struct void_method : public task_base
     }
 
 
-    _NODISCARD_ virtual RETURN_TYPE execute(_MAYBE_UNUSED_ void* out_return_ptr_p = nullptr, _MAYBE_UNUSED_ const char* const typename_str_ptrc_p = nullptr) noexcept override
+    _NODISCARD_ virtual RETURN_TYPE execute(_MAYBE_UNUSED_ void* out_return_ptr_p = nullptr, _MAYBE_UNUSED_ const char* const return_typename_ptrc_p = nullptr) noexcept override
     {
+        FE_ASSERT((out_return_ptr_p != nullptr) || (return_typename_ptrc_p != nullptr), "ERROR!: out_return_ptr_p must be nullptr. A return buffer address assigned to a void function object.");
+
         _method(*_object);
 
         return RETURN_TYPE::_VOID;
@@ -246,7 +254,7 @@ template<typename P0>
 struct void_function_with_1_arg : public task_base
 {
     ::std::function<void(P0)> _function;
-    FE::one_arg<P0> _parameters;
+    FE::one_arg<P0> _parameters; // replace it with a pointer to argument pool
 
     using function_type = decltype(_function);
     using parameter_package_type = decltype(_parameters);
@@ -276,8 +284,10 @@ struct void_function_with_1_arg : public task_base
     }
 
 
-    _NODISCARD_ virtual RETURN_TYPE execute(_MAYBE_UNUSED_ void* out_return_ptr_p = nullptr, _MAYBE_UNUSED_ const char* const typename_str_ptrc_p = nullptr) noexcept override
+    _NODISCARD_ virtual RETURN_TYPE execute(_MAYBE_UNUSED_ void* out_return_ptr_p = nullptr, _MAYBE_UNUSED_ const char* const return_typename_ptrc_p = nullptr) noexcept override
     {
+        FE_ASSERT((out_return_ptr_p != nullptr) || (return_typename_ptrc_p != nullptr), "ERROR!: out_return_ptr_p must be nullptr. A return buffer address assigned to a void function object.");
+
         _function
         (
             _parameters._param0
@@ -325,8 +335,10 @@ struct void_method_with_1_arg : public task_base
     }
 
 
-    _NODISCARD_ virtual RETURN_TYPE execute(_MAYBE_UNUSED_ void* out_return_ptr_p = nullptr, _MAYBE_UNUSED_ const char* const typename_str_ptrc_p = nullptr) noexcept override
+    _NODISCARD_ virtual RETURN_TYPE execute(_MAYBE_UNUSED_ void* out_return_ptr_p = nullptr, _MAYBE_UNUSED_ const char* const return_typename_ptrc_p = nullptr) noexcept override
     {
+        FE_ASSERT((out_return_ptr_p != nullptr) || (return_typename_ptrc_p != nullptr), "ERROR!: out_return_ptr_p must be nullptr. A return buffer address assigned to a void function object.");
+
         _method
         (
             *_object,
@@ -374,8 +386,10 @@ struct void_function_with_2_args : public task_base
     }
 
 
-    _NODISCARD_ virtual RETURN_TYPE execute(_MAYBE_UNUSED_ void* out_return_ptr_p = nullptr, _MAYBE_UNUSED_ const char* const typename_str_ptrc_p = nullptr) noexcept override
+    _NODISCARD_ virtual RETURN_TYPE execute(_MAYBE_UNUSED_ void* out_return_ptr_p = nullptr, _MAYBE_UNUSED_ const char* const return_typename_ptrc_p = nullptr) noexcept override
     {
+        FE_ASSERT((out_return_ptr_p != nullptr) || (return_typename_ptrc_p != nullptr), "ERROR!: out_return_ptr_p must be nullptr. A return buffer address assigned to a void function object.");
+
         _function
         (
             _parameters._param0, _parameters._param1
@@ -423,8 +437,10 @@ struct void_method_with_2_args : public task_base
     }
 
 
-    _NODISCARD_ virtual RETURN_TYPE execute(_MAYBE_UNUSED_ void* out_return_ptr_p = nullptr, _MAYBE_UNUSED_ const char* const typename_str_ptrc_p = nullptr) noexcept override
+    _NODISCARD_ virtual RETURN_TYPE execute(_MAYBE_UNUSED_ void* out_return_ptr_p = nullptr, _MAYBE_UNUSED_ const char* const return_typename_ptrc_p = nullptr) noexcept override
     {
+        FE_ASSERT((out_return_ptr_p != nullptr) || (return_typename_ptrc_p != nullptr), "ERROR!: out_return_ptr_p must be nullptr. A return buffer address assigned to a void function object.");
+
         _method
         (
             *_object,
@@ -472,8 +488,10 @@ struct void_function_with_3_args : public task_base
     }
 
 
-    _NODISCARD_ virtual RETURN_TYPE execute(_MAYBE_UNUSED_ void* out_return_ptr_p = nullptr, _MAYBE_UNUSED_ const char* const typename_str_ptrc_p = nullptr) noexcept override
+    _NODISCARD_ virtual RETURN_TYPE execute(_MAYBE_UNUSED_ void* out_return_ptr_p = nullptr, _MAYBE_UNUSED_ const char* const return_typename_ptrc_p = nullptr) noexcept override
     {
+        FE_ASSERT((out_return_ptr_p != nullptr) || (return_typename_ptrc_p != nullptr), "ERROR!: out_return_ptr_p must be nullptr. A return buffer address assigned to a void function object.");
+
         _function
         (
             _parameters._param0, _parameters._param1,
@@ -522,8 +540,10 @@ struct void_method_with_3_args : public task_base
     }
 
 
-    _NODISCARD_ virtual RETURN_TYPE execute(_MAYBE_UNUSED_ void* out_return_ptr_p = nullptr, _MAYBE_UNUSED_ const char* const typename_str_ptrc_p = nullptr) noexcept override
+    _NODISCARD_ virtual RETURN_TYPE execute(_MAYBE_UNUSED_ void* out_return_ptr_p = nullptr, _MAYBE_UNUSED_ const char* const return_typename_ptrc_p = nullptr) noexcept override
     {
+        FE_ASSERT((out_return_ptr_p != nullptr) || (return_typename_ptrc_p != nullptr), "ERROR!: out_return_ptr_p must be nullptr. A return buffer address assigned to a void function object.");
+
         _method
         (
             *_object,
@@ -573,8 +593,10 @@ struct void_function_with_4_args : public task_base
     }
 
 
-    _NODISCARD_ virtual RETURN_TYPE execute(_MAYBE_UNUSED_ void* out_return_ptr_p = nullptr, _MAYBE_UNUSED_ const char* const typename_str_ptrc_p = nullptr) noexcept override
+    _NODISCARD_ virtual RETURN_TYPE execute(_MAYBE_UNUSED_ void* out_return_ptr_p = nullptr, _MAYBE_UNUSED_ const char* const return_typename_ptrc_p = nullptr) noexcept override
     {
+        FE_ASSERT((out_return_ptr_p != nullptr) || (return_typename_ptrc_p != nullptr), "ERROR!: out_return_ptr_p must be nullptr. A return buffer address assigned to a void function object.");
+
         _function
         (
             _parameters._param0, _parameters._param1,
@@ -624,8 +646,10 @@ struct void_method_with_4_args : public task_base
     }
 
 
-    _NODISCARD_ virtual RETURN_TYPE execute(_MAYBE_UNUSED_ void* out_return_ptr_p = nullptr, _MAYBE_UNUSED_ const char* const typename_str_ptrc_p = nullptr) noexcept override
+    _NODISCARD_ virtual RETURN_TYPE execute(_MAYBE_UNUSED_ void* out_return_ptr_p = nullptr, _MAYBE_UNUSED_ const char* const return_typename_ptrc_p = nullptr) noexcept override
     {
+        FE_ASSERT((out_return_ptr_p != nullptr) || (return_typename_ptrc_p != nullptr), "ERROR!: out_return_ptr_p must be nullptr. A return buffer address assigned to a void function object.");
+
         _method
         (
             *_object,
@@ -677,8 +701,10 @@ struct void_function_with_5_args : public task_base
     }
 
 
-    _NODISCARD_ virtual RETURN_TYPE execute(_MAYBE_UNUSED_ void* out_return_ptr_p = nullptr, _MAYBE_UNUSED_ const char* const typename_str_ptrc_p = nullptr) noexcept override
+    _NODISCARD_ virtual RETURN_TYPE execute(_MAYBE_UNUSED_ void* out_return_ptr_p = nullptr, _MAYBE_UNUSED_ const char* const return_typename_ptrc_p = nullptr) noexcept override
     {
+        FE_ASSERT((out_return_ptr_p != nullptr) || (return_typename_ptrc_p != nullptr), "ERROR!: out_return_ptr_p must be nullptr. A return buffer address assigned to a void function object.");
+
         _function
         (
             _parameters._param0, _parameters._param1,
@@ -731,8 +757,10 @@ struct void_method_with_5_args : public task_base
     }
 
 
-    _NODISCARD_ virtual RETURN_TYPE execute(_MAYBE_UNUSED_ void* out_return_ptr_p = nullptr, _MAYBE_UNUSED_ const char* const typename_str_ptrc_p = nullptr) noexcept override
+    _NODISCARD_ virtual RETURN_TYPE execute(_MAYBE_UNUSED_ void* out_return_ptr_p = nullptr, _MAYBE_UNUSED_ const char* const return_typename_ptrc_p = nullptr) noexcept override
     {
+        FE_ASSERT((out_return_ptr_p != nullptr) || (return_typename_ptrc_p != nullptr), "ERROR!: out_return_ptr_p must be nullptr. A return buffer address assigned to a void function object.");
+
         _method
         (
             *_object,
@@ -785,8 +813,10 @@ struct void_function_with_6_args : public task_base
     }
 
 
-    _NODISCARD_ virtual RETURN_TYPE execute(_MAYBE_UNUSED_ void* out_return_ptr_p = nullptr, _MAYBE_UNUSED_ const char* const typename_str_ptrc_p = nullptr) noexcept override
+    _NODISCARD_ virtual RETURN_TYPE execute(_MAYBE_UNUSED_ void* out_return_ptr_p = nullptr, _MAYBE_UNUSED_ const char* const return_typename_ptrc_p = nullptr) noexcept override
     {
+        FE_ASSERT((out_return_ptr_p != nullptr) || (return_typename_ptrc_p != nullptr), "ERROR!: out_return_ptr_p must be nullptr. A return buffer address assigned to a void function object.");
+
         _function
         (
             _parameters._param0, _parameters._param1,
@@ -839,8 +869,10 @@ struct void_method_with_6_args : public task_base
     }
 
 
-    _NODISCARD_ virtual RETURN_TYPE execute(_MAYBE_UNUSED_ void* out_return_ptr_p = nullptr, _MAYBE_UNUSED_ const char* const typename_str_ptrc_p = nullptr) noexcept override
+    _NODISCARD_ virtual RETURN_TYPE execute(_MAYBE_UNUSED_ void* out_return_ptr_p = nullptr, _MAYBE_UNUSED_ const char* const return_typename_ptrc_p = nullptr) noexcept override
     {
+        FE_ASSERT((out_return_ptr_p != nullptr) || (return_typename_ptrc_p != nullptr), "ERROR!: out_return_ptr_p must be nullptr. A return buffer address assigned to a void function object.");
+
         _method
         (
             *_object,
@@ -894,8 +926,10 @@ struct void_function_with_7_args : public task_base
     }
 
 
-    _NODISCARD_ virtual RETURN_TYPE execute(_MAYBE_UNUSED_ void* out_return_ptr_p = nullptr, _MAYBE_UNUSED_ const char* const typename_str_ptrc_p = nullptr) noexcept override
+    _NODISCARD_ virtual RETURN_TYPE execute(_MAYBE_UNUSED_ void* out_return_ptr_p = nullptr, _MAYBE_UNUSED_ const char* const return_typename_ptrc_p = nullptr) noexcept override
     {
+        FE_ASSERT((out_return_ptr_p != nullptr) || (return_typename_ptrc_p != nullptr), "ERROR!: out_return_ptr_p must be nullptr. A return buffer address assigned to a void function object.");
+
         _function
         (
             _parameters._param0, _parameters._param1,
@@ -950,8 +984,10 @@ struct void_method_with_7_args : public task_base
     }
 
 
-    _NODISCARD_ virtual RETURN_TYPE execute(_MAYBE_UNUSED_ void* out_return_ptr_p = nullptr, _MAYBE_UNUSED_ const char* const typename_str_ptrc_p = nullptr) noexcept override
+    _NODISCARD_ virtual RETURN_TYPE execute(_MAYBE_UNUSED_ void* out_return_ptr_p = nullptr, _MAYBE_UNUSED_ const char* const return_typename_ptrc_p = nullptr) noexcept override
     {
+        FE_ASSERT((out_return_ptr_p != nullptr) || (return_typename_ptrc_p != nullptr), "ERROR!: out_return_ptr_p must be nullptr. A return buffer address assigned to a void function object.");
+
         _method
         (
             *_object,
@@ -1006,8 +1042,10 @@ struct void_function_with_8_args : public task_base
     }
 
 
-    _NODISCARD_ virtual RETURN_TYPE execute(_MAYBE_UNUSED_ void* out_return_ptr_p = nullptr, _MAYBE_UNUSED_ const char* const typename_str_ptrc_p = nullptr) noexcept override
+    _NODISCARD_ virtual RETURN_TYPE execute(_MAYBE_UNUSED_ void* out_return_ptr_p = nullptr, _MAYBE_UNUSED_ const char* const return_typename_ptrc_p = nullptr) noexcept override
     {
+        FE_ASSERT((out_return_ptr_p != nullptr) || (return_typename_ptrc_p != nullptr), "ERROR!: out_return_ptr_p must be nullptr. A return buffer address assigned to a void function object.");
+
         _function
         (
             _parameters._param0, _parameters._param1,
@@ -1062,8 +1100,10 @@ struct void_method_with_8_args : public task_base
     }
 
 
-    _NODISCARD_ virtual RETURN_TYPE execute(_MAYBE_UNUSED_ void* out_return_ptr_p = nullptr, _MAYBE_UNUSED_ const char* const typename_str_ptrc_p = nullptr) noexcept override
+    _NODISCARD_ virtual RETURN_TYPE execute(_MAYBE_UNUSED_ void* out_return_ptr_p = nullptr, _MAYBE_UNUSED_ const char* const return_typename_ptrc_p = nullptr) noexcept override
     {
+        FE_ASSERT((out_return_ptr_p != nullptr) || (return_typename_ptrc_p != nullptr), "ERROR!: out_return_ptr_p must be nullptr. A return buffer address assigned to a void function object.");
+
         _method
         (
             *_object,
@@ -1120,8 +1160,10 @@ struct void_function_with_9_args : public task_base
     }
 
 
-    _NODISCARD_ virtual RETURN_TYPE execute(_MAYBE_UNUSED_ void* out_return_ptr_p = nullptr, _MAYBE_UNUSED_ const char* const typename_str_ptrc_p = nullptr) noexcept override
+    _NODISCARD_ virtual RETURN_TYPE execute(_MAYBE_UNUSED_ void* out_return_ptr_p = nullptr, _MAYBE_UNUSED_ const char* const return_typename_ptrc_p = nullptr) noexcept override
     {
+        FE_ASSERT((out_return_ptr_p != nullptr) || (return_typename_ptrc_p != nullptr), "ERROR!: out_return_ptr_p must be nullptr. A return buffer address assigned to a void function object.");
+
         _function
         (
             _parameters._param0, _parameters._param1,
@@ -1178,8 +1220,10 @@ struct void_method_with_9_args : public task_base
     }
 
 
-    _NODISCARD_ virtual RETURN_TYPE execute(_MAYBE_UNUSED_ void* out_return_ptr_p = nullptr, _MAYBE_UNUSED_ const char* const typename_str_ptrc_p = nullptr) noexcept override
+    _NODISCARD_ virtual RETURN_TYPE execute(_MAYBE_UNUSED_ void* out_return_ptr_p = nullptr, _MAYBE_UNUSED_ const char* const return_typename_ptrc_p = nullptr) noexcept override
     {
+        FE_ASSERT((out_return_ptr_p != nullptr) || (return_typename_ptrc_p != nullptr), "ERROR!: out_return_ptr_p must be nullptr. A return buffer address assigned to a void function object.");
+
         _method
         (
             *_object,
@@ -1236,8 +1280,10 @@ struct void_function_with_10_args : public task_base
     }
 
 
-    _NODISCARD_ virtual RETURN_TYPE execute(_MAYBE_UNUSED_ void* out_return_ptr_p = nullptr, _MAYBE_UNUSED_ const char* const typename_str_ptrc_p = nullptr) noexcept override
+    _NODISCARD_ virtual RETURN_TYPE execute(_MAYBE_UNUSED_ void* out_return_ptr_p = nullptr, _MAYBE_UNUSED_ const char* const return_typename_ptrc_p = nullptr) noexcept override
     {
+        FE_ASSERT((out_return_ptr_p != nullptr) || (return_typename_ptrc_p != nullptr), "ERROR!: out_return_ptr_p must be nullptr. A return buffer address assigned to a void function object.");
+
         _function
         (
             _parameters._param0, _parameters._param1,
@@ -1294,8 +1340,10 @@ struct void_method_with_10_args : public task_base
     }
 
 
-    _NODISCARD_ virtual RETURN_TYPE execute(_MAYBE_UNUSED_ void* out_return_ptr_p = nullptr, _MAYBE_UNUSED_ const char* const typename_str_ptrc_p = nullptr) noexcept override
+    _NODISCARD_ virtual RETURN_TYPE execute(_MAYBE_UNUSED_ void* out_return_ptr_p = nullptr, _MAYBE_UNUSED_ const char* const return_typename_ptrc_p = nullptr) noexcept override
     {
+        FE_ASSERT((out_return_ptr_p != nullptr) || (return_typename_ptrc_p != nullptr), "ERROR!: out_return_ptr_p must be nullptr. A return buffer address assigned to a void function object.");
+
         _method
         (
             *_object,
@@ -1346,7 +1394,8 @@ struct function : public task_base
     {
         FE_ASSERT(!::FE::algorithm::string::string_comparison<char>(typeid(return_type).name(), typename_str_ptrc_p), "ERROR: an ilegal type of data was passed");
         
-        *((return_type*)out_return_ptr_p) = _function();
+        return_type* const l_return_buffer_ptrc = static_cast<return_type*>(out_return_ptr_p);
+        *l_return_buffer_ptrc = std::move(_function());
 
         return RETURN_TYPE::_NON_VOID;
     }
@@ -1390,7 +1439,8 @@ struct method : public task_base
     {
         FE_ASSERT(!::FE::algorithm::string::string_comparison<char>(typeid(return_type).name(), typename_str_ptrc_p), "ERROR: an ilegal type of data was passed");
 
-        *((return_type*)out_return_ptr_p) = _method(*_object);
+        return_type* const l_return_buffer_ptrc = static_cast<return_type*>(out_return_ptr_p);
+        *l_return_buffer_ptrc = std::move(_method(*_object));
 
         return RETURN_TYPE::_NON_VOID;
     }
@@ -1438,10 +1488,11 @@ struct function_with_1_arg : public task_base
     {
         FE_ASSERT(!::FE::algorithm::string::string_comparison<char>(typeid(return_type).name(), typename_str_ptrc_p), "ERROR: an ilegal type of data was passed");
 
-        *((return_type*)out_return_ptr_p) = _function
+        return_type* const l_return_buffer_ptrc = static_cast<return_type*>(out_return_ptr_p);
+        *l_return_buffer_ptrc = std::move(_function
         (
             _parameters._param0
-        );
+        ));
 
         return RETURN_TYPE::_NON_VOID;
     }
@@ -1490,11 +1541,12 @@ struct method_with_1_arg : public task_base
     {
         FE_ASSERT(!::FE::algorithm::string::string_comparison<char>(typeid(return_type).name(), typename_str_ptrc_p), "ERROR: an ilegal type of data was passed");
 
-        *((return_type*)out_return_ptr_p) = _method
+        return_type* const l_return_buffer_ptrc = static_cast<return_type*>(out_return_ptr_p);
+        *l_return_buffer_ptrc = std::move(_method
         (
             *_object,
             _parameters._param0
-        );
+        ));
 
         return RETURN_TYPE::_NON_VOID;
     }
@@ -1542,10 +1594,11 @@ struct function_with_2_args : public task_base
     {
         FE_ASSERT(!::FE::algorithm::string::string_comparison<char>(typeid(return_type).name(), typename_str_ptrc_p), "ERROR: an ilegal type of data was passed");
 
-        *((return_type*)out_return_ptr_p) = _function
+        return_type* const l_return_buffer_ptrc = static_cast<return_type*>(out_return_ptr_p);
+        *l_return_buffer_ptrc = std::move(_function
         (
             _parameters._param0, _parameters._param1
-        );
+        ));
 
         return RETURN_TYPE::_NON_VOID;
     }
@@ -1594,11 +1647,12 @@ struct method_with_2_args : public task_base
     {
         FE_ASSERT(!::FE::algorithm::string::string_comparison<char>(typeid(return_type).name(), typename_str_ptrc_p), "ERROR: an ilegal type of data was passed");
 
-        *((return_type*)out_return_ptr_p) = _method
+        return_type* const l_return_buffer_ptrc = static_cast<return_type*>(out_return_ptr_p);
+        *l_return_buffer_ptrc = std::move(_method
         (
             *_object,
             _parameters._param0, _parameters._param1
-        );
+        ));
 
         return RETURN_TYPE::_NON_VOID;
     }
@@ -1647,11 +1701,12 @@ struct function_with_3_args : public task_base
     {
         FE_ASSERT(!::FE::algorithm::string::string_comparison<char>(typeid(return_type).name(), typename_str_ptrc_p), "ERROR: an ilegal type of data was passed");
 
-        *((return_type*)out_return_ptr_p) = _function
+        return_type* const l_return_buffer_ptrc = static_cast<return_type*>(out_return_ptr_p);
+        *l_return_buffer_ptrc = std::move(_function
         (
             _parameters._param0, _parameters._param1,
             _parameters._param2
-        );
+        ));
 
         return RETURN_TYPE::_NON_VOID;
     }
@@ -1702,12 +1757,13 @@ struct method_with_3_args : public task_base
     {
         FE_ASSERT(!::FE::algorithm::string::string_comparison<char>(typeid(return_type).name(), typename_str_ptrc_p), "ERROR: an ilegal type of data was passed");
 
-        *((return_type*)out_return_ptr_p) = _method
+        return_type* const l_return_buffer_ptrc = static_cast<return_type*>(out_return_ptr_p);
+        *l_return_buffer_ptrc = std::move(_method
         (
             *_object,
             _parameters._param0, _parameters._param1,
             _parameters._param2
-        );
+        ));
 
         return RETURN_TYPE::_NON_VOID;
     }
@@ -1757,11 +1813,12 @@ struct function_with_4_args : public task_base
     {
         FE_ASSERT(!::FE::algorithm::string::string_comparison<char>(typeid(return_type).name(), typename_str_ptrc_p), "ERROR: an ilegal type of data was passed");
 
-        *((return_type*)out_return_ptr_p) = _function
+        return_type* const l_return_buffer_ptrc = static_cast<return_type*>(out_return_ptr_p);
+        *l_return_buffer_ptrc = std::move(_function
         (
             _parameters._param0, _parameters._param1,
             _parameters._param2, _parameters._param3
-        );
+        ));
 
         return RETURN_TYPE::_NON_VOID;
     }
@@ -1812,12 +1869,13 @@ struct method_with_4_args : public task_base
     {
         FE_ASSERT(!::FE::algorithm::string::string_comparison<char>(typeid(return_type).name(), typename_str_ptrc_p), "ERROR: an ilegal type of data was passed");
 
-        *((return_type*)out_return_ptr_p) = _method
+        return_type* const l_return_buffer_ptrc = static_cast<return_type*>(out_return_ptr_p);
+        *l_return_buffer_ptrc = std::move(_method
         (
             *_object,
             _parameters._param0, _parameters._param1,
             _parameters._param2, _parameters._param3
-        );
+        ));
 
         return RETURN_TYPE::_NON_VOID;
     }
@@ -1868,12 +1926,13 @@ struct function_with_5_args : public task_base
     {
         FE_ASSERT(!::FE::algorithm::string::string_comparison<char>(typeid(return_type).name(), typename_str_ptrc_p), "ERROR: an ilegal type of data was passed");
 
-        *((return_type*)out_return_ptr_p) = _function
+        return_type* const l_return_buffer_ptrc = static_cast<return_type*>(out_return_ptr_p);
+        *l_return_buffer_ptrc = std::move(_function
         (
             _parameters._param0, _parameters._param1,
             _parameters._param2, _parameters._param3,
             _parameters._param4
-        );
+        ));
 
         return RETURN_TYPE::_NON_VOID;
     }
@@ -1925,13 +1984,14 @@ struct method_with_5_args : public task_base
     {
         FE_ASSERT(!::FE::algorithm::string::string_comparison<char>(typeid(return_type).name(), typename_str_ptrc_p), "ERROR: an ilegal type of data was passed");
 
-        *((return_type*)out_return_ptr_p) = _method
+        return_type* const l_return_buffer_ptrc = static_cast<return_type*>(out_return_ptr_p);
+        *l_return_buffer_ptrc = std::move(_method
         (
             *_object,
             _parameters._param0, _parameters._param1,
             _parameters._param2, _parameters._param3,
             _parameters._param4
-        );
+        ));
 
         return RETURN_TYPE::_NON_VOID;
     }
@@ -1982,12 +2042,13 @@ struct function_with_6_args : public task_base
     {
         FE_ASSERT(!::FE::algorithm::string::string_comparison<char>(typeid(return_type).name(), typename_str_ptrc_p), "ERROR: an ilegal type of data was passed");
 
-        *((return_type*)out_return_ptr_p) = _function
+        return_type* const l_return_buffer_ptrc = static_cast<return_type*>(out_return_ptr_p);
+        *l_return_buffer_ptrc = std::move(_function
         (
             _parameters._param0, _parameters._param1,
             _parameters._param2, _parameters._param3,
             _parameters._param4, _parameters._param5
-        );
+        ));
 
         return RETURN_TYPE::_NON_VOID;
     }
@@ -2039,13 +2100,14 @@ struct method_with_6_args : public task_base
     {
         FE_ASSERT(!::FE::algorithm::string::string_comparison<char>(typeid(return_type).name(), typename_str_ptrc_p), "ERROR: an ilegal type of data was passed");
 
-        *((return_type*)out_return_ptr_p) = _method
+        return_type* const l_return_buffer_ptrc = static_cast<return_type*>(out_return_ptr_p);
+        *l_return_buffer_ptrc = std::move(_method
         (
             *_object,
             _parameters._param0, _parameters._param1,
             _parameters._param2, _parameters._param3,
             _parameters._param4, _parameters._param5
-        );
+        ));
 
         return RETURN_TYPE::_NON_VOID;
     }
@@ -2097,13 +2159,14 @@ struct function_with_7_args : public task_base
     {
         FE_ASSERT(!::FE::algorithm::string::string_comparison<char>(typeid(return_type).name(), typename_str_ptrc_p), "ERROR: an ilegal type of data was passed");
 
-        *((return_type*)out_return_ptr_p) = _function
+        return_type* const l_return_buffer_ptrc = static_cast<return_type*>(out_return_ptr_p);
+        *l_return_buffer_ptrc = std::move(_function
         (
             _parameters._param0, _parameters._param1,
             _parameters._param2, _parameters._param3,
             _parameters._param4, _parameters._param5,
             _parameters._param6
-        );
+        ));
 
         return RETURN_TYPE::_NON_VOID;
     }
@@ -2156,14 +2219,15 @@ struct method_with_7_args : public task_base
     {
         FE_ASSERT(!::FE::algorithm::string::string_comparison<char>(typeid(return_type).name(), typename_str_ptrc_p), "ERROR: an ilegal type of data was passed");
 
-        *((return_type*)out_return_ptr_p) = _method
+        return_type* const l_return_buffer_ptrc = static_cast<return_type*>(out_return_ptr_p);
+        *l_return_buffer_ptrc = std::move(_method
         (
             *_object,
             _parameters._param0, _parameters._param1,
             _parameters._param2, _parameters._param3,
             _parameters._param4, _parameters._param5,
             _parameters._param6
-        );
+        ));
 
         return RETURN_TYPE::_NON_VOID;
     }
@@ -2215,13 +2279,14 @@ struct function_with_8_args : public task_base
     {
         FE_ASSERT(!::FE::algorithm::string::string_comparison<char>(typeid(return_type).name(), typename_str_ptrc_p), "ERROR: an ilegal type of data was passed");
 
-        *((return_type*)out_return_ptr_p) = _function
+        return_type* const l_return_buffer_ptrc = static_cast<return_type*>(out_return_ptr_p);
+        *l_return_buffer_ptrc = std::move(_function
         (
             _parameters._param0, _parameters._param1,
             _parameters._param2, _parameters._param3,
             _parameters._param4, _parameters._param5,
             _parameters._param6, _parameters._param7
-        );
+        ));
 
         return RETURN_TYPE::_NON_VOID;
     }
@@ -2274,14 +2339,15 @@ struct method_with_8_args : public task_base
     {
         FE_ASSERT(!::FE::algorithm::string::string_comparison<char>(typeid(return_type).name(), typename_str_ptrc_p), "ERROR: an ilegal type of data was passed");
 
-        *((return_type*)out_return_ptr_p) = _method
+        return_type* const l_return_buffer_ptrc = static_cast<return_type*>(out_return_ptr_p);
+        *l_return_buffer_ptrc = std::move(_method
         (
             *_object,
             _parameters._param0, _parameters._param1,
             _parameters._param2, _parameters._param3,
             _parameters._param4, _parameters._param5,
             _parameters._param6, _parameters._param7
-        );
+        ));
 
         return RETURN_TYPE::_NON_VOID;
     }
@@ -2335,14 +2401,15 @@ struct function_with_9_args : public task_base
     {
         FE_ASSERT(!::FE::algorithm::string::string_comparison<char>(typeid(return_type).name(), typename_str_ptrc_p), "ERROR: an ilegal type of data was passed");
 
-        *((return_type*)out_return_ptr_p) = _function
+        return_type* const l_return_buffer_ptrc = static_cast<return_type*>(out_return_ptr_p);
+        *l_return_buffer_ptrc = std::move(_function
         (
             _parameters._param0, _parameters._param1,
             _parameters._param2, _parameters._param3,
             _parameters._param4, _parameters._param5,
             _parameters._param6, _parameters._param7,
             _parameters._param8
-        );
+        ));
 
         return RETURN_TYPE::_NON_VOID;
     }
@@ -2396,7 +2463,8 @@ struct method_with_9_args : public task_base
     {
         FE_ASSERT(!::FE::algorithm::string::string_comparison<char>(typeid(return_type).name(), typename_str_ptrc_p), "ERROR: an ilegal type of data was passed");
 
-        *((return_type*)out_return_ptr_p) = _method
+        return_type* const l_return_buffer_ptrc = static_cast<return_type*>(out_return_ptr_p);
+        *l_return_buffer_ptrc = std::move(_method
         (
             *_object,
             _parameters._param0, _parameters._param1,
@@ -2404,7 +2472,7 @@ struct method_with_9_args : public task_base
             _parameters._param4, _parameters._param5,
             _parameters._param6, _parameters._param7,
             _parameters._param8
-        );
+        ));
 
         return RETURN_TYPE::_NON_VOID;
     }
@@ -2457,14 +2525,15 @@ struct function_with_10_args : public task_base
     {
         FE_ASSERT(!::FE::algorithm::string::string_comparison<char>(typeid(return_type).name(), typename_str_ptrc_p), "ERROR: an ilegal type of data was passed");
 
-        *((return_type*)out_return_ptr_p) = _function
+        return_type* const l_return_buffer_ptrc = static_cast<return_type*>(out_return_ptr_p);
+        *l_return_buffer_ptrc = std::move(_function
         (
             _parameters._param0, _parameters._param1,
             _parameters._param2, _parameters._param3,
             _parameters._param4, _parameters._param5,
             _parameters._param6, _parameters._param7,
             _parameters._param8, _parameters._param9
-        );
+        ));
 
         return RETURN_TYPE::_NON_VOID;
     }
@@ -2518,7 +2587,8 @@ struct method_with_10_args : public task_base
     {
         FE_ASSERT(!::FE::algorithm::string::string_comparison<char>(typeid(return_type).name(), typename_str_ptrc_p), "ERROR: an ilegal type of data was passed");
 
-        *((return_type*)out_return_ptr_p) = _method
+        return_type* const l_return_buffer_ptrc = static_cast<return_type*>(out_return_ptr_p);
+        *l_return_buffer_ptrc = std::move(_method
         (
             *_object,
             _parameters._param0, _parameters._param1,
@@ -2526,7 +2596,7 @@ struct method_with_10_args : public task_base
             _parameters._param4, _parameters._param5,
             _parameters._param6, _parameters._param7,
             _parameters._param8, _parameters._param9
-        );
+        ));
 
         return RETURN_TYPE::_NON_VOID;
     }

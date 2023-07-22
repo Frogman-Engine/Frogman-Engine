@@ -97,7 +97,7 @@ TEST(cstring, begin_end)
 	FE::cstring::buffer_type l_buffer[100] = "\0";
 
 	FE::var::index_t l_idx = 0;
-	for (auto character = l_cstring.begin(); character != l_cstring.end(); ++character)
+	for (auto character = l_cstring.cbegin(); character != l_cstring.cend(); ++character)
 	{
 		l_buffer[l_idx] = *character;
 		++l_idx;
@@ -107,7 +107,7 @@ TEST(cstring, begin_end)
 
 
 	l_idx = 0;
-	for (auto character = l_cstring.rbegin(); character != l_cstring.rend(); ++character)
+	for (auto character = l_cstring.crbegin(); character != l_cstring.crend(); ++character)
 	{
 		l_buffer[l_idx] = *character;
 		++l_idx;
@@ -129,12 +129,6 @@ TEST(cstring, length)
 {
 	FE::cstring l_cstring = "FE::compile_time_constant_string is a compile-time string class template.";
 	EXPECT_EQ(l_cstring.length(), 73);
-}
-
-TEST(cstring, max_length)
-{
-	FE::cstring l_cstring = "FE::compile_time_constant_string is a compile-time string class template.";
-	EXPECT_EQ(l_cstring.max_length(), FE::max_value<FE::cstring::length_type>());
 }
 
 TEST(cstring, clear)
@@ -200,27 +194,44 @@ TEST(cstring, find)
 	FE::cstring l_cstring = "FE::compile_time_constant_string is a compile-time string class template.";
 	FE::cstring l_substring = "string";
 
-	std::optional<string::string_range> l_search_result = l_cstring.find(l_substring);
+	std::optional<string::range> l_search_result = l_cstring.find(l_substring);
 	EXPECT_TRUE(l_search_result.has_value());
 
-	EXPECT_TRUE(string::compare_ranged_strings(l_cstring.data(), *l_search_result, l_substring.data(), string::string_range{0, l_substring.length()}));
+	EXPECT_TRUE(string::compare_ranged_strings(l_cstring.data(), *l_search_result, l_substring.data(), string::range{0, l_substring.length()}));
 
 
 	l_substring = "time";
 	l_search_result.reset();
 	l_search_result.emplace(*(l_cstring.find(l_substring, 20)));
 	
-	EXPECT_TRUE(string::compare_ranged_strings(l_cstring.data(), *l_search_result, l_substring.data(), string::string_range{0, l_substring.length()}));
+	EXPECT_TRUE(string::compare_ranged_strings(l_cstring.data(), *l_search_result, l_substring.data(), string::range{0, l_substring.length()}));
 }
 
-TEST(cstring, find_all_corresponding_characters)
+TEST(cstring, rfind)
+{
+	FE::cstring l_cstring = "FE::compile_time_constant_string is a compile-time string class template.";
+	FE::cstring l_substring = "string";
+
+	std::optional<string::range> l_search_result = l_cstring.rfind(l_substring, 70);
+	EXPECT_TRUE(l_search_result.has_value());
+
+	EXPECT_TRUE(string::compare_ranged_strings(l_cstring.data(), *l_search_result, l_substring.data(), string::range{0, l_substring.length()}));
+
+
+	string::char_search_result l_result2 = l_cstring.rfind('t', 20);
+
+	EXPECT_EQ(l_result2._target_data, 't');
+	EXPECT_EQ(l_result2._target_data_location, 12);
+}
+
+TEST(cstring, count_all_corresponding_chars)
 {
 	FE::cstring l_cstring = "FE::compile_time_constant_string is a compile-time string class template.";
 
-	EXPECT_EQ((l_cstring.find_all_corresponding_characters('c'))._match_count, 4);
+	EXPECT_EQ((l_cstring.count_all_corresponding_chars('c'))._match_count, 4);
 
 	index_t l_from = 20;
-	EXPECT_EQ((l_cstring.find_all_corresponding_characters('c', l_from))._match_count, 2);
+	EXPECT_EQ((l_cstring.count_all_corresponding_chars('c', l_from))._match_count, 2);
 }
 
 TEST(cstring, swap)

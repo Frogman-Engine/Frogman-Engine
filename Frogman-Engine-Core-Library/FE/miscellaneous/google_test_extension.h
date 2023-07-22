@@ -6,7 +6,7 @@
 #include <FE/core/macros/macro_definitions.h>
 
 
-// Macros for Google-Testing Frogman API classes and structures
+// Macros for Google-Testing Frogman Engine classes and structures
 // Do not put namespaces in front of a class name, nor put this macro inside any namespaces.
 #define ENABLE_TEST_FOR(test_subject_class_name_p) class sample_##test_subject_class_name_p##_instance_Test
 
