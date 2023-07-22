@@ -3,7 +3,7 @@
 // Copyright © from 2023 to current, UNKNOWN STRYKER. All Rights Reserved.
 #include "prerequisite_symbols.h"
 #include "private/memory.hpp"
-#include "heap_utilization.hpp"
+#include "heap_memory_tracker.hpp"
 #include <tbb/cache_aligned_allocator.h>
 
 
@@ -63,8 +63,8 @@ public:
 	{
 		FE_ASSERT(count_p == 0, "UNRECOVERABLE CRITICAL ERROR!: queried allocation size is zero.");
 
-#if _ENABLE_MEMORY_TRACKER_ == true
-		::FE::heap_utilization<T>::add(sizeof(T) * count_p);
+#ifdef _ENABLE_MEMORY_TRACKER_
+		::FE::heap_memory_tracker<T>::add(sizeof(T) * count_p);
 #endif
 		T* const l_result_ptrc = static_cast<T*>(::tbb::detail::r1::cache_aligned_allocate(count_p * sizeof(T)));
 		FE_ASSERT(l_result_ptrc == nullptr, "UNRECOVERABLE CRITICAL ERROR!: failed to allocate memory from cache_aligned_allocator.");
@@ -92,8 +92,8 @@ public:
 	{
 		FE_ASSERT((ptrc_p == nullptr) || (count_p == 0), "UNRECOVERABLE CRITICAL ERROR!: attempted to delete nullptr or the size input value is zero.");
 
-#if _ENABLE_MEMORY_TRACKER_ == true
-		::FE::heap_utilization<T>::sub(sizeof(T) * count_p);
+#ifdef _ENABLE_MEMORY_TRACKER_
+		::FE::heap_memory_tracker<T>::sub(sizeof(T) * count_p);
 #endif 
 		::tbb::detail::r1::cache_aligned_deallocate(ptrc_p);
 	}

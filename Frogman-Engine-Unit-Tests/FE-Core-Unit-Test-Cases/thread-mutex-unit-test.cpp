@@ -29,7 +29,7 @@ TEST(thread, fork_and_join)
 
 	FE::function_with_1_arg<int, int> l_int_fn(int_fn, l_arg);
 	int l_result;
-	l_thread.fork(&l_int_fn, PASS_ARGUMENT_OBJECT(l_result));
+	l_thread.fork(&l_int_fn, PASS_RETURN_BUFFER(l_result));
 	l_thread.join();
 
 	EXPECT_EQ(l_result, 0);

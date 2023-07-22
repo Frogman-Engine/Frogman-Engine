@@ -3,17 +3,5 @@
 *.idb
 *.pdb
 
-*.bat
-*.sh
-
-Builder/Static/Windows/
-Builder/Static/Linux/
-Builder/Static/Linux/CMake/cmake-build-debug/
-
-Builder/Dynamic/Windows/
-Builder/Dynamic/Linux/
-Builder/Dynamic/Linux/CMake/cmake-build-debug/
-
-Debugger/Windows/
-Debugger/Linux/
-Debugger/CMake/cmake-build-debug/
+Windows/
+Linux/

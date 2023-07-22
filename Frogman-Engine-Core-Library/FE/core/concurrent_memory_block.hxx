@@ -50,7 +50,7 @@ public:
 
 	_NODISCARD_ _FORCE_INLINE_ movable_scoped_ref<T> try_access() noexcept
 	{
-		if (FE_LOG(this->m_is_block_constructed.load() == false, "WARNING: failed to access the memory block because the block is not constructed. The function will return early with a null object."))
+		if (FE_EXCEPTION_LOG(this->m_is_block_constructed.load() == false, "WARNING: failed to access the memory block because the block is not constructed. The function will return early with a null object."))
 		{
 			return movable_scoped_ref(&concurrent_memory_block<T, alignment>::tl_s_null_object, nullptr, false);
 		}

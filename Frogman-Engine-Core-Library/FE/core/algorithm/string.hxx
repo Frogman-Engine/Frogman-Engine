@@ -19,21 +19,21 @@ _MAYBE_UNUSED_ static constexpr uint8 _ASCII_Z_ = 90;
 _MAYBE_UNUSED_ static constexpr uint8 _ASCII_GAP_BETWEEN_UPPERCASE_and_lowercase_ = 32;
 
 
-struct string_range
+struct range
 {
     var::index_t _begin;
     var::index_t _end;
 };
 
 template<typename char_type>
-struct target_char_count
+struct char_count
 {
     char_type _target_data;
     count_t _match_count;
 };
 
 template<typename char_type>
-struct target_char_search_result
+struct char_search_result
 {
     char_type _target_data;
     index_t _target_data_location;
@@ -148,7 +148,7 @@ template <typename char_type>
 #if _HAS_CXX20_ == 1
     requires character_type<char_type>
 #endif
-_NODISCARD_ _FORCE_INLINE_ var::boolean compare_ranged_strings(const char_type* const lstr_ptrc_p, const string_range lstr_range_p, char_type* const rstr_ptrc_p, const string_range rstr_range_p) noexcept
+_NODISCARD_ _FORCE_INLINE_ var::boolean compare_ranged_strings(const char_type* const lstr_ptrc_p, const range lstr_range_p, char_type* const rstr_ptrc_p, const range rstr_range_p) noexcept
 {
     static_assert(FE::is_character<char_type>::_VALUE_, "char_type is not a valid character type");
     FE_EXIT(lstr_ptrc_p == nullptr, "NULLPTR DETECTED: lstr_ptrc_p is nullptr.", FE::MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR);
@@ -186,7 +186,7 @@ template <typename char_type>
 #if _HAS_CXX20_ == 1
     requires character_type<char_type>
 #endif
-_NODISCARD_ _FORCE_INLINE_ var::boolean compare_ranged_strings(char_type* const lstr_ptrc_p, const string_range lstr_range_p, const char_type* const rstr_ptrc_p, const string_range rstr_range_p) noexcept
+_NODISCARD_ _FORCE_INLINE_ var::boolean compare_ranged_strings(char_type* const lstr_ptrc_p, const range lstr_range_p, const char_type* const rstr_ptrc_p, const range rstr_range_p) noexcept
 {
     static_assert(FE::is_character<char_type>::_VALUE_, "char_type is not a valid character type");
     FE_EXIT(lstr_ptrc_p == nullptr, "NULLPTR DETECTED: lstr_ptrc_p is nullptr.", FE::MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR);
@@ -224,7 +224,7 @@ template <typename char_type>
 #if _HAS_CXX20_ == 1
     requires character_type<char_type>
 #endif
-_NODISCARD_ _FORCE_INLINE_ var::boolean compare_ranged_strings(char_type* const lstr_ptrc_p, const string_range lstr_range_p, char_type* const rstr_ptrc_p, const string_range rstr_range_p) noexcept
+_NODISCARD_ _FORCE_INLINE_ var::boolean compare_ranged_strings(char_type* const lstr_ptrc_p, const range lstr_range_p, char_type* const rstr_ptrc_p, const range rstr_range_p) noexcept
 {
     static_assert(FE::is_character<char_type>::_VALUE_, "char_type is not a valid character type");
     FE_EXIT(lstr_ptrc_p == nullptr, "NULLPTR DETECTED: lstr_ptrc_p is nullptr.", FE::MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR);
@@ -262,7 +262,7 @@ template <typename char_type>
 #if _HAS_CXX20_ == 1
     requires character_type<char_type>
 #endif
-_NODISCARD_ _FORCE_INLINE_ constexpr var::boolean compare_ranged_strings(const char_type* const lstr_ptrc_p, const string_range lstr_range_p, const char_type* const rstr_ptrc_p, const string_range rstr_range_p) noexcept
+_NODISCARD_ _FORCE_INLINE_ constexpr var::boolean compare_ranged_strings(const char_type* const lstr_ptrc_p, const range lstr_range_p, const char_type* const rstr_ptrc_p, const range rstr_range_p) noexcept
 {
     static_assert(FE::is_character<char_type>::_VALUE_, "char_type is not a valid character type");
     FE_EXIT(lstr_ptrc_p == nullptr, "NULLPTR DETECTED: lstr_ptrc_p is nullptr.", FE::MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR);
@@ -312,7 +312,7 @@ _FORCE_INLINE_ void copy_string(char_type* const destination_out_ptrc_p, count_t
 
     if(source_count_p != 0)
     { 
-        FE::unaligned_memcpy(destination_out_ptrc_p, destination_count_p, sizeof(char_type), source_ptrc_p, source_count_p, sizeof(char_type));
+        UNALIGNED_MEMCPY(destination_out_ptrc_p, destination_count_p, sizeof(char_type), source_ptrc_p, source_count_p, sizeof(char_type));
     }
     destination_out_ptrc_p[source_count_p] = static_cast<char_type>('\0');
 }
@@ -492,7 +492,7 @@ template <typename char_type>
 #if _HAS_CXX20_ == 1
     requires character_type<char_type>
 #endif
-_NODISCARD_ _FORCE_INLINE_ var::boolean insensitive_ranged_string_comparison(const char_type* const lstr_ptrc_p, const string_range lstr_range_p, char_type* const rstr_ptrc_p, const string_range rstr_range_p) noexcept
+_NODISCARD_ _FORCE_INLINE_ var::boolean insensitive_ranged_string_comparison(const char_type* const lstr_ptrc_p, const range lstr_range_p, char_type* const rstr_ptrc_p, const range rstr_range_p) noexcept
 {
     static_assert(FE::is_character<char_type>::_VALUE_, "char_type is not a valid character type");
     FE_EXIT(lstr_ptrc_p == nullptr, "NULLPTR DETECTED: lstr_ptrc_p is nullptr.", FE::MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR);
@@ -530,7 +530,7 @@ template <typename char_type>
 #if _HAS_CXX20_ == 1
     requires character_type<char_type>
 #endif
-_NODISCARD_ _FORCE_INLINE_ var::boolean insensitive_ranged_string_comparison(char_type* const lstr_ptrc_p, const string_range lstr_range_p, const char_type* const rstr_ptrc_p, const string_range rstr_range_p) noexcept
+_NODISCARD_ _FORCE_INLINE_ var::boolean insensitive_ranged_string_comparison(char_type* const lstr_ptrc_p, const range lstr_range_p, const char_type* const rstr_ptrc_p, const range rstr_range_p) noexcept
 {
     static_assert(FE::is_character<char_type>::_VALUE_, "char_type is not a valid character type");
     FE_EXIT(lstr_ptrc_p == nullptr, "NULLPTR DETECTED: lstr_ptrc_p is nullptr.", FE::MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR);
@@ -568,7 +568,7 @@ template <typename char_type>
 #if _HAS_CXX20_ == 1
     requires character_type<char_type>
 #endif
-_NODISCARD_ _FORCE_INLINE_ var::boolean insensitive_ranged_string_comparison(char_type* const lstr_ptrc_p, const string_range lstr_range_p, char_type* const rstr_ptrc_p, const string_range rstr_range_p) noexcept
+_NODISCARD_ _FORCE_INLINE_ var::boolean insensitive_ranged_string_comparison(char_type* const lstr_ptrc_p, const range lstr_range_p, char_type* const rstr_ptrc_p, const range rstr_range_p) noexcept
 {
     static_assert(FE::is_character<char_type>::_VALUE_, "char_type is not a valid character type");
     FE_EXIT(lstr_ptrc_p == nullptr, "NULLPTR DETECTED: lstr_ptrc_p is nullptr.", FE::MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR);
@@ -606,7 +606,7 @@ template <typename char_type>
 #if _HAS_CXX20_ == 1
     requires character_type<char_type>
 #endif
-_NODISCARD_ _FORCE_INLINE_ _CONSTEXPR23_ var::boolean insensitive_ranged_string_comparison(const char_type* const lstr_ptrc_p, const string_range lstr_range_p, const char_type* const rstr_ptrc_p, const string_range rstr_range_p) noexcept
+_NODISCARD_ _FORCE_INLINE_ _CONSTEXPR23_ var::boolean insensitive_ranged_string_comparison(const char_type* const lstr_ptrc_p, const range lstr_range_p, const char_type* const rstr_ptrc_p, const range rstr_range_p) noexcept
 {
     static_assert(FE::is_character<char_type>::_VALUE_, "char_type is not a valid character type");
     FE_EXIT(lstr_ptrc_p == nullptr, "NULLPTR DETECTED: lstr_ptrc_p is nullptr.", FE::MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR);
@@ -858,7 +858,7 @@ template<typename char_type>
 #if _HAS_CXX20_ == 1
     requires character_type<char_type>
 #endif
-_NODISCARD_ _FORCE_INLINE_ target_char_search_result<char_type> search_very_first_char(const char_type* const string_ptrc_p, const char_type target_char_p) noexcept
+_NODISCARD_ _FORCE_INLINE_ char_search_result<char_type> search_very_first_char(const char_type* const string_ptrc_p, const char_type target_char_p) noexcept
 {
     static_assert(FE::is_character<char_type>::_VALUE_, "char_type is not a valid character type");
     FE_EXIT(string_ptrc_p == nullptr, "NULLPTR DETECTED: string_ptrc_p is nullptr.", FE::MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR);
@@ -868,12 +868,12 @@ _NODISCARD_ _FORCE_INLINE_ target_char_search_result<char_type> search_very_firs
     {
         if (*l_string_ptr == target_char_p)
         {
-            return target_char_search_result<char_type>{*l_string_ptr, static_cast<index_t>(l_string_ptr - string_ptrc_p) };
+            return char_search_result<char_type>{*l_string_ptr, static_cast<index_t>(l_string_ptr - string_ptrc_p) };
         }
         ++l_string_ptr;
     }
         
-    return target_char_search_result<char_type>{};
+    return char_search_result<char_type>{};
 }
 
 
@@ -881,7 +881,7 @@ template<typename char_type>
 #if _HAS_CXX20_ == 1
     requires character_type<char_type>
 #endif
-_NODISCARD_ _FORCE_INLINE_ target_char_search_result<char_type> search_very_last_char(const char_type* const string_ptrc_p, const char_type target_char_p) noexcept
+_NODISCARD_ _FORCE_INLINE_ char_search_result<char_type> search_very_last_char(const char_type* const string_ptrc_p, const char_type target_char_p) noexcept
 {
     static_assert(FE::is_character<char_type>::_VALUE_, "char_type is not a valid character type");
     FE_EXIT(string_ptrc_p == nullptr, "NULLPTR DETECTED: string_ptrc_p is nullptr.", FE::MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR);
@@ -893,12 +893,12 @@ _NODISCARD_ _FORCE_INLINE_ target_char_search_result<char_type> search_very_last
     {
         if (*l_string_rbegin == target_char_p)
         {
-            return target_char_search_result<char_type>{*l_string_rbegin, static_cast<index_t>(l_string_rbegin.operator->() - string_ptrc_p) };
+            return char_search_result<char_type>{*l_string_rbegin, static_cast<index_t>(l_string_rbegin.operator->() - string_ptrc_p) };
         }
         ++l_string_rbegin;
     }
 
-    return target_char_search_result<char_type>{};
+    return char_search_result<char_type>{};
 }
 
 
@@ -906,7 +906,7 @@ template<typename char_type>
 #if _HAS_CXX20_ == 1
     requires character_type<char_type>
 #endif
-_NODISCARD_ _FORCE_INLINE_ target_char_count<char_type> count_all_corresponding_chars(char_type* string_ptr_p, const char_type target_char_p) noexcept
+_NODISCARD_ _FORCE_INLINE_ char_count<char_type> count_all_corresponding_chars(char_type* string_ptr_p, const char_type target_char_p) noexcept
 {
     static_assert(FE::is_character<char_type>::_VALUE_, "char_type is not a valid character type");
     FE_EXIT(string_ptr_p == nullptr, "NULLPTR DETECTED: string_ptr_p is nullptr.", FE::MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR);
@@ -929,14 +929,14 @@ _NODISCARD_ _FORCE_INLINE_ target_char_count<char_type> count_all_corresponding_
         l_target_char_buffer = target_char_p;
     }
 
-    return target_char_count<char_type>{l_target_char_buffer, l_match_count};
+    return char_count<char_type>{l_target_char_buffer, l_match_count};
 }
 
 template<typename char_type>
 #if _HAS_CXX20_ == 1
     requires character_type<char_type>
 #endif
-_NODISCARD_ _FORCE_INLINE_ constexpr target_char_count<char_type> count_all_corresponding_chars(const char_type* string_ptr_p, const char_type target_char_p) noexcept
+_NODISCARD_ _FORCE_INLINE_ constexpr char_count<char_type> count_all_corresponding_chars(const char_type* string_ptr_p, const char_type target_char_p) noexcept
 {
     static_assert(FE::is_character<char_type>::_VALUE_, "char_type is not a valid character type");
     FE_EXIT(string_ptr_p == nullptr, "NULLPTR DETECTED: string_ptr_p is nullptr.", FE::MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR);
@@ -959,7 +959,7 @@ _NODISCARD_ _FORCE_INLINE_ constexpr target_char_count<char_type> count_all_corr
         l_target_char_buffer = target_char_p;
     }
 
-    return target_char_count<char_type>{l_target_char_buffer, l_match_count};
+    return char_count<char_type>{l_target_char_buffer, l_match_count};
 }
 
 
@@ -967,7 +967,7 @@ template<typename char_type>
 #if _HAS_CXX20_ == 1
     requires character_type<char_type>
 #endif
-_NODISCARD_ _FORCE_INLINE_ ::std::optional<string_range> search_very_first_substring(const char_type* const string_ptrc_p, const char_type* const target_substring_ptrc_p) noexcept
+_NODISCARD_ _FORCE_INLINE_ ::std::optional<range> search_very_first_substring(const char_type* const string_ptrc_p, const char_type* const target_substring_ptrc_p) noexcept
 {
     static_assert(FE::is_character<char_type>::_VALUE_, "char_type is not a valid character type");
     FE_EXIT(string_ptrc_p == nullptr, "NULLPTR DETECTED: string_ptrc_p is nullptr.", FE::MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR);
@@ -997,9 +997,9 @@ _NODISCARD_ _FORCE_INLINE_ ::std::optional<string_range> search_very_first_subst
     index_t l_begin = (l_string_ptr - string_ptrc_p) - (l_target_substring_ptr - target_substring_ptrc_p);
     index_t l_end = l_string_ptr - string_ptrc_p;
 
-    if (compare_ranged_strings(string_ptrc_p, string_range{ l_begin, l_end }, target_substring_ptrc_p, string_range{ 0, l_target_substring_length }))
+    if (compare_ranged_strings(string_ptrc_p, range{ l_begin, l_end }, target_substring_ptrc_p, range{ 0, l_target_substring_length }))
     {
-        return  std::make_optional<string_range>(l_begin, l_end);
+        return  std::make_optional<range>(l_begin, l_end);
     }
 
     return ::std::nullopt;
@@ -1010,7 +1010,7 @@ template<typename char_type>
 #if _HAS_CXX20_ == 1
     requires character_type<char_type>
 #endif
-_NODISCARD_ _FORCE_INLINE_::std::optional<string_range> search_very_last_substring(const char_type* const string_ptrc_p, const char_type* const target_substring_ptrc_p) noexcept
+_NODISCARD_ _FORCE_INLINE_::std::optional<range> search_very_last_substring(const char_type* const string_ptrc_p, const char_type* const target_substring_ptrc_p) noexcept
 {
     static_assert(FE::is_character<char_type>::_VALUE_, "char_type is not a valid character type");
     FE_EXIT(string_ptrc_p == nullptr, "NULLPTR DETECTED: string_ptrc_p is nullptr.", FE::MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR);
@@ -1043,9 +1043,9 @@ _NODISCARD_ _FORCE_INLINE_::std::optional<string_range> search_very_last_substri
     index_t l_begin = (l_string_crbegin.operator->() - string_ptrc_p) + 1;
     index_t l_end = ((l_string_crbegin.operator->() + l_target_substring_length) - string_ptrc_p) + 1;
 
-    if ( compare_ranged_strings(string_ptrc_p, string_range{ l_begin, l_end }, target_substring_ptrc_p, string_range{0, l_target_substring_length}) )
+    if ( compare_ranged_strings(string_ptrc_p, range{ l_begin, l_end }, target_substring_ptrc_p, range{0, l_target_substring_length}) )
     {
-        return  std::make_optional<string_range>(l_begin, l_end);
+        return  std::make_optional<range>(l_begin, l_end);
     }
 
     return ::std::nullopt;
@@ -1058,7 +1058,7 @@ template<typename char_type>
 #if _HAS_CXX20_ == 1
     requires character_type<char_type>
 #endif
-_NODISCARD_ _FORCE_INLINE_ target_char_search_result<char_type> search_very_first_char_within_range(const char_type* const string_ptrc_p, const string_range string_range_p, const char_type target_char_p) noexcept
+_NODISCARD_ _FORCE_INLINE_ char_search_result<char_type> search_very_first_char_within_range(const char_type* const string_ptrc_p, const range string_range_p, const char_type target_char_p) noexcept
 {
     static_assert(FE::is_character<char_type>::_VALUE_, "char_type is not a valid character type");
     FE_EXIT(string_ptrc_p == nullptr, "NULLPTR DETECTED: string_ptrc_p is nullptr.", FE::MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR);
@@ -1070,12 +1070,12 @@ _NODISCARD_ _FORCE_INLINE_ target_char_search_result<char_type> search_very_firs
     {
         if (*l_string_ptr == target_char_p)
         {
-            return target_char_search_result<char_type>{*l_string_ptr, static_cast<index_t>(l_string_ptr - string_ptrc_p) };
+            return char_search_result<char_type>{*l_string_ptr, static_cast<index_t>(l_string_ptr - string_ptrc_p) };
         }
         ++l_string_ptr;
     }
 
-    return target_char_search_result<char_type>{};
+    return char_search_result<char_type>{};
 }
 
 
@@ -1083,7 +1083,7 @@ template<typename char_type>
 #if _HAS_CXX20_ == 1
     requires character_type<char_type>
 #endif
-_NODISCARD_ _FORCE_INLINE_ target_char_search_result<char_type> search_very_last_char_within_range(const char_type* const string_ptrc_p, const string_range string_range_p, const char_type target_char_p) noexcept
+_NODISCARD_ _FORCE_INLINE_ char_search_result<char_type> search_very_last_char_within_range(const char_type* const string_ptrc_p, const range string_range_p, const char_type target_char_p) noexcept
 {
     static_assert(FE::is_character<char_type>::_VALUE_, "char_type is not a valid character type");
     FE_EXIT(string_ptrc_p == nullptr, "NULLPTR DETECTED: string_ptrc_p is nullptr.", FE::MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR);
@@ -1097,12 +1097,12 @@ _NODISCARD_ _FORCE_INLINE_ target_char_search_result<char_type> search_very_last
     {
         if (*l_string_rbegin == target_char_p)
         {
-            return target_char_search_result<char_type>{*l_string_rbegin, static_cast<index_t>(l_string_rbegin.operator->() - string_ptrc_p) };
+            return char_search_result<char_type>{*l_string_rbegin, static_cast<index_t>(l_string_rbegin.operator->() - string_ptrc_p) };
         }
         ++l_string_rbegin;
     }
 
-    return target_char_search_result<char_type>{};
+    return char_search_result<char_type>{};
 }
 
 
@@ -1110,7 +1110,7 @@ template<typename char_type>
 #if _HAS_CXX20_ == 1
     requires character_type<char_type>
 #endif
-_NODISCARD_ _FORCE_INLINE_ target_char_count<char_type> count_all_corresponding_chars_within_range(char_type* string_ptr_p, const string_range string_range_p, const char_type target_char_p) noexcept
+_NODISCARD_ _FORCE_INLINE_ char_count<char_type> count_all_corresponding_chars_within_range(char_type* string_ptr_p, const range string_range_p, const char_type target_char_p) noexcept
 {
     static_assert(FE::is_character<char_type>::_VALUE_, "char_type is not a valid character type");
     FE_EXIT(string_ptr_p == nullptr, "NULLPTR DETECTED: string_ptr_p is nullptr.", FE::MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR);
@@ -1136,14 +1136,14 @@ _NODISCARD_ _FORCE_INLINE_ target_char_count<char_type> count_all_corresponding_
         l_target_char_buffer = target_char_p;
     }
 
-    return target_char_count<char_type>{l_target_char_buffer, l_match_count};
+    return char_count<char_type>{l_target_char_buffer, l_match_count};
 }
 
 template<typename char_type>
 #if _HAS_CXX20_ == 1
     requires character_type<char_type>
 #endif
-_NODISCARD_ _FORCE_INLINE_ constexpr target_char_count<char_type> count_all_corresponding_chars_within_range(const char_type* string_ptr_p, const string_range string_range_p, const char_type target_char_p) noexcept
+_NODISCARD_ _FORCE_INLINE_ constexpr char_count<char_type> count_all_corresponding_chars_within_range(const char_type* string_ptr_p, const range string_range_p, const char_type target_char_p) noexcept
 {
     static_assert(FE::is_character<char_type>::_VALUE_, "char_type is not a valid character type");
     FE_EXIT(string_ptr_p == nullptr, "NULLPTR DETECTED: string_ptr_p is nullptr.", FE::MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR);
@@ -1169,7 +1169,7 @@ _NODISCARD_ _FORCE_INLINE_ constexpr target_char_count<char_type> count_all_corr
         l_target_char_buffer = target_char_p;
     }
 
-    return target_char_count<char_type>{l_target_char_buffer, l_match_count};
+    return char_count<char_type>{l_target_char_buffer, l_match_count};
 }
 
 
@@ -1177,7 +1177,7 @@ template<typename char_type>
 #if _HAS_CXX20_ == 1
     requires character_type<char_type>
 #endif
-_NODISCARD_ _FORCE_INLINE_::std::optional<string_range> search_very_first_substring_within_range(const char_type* const string_ptrc_p, const string_range string_range_p, const char_type* const target_substring_ptrc_p) noexcept
+_NODISCARD_ _FORCE_INLINE_::std::optional<range> search_very_first_substring_within_range(const char_type* const string_ptrc_p, const range string_range_p, const char_type* const target_substring_ptrc_p) noexcept
 {
     static_assert(FE::is_character<char_type>::_VALUE_, "char_type is not a valid character type");
     FE_EXIT(string_ptrc_p == nullptr, "NULLPTR DETECTED: string_ptrc_p is nullptr.", FE::MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR);
@@ -1209,9 +1209,9 @@ _NODISCARD_ _FORCE_INLINE_::std::optional<string_range> search_very_first_substr
     index_t l_begin = (l_string_ptr - string_ptrc_p) - (l_target_substring_ptr - target_substring_ptrc_p);
     index_t l_end = l_string_ptr - string_ptrc_p;
 
-    if (compare_ranged_strings(string_ptrc_p, string_range{l_begin, l_end}, target_substring_ptrc_p, string_range{0, l_target_substring_length}))
+    if (compare_ranged_strings(string_ptrc_p, range{l_begin, l_end}, target_substring_ptrc_p, range{0, l_target_substring_length}))
     {
-        return  std::make_optional<string_range>(l_begin, l_end);
+        return  std::make_optional<range>(l_begin, l_end);
     }
 
     return ::std::nullopt;
@@ -1222,7 +1222,7 @@ template<typename char_type>
 #if _HAS_CXX20_ == 1
     requires character_type<char_type>
 #endif
-_NODISCARD_ _FORCE_INLINE_::std::optional<string_range> search_very_last_substring_within_range(const char_type* const string_ptrc_p, const string_range string_range_p, const char_type* const target_substring_ptrc_p) noexcept
+_NODISCARD_ _FORCE_INLINE_::std::optional<range> search_very_last_substring_within_range(const char_type* const string_ptrc_p, const range string_range_p, const char_type* const target_substring_ptrc_p) noexcept
 {
     static_assert(FE::is_character<char_type>::_VALUE_, "char_type is not a valid character type");
     FE_EXIT(string_ptrc_p == nullptr, "NULLPTR DETECTED: string_ptrc_p is nullptr.", FE::MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR);
@@ -1257,9 +1257,9 @@ _NODISCARD_ _FORCE_INLINE_::std::optional<string_range> search_very_last_substri
     index_t l_begin = (l_string_crbegin.operator->() - string_ptrc_p) + 1;
     index_t l_end = ((l_string_crbegin.operator->() + l_target_substring_length) - string_ptrc_p) + 1;
 
-    if (compare_ranged_strings(string_ptrc_p, string_range{ l_begin, l_end }, target_substring_ptrc_p, string_range{ 0, l_target_substring_length }))
+    if (compare_ranged_strings(string_ptrc_p, range{ l_begin, l_end }, target_substring_ptrc_p, range{ 0, l_target_substring_length }))
     {
-        return  std::make_optional<string_range>(l_begin, l_end);
+        return  std::make_optional<range>(l_begin, l_end);
     }
 
     return ::std::nullopt;
@@ -1299,7 +1299,7 @@ _FORCE_INLINE_ void concatenate_strings(char_type* const out_string_buffer_ptrc_
 
         ABORT_IF(string_buffer_size_p <= l_current_begin_index, "MEMORY BOUNDARY CHECK FAILURES: the string_buffer_size_p is smaller or equal to the l_current_begin_index");
 
-        ::FE::unaligned_memcpy(out_string_buffer_ptrc_p + l_current_begin_index, string_buffer_size_p, sizeof(char_type), strings_p.begin()[i], l_string_length_buffer, sizeof(char_type));
+        UNALIGNED_MEMCPY(out_string_buffer_ptrc_p + l_current_begin_index, string_buffer_size_p, sizeof(char_type), strings_p.begin()[i], l_string_length_buffer, sizeof(char_type));
         l_current_begin_index += l_string_length_buffer;
     }
 }

@@ -6,9 +6,6 @@
 #include <thread>
 
 
-#define PASS_ARGUMENT_OBJECT(argument_object_p) &argument_object_p, typeid(argument_object_p).name()
-
-
 BEGIN_NAMESPACE(FE)
 
 
@@ -24,7 +21,7 @@ public:
 	typedef var::uint64 id_type;
 
 	_MAYBE_UNUSED_ static constexpr var::uint16 _MINIMUM_SUITABLE_THREAD_COUNT_ = 6;
-
+	_MAYBE_UNUSED_ static constexpr var::uint16 _MAX_THRED_ID_DIGIT_LENGTH_ = 24;
 
 	thread() noexcept = default;
 
@@ -48,7 +45,7 @@ public:
 
 	void fork(FE::task_base* const function_ptrc_p) noexcept;
 
-	void fork(FE::task_base* const function_ptrc_p, void* const out_return_ptrc_p, const char* const typename_str_ptrc_p) noexcept;
+	void fork(FE::task_base* const function_ptrc_p, void* const out_return_ptrc_p, const char* const return_typename_ptrc_p) noexcept;
 
 
 	void join() noexcept;

@@ -1,6 +1,6 @@
 ﻿// Copyright © from 2023 to current, UNKNOWN STRYKER. All Rights Reserved.
 #include <FE/core/memory_metrics.h>
-#include <FE/core/heap_utilization.hpp>
+#include <FE/core/heap_memory_tracker.hpp>
 #include "memory.hpp"
 
 

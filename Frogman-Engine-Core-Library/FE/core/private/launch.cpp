@@ -1,7 +1,8 @@
 ﻿// Copyright © from 2023 to current, UNKNOWN STRYKER. All Rights Reserved.
 #include "launch.hpp"
 #include <FE/core/fstream_guard.hxx>
-#include <boost/stacktrace/stacktrace.hpp>
+#include <FE/core/function_table.hpp>
+#include <boost/stacktrace.hpp>
 #include <csignal>
 
 
@@ -14,13 +15,9 @@ void ::FE::internal::engine_main::initialize_engine(_MAYBE_UNUSED_ engine_main_i
 
 #ifdef _IS_EXCEPTION_LOGGER_ENABLED_
 	ABORT_IF(engine_main_initialization_arguments_p._exception_initialization_arguments._exception_logging_strategy_ptr == nullptr, "CRITICAL ERROR: engine_main_initialization_arguments_p._exception_initialization_arguments._exception_logging_strategy_ptr cannot be nullptr");
-	ABORT_IF(engine_main_initialization_arguments_p._exception_initialization_arguments._exception_log_buffer_size == 0, "CRITICAL ERROR: engine_main_initialization_arguments_p._exception_initialization_arguments._exception_log_buffer_size cannot be ZERO");
 	::FE::exception::s_logging_strategy_ptr = engine_main_initialization_arguments_p._exception_initialization_arguments._exception_logging_strategy_ptr;
-	
-	::FE::exception::s_log_buffer_size = std::move(engine_main_initialization_arguments_p._exception_initialization_arguments._exception_log_buffer_size);
-	::FE::exception::s_write_operation_triggering_point = std::move(engine_main_initialization_arguments_p._exception_initialization_arguments._write_operation_triggering_point);
 
-	::FE::exception::__construct_exception_on_main_thread();
+	::FE::exception::__construct_exception();
 #endif
 	
 	::std::signal(SIGTERM, abnormal_shutdown_with_exit_code);
@@ -28,12 +25,14 @@ void ::FE::internal::engine_main::initialize_engine(_MAYBE_UNUSED_ engine_main_i
 	::std::signal(SIGILL, abnormal_shutdown_with_exit_code);
 	::std::signal(SIGABRT, abnormal_shutdown_with_exit_code);
 	::std::signal(SIGFPE, abnormal_shutdown_with_exit_code);
+
+	FE::function_table::tl_s_hash_map.reserve(engine_main_initialization_arguments_p._initial_function_table_size);
 }
 
 void ::FE::internal::engine_main::shutdown_engine() noexcept
 {
 #ifdef _IS_EXCEPTION_LOGGER_ENABLED_
-	::FE::exception::__destruct_exception_on_main_thread();
+	::FE::exception::__destruct_exception();
 #endif
 }
 
