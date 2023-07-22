@@ -9,6 +9,7 @@
 #include <csignal>
 #include <cwchar>
 #include <filesystem>
+#include <FE/miscellaneous/misc.h>
 #pragma warning(disable: 4723)
 #pragma warning(disable: 4127)
 
@@ -36,19 +37,14 @@ namespace internal
 }
 
 
-constexpr auto _FILE_NAME_MAX_LENGTH_ = 1024;
-constexpr auto _MAX_THRED_ID_DIGIT_LENGTH_ = 24;
-constexpr FE::length_t g_sec_string_length = 4;
-
-
 FE::exception* FE::exception::s_logging_strategy_ptr = nullptr;
 
 
 thread_local ::std::ofstream FE::exception::tl_s_file_logger;
 thread_local ::FE::clock FE::exception::tl_s_clock;
 thread_local ::std::string FE::exception::tl_s_log_buffer;
-::FE::lazy_const<FE::var::size_t> FE::exception::s_log_buffer_size;
-::FE::lazy_const<FE::var::uint8> FE::exception::s_write_operation_triggering_point;
+::FE::lazy_const<FE::var::size_t> FE::internal::exception_logger_initialization_arguments::s_log_buffer_size;
+::FE::lazy_const<FE::var::uint8> FE::internal::exception_logger_initialization_arguments::s_write_operation_triggering_point;
 
 
 bool FE::exception::log(const bool expression_p, const char* const expression_string_ptrc_p, const FE::EXCEPTION_MODE runtime_exception_mode_p, const char* const message_ptrc_p, const char* const file_name_ptrc_p, const char* const function_name_ptrc_p, const int line_p, const char* const exit_code_enum_ptrc_p, const int exit_code_p) noexcept
@@ -56,15 +52,6 @@ bool FE::exception::log(const bool expression_p, const char* const expression_st
     return exception::s_logging_strategy_ptr->__logging_strategy(expression_p, expression_string_ptrc_p, runtime_exception_mode_p, message_ptrc_p, file_name_ptrc_p, function_name_ptrc_p, line_p, exit_code_enum_ptrc_p, exit_code_p);
 }
 
-void FE::exception::__construct_exception_on_main_thread() noexcept
-{
-    exception::s_logging_strategy_ptr->__main_thread_exception_construction_strategy();
-}
-
-void  FE::exception::__destruct_exception_on_main_thread() noexcept
-{
-    exception::s_logging_strategy_ptr->__main_thread_exception_destruction_strategy();
-}
 
 void FE::exception::__construct_exception() noexcept
 {
@@ -152,83 +139,6 @@ bool FE::real_time_exception_history_logging_strategy::__logging_strategy(boolea
     return true;
 }
 
-void FE::real_time_exception_history_logging_strategy::__main_thread_exception_construction_strategy() noexcept
-{
-    ::std::filesystem::path l_directory_name = (::std::filesystem::current_path() / "Frogman-Engine-Exception-History-Logs\0");
-    if (::std::filesystem::exists(l_directory_name) == false)
-    {
-        ::std::filesystem::create_directory(l_directory_name);
-    }
-
-    tl_s_log_buffer.reserve(s_log_buffer_size.load());
-    std::memset(tl_s_log_buffer.data(), _NULL_, s_log_buffer_size.load() * sizeof(FE::exception::buffer_type));
-
-#ifdef _WINDOWS_64BIT_OS_
-    var::wchar l_date_info_wstring[clock::_GET_CURRENT_LOCAL_TIME_BUFFER_SIZE_] = L"\0";
-    ::std::mbstowcs(l_date_info_wstring, exception::tl_s_clock.get_current_local_time(), clock::_GET_CURRENT_LOCAL_TIME_BUFFER_SIZE_);
-    std::memset(l_date_info_wstring + (::std::wcslen(l_date_info_wstring) - g_sec_string_length), _NULL_, g_sec_string_length * sizeof(var::wchar)); // to remove seconds
-
-    ::std::filesystem::path l_path_to_log_dump_file = l_directory_name / l_date_info_wstring;
-    ABORT_IF(::std::wcslen(l_path_to_log_dump_file.c_str()) >= _FILE_NAME_MAX_LENGTH_ - clock::_GET_CURRENT_LOCAL_TIME_BUFFER_SIZE_, "ERROR: file name buffer overflowed.");
-
-    var::wchar l_full_path_to_the_file[_FILE_NAME_MAX_LENGTH_] = L"\0";
-    ::std::wcscpy(l_full_path_to_the_file, l_path_to_log_dump_file.c_str());
-
-    ::FE::algorithm::string::concatenate_strings<var::wchar>
-        (
-            l_full_path_to_the_file,
-            _FILE_NAME_MAX_LENGTH_,
-            {
-                L"\\thread main() @ ",
-                l_date_info_wstring,
-                L".txt"
-            }
-    );
-
-#elif defined(_LINUX_64BIT_OS_)
-    var::character l_date_info_string[clock::_GET_CURRENT_LOCAL_TIME_BUFFER_SIZE_] = "\0";
-    ::std::strcpy(l_date_info_string, exception::tl_s_clock.get_current_local_time());
-    std::memset(l_date_info_string + (::std::strlen(l_date_info_string) - g_sec_string_length), _NULL_, g_sec_string_length * sizeof(var::character)); // to remove min sec
-    ::std::filesystem::path l_path_to_log_dump_file = l_directory_name / l_date_info_string;
-
-    ABORT_IF(::std::strlen(l_path_to_log_dump_file.c_str()) >= _FILE_NAME_MAX_LENGTH_ - clock::_GET_CURRENT_LOCAL_TIME_BUFFER_SIZE_, "ERROR: file name buffer overflowed.");
-
-    var::character l_full_path_to_the_file[_FILE_NAME_MAX_LENGTH_] = "\0";
-    ::std::strcpy(l_full_path_to_the_file, l_path_to_log_dump_file.c_str());
-
-    ::FE::algorithm::string::concatenate_strings<var::character>
-        (
-            l_full_path_to_the_file,
-            _FILE_NAME_MAX_LENGTH_,
-            {
-                "/thread main() @ ",
-                l_date_info_string,
-                ".txt"
-            }
-    );
-
-
-#endif
-
-    if (::std::filesystem::exists(l_path_to_log_dump_file) == false)
-    {
-        ::std::filesystem::create_directory(l_path_to_log_dump_file);
-    }
-
-    tl_s_file_logger.open(l_full_path_to_the_file);
-    tl_s_file_logger << "[BEGIN RECORD]\n{\n";
-}
-
-void FE::real_time_exception_history_logging_strategy::__main_thread_exception_destruction_strategy() noexcept
-{
-    if (real_time_exception_history_logging_strategy::tl_s_file_logger.is_open() == true)
-    {
-        real_time_exception_history_logging_strategy::tl_s_file_logger << "\n}\n[END OF HISTORY]";
-        real_time_exception_history_logging_strategy::tl_s_file_logger << "\n\nThe leaked heap memory byte(s) by the main thread" << " is " << heap_utilization<void>::query_all_data()._thread_local_total_bytes << " byte(s)\n";
-        real_time_exception_history_logging_strategy::tl_s_file_logger << "The total leaked byte(s) on the heap is " << heap_utilization<void>::query_all_data()._global_total_bytes << " byte(s)";
-        real_time_exception_history_logging_strategy::tl_s_file_logger.close();
-    }
-}
 
 void FE::real_time_exception_history_logging_strategy::__exception_construction_strategy() noexcept
 {
@@ -238,26 +148,26 @@ void FE::real_time_exception_history_logging_strategy::__exception_construction_
         ::std::filesystem::create_directory(l_directory_name);
     }
 
-    tl_s_log_buffer.reserve(s_log_buffer_size.load());
-    std::memset(tl_s_log_buffer.data(), _NULL_, s_log_buffer_size.load() * sizeof(FE::exception::buffer_type));
+    tl_s_log_buffer.reserve(internal::exception_logger_initialization_arguments::s_log_buffer_size.load());
+    std::memset(tl_s_log_buffer.data(), _NULL_, internal::exception_logger_initialization_arguments::s_log_buffer_size.load() * sizeof(FE::exception::buffer_type));
 
 #ifdef _WINDOWS_64BIT_OS_
-    var::wchar l_thread_id[_MAX_THRED_ID_DIGIT_LENGTH_] = L"\0";
-    ::swprintf(l_thread_id, _MAX_THRED_ID_DIGIT_LENGTH_, L"%llu", ::FE::thread::tl_s_this_thread_id); // hashed thread-ids from std::hash are too long and hard to read 
+    var::wchar l_thread_id[thread::_MAX_THRED_ID_DIGIT_LENGTH_] = L"\0";
+    ::swprintf(l_thread_id, thread::_MAX_THRED_ID_DIGIT_LENGTH_, L"%llu", ::FE::thread::tl_s_this_thread_id); // hashed thread-ids from std::hash are too long and hard to read 
 
     var::wchar l_date_info_wstring[clock::_GET_CURRENT_LOCAL_TIME_BUFFER_SIZE_] = L"\0";
     ::std::mbstowcs(l_date_info_wstring, exception::tl_s_clock.get_current_local_time(), clock::_GET_CURRENT_LOCAL_TIME_BUFFER_SIZE_);
-    std::memset(l_date_info_wstring + (::std::wcslen(l_date_info_wstring) - g_sec_string_length), _NULL_, g_sec_string_length * sizeof(var::wchar)); // to remove seconds
+    std::memset(l_date_info_wstring + (::std::wcslen(l_date_info_wstring) - _SECONDS_STRING_LENGTH_), _NULL_, _SECONDS_STRING_LENGTH_ * sizeof(var::wchar)); // to remove seconds
 
     ::std::filesystem::path l_path_to_log_dump_file = l_directory_name / l_date_info_wstring;
 
-    var::wchar l_full_path_to_the_file[_FILE_NAME_MAX_LENGTH_] = L"\0";
+    var::wchar l_full_path_to_the_file[_FULL_PATH_TO_FILE_MAX_LENGTH_] = L"\0";
     ::std::wcscpy(l_full_path_to_the_file, l_path_to_log_dump_file.c_str());
 
     ::FE::algorithm::string::concatenate_strings<var::wchar>
         (
             l_full_path_to_the_file,
-            _FILE_NAME_MAX_LENGTH_,
+            _FULL_PATH_TO_FILE_MAX_LENGTH_,
             {
                 L"\\thread ",
                 l_thread_id,
@@ -273,16 +183,16 @@ void FE::real_time_exception_history_logging_strategy::__exception_construction_
 
     var::character l_date_info_string[clock::_GET_CURRENT_LOCAL_TIME_BUFFER_SIZE_] = "\0";
     ::std::strcpy(l_date_info_string, exception::tl_s_clock.get_current_local_time());
-    std::memset(l_date_info_string + (::std::strlen(l_date_info_string) - g_sec_string_length), _NULL_, g_sec_string_length * sizeof(var::character)); // to remove min sec
+    std::memset(l_date_info_string + (::std::strlen(l_date_info_string) - _SECONDS_STRING_LENGTH_), _NULL_, _SECONDS_STRING_LENGTH_ * sizeof(var::character)); // to remove min sec
     ::std::filesystem::path l_path_to_log_dump_file = l_directory_name / l_date_info_string;
 
-    var::character l_full_path_to_the_file[_FILE_NAME_MAX_LENGTH_] = "\0";
+    var::character l_full_path_to_the_file[_FULL_PATH_TO_FILE_MAX_LENGTH_] = "\0";
     strcpy(l_full_path_to_the_file, l_path_to_log_dump_file.c_str());
 
     ::FE::algorithm::string::concatenate_strings<var::character>
         (
             l_full_path_to_the_file,
-            _FILE_NAME_MAX_LENGTH_,
+            _FULL_PATH_TO_FILE_MAX_LENGTH_,
             {
                 "/thread ",
                 l_thread_id,
@@ -309,7 +219,7 @@ void FE::real_time_exception_history_logging_strategy::__exception_destruction_s
     {
         real_time_exception_history_logging_strategy::tl_s_file_logger << "\n}\n[END OF HISTORY]";
 
-        real_time_exception_history_logging_strategy::tl_s_file_logger << "\n\nThe leaked heap memory byte(s) by the thread " << ::FE::thread::tl_s_this_thread_id << " is " << heap_utilization<void>::query_all_data()._thread_local_total_bytes << " byte(s)";
+        real_time_exception_history_logging_strategy::tl_s_file_logger << "\n\nThe leaked heap memory byte(s) by the thread " << ::FE::thread::tl_s_this_thread_id << " is " << heap_memory_tracker<void>::query_all_data()._thread_local_total_bytes << " byte(s)";
 
         real_time_exception_history_logging_strategy::tl_s_file_logger.close();
     }
@@ -357,10 +267,10 @@ bool FE::exception_history_log_buffering_strategy::__logging_strategy(boolean ex
             tl_s_log_buffer = tl_s_log_buffer.data();
             length_t l_log_buffer_length = tl_s_log_buffer.length();
 
-            size_t l_divisor = (tl_s_log_buffer.capacity() / exception::s_write_operation_triggering_point.load());
+            size_t l_divisor = (tl_s_log_buffer.capacity() / internal::exception_logger_initialization_arguments::s_write_operation_triggering_point.load());
 
             ABORT_IF(l_log_buffer_length == 0, "l_log_buffer_length cannot be zero");
-            ABORT_IF(exception::s_write_operation_triggering_point.load() == 0, "exception::s_write_operation_triggering_point cannot be zero");
+            ABORT_IF(internal::exception_logger_initialization_arguments::s_write_operation_triggering_point.load() == 0, "exception::s_write_operation_triggering_point cannot be zero");
             ABORT_IF(l_divisor == 0, "l_divisor cannot be zero");
 
             if (l_log_buffer_length >= (l_log_buffer_length / l_divisor))
@@ -410,83 +320,6 @@ bool FE::exception_history_log_buffering_strategy::__logging_strategy(boolean ex
     return true;
 }
 
-void FE::exception_history_log_buffering_strategy::__main_thread_exception_construction_strategy() noexcept
-{
-    ::std::filesystem::path l_directory_name = (::std::filesystem::current_path() / "Frogman-Engine-Exception-History-Logs\0");
-    if (::std::filesystem::exists(l_directory_name) == false)
-    {
-        ::std::filesystem::create_directory(l_directory_name);
-    }
-
-    tl_s_log_buffer.reserve(s_log_buffer_size.load());
-    std::memset(tl_s_log_buffer.data(), _NULL_, s_log_buffer_size.load() * sizeof(FE::exception::buffer_type));
-
-#ifdef _WINDOWS_64BIT_OS_
-    var::wchar l_date_info_wstring[clock::_GET_CURRENT_LOCAL_TIME_BUFFER_SIZE_] = L"\0";
-    ::std::mbstowcs(l_date_info_wstring, exception::tl_s_clock.get_current_local_time(), clock::_GET_CURRENT_LOCAL_TIME_BUFFER_SIZE_);
-    std::memset(l_date_info_wstring + (::std::wcslen(l_date_info_wstring) - g_sec_string_length), _NULL_, g_sec_string_length * sizeof(var::wchar)); // to remove seconds
-
-    ::std::filesystem::path l_path_to_log_dump_file = l_directory_name / l_date_info_wstring;
-    ABORT_IF(::std::wcslen(l_path_to_log_dump_file.c_str()) >= _FILE_NAME_MAX_LENGTH_ - clock::_GET_CURRENT_LOCAL_TIME_BUFFER_SIZE_, "ERROR: file name buffer overflowed.");
-
-    var::wchar l_full_path_to_the_file[_FILE_NAME_MAX_LENGTH_] = L"\0";
-    ::std::wcscpy(l_full_path_to_the_file, l_path_to_log_dump_file.c_str());
-
-    ::FE::algorithm::string::concatenate_strings<var::wchar>
-        (
-            l_full_path_to_the_file,
-            _FILE_NAME_MAX_LENGTH_,
-            {
-                L"\\thread main() @ ",
-                l_date_info_wstring,
-                L".txt"
-            }
-    );
-
-#elif defined(_LINUX_64BIT_OS_)
-    var::character l_date_info_string[clock::_GET_CURRENT_LOCAL_TIME_BUFFER_SIZE_] = "\0";
-    ::std::strcpy(l_date_info_string, exception::tl_s_clock.get_current_local_time());
-    std::memset(l_date_info_string + (::std::strlen(l_date_info_string) - g_sec_string_length), _NULL_, g_sec_string_length * sizeof(var::character)); // to remove min sec
-    ::std::filesystem::path l_path_to_log_dump_file = l_directory_name / l_date_info_string;
-
-    ABORT_IF(::std::strlen(l_path_to_log_dump_file.c_str()) >= _FILE_NAME_MAX_LENGTH_ - clock::_GET_CURRENT_LOCAL_TIME_BUFFER_SIZE_, "ERROR: file name buffer overflowed.");
-
-    var::character l_full_path_to_the_file[_FILE_NAME_MAX_LENGTH_] = "\0";
-    ::std::strcpy(l_full_path_to_the_file, l_path_to_log_dump_file.c_str());
-
-    ::FE::algorithm::string::concatenate_strings<var::character>
-        (
-            l_full_path_to_the_file,
-            _FILE_NAME_MAX_LENGTH_,
-            {
-                "/thread main() @ ",
-                l_date_info_string,
-                ".txt"
-            }
-    );
-
-
-#endif
-
-    if (::std::filesystem::exists(l_path_to_log_dump_file) == false)
-    {
-        ::std::filesystem::create_directory(l_path_to_log_dump_file);
-    }
-
-    tl_s_file_logger.open(l_full_path_to_the_file);
-    tl_s_file_logger << "[BEGIN RECORD]\n{\n";
-}
-
-void FE::exception_history_log_buffering_strategy::__main_thread_exception_destruction_strategy() noexcept
-{
-    if (tl_s_file_logger.is_open() == true)
-    {
-        tl_s_file_logger << "\n}\n[END OF HISTORY]";
-        tl_s_file_logger << "\n\nThe leaked heap memory byte(s) by the main thread" << " is " << heap_utilization<void>::query_all_data()._thread_local_total_bytes << " byte(s)\n";
-        tl_s_file_logger << "The total leaked byte(s) on the heap is " << heap_utilization<void>::query_all_data()._global_total_bytes << " byte(s)";
-        tl_s_file_logger.close();
-    }
-}
 
 void FE::exception_history_log_buffering_strategy::__exception_construction_strategy() noexcept
 {
@@ -496,26 +329,26 @@ void FE::exception_history_log_buffering_strategy::__exception_construction_stra
         ::std::filesystem::create_directory(l_directory_name);
     }
 
-    tl_s_log_buffer.reserve(s_log_buffer_size.load());
-    std::memset(tl_s_log_buffer.data(), _NULL_, s_log_buffer_size.load() * sizeof(FE::exception::buffer_type));
+    tl_s_log_buffer.reserve(internal::exception_logger_initialization_arguments::s_log_buffer_size.load());
+    std::memset(tl_s_log_buffer.data(), _NULL_, internal::exception_logger_initialization_arguments::s_log_buffer_size.load() * sizeof(FE::exception::buffer_type));
 
 #ifdef _WINDOWS_64BIT_OS_
-    var::wchar l_thread_id[_MAX_THRED_ID_DIGIT_LENGTH_] = L"\0";
-    ::swprintf(l_thread_id, _MAX_THRED_ID_DIGIT_LENGTH_, L"%llu", ::FE::thread::tl_s_this_thread_id); // hashed thread-ids from std::hash are too long and hard to read 
+    var::wchar l_thread_id[thread::_MAX_THRED_ID_DIGIT_LENGTH_] = L"\0";
+    ::swprintf(l_thread_id, thread::_MAX_THRED_ID_DIGIT_LENGTH_, L"%llu", ::FE::thread::tl_s_this_thread_id); // hashed thread-ids from std::hash are too long and hard to read 
 
     var::wchar l_date_info_wstring[clock::_GET_CURRENT_LOCAL_TIME_BUFFER_SIZE_] = L"\0";
     ::std::mbstowcs(l_date_info_wstring, exception::tl_s_clock.get_current_local_time(), clock::_GET_CURRENT_LOCAL_TIME_BUFFER_SIZE_);
-    std::memset(l_date_info_wstring + (::std::wcslen(l_date_info_wstring) - g_sec_string_length), _NULL_, g_sec_string_length * sizeof(var::wchar)); // to remove seconds
+    std::memset(l_date_info_wstring + (::std::wcslen(l_date_info_wstring) - _SECONDS_STRING_LENGTH_), _NULL_, _SECONDS_STRING_LENGTH_ * sizeof(var::wchar)); // to remove seconds
 
     ::std::filesystem::path l_path_to_log_dump_file = l_directory_name / l_date_info_wstring;
 
-    var::wchar l_full_path_to_the_file[_FILE_NAME_MAX_LENGTH_] = L"\0";
+    var::wchar l_full_path_to_the_file[_FULL_PATH_TO_FILE_MAX_LENGTH_] = L"\0";
     ::std::wcscpy(l_full_path_to_the_file, l_path_to_log_dump_file.c_str());
 
     ::FE::algorithm::string::concatenate_strings<var::wchar>
         (
             l_full_path_to_the_file,
-            _FILE_NAME_MAX_LENGTH_,
+            _FULL_PATH_TO_FILE_MAX_LENGTH_,
             {
                 L"\\thread ",
                 l_thread_id,
@@ -531,16 +364,16 @@ void FE::exception_history_log_buffering_strategy::__exception_construction_stra
 
     var::character l_date_info_string[clock::_GET_CURRENT_LOCAL_TIME_BUFFER_SIZE_] = "\0";
     ::std::strcpy(l_date_info_string, exception::tl_s_clock.get_current_local_time());
-    std::memset(l_date_info_string + (::std::strlen(l_date_info_string) - g_sec_string_length), _NULL_, g_sec_string_length * sizeof(var::character)); // to remove min sec
+    std::memset(l_date_info_string + (::std::strlen(l_date_info_string) - _SECONDS_STRING_LENGTH_), _NULL_, _SECONDS_STRING_LENGTH_ * sizeof(var::character)); // to remove min sec
     ::std::filesystem::path l_path_to_log_dump_file = l_directory_name / l_date_info_string;
 
-    var::character l_full_path_to_the_file[_FILE_NAME_MAX_LENGTH_] = "\0";
+    var::character l_full_path_to_the_file[_FULL_PATH_TO_FILE_MAX_LENGTH_] = "\0";
     strcpy(l_full_path_to_the_file, l_path_to_log_dump_file.c_str());
 
     ::FE::algorithm::string::concatenate_strings<var::character>
         (
             l_full_path_to_the_file,
-            _FILE_NAME_MAX_LENGTH_,
+            _FULL_PATH_TO_FILE_MAX_LENGTH_,
             {
                 "/thread ",
                 l_thread_id,
@@ -567,7 +400,7 @@ void FE::exception_history_log_buffering_strategy::__exception_destruction_strat
     {
         tl_s_file_logger << "\n}\n[END OF HISTORY]";
 
-        tl_s_file_logger << "\n\nThe leaked heap memory byte(s) by the thread " << ::FE::thread::tl_s_this_thread_id << " is " << heap_utilization<void>::query_all_data()._thread_local_total_bytes << " byte(s)";
+        tl_s_file_logger << "\n\nThe leaked heap memory byte(s) by the thread " << ::FE::thread::tl_s_this_thread_id << " is " << heap_memory_tracker<void>::query_all_data()._thread_local_total_bytes << " byte(s)";
 
         tl_s_file_logger.close();
     }

@@ -71,7 +71,7 @@ public:
 
 	var::boolean stop_using() noexcept
 	{
-		if (FE_LOG(this->m_signal_ptr == nullptr, "WARNING: The signal pointer is nullptr. This function will return early with false.")) _LIKELY_ { return _FAILED_; }
+		if (FE_EXCEPTION_LOG(this->m_signal_ptr == nullptr, "WARNING: The signal pointer is nullptr. This function will return early with false.")) _LIKELY_ { return _FAILED_; }
 
 		this->m_signal_ptr->store(false, std::memory_order_release);
 		return _SUCCESSFUL_;

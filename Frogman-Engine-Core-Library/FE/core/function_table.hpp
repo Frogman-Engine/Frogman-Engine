@@ -36,15 +36,19 @@ public:
 	static var::boolean check_presence(underlying_container::key_type key_p) noexcept { return (FE::function_table::tl_s_hash_map.find(key_p) == FE::function_table::tl_s_hash_map.end()) ? false : true; }
 	static FE::task_base* retrieve(underlying_container::key_type key_p) noexcept { return FE::function_table::tl_s_hash_map.find(key_p)->second; }
 
-	template<typename ...arguments>
-	_FORCE_INLINE_ static void invoke(underlying_container::key_type key_p, arguments&& ...arguments_p) noexcept { FE::function_table::tl_s_hash_map.find(key_p)->second->execute(arguments_p...); }
-
-	template<typename return_type, typename ...arguments>
-	_FORCE_INLINE_ static return_type invoke(underlying_container::key_type key_p, arguments&& ...arguments_p) noexcept { return FE::function_table::tl_s_hash_map.find(key_p)->second->execute(arguments_p...); }
-
 	template<typename return_type>
-	_FORCE_INLINE_ static return_type invoke(underlying_container::key_type key_p) noexcept { return FE::function_table::tl_s_hash_map.find(key_p)->second->execute(); }
-	_FORCE_INLINE_ static void invoke(underlying_container::key_type key_p) noexcept { FE::function_table::tl_s_hash_map.find(key_p)->second->execute(); }
+	_FORCE_INLINE_ static return_type invoke(underlying_container::key_type key_p) noexcept 
+	{
+		return_type l_buffer;
+		auto l_return_type_info = FE::function_table::tl_s_hash_map.find(key_p)->second->execute(PASS_RETURN_BUFFER(l_buffer));
+		FE_ASSERT(l_return_type_info == FE::RETURN_TYPE::_VOID, "ERROR: invoked a function with a non-void return type, but the result is void");
+		return l_buffer;
+	}
+	_FORCE_INLINE_ static void invoke(underlying_container::key_type key_p) noexcept 
+	{
+		auto l_return_type_info = FE::function_table::tl_s_hash_map.find(key_p)->second->execute();
+		FE_ASSERT(l_return_type_info == FE::RETURN_TYPE::_NON_VOID, "ERROR: invoked a function with void return type, but the result is not void");
+	}
 };
 
 

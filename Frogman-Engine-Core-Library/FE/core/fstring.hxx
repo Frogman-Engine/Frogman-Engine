@@ -4,7 +4,7 @@
 #include "algorithm/string.hxx"
 #include "iterator.hxx"
 #include "private/memory.hpp"
-#include "heap_utilization.hpp"
+#include "heap_memory_tracker.hpp"
 
 
 BEGIN_NAMESPACE(FE)

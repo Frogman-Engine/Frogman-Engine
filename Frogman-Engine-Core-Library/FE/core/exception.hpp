@@ -60,23 +60,15 @@ protected:
     thread_local static ::std::ofstream tl_s_file_logger;
     thread_local static ::FE::clock tl_s_clock;
     thread_local static ::std::string tl_s_log_buffer;
-    static lazy_const<var::size_t> s_log_buffer_size;
-    static lazy_const<var::uint8> s_write_operation_triggering_point;
    
 public:
     static bool log(boolean expression_p, character* const expression_string_ptrc_p, const EXCEPTION_MODE runtime_exception_mode_p, character* const message_ptrc_p, character* const file_name_ptrc_p, character* const function_name_ptrc_p, int32 line_p, character* const exit_code_enum_ptrc_p = nullptr, int32 exit_code_p = -1) noexcept;
 
 private:
-    static void __construct_exception_on_main_thread() noexcept;
-    static void __destruct_exception_on_main_thread() noexcept;
-  
 	static void __construct_exception() noexcept;
     static void __destruct_exception() noexcept;
    
 protected:
-    virtual void __main_thread_exception_construction_strategy() noexcept = 0;
-    virtual void __main_thread_exception_destruction_strategy() noexcept = 0;
-
     virtual void __exception_construction_strategy() noexcept = 0;
     virtual void __exception_destruction_strategy() noexcept = 0;
 
@@ -84,12 +76,16 @@ protected:
 };
 
 
-struct exception_initialization_arguments
+namespace internal
 {
-    FE::exception* _exception_logging_strategy_ptr;
-    var::size_t _exception_log_buffer_size;
-    var::uint8 _write_operation_triggering_point;
-};
+    struct exception_logger_initialization_arguments
+    {
+        using percent_t = var::uint8;
+        FE::exception* _exception_logging_strategy_ptr;
+        static lazy_const<var::size_t> s_log_buffer_size;
+        static lazy_const<var::uint8> s_write_operation_triggering_point;
+    };
+}
 
 
 #ifdef _ENABLE_ASSERT_
@@ -100,12 +96,12 @@ struct exception_initialization_arguments
 #define FE_ASSERT(expression_p, message_p)
 #endif
 
-#ifdef _ENABLE_LOG_
+#ifdef _ENABLE_EXCEPTION_LOG_
 // It logs an exception if the expression_p is true
-#define FE_LOG(expression_p, message_p) ::FE::exception::log(expression_p, #expression_p, ::FE::_LOG_EXCEPTION_HISTORY_, message_p, _SOURCE_CODE_LOCATION_)
+#define FE_EXCEPTION_LOG(expression_p, message_p) ::FE::exception::log(expression_p, #expression_p, ::FE::_LOG_EXCEPTION_HISTORY_, message_p, _SOURCE_CODE_LOCATION_)
 #else
 // It logs an exception if the expression_p is true
-#define FE_LOG(expression_p, message_p) expression_p
+#define FE_EXCEPTION_LOG(expression_p, message_p) expression_p
 #endif
 
 #ifdef _ENABLE_EXIT_
@@ -126,8 +122,6 @@ public:
 private:
     virtual bool __logging_strategy(boolean expression_p, character* const expression_string_ptrc_p, const EXCEPTION_MODE runtime_exception_mode_p, character* const message_ptrc_p, character* const file_name_ptrc_p, character* const function_name_ptrc_p, int32 line_p, character* const exit_code_enum_ptrc_p, int32 exit_code_p) noexcept override;
 
-    virtual void __main_thread_exception_construction_strategy() noexcept override;
-    virtual void __main_thread_exception_destruction_strategy() noexcept override;
     virtual void __exception_construction_strategy() noexcept override;
     virtual void __exception_destruction_strategy() noexcept override;
 };
@@ -142,8 +136,6 @@ public:
 private:
     virtual bool __logging_strategy(boolean expression_p, character* const expression_string_ptrc_p, const EXCEPTION_MODE runtime_exception_mode_p, character* const message_ptrc_p, character* const file_name_ptrc_p, character* const function_name_ptrc_p, int32 line_p, character* const exit_code_enum_ptrc_p, int32 exit_code_p) noexcept override;
 
-    virtual void __main_thread_exception_construction_strategy() noexcept override;
-    virtual void __main_thread_exception_destruction_strategy() noexcept override;
     virtual void __exception_construction_strategy() noexcept override;
     virtual void __exception_destruction_strategy() noexcept override;
 };

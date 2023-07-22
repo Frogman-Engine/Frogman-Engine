@@ -1,7 +1,7 @@
 ﻿#ifndef _FE_CORE_LAUNCH_HPP_
 #define _FE_CORE_LAUNCH_HPP_
 // Copyright © from 2023 to current, UNKNOWN STRYKER. All Rights Reserved.
-#include <FE/core/clock.hpp>
+#include <FE/core/heap_memory_tracker.hpp>
 
 
 int main(int argc, char** argv);
@@ -15,8 +15,11 @@ constexpr auto _MAIN_THREAD_ID_ = -1;
 
 struct engine_main_initialization_arguments
 {
-	exception_initialization_arguments _exception_initialization_arguments;
-	var::size_t _initial_function_table_size;
+	using initial_function_table_size_t = var::size_t;
+
+	::FE::internal::exception_logger_initialization_arguments _exception_initialization_arguments;
+	initial_function_table_size_t _initial_function_table_size;
+	::FE::internal::heap_memory_tracker_initialization_argument _heap_memory_tracker_initialization_argument;
 };
 
 

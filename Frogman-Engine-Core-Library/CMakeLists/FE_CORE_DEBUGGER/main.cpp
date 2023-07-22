@@ -7,7 +7,7 @@
 #include <FE/miscellaneous/define_max_min.h>
 
 #include <FE/core/concurrent_memory_block.hxx>
-#include <FE/core/heap_utilization.hpp>
+#include <FE/core/heap_memory_tracker.hpp>
 #include <FE/core/allocator_adaptor.hxx>
 #include <FE/core/function_table.hpp>
 #include <FE/core/thread.hpp>
@@ -18,20 +18,24 @@
 #define _ENABLE_PRE_TEST_ false
 
 
-static ::FE::real_time_exception_history_logging_strategy s_real_time_exception_history_logging_strategy;
-static ::FE::exception_history_log_buffering_strategy s_exception_history_log_buffering_strategy;
- 
-static ::FE::internal::engine_main_initialization_arguments s_config_args = ::FE::internal::engine_main_initialization_arguments
-{
-	FE::exception_initialization_arguments
-	{
-		&s_exception_history_log_buffering_strategy,
-		FE::exception::_DEFAULT_DEBUG_LOG_BUFFER_SIZE_,
-		50
-	},
 
-	1000
-};
+
+static FE::internal::engine_main_initialization_arguments s_config_args = []()
+{
+	static FE::real_time_exception_history_logging_strategy s_real_time_exception_history_logging_strategy;
+	static FE::exception_history_log_buffering_strategy s_exception_history_log_buffering_strategy;
+
+
+	FE::internal::engine_main_initialization_arguments l_configs;
+
+	l_configs._exception_initialization_arguments._exception_logging_strategy_ptr = &s_exception_history_log_buffering_strategy;
+	l_configs._exception_initialization_arguments.s_log_buffer_size = FE::exception::_DEFAULT_DEBUG_LOG_BUFFER_SIZE_;
+	l_configs._exception_initialization_arguments.s_write_operation_triggering_point = FE::internal::exception_logger_initialization_arguments::percent_t{ 70 };
+	l_configs._initial_function_table_size = 1000;
+	l_configs._heap_memory_tracker_initialization_argument.s_output_stream_buffer_size = FE::exception::_DEFAULT_DEBUG_LOG_BUFFER_SIZE_;
+
+	return l_configs;
+}();
 
 
 void fn() noexcept
