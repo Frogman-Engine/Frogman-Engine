@@ -7,6 +7,7 @@
 #include <FE/core/memory_metrics.h>
 #include <FE/miscellaneous/misc.h>
 #include <FE/core/clock.hpp>
+#include <FE/core/thread.hpp>
 #include <filesystem>
 #include <fstream>
 
@@ -31,6 +32,10 @@ class heap_memory_tracker_base
 protected:
 	static ::std::atomic_size_t s_global_total_bytes;
 	thread_local static var::size_t tl_s_thread_local_total_bytes;
+
+    thread_local static std::ofstream tl_s_utilized_heap_memory_output_stream;
+    thread_local static std::string tl_s_utilized_heap_memory_output_stream_buffer;
+    thread_local static FE::clock tl_s_clock;
 };
 
 
@@ -53,9 +58,6 @@ class heap_memory_tracker final : public heap_memory_tracker_base
 
 	static ::std::atomic_size_t s_global_total_bytes_by_type;
 	thread_local static var::size_t tl_s_thread_local_total_bytes_by_type;
-	thread_local static std::ofstream tl_s_utilized_heap_memory_output_stream;
-	thread_local static std::string tl_s_utilized_heap_memory_output_stream_buffer;
-
 
 	_FORCE_INLINE_ static void add(size_t size_bytes_p) noexcept
 	{
@@ -84,7 +86,7 @@ class heap_memory_tracker final : public heap_memory_tracker_base
 		}
 
 		tl_s_utilized_heap_memory_output_stream_buffer.reserve(internal::heap_memory_tracker_initialization_argument::s_output_stream_buffer_size.load());
-		std::memset(internal::heap_memory_tracker_initialization_argument::tl_s_utilized_heap_memory_output_stream_buffer.data(), _NULL_, internal::heap_memory_tracker_initialization_argument::s_output_stream_buffer_size.load() * sizeof(char));
+		std::memset(tl_s_utilized_heap_memory_output_stream_buffer.data(), _NULL_, internal::heap_memory_tracker_initialization_argument::s_output_stream_buffer_size.load() * sizeof(char));
 
 #ifdef _WINDOWS_64BIT_OS_
 		var::wchar l_thread_id[thread::_MAX_THRED_ID_DIGIT_LENGTH_] = L"\0";
@@ -113,11 +115,11 @@ class heap_memory_tracker final : public heap_memory_tracker_base
 		);
 
 #elif defined(_LINUX_64BIT_OS_)
-		var::character l_thread_id[_MAX_THRED_ID_DIGIT_LENGTH_] = "\0";
-		snprintf(l_thread_id, _MAX_THRED_ID_DIGIT_LENGTH_, "%llu", ::FE::thread::tl_s_this_thread_id);
+		var::character l_thread_id[FE::thread::_MAX_THRED_ID_DIGIT_LENGTH_] = "\0";
+		snprintf(l_thread_id, FE::thread::_MAX_THRED_ID_DIGIT_LENGTH_, "%llu", ::FE::thread::tl_s_this_thread_id);
 
 		var::character l_date_info_string[clock::_GET_CURRENT_LOCAL_TIME_BUFFER_SIZE_] = "\0";
-		::std::strcpy(l_date_info_string, exception::tl_s_clock.get_current_local_time());
+		::std::strcpy(l_date_info_string, tl_s_clock.get_current_local_time());
 		std::memset(l_date_info_string + (::std::strlen(l_date_info_string) - _SECONDS_STRING_LENGTH_), _NULL_, _SECONDS_STRING_LENGTH_ * sizeof(char)); // to remove min sec
 		::std::filesystem::path l_path_to_log_dump_file = l_directory_name / l_date_info_string;
 
@@ -221,9 +223,6 @@ template<typename T, class address_alignment>
 
 template<typename T, class address_alignment>
 thread_local var::size_t FE::heap_memory_tracker<T, address_alignment>::tl_s_thread_local_total_bytes_by_type = 0;
-
-template<typename T, class address_alignment>
-thread_local std::ofstream FE::heap_memory_tracker<T, address_alignment>::tl_s_utilized_heap_memory_output_stream;
 
 
 template<typename T, class alignment = align_8bytes>

@@ -43,7 +43,6 @@ _FORCE_INLINE_ void assign(iterator dest_iterator_begin_p, OBJECT_LIFECYCLE* con
 {
 	using T = typename iterator::value_type;
 	static_assert(std::is_class<iterator>::value == true);
-	static_assert(std::is_assignable<T>::value == true);
 	FE_ASSERT(dest_iterator_begin_p == nullptr, "ERROR: object_ptrc_p is nullptr.");
     FE_ASSERT(bool_mask_ptrc_p == nullptr, "ERROR: bool_mask_ptrc_p is nullptr.");
 
@@ -146,7 +145,6 @@ _FORCE_INLINE_ void assign(iterator begin_p, iterator end_p, OBJECT_LIFECYCLE* c
 {
 	using T = typename iterator::value_type;
 	static_assert(std::is_class<iterator>::value == true);
-	static_assert(std::is_assignable<T>::value == true);
 	static_assert(FE::is_trivially_constructible_and_destructible<T>::_VALUE_ == FE::OBJECT_TRIVIALITY::_NOT_TRIVIAL, "WARNING: T must not be trivially constructible and destructible. This function call has no effect and is a waste of computing resource");
 	FE_ASSERT(boolean_mask_ptrc_p == nullptr, "ERROR: boolean_mask_ptrc_p is nullptr.");
 	FE_ASSERT(begin_p == nullptr, "ERROR: begin_p is nullptr.");
