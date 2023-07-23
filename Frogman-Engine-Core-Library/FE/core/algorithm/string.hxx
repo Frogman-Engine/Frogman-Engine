@@ -8,6 +8,28 @@
 #include <utility>
 
 
+namespace FE::internal
+{
+    _NODISCARD_ _FORCE_INLINE_ constexpr FE::var::uint64 strlen(const char* const str_ptrc_p) noexcept
+    {
+        const char* l_iterator_ptr = str_ptrc_p;
+
+        switch (*str_ptrc_p)
+        {
+        case  '\0':
+            return 0;
+
+        default:
+            break;
+        }
+
+        while (*(++l_iterator_ptr) != '\0') _LIKELY_{}
+
+        return (l_iterator_ptr - str_ptrc_p);
+    }
+}
+
+
 BEGIN_NAMESPACE(FE::algorithm::string)
 
 

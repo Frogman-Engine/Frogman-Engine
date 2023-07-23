@@ -35,9 +35,7 @@ void FE::thread::fork(FE::task_base* const function_ptrc_p) noexcept
 		{
 			tl_s_this_thread_id = __generate_id();
 
-			ENABLE_IF_EXCEPTION_LOGGER_ENABLED(::FE::exception::__construct_exception());
 			_DISCARD_ auto l_ignore_nodiscard_ = function_ptrc_p->execute();
-			ENABLE_IF_EXCEPTION_LOGGER_ENABLED(::FE::exception::__destruct_exception());
 		}
 	);
 }
@@ -54,9 +52,7 @@ void FE::thread::fork(FE::task_base* const function_ptrc_p, void* const out_retu
 		{
 			tl_s_this_thread_id = __generate_id();
 
-			ENABLE_IF_EXCEPTION_LOGGER_ENABLED(::FE::exception::__construct_exception());
 			_DISCARD_ auto l_is_void = function_ptrc_p->execute(out_return_ptrc_p, return_typename_ptrc_p);
-			ENABLE_IF_EXCEPTION_LOGGER_ENABLED(::FE::exception::__destruct_exception());
 
 			FE_ASSERT(l_is_void == FE::RETURN_TYPE::_VOID && out_return_ptrc_p != nullptr, "ERROR: a non-void function assigned to a void-return-type task object.");
 		}

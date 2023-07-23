@@ -4,11 +4,10 @@
 #include "types.h"
 #include "debug.h"
 #include <fstream>
-#include <memory>
 #include <string>
 
 
-#if defined(_ENABLE_ASSERT_) || defined(_ENABLE_LOG_) || defined(_ENABLE_EXIT_)
+#if defined(_ENABLE_ASSERT_) || defined(_ENABLE_EXCEPTION_LOG_) || defined(_ENABLE_EXIT_)
 #define _IS_EXCEPTION_LOGGER_ENABLED_
 #define IF_EXCEPTION_LOGGER_ENABLED(true_p, false_p) true_p
 #define ENABLE_IF_EXCEPTION_LOGGER_ENABLED(code_p) code_p
@@ -17,13 +16,10 @@
 #define ENABLE_IF_EXCEPTION_LOGGER_ENABLED(code_p)
 #endif
 
-#define _SOURCE_CODE_LOCATION_ __FILE__, __func__, __LINE__
-
 
 BEGIN_NAMESPACE(FE)
 
 
-class thread;
 class clock;
 FORWARD_CLASS_DECLARATION(internal, engine_main);
 
@@ -43,11 +39,18 @@ _MAYBE_UNUSED_ inline constexpr EXCEPTION_MODE _ABORT_IMMEDIATELY_ = EXCEPTION_M
 class exception
 {
     friend class internal::engine_main;
-    friend class ::FE::thread;
+
 public:
     using buffer_type = char;
     _MAYBE_UNUSED_ static constexpr uint16 _LINE_INFO_BUFFER_SIZE_ = 32;
     _MAYBE_UNUSED_ static constexpr uint16 _DEFAULT_DEBUG_LOG_BUFFER_SIZE_ = 1024;
+
+private:
+    struct initializer
+    {
+        initializer() noexcept;
+        ~initializer() noexcept;
+    };
     
 public:
     constexpr exception() noexcept {}
@@ -64,10 +67,6 @@ protected:
 public:
     static bool log(boolean expression_p, character* const expression_string_ptrc_p, const EXCEPTION_MODE runtime_exception_mode_p, character* const message_ptrc_p, character* const file_name_ptrc_p, character* const function_name_ptrc_p, int32 line_p, character* const exit_code_enum_ptrc_p = nullptr, int32 exit_code_p = -1) noexcept;
 
-private:
-	static void __construct_exception() noexcept;
-    static void __destruct_exception() noexcept;
-   
 protected:
     virtual void __exception_construction_strategy() noexcept = 0;
     virtual void __exception_destruction_strategy() noexcept = 0;

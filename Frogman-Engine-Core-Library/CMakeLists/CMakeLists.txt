@@ -104,6 +104,7 @@ SET(_PRIVATE_
 	${CMAKE_CURRENT_SOURCE_DIR}/../FE/core/private/memory.hxx
 	${CMAKE_CURRENT_SOURCE_DIR}/../FE/core/private/memory_metrics.cpp 
 	${CMAKE_CURRENT_SOURCE_DIR}/../FE/core/private/mutex.cpp 
+	${CMAKE_CURRENT_SOURCE_DIR}/../FE/core/private/log.cpp 
 	${CMAKE_CURRENT_SOURCE_DIR}/../FE/core/private/exception.cpp 
 	${CMAKE_CURRENT_SOURCE_DIR}/../FE/core/private/thread.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/../FE/core/private/function_table.cpp
@@ -143,6 +144,7 @@ SET(_CORE_
 	${CMAKE_CURRENT_SOURCE_DIR}/../FE/core/mutex.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/../FE/core/prerequisite_symbols.h
 	${CMAKE_CURRENT_SOURCE_DIR}/../FE/core/random.hxx
+	${CMAKE_CURRENT_SOURCE_DIR}/../FE/core/log.hpp 
 	${CMAKE_CURRENT_SOURCE_DIR}/../FE/core/exception.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/../FE/core/singleton.hxx
 	${CMAKE_CURRENT_SOURCE_DIR}/../FE/core/string.hxx

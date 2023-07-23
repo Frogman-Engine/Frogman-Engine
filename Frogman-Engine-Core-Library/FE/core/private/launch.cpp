@@ -13,12 +13,20 @@ void ::FE::internal::engine_main::initialize_engine(_MAYBE_UNUSED_ engine_main_i
 	ABORT_IF(l_s_is_initialized == true, "ERROR: The initialization cannot be done more than once");
 	l_s_is_initialized = true;
 
+
 #ifdef _IS_EXCEPTION_LOGGER_ENABLED_
 	ABORT_IF(engine_main_initialization_arguments_p._exception_initialization_arguments._exception_logging_strategy_ptr == nullptr, "CRITICAL ERROR: engine_main_initialization_arguments_p._exception_initialization_arguments._exception_logging_strategy_ptr cannot be nullptr");
 	::FE::exception::s_logging_strategy_ptr = engine_main_initialization_arguments_p._exception_initialization_arguments._exception_logging_strategy_ptr;
-
-	::FE::exception::__construct_exception();
+	ABORT_IF(internal::exception_logger_initialization_arguments::s_write_operation_triggering_point.load() == 0, "exception::s_write_operation_triggering_point cannot be zero");
 #endif
+
+
+#ifdef _IS_LOGGER_ENABLED_
+	ABORT_IF(engine_main_initialization_arguments_p._logger_initialization_arguments._logging_strategy_ptr == nullptr, "CRITICAL ERROR: engine_main_initialization_arguments_p._logger_initialization_arguments._logging_strategy_ptr cannot be nullptr");
+	::FE::logger::s_logging_strategy_ptr = engine_main_initialization_arguments_p._logger_initialization_arguments._logging_strategy_ptr;
+	ABORT_IF(internal::logger_initialization_arguments::s_write_operation_triggering_point.load() == 0, "logger::s_write_operation_triggering_point cannot be zero");
+#endif
+
 	
 	::std::signal(SIGTERM, abnormal_shutdown_with_exit_code);
 	::std::signal(SIGSEGV, abnormal_shutdown_with_exit_code);
@@ -31,9 +39,7 @@ void ::FE::internal::engine_main::initialize_engine(_MAYBE_UNUSED_ engine_main_i
 
 void ::FE::internal::engine_main::shutdown_engine() noexcept
 {
-#ifdef _IS_EXCEPTION_LOGGER_ENABLED_
-	::FE::exception::__destruct_exception();
-#endif
+
 }
 
 _NORETURN_ void ::FE::internal::engine_main::abnormal_shutdown_with_exit_code(int32 signal_p) noexcept
@@ -54,8 +60,6 @@ _NORETURN_ void ::FE::internal::engine_main::abnormal_shutdown_with_exit_code(in
 	}
 
 	exception::tl_s_file_logger << "-------------------------------------------------- END OF STACK TRACE RECORD --------------------------------------------------\n";
-	
-	::FE::exception::__destruct_exception();
 	::std::exit(signal_p);
 
 #else

@@ -10,7 +10,7 @@
 constexpr inline auto _FULL_PATH_TO_FILE_MAX_LENGTH_ = 1024;
 
 
-#ifndef _USE_CMAKE_MACRO_
+#if _USE_CMAKE_MACRO_ == false
 
 // Frogman Engine Memory Tracker generates a memory utilization report over frames at the end of an app process.
 // The output file can be visualized as a graph image via Frogman Engine Memory Utilization Analyzer.
@@ -22,15 +22,20 @@ constexpr inline auto _FULL_PATH_TO_FILE_MAX_LENGTH_ = 1024;
 // FE::exception is designed to replace conventional C++ exception models. 
 // It logs recoverable errors and warnings with timestamps to keep track of suspicious app process flows, and it can return early if it is nested inside an if-statement.
 // Frogman Engine Exception system can be turned off by assigning "false" to this macro.
-#define _ENABLE_EXCEPTION_HISTORY_
+#define _ENABLE_EXCEPTION_LOG_
 
 
 // FE_ASSERT can be disabled by setting this macro "true" to eliminate error-checking overhead.
 // Please NOTE that FE_ASSERT aborts when circumstances are unrecoverable and critical. Therefore, precise debugging should be placed first.
 #define _ENABLE_ASSERT_
+#define _ENABLE_EXIT_
+
 #define _ENABLE_ABORT_IF_
 
-#define _ENABLE_EXIT_
+
+#define _ENABLE_LOG_ 
+#define _ENABLE_CONDITIONAL_LOG_
+
 
 #endif
 

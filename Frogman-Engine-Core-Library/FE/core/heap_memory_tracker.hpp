@@ -33,19 +33,9 @@ protected:
 	static ::std::atomic_size_t s_global_total_bytes;
 	thread_local static var::size_t tl_s_thread_local_total_bytes;
 
-    thread_local static std::ofstream tl_s_utilized_heap_memory_output_stream;
     thread_local static std::string tl_s_utilized_heap_memory_output_stream_buffer;
     thread_local static FE::clock tl_s_clock;
 };
-
-
-namespace internal
-{
-	struct heap_memory_tracker_initialization_argument
-	{
-		static lazy_const<var::size_t> s_output_stream_buffer_size;
-	};
-}
 
 
 template<typename U, class address_alignment = align_8bytes>
@@ -75,89 +65,6 @@ class heap_memory_tracker final : public heap_memory_tracker_base
 
 		heap_memory_tracker::s_global_total_bytes_by_type.fetch_sub(size_bytes_p, ::std::memory_order_relaxed);
 		heap_memory_tracker::tl_s_thread_local_total_bytes_by_type -= size_bytes_p;
-	}
-
-	_FORCE_INLINE_ static void create_report_file() noexcept
-	{
-		::std::filesystem::path l_directory_name = (::std::filesystem::current_path() / "Heap Memory Tracker Report\0");
-		if (::std::filesystem::exists(l_directory_name) == false)
-		{
-			::std::filesystem::create_directory(l_directory_name);
-		}
-
-		tl_s_utilized_heap_memory_output_stream_buffer.reserve(internal::heap_memory_tracker_initialization_argument::s_output_stream_buffer_size.load());
-		std::memset(tl_s_utilized_heap_memory_output_stream_buffer.data(), _NULL_, internal::heap_memory_tracker_initialization_argument::s_output_stream_buffer_size.load() * sizeof(char));
-
-#ifdef _WINDOWS_64BIT_OS_
-		var::wchar l_thread_id[thread::_MAX_THRED_ID_DIGIT_LENGTH_] = L"\0";
-		::swprintf(l_thread_id, thread::_MAX_THRED_ID_DIGIT_LENGTH_, L"%llu", ::FE::thread::tl_s_this_thread_id); // hashed thread-ids from std::hash are too long and hard to read 
-
-		var::wchar l_date_info_wstring[clock::_GET_CURRENT_LOCAL_TIME_BUFFER_SIZE_] = L"\0";
-		::std::mbstowcs(l_date_info_wstring, exception::tl_s_clock.get_current_local_time(), clock::_GET_CURRENT_LOCAL_TIME_BUFFER_SIZE_);
-		std::memset(l_date_info_wstring + (::std::wcslen(l_date_info_wstring) - _SECONDS_STRING_LENGTH_), _NULL_, _SECONDS_STRING_LENGTH_ * sizeof(var::wchar)); // to remove seconds
-		
-		::std::filesystem::path l_path_to_log_dump_file = l_directory_name / l_date_info_wstring;
-
-		var::wchar l_full_path_to_the_file[_FULL_PATH_TO_FILE_MAX_LENGTH_] = L"\0";
-		::std::wcscpy(l_full_path_to_the_file, l_path_to_log_dump_file.c_str());
-
-		::FE::algorithm::string::concatenate_strings<var::wchar>
-		(
-				l_full_path_to_the_file,
-				_FULL_PATH_TO_FILE_MAX_LENGTH_,
-				{
-					L"\\thread ",
-					l_thread_id,
-					L" @ ",
-					l_date_info_wstring,
-					L".txt"
-				}
-		);
-
-#elif defined(_LINUX_64BIT_OS_)
-		var::character l_thread_id[FE::thread::_MAX_THRED_ID_DIGIT_LENGTH_] = "\0";
-		snprintf(l_thread_id, FE::thread::_MAX_THRED_ID_DIGIT_LENGTH_, "%llu", ::FE::thread::tl_s_this_thread_id);
-
-		var::character l_date_info_string[clock::_GET_CURRENT_LOCAL_TIME_BUFFER_SIZE_] = "\0";
-		::std::strcpy(l_date_info_string, tl_s_clock.get_current_local_time());
-		std::memset(l_date_info_string + (::std::strlen(l_date_info_string) - _SECONDS_STRING_LENGTH_), _NULL_, _SECONDS_STRING_LENGTH_ * sizeof(char)); // to remove min sec
-		::std::filesystem::path l_path_to_log_dump_file = l_directory_name / l_date_info_string;
-
-		var::character l_full_path_to_the_file[_FULL_PATH_TO_FILE_MAX_LENGTH_] = "\0";
-		strcpy(l_full_path_to_the_file, l_path_to_log_dump_file.c_str());
-
-		::FE::algorithm::string::concatenate_strings<var::character>
-			(
-				l_full_path_to_the_file,
-				_FULL_PATH_TO_FILE_MAX_LENGTH_,
-				{
-					"/thread ",
-					l_thread_id,
-					" @ ",
-					l_date_info_string,
-					".txt"
-				}
-		);
-
-#endif
-
-		if (::std::filesystem::exists(l_path_to_log_dump_file) == false)
-		{
-			::std::filesystem::create_directory(l_path_to_log_dump_file);
-		}
-
-		tl_s_utilized_heap_memory_output_stream.open(l_full_path_to_the_file);
-		tl_s_utilized_heap_memory_output_stream << "-------------------------------------------------- BEGIN HEAP MEMORY TRACKER RECORD --------------------------------------------------\n\n";
-	}
-
-	_FORCE_INLINE_ static void close_report_file() noexcept
-	{
-		tl_s_utilized_heap_memory_output_stream << "\n\n-------------------------------------------------- END OF HEAP MEMORY TRACKER RECORD --------------------------------------------------";
-		tl_s_utilized_heap_memory_output_stream.close();
-	}
-
-	_FORCE_INLINE_ static void write_data_to_file() noexcept
-	{
 	}
 
 public:

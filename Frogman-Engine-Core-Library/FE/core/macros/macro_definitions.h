@@ -12,6 +12,8 @@
 #define FORWARD_STRUCT_DECLARATION(namespace_p, struct_p) namespace namespace_p { struct struct_p; }
 #define FORWARD_ENUM_STRUCT_DECLARATION(namespace_p, enum_struct_p) namespace namespace_p { enum struct enum_struct_p; }
 
+#define _SOURCE_CODE_LOCATION_ __FILE__, __func__, __LINE__
+
 
 #ifdef _MSC_VER
 #define _VISUAL_STUDIO_CPP_

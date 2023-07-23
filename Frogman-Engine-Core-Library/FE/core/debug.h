@@ -1,7 +1,6 @@
 ﻿#ifndef _FE_CORE_DEBUG_H_
 #define _FE_CORE_DEBUG_H_
 #include <FE/miscellaneous/configuration.h>
-#include <csignal>
 #include <iostream>
 // Copyright © from 2023 to current, UNKNOWN STRYKER. All Rights Reserved.
 

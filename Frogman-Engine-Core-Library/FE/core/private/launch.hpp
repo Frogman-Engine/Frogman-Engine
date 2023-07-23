@@ -18,8 +18,8 @@ struct engine_main_initialization_arguments
 	using initial_function_table_size_t = var::size_t;
 
 	::FE::internal::exception_logger_initialization_arguments _exception_initialization_arguments;
+	::FE::internal::logger_initialization_arguments _logger_initialization_arguments;
 	initial_function_table_size_t _initial_function_table_size;
-	::FE::internal::heap_memory_tracker_initialization_argument _heap_memory_tracker_initialization_argument;
 };
 
 

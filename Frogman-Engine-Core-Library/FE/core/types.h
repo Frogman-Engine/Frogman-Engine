@@ -16,6 +16,7 @@
 #pragma warning(push)
 #pragma warning(disable: 4715)
 
+
 #ifdef _VISUAL_STUDIO_CPP_
 #ifdef max
 #undef max

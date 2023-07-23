@@ -2,43 +2,21 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include <FE/core/exception.hpp>
 #include <FE/core/algorithm/string.hxx>
-#include <FE/core/fstring.hxx>
-#include <FE/core/thread.hpp>
 #include <FE/core/clock.hpp>
+#include <FE/core/heap_memory_tracker.hpp>
+#include <FE/miscellaneous/misc.h>
+#include <FE/core/thread.hpp>
 #include <cstdlib>
 #include <csignal>
 #include <cwchar>
 #include <filesystem>
-#include <FE/miscellaneous/misc.h>
 #pragma warning(disable: 4723)
 #pragma warning(disable: 4127)
 
 
-namespace internal
-{
-    _NODISCARD_ _FORCE_INLINE_ constexpr FE::var::uint64 strlen(const char* const str_ptrc_p) noexcept
-    {
-        const char* l_iterator_ptr = str_ptrc_p;
-
-        switch (*str_ptrc_p)
-        {
-        case  '\0':
-            return 0;
-
-        default:
-            break;
-        }
-
-        while (*(++l_iterator_ptr) != '\0') _LIKELY_{}
-
-        return (l_iterator_ptr - str_ptrc_p);
-    }
-
-}
 
 
 FE::exception* FE::exception::s_logging_strategy_ptr = nullptr;
-
 
 thread_local ::std::ofstream FE::exception::tl_s_file_logger;
 thread_local ::FE::clock FE::exception::tl_s_clock;
@@ -47,20 +25,25 @@ thread_local ::std::string FE::exception::tl_s_log_buffer;
 ::FE::lazy_const<FE::var::uint8> FE::internal::exception_logger_initialization_arguments::s_write_operation_triggering_point;
 
 
-bool FE::exception::log(const bool expression_p, const char* const expression_string_ptrc_p, const FE::EXCEPTION_MODE runtime_exception_mode_p, const char* const message_ptrc_p, const char* const file_name_ptrc_p, const char* const function_name_ptrc_p, const int line_p, const char* const exit_code_enum_ptrc_p, const int exit_code_p) noexcept
-{
-    return exception::s_logging_strategy_ptr->__logging_strategy(expression_p, expression_string_ptrc_p, runtime_exception_mode_p, message_ptrc_p, file_name_ptrc_p, function_name_ptrc_p, line_p, exit_code_enum_ptrc_p, exit_code_p);
-}
 
 
-void FE::exception::__construct_exception() noexcept
+FE::exception::initializer::initializer() noexcept
 {
     exception::s_logging_strategy_ptr->__exception_construction_strategy();
 }
 
-void FE::exception::__destruct_exception() noexcept
+FE::exception::initializer::~initializer() noexcept
 {
     exception::s_logging_strategy_ptr->__exception_destruction_strategy();
+}
+
+
+
+
+bool FE::exception::log(const bool expression_p, const char* const expression_string_ptrc_p, const FE::EXCEPTION_MODE runtime_exception_mode_p, const char* const message_ptrc_p, const char* const file_name_ptrc_p, const char* const function_name_ptrc_p, const int line_p, const char* const exit_code_enum_ptrc_p, const int exit_code_p) noexcept
+{
+    ENABLE_IF_EXCEPTION_LOGGER_ENABLED(thread_local static exception::initializer tl_s_initializer);
+    return exception::s_logging_strategy_ptr->__logging_strategy(expression_p, expression_string_ptrc_p, runtime_exception_mode_p, message_ptrc_p, file_name_ptrc_p, function_name_ptrc_p, line_p, exit_code_enum_ptrc_p, exit_code_p);
 }
 
 
@@ -105,7 +88,7 @@ bool FE::real_time_exception_history_logging_strategy::__logging_strategy(boolea
 
 
     case _ABORT_IMMEDIATELY_:
-        strncat(real_time_exception_history_logging_strategy::tl_s_log_buffer.data(), "\nabort() HAS BEEN CALLED.", ::internal::strlen("\tabort() HAS BEEN CALLED."));
+        strncat(real_time_exception_history_logging_strategy::tl_s_log_buffer.data(), "\nabort() HAS BEEN CALLED.", internal::strlen("\tabort() HAS BEEN CALLED."));
 
         real_time_exception_history_logging_strategy::tl_s_file_logger << real_time_exception_history_logging_strategy::tl_s_log_buffer.data() << "\n\n";
 
@@ -138,7 +121,6 @@ bool FE::real_time_exception_history_logging_strategy::__logging_strategy(boolea
 
     return true;
 }
-
 
 void FE::real_time_exception_history_logging_strategy::__exception_construction_strategy() noexcept
 {
@@ -219,15 +201,11 @@ void FE::real_time_exception_history_logging_strategy::__exception_destruction_s
     {
         real_time_exception_history_logging_strategy::tl_s_file_logger << "\n}\n[END OF HISTORY]";
 
-        real_time_exception_history_logging_strategy::tl_s_file_logger << "\n\nThe leaked heap memory byte(s) by the thread " << ::FE::thread::tl_s_this_thread_id << " is " << heap_memory_tracker<void>::query_all_data()._thread_local_total_bytes << " byte(s)";
+        tl_s_file_logger << "\n\nThe leaked heap memory byte(s) by the thread " << ::FE::thread::tl_s_this_thread_id << " is " << heap_memory_tracker<void>::query_all_data()._thread_local_total_bytes << " byte(s)";
 
         real_time_exception_history_logging_strategy::tl_s_file_logger.close();
     }
 }
-
-
-
-
 
 
 
@@ -270,7 +248,6 @@ bool FE::exception_history_log_buffering_strategy::__logging_strategy(boolean ex
             size_t l_divisor = (tl_s_log_buffer.capacity() / internal::exception_logger_initialization_arguments::s_write_operation_triggering_point.load());
 
             ABORT_IF(l_log_buffer_length == 0, "l_log_buffer_length cannot be zero");
-            ABORT_IF(internal::exception_logger_initialization_arguments::s_write_operation_triggering_point.load() == 0, "exception::s_write_operation_triggering_point cannot be zero");
             ABORT_IF(l_divisor == 0, "l_divisor cannot be zero");
 
             if (l_log_buffer_length >= (l_log_buffer_length / l_divisor))
@@ -285,7 +262,7 @@ bool FE::exception_history_log_buffering_strategy::__logging_strategy(boolean ex
 
 
     case _ABORT_IMMEDIATELY_:
-        strncat(tl_s_log_buffer.data(), "\nabort() HAS BEEN CALLED.", ::internal::strlen("\tabort() HAS BEEN CALLED."));
+        strncat(tl_s_log_buffer.data(), "\nabort() HAS BEEN CALLED.", internal::strlen("\tabort() HAS BEEN CALLED."));
 
         tl_s_file_logger << tl_s_log_buffer.data() << "\n\n";
 
@@ -319,7 +296,6 @@ bool FE::exception_history_log_buffering_strategy::__logging_strategy(boolean ex
 
     return true;
 }
-
 
 void FE::exception_history_log_buffering_strategy::__exception_construction_strategy() noexcept
 {

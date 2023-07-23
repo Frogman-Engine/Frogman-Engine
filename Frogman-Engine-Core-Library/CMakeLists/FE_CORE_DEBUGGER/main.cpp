@@ -25,14 +25,21 @@ static FE::internal::engine_main_initialization_arguments s_config_args = []()
 	static FE::real_time_exception_history_logging_strategy s_real_time_exception_history_logging_strategy;
 	static FE::exception_history_log_buffering_strategy s_exception_history_log_buffering_strategy;
 
+	static FE::real_time_logging_strategy s_real_time_logging_strategy;
+	static FE::log_buffering_strategy s_log_buffering_strategy;
+
 
 	FE::internal::engine_main_initialization_arguments l_configs;
 
 	l_configs._exception_initialization_arguments._exception_logging_strategy_ptr = &s_exception_history_log_buffering_strategy;
 	l_configs._exception_initialization_arguments.s_log_buffer_size = FE::exception::_DEFAULT_DEBUG_LOG_BUFFER_SIZE_;
 	l_configs._exception_initialization_arguments.s_write_operation_triggering_point = FE::internal::exception_logger_initialization_arguments::percent_t{ 70 };
+
+	l_configs._logger_initialization_arguments._logging_strategy_ptr = &s_log_buffering_strategy;
+	l_configs._logger_initialization_arguments.s_log_buffer_size = FE::exception::_DEFAULT_DEBUG_LOG_BUFFER_SIZE_;
+	l_configs._logger_initialization_arguments.s_write_operation_triggering_point = FE::internal::exception_logger_initialization_arguments::percent_t{ 70 };
+
 	l_configs._initial_function_table_size = 1000;
-	l_configs._heap_memory_tracker_initialization_argument.s_output_stream_buffer_size = FE::exception::_DEFAULT_DEBUG_LOG_BUFFER_SIZE_;
 
 	return l_configs;
 }();
