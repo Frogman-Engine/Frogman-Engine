@@ -68,14 +68,14 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
 	if(GNU_CPP)
 		TARGET_COMPILE_OPTIONS(${FE_CORE_DEBUGGER} PRIVATE
 			$<$<CONFIG:DEBUG>:			-Wall -Wextra -g	-pthread -fno-inline-functions	-fno-unroll-loops	-fno-omit-frame-pointer -fno-exceptions -march=x86-64 -O0 -mavx
-			$<$<CONFIG:RELWITHDEBINFO>: -Wall -Wextra Og	-pthread -finline-functions		-funroll-loops		-fomit-frame-pointer	-fno-exceptions -march=x86-64 -O3 -mavx
+			$<$<CONFIG:RELWITHDEBINFO>: -Wall -Wextra 		-pthread -finline-functions		-funroll-loops		-fomit-frame-pointer	-fno-exceptions -march=x86-64 -O3 -mavx
 			$<$<CONFIG:RELEASE>:		-Wall -Wextra		-pthread -finline-functions		-funroll-loops		-fomit-frame-pointer	-fno-exceptions -march=x86-64 -O3 -mavx
 			$<$<CONFIG:MINSIZEREL>:		-Wall -Wextra		-pthread -finline-functions		-funroll-loops		-fomit-frame-pointer	-fno-exceptions -march=x86-64 -O3 -mavx
 		)
 	elseif(CLANG_CPP)
 		TARGET_COMPILE_OPTIONS(${FE_CORE_DEBUGGER} PRIVATE
 			$<$<CONFIG:DEBUG>:			-Wall -Wextra -g	-pthread -fno-inline-functions	-fno-unroll-loops	-fno-omit-frame-pointer -fno-exceptions -march=x86-64 -O0 -mavx
-			$<$<CONFIG:RELWITHDEBINFO>: -Wall -Wextra Og	-pthread -finline-functions		-funroll-loops		-fomit-frame-pointer	-fno-exceptions -march=x86-64 -O3 -mavx
+			$<$<CONFIG:RELWITHDEBINFO>: -Wall -Wextra 		-pthread -finline-functions		-funroll-loops		-fomit-frame-pointer	-fno-exceptions -march=x86-64 -O3 -mavx
 			$<$<CONFIG:RELEASE>:		-Wall -Wextra		-pthread -finline-functions		-funroll-loops		-fomit-frame-pointer	-fno-exceptions -march=x86-64 -O3 -mavx
 			$<$<CONFIG:MINSIZEREL>:		-Wall -Wextra		-pthread -finline-functions		-funroll-loops		-fomit-frame-pointer	-fno-exceptions -march=x86-64 -O3 -mavx
 		)
@@ -89,9 +89,12 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
         ARCHIVE_OUTPUT_DIRECTORY_MINSIZEREL ${CMAKE_CURRENT_SOURCE_DIR}/Linux/minimally_sized_release/a
     )
 
-
-	FIND_LIBRARY(UNIT_TEST_LINUX libgtest.a PATHS ${CMAKE_CURRENT_SOURCE_DIR}/../../../Frogman-Engine-Unit-Tests/Unit-Test-Linux-Packages)
-
+	SET(UNIT_TEST_LINUX			
+		$<$<CONFIG:DEBUG>:			${CMAKE_CURRENT_SOURCE_DIR}/../../../Frogman-Engine-Unit-Tests/Unit-Test-Linux-Packages/libgtest.a>
+		$<$<CONFIG:RELWITHDEBINFO>: ${CMAKE_CURRENT_SOURCE_DIR}/../../../Frogman-Engine-Unit-Tests/Unit-Test-Linux-Packages/libgtest.a>
+		$<$<CONFIG:RELEASE>:		${CMAKE_CURRENT_SOURCE_DIR}/../../../Frogman-Engine-Unit-Tests/Unit-Test-Linux-Packages/libgtest.a>
+		$<$<CONFIG:MINSIZEREL>:		${CMAKE_CURRENT_SOURCE_DIR}/../../../Frogman-Engine-Unit-Tests/Unit-Test-Linux-Packages/libgtest.a>
+	)
 
 	TARGET_LINK_LIBRARIES(${FE_CORE_DEBUGGER} stdc++fs 
 		${TBB_LINUX}

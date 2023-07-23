@@ -40,14 +40,14 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
 	if(GNU_CPP)
 		TARGET_COMPILE_OPTIONS(${FE_CORE_AVX512} PRIVATE
 			$<$<CONFIG:DEBUG>:			-Wall -Wextra -g	-pthread -fno-inline-functions	-fno-unroll-loops	-fno-omit-frame-pointer -fno-exceptions -march=x86-64 -O0 -mavx512f
-			$<$<CONFIG:RELWITHDEBINFO>: -Wall -Wextra Og	-pthread -finline-functions		-funroll-loops		-fomit-frame-pointer	-fno-exceptions -march=x86-64 -O3 -mavx512f
+			$<$<CONFIG:RELWITHDEBINFO>: -Wall -Wextra 		-pthread -finline-functions		-funroll-loops		-fomit-frame-pointer	-fno-exceptions -march=x86-64 -O3 -mavx512f
 			$<$<CONFIG:RELEASE>:		-Wall -Wextra		-pthread -finline-functions		-funroll-loops		-fomit-frame-pointer	-fno-exceptions -march=x86-64 -O3 -mavx512f
 			$<$<CONFIG:MINSIZEREL>:		-Wall -Wextra		-pthread -finline-functions		-funroll-loops		-fomit-frame-pointer	-fno-exceptions -march=x86-64 -O3 -mavx512f
 		)
 	elseif(CLANG_CPP)
 		TARGET_COMPILE_OPTIONS(${FE_CORE_AVX512} PRIVATE
 			$<$<CONFIG:DEBUG>:			-Wall -Wextra -g	-pthread -fno-inline-functions	-fno-unroll-loops	-fno-omit-frame-pointer -fno-exceptions -march=x86-64 -O0 -mavx512f
-			$<$<CONFIG:RELWITHDEBINFO>: -Wall -Wextra Og	-pthread -finline-functions		-funroll-loops		-fomit-frame-pointer	-fno-exceptions -march=x86-64 -O3 -mavx512f
+			$<$<CONFIG:RELWITHDEBINFO>: -Wall -Wextra 		-pthread -finline-functions		-funroll-loops		-fomit-frame-pointer	-fno-exceptions -march=x86-64 -O3 -mavx512f
 			$<$<CONFIG:RELEASE>:		-Wall -Wextra		-pthread -finline-functions		-funroll-loops		-fomit-frame-pointer	-fno-exceptions -march=x86-64 -O3 -mavx512f
 			$<$<CONFIG:MINSIZEREL>:		-Wall -Wextra		-pthread -finline-functions		-funroll-loops		-fomit-frame-pointer	-fno-exceptions -march=x86-64 -O3 -mavx512f
 		)
