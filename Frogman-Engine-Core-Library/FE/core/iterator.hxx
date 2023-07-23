@@ -614,7 +614,7 @@ struct contiguous_iterator
 {
 	using category = contiguous_iterator;
 	using value_type = T;
-	using difference_type = ::FE::ptrdiff_t;
+	using difference_type = ::FE::var::ptrdiff_t;
 	using pointer = T*;
 	using reference = T&;
 	using const_pointer = const T*;

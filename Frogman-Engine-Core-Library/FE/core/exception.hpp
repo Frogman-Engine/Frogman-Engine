@@ -105,7 +105,7 @@ namespace internal
 
 #ifdef _ENABLE_EXIT_
 // It logs an error and exits if the expression_p is true
-#define FE_EXIT(expression_p, message_p, exit_code_p) if(expression_p) _UNLIKELY_ { ::FE::exception::log(true, #expression_p, ::FE::_EXIT_WITH_CODE_, message_p, _SOURCE_CODE_LOCATION_, #exit_code_p, static_cast<::FE::int32>(exit_code_p)); }
+#define FE_EXIT(expression_p, message_p, exit_code_p) if(expression_p) _UNLIKELY_ { ::FE::exception::log(true, #expression_p, ::FE::_EXIT_WITH_CODE_, message_p, _SOURCE_CODE_LOCATION_, #exit_code_p, static_cast<::FE::var::int32>(exit_code_p)); }
 #else
 // It logs an error and exits if the expression_p is true
 #define FE_EXIT(expression_p, message_p, exit_code_p)

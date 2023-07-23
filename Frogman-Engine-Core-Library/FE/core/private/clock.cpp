@@ -23,8 +23,3 @@ const FE::clock::char_type* FE::clock::get_current_local_time() noexcept
     FE_EXIT(tl_s_local_time_string_buffer == nullptr, "ERROR: tl_s_local_time_string_buffer is nullptr.", FE::MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR);
     return tl_s_local_time_string_buffer;
 }
-
-
-
-
-#undef _CRT_SECURE_NO_WARNINGS

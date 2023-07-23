@@ -49,17 +49,17 @@ enum struct SIZE_BYTE_UNIT : FE::uint8
 
 _FORCE_INLINE_ var::float64 convert_bytes_to_kilobytes(uint64 bytes_p) noexcept
 {
-	return static_cast<float64>(bytes_p) / static_cast<float64>(one_kb);
+	return static_cast<var::float64>(bytes_p) / static_cast<var::float64>(one_kb);
 }
 
 _FORCE_INLINE_ var::float64 convert_bytes_to_megabytes(uint64 bytes_p) noexcept
 {
-	return static_cast<float64>(bytes_p) / static_cast<float64>(one_mb);
+	return static_cast<var::float64>(bytes_p) / static_cast<var::float64>(one_mb);
 }
 
 _FORCE_INLINE_ var::float64 convert_bytes_to_gigabytes(uint64 bytes_p) noexcept
 {
-	return static_cast<float64>(bytes_p) / static_cast<float64>(one_gb);
+	return static_cast<var::float64>(bytes_p) / static_cast<var::float64>(one_gb);
 }
 
 var::uint64 request_app_memory_utilization(const HEAP_MEMORY_UTIL_INFO select_data_p) noexcept;
