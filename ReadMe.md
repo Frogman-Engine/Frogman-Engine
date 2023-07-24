@@ -3,7 +3,7 @@ Copyright © 2023 by Dafher and UNKNOWN STRYKER. All rights reserved.
 This project, Frogman Engine,' is licensed under the Boost Software License - Version 1.0. 
 Users who use, modify, or redistribute the original source code cannot claim authority or ownership over Frogman Engine, which remains the sole property of its original author, "UNKNOWN STRYKER / Hojin Lee / 이호진."
 
-This project is under development and can contain some bugs and issues.
+This project is under development and may contain some bugs and issues.
 
 # Our Dev Team Discord Link: https://discord.gg/jhu4vAU3Mm
 
