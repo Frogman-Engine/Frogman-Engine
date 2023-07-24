@@ -1,9 +1,7 @@
 # Frogman-Engine
 Copyright © 2023 by Dafher and UNKNOWN STRYKER. All rights reserved. 
 This project, Frogman Engine,' is licensed under the Boost Software License - Version 1.0. 
-Users who use, modify, or redistribute the original source code cannot claim authority or ownership over Frogman Engine, which remains the sole property of its original authors, "UNKNOWN STRYKER / Hojin Lee / 이호진" and "Dafher / Ju Yeong Kim / 김주영".
-
-Visit https://www.notion.so/Welcome-to-Frogman-Engine-Programming-Convention-Guideline-Document-ce98aa7b99bd41a18bced807031b1f81?pvs=4 for Frogman Engine Coding Conventions.
+Users who use, modify, or redistribute the original source code cannot claim authority or ownership over Frogman Engine, which remains the sole property of its original author, "UNKNOWN STRYKER / Hojin Lee / 이호진."
 
 This project is under development and can contain some bugs and issues.
 
