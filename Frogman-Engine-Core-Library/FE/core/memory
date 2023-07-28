@@ -1,0 +1,6 @@
+﻿#ifndef _FE_CORE_MEMORY_
+#define _FE_CORE_MEMORY_
+// Copyright © from 2023 to current, UNKNOWN STRYKER. All Rights Reserved.
+#include <FE/core/private/memory.hpp>
+#include <FE/core/private/memory.hxx>
+#endif

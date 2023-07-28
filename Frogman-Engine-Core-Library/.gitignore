@@ -1,0 +1,10 @@
+*.obj
+*.ipch
+*.idb
+*.pdb
+
+Windows/
+Linux/
+
+CMakeLists/cmake-build-debug/
+Debugger/
