@@ -28,20 +28,6 @@ class test final : public FE::framework::application
 protected:
 	virtual void set_up() noexcept override final
 	{
-		FE_LOG("int32 : ${%d@0}", &FE::buffer<FE::var::int32>::set_and_get(-5));
-		FE_LOG("uint32 : ${%u@0}", &FE::buffer<FE::var::uint32>::set_and_get(5));
-
-		FE_LOG("int64 : ${%ld@0}", &FE::buffer<FE::var::int64>::set_and_get(2147483648));
-		FE_LOG("uint64 : ${%lu@0}", &FE::buffer<FE::var::uint64>::set_and_get(4294967296));
-
-		FE_LOG("float32 : ${%f@0}", &FE::buffer<FE::var::float32>::set_and_get(3.14));
-		FE_LOG("float64 : ${%lf@0}", &FE::buffer<FE::var::float64>::set_and_get(2023.1208));
-
-		FE_LOG("boolean : ${%b@0}", &FE::buffer<FE::var::boolean>::set_and_get(true));
-		FE_LOG("character : ${%c@0}", &FE::buffer<FE::var::character>::set_and_get('h'));
-
-		FE_LOG("string : ${%s@0}", "C++ string");
-		FE_LOG("pointer : ${%p@0}", nullptr);
 	}
 	
 	virtual int run(int argc_p, char** argv_p) noexcept override final

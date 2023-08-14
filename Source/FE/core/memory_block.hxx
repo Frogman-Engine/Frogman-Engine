@@ -20,9 +20,9 @@ public:
 	typedef T value_type;
 	typedef alignment alignment_type;
 	
-	constexpr memory_block() noexcept : m_is_block_constructed(), m_memory(), m_memory_ptrc(reinterpret_cast<T*>(m_memory)) {}
+	_FORCE_INLINE_ constexpr memory_block() noexcept : m_is_block_constructed(), m_memory(), m_memory_ptrc(reinterpret_cast<T*>(m_memory)) {}
 
-	~memory_block()
+	_FORCE_INLINE_ ~memory_block()
 	{
 		if (this->m_is_block_constructed == true)
 		{
@@ -30,11 +30,61 @@ public:
 		}
 	}
 
-	memory_block(const memory_block& other_cref_p) noexcept = delete;
-	memory_block(memory_block&& rvalue_p) noexcept = delete;
+	_FORCE_INLINE_ memory_block(const memory_block& other_cref_p) noexcept : m_is_block_constructed(other_cref_p.m_is_block_constructed), m_memory(), m_memory_ptrc(reinterpret_cast<T*>(m_memory))
+	{
+		if (other_cref_p.m_is_block_constructed == true)
+		{
+			new(this->m_memory_ptrc) T();
+			*this->m_memory_ptrc = *other_cref_p.m_memory_ptrc;
+		}
+	}
 
-	memory_block& operator=(const memory_block& other_cref_p) noexcept = delete;
-	memory_block& operator=(memory_block&& rvalue_p) noexcept = delete;
+	_FORCE_INLINE_ memory_block(memory_block&& rvalue_p) noexcept : m_is_block_constructed(rvalue_p.m_is_block_constructed), m_memory(), m_memory_ptrc(reinterpret_cast<T*>(m_memory))
+	{
+		if (rvalue_p.m_is_block_constructed == false)
+		{
+			return;
+		}
+
+		new(this->m_memory_ptrc) T();
+		*this->m_memory_ptrc = std::move(*rvalue_p.m_memory_ptrc);
+	}
+
+	_FORCE_INLINE_ memory_block& operator=(const memory_block& other_cref_p) noexcept
+	{
+		if (other_cref_p.m_is_block_constructed == false)
+		{
+			return *this;
+		}
+
+		if (this->m_is_block_constructed == false)
+		{
+			new(this->m_memory_ptrc) T();
+			this->m_is_block_constructed = true;
+		}
+
+		*this->m_memory_ptrc = *other_cref_p.m_memory_ptrc;
+
+		return *this;
+	}
+
+	_FORCE_INLINE_ memory_block& operator=(memory_block&& rvalue_p) noexcept
+	{
+		if (rvalue_p.m_is_block_constructed == false)
+		{
+			return *this;
+		}
+
+		if (this->m_is_block_constructed == false)
+		{
+			new(this->m_memory_ptrc) T();
+			this->m_is_block_constructed = true;
+		}
+
+		*this->m_memory_ptrc = std::move(*rvalue_p.m_memory_ptrc);
+
+		return *this;
+	}
 
 	_FORCE_INLINE_ T& operator*() noexcept
 	{

@@ -4,7 +4,7 @@
 #include "prerequisite_symbols.h"
 #include <tbb/cache_aligned_allocator.h>
 #include <tbb/scalable_allocator.h>
-#include "heap_memory_tracker.hpp"
+#include "heap_memory.hpp"
 
 
 
@@ -30,15 +30,37 @@ public:
 		FE_ASSERT(count_p == 0, "${%s@0}: queried allocation size is ${%lu@1}.", TO_STRING(MEMORY_ERROR_1XX::_ERROR_INVALID_SIZE), &count_p);
 
 		pointer l_result = allocator::allocate(count_p);
-		new(l_result) value_type();
+
+		pointer const l_end = l_result + count_p;
+		for (pointer begin = l_result; begin != l_end; ++begin)
+		{
+			new(begin) value_type();
+		}
+
 		return l_result;
 	}
 
 
 	_NODISCARD_ _FORCE_INLINE_ static pointer reallocate(pointer const pointer_p, size_type prev_count_p, size_type new_count_p) noexcept
 	{
+		FE_ASSERT(pointer_p == nullptr, "${%s@0}: ${%s@1} is nullptr.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(pointer_p));
+
+		{
+			pointer const l_end = pointer_p + prev_count_p;
+			for (pointer begin = pointer_p; begin != l_end; ++begin)
+			{
+				begin->~value_type();
+			}
+		}
+
 		pointer l_result = allocator::reallocate(pointer_p, prev_count_p, new_count_p);
-		new(l_result) value_type();
+
+		pointer const l_end = l_result + new_count_p;
+		for (pointer begin = l_result; begin != l_end; ++begin)
+		{
+			new(begin) value_type();
+		}
+		
 		return l_result;
 	}
 
@@ -47,8 +69,12 @@ public:
 	{
 		FE_ASSERT(count_p == 0, "${%s@0}: queried allocation size is ${%lu@1}.", TO_STRING(MEMORY_ERROR_1XX::_ERROR_INVALID_SIZE), &count_p);
 		FE_ASSERT(pointer_p == nullptr, "${%s@0}: attempted to delete ${%p@1}.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), pointer_p);
-
-		pointer_p->~value_type();
+		
+		pointer const l_end = pointer_p + count_p;
+		for (pointer begin = pointer_p; begin != l_end; ++begin)
+		{
+			begin->~value_type();
+		}
 		allocator::deallocate(pointer_p, count_p);
 	}
 };
@@ -76,6 +102,8 @@ public:
 
 	_NODISCARD_ _FORCE_INLINE_ static pointer reallocate(pointer const pointer_p, size_type prev_count_p, size_type new_count_p) noexcept
 	{
+		FE_ASSERT(pointer_p == nullptr, "${%s@0}: ${%s@1} is nullptr.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(pointer_p));
+
 		if (new_count_p == 0) _UNLIKELY_
 		{
 			deallocate(pointer_p, prev_count_p);
@@ -125,6 +153,8 @@ public:
 
 	_NODISCARD_ _FORCE_INLINE_ static pointer reallocate(pointer const pointer_p, size_type prev_count_p, size_type new_count_p) noexcept
 	{
+		FE_ASSERT(pointer_p == nullptr, "${%s@0}: ${%s@1} is nullptr.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(pointer_p));
+
 		if (new_count_p == 0) _UNLIKELY_
 		{
 			deallocate(pointer_p, prev_count_p);
@@ -134,7 +164,7 @@ public:
 		pointer const l_result_ptrc = static_cast<pointer>(cache_aligned_allocator<T>::allocate(new_count_p));
 		FE_ASSERT((reinterpret_cast<uintptr_t>(l_result_ptrc) % 2) != 0, "ERROR: The allocated heap memory address not aligned by two. The address value was ${%p@0}", l_result_ptrc);
 
-		::FE::unaligned_memcpy(l_result_ptrc, new_count_p, sizeof(value_type), pointer_p, prev_count_p, sizeof(value_type));
+		FE::aligned_memcpy(l_result_ptrc, new_count_p, sizeof(value_type), pointer_p, prev_count_p, sizeof(value_type));
 		cache_aligned_allocator<value_type>::deallocate(pointer_p, prev_count_p);
 
 		return l_result_ptrc;
@@ -147,9 +177,9 @@ public:
 		FE_ASSERT(pointer_p == nullptr, "${%s@0}: attempted to delete ${%p@1}.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), pointer_p);
 
 #ifdef _ENABLE_MEMORY_TRACKER_
-		::FE::heap_memory_tracker<value_type>::sub(sizeof(value_type) * count_p);
+		FE::heap_memory_tracker<value_type>::sub(sizeof(value_type) * count_p);
 #endif 
-		::tbb::detail::r1::cache_aligned_deallocate(pointer_p);
+		tbb::detail::r1::cache_aligned_deallocate(pointer_p);
 	}
 };
 

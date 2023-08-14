@@ -12,6 +12,7 @@
 #include <string>
 #include <typeinfo>
 #include <type_traits>
+#include <utility>
 #pragma warning(push)
 #pragma warning(disable: 4530) // disable no-exception warnings
 

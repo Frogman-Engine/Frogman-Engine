@@ -27,9 +27,9 @@ public:
 	typedef T value_type;
 	typedef alignment alignment_type;
 
-	constexpr concurrent_memory_block() noexcept : m_is_being_used(false), m_is_block_constructed(false), m_memory(), m_memory_ptrc(reinterpret_cast<T*>(m_memory)) {}
+	_FORCE_INLINE_ constexpr concurrent_memory_block() noexcept : m_is_being_used(false), m_is_block_constructed(false), m_memory(), m_memory_ptrc(reinterpret_cast<T*>(m_memory)) {}
 
-	~concurrent_memory_block()
+	_FORCE_INLINE_ ~concurrent_memory_block()
 	{
 		if (this->m_is_block_constructed.load(std::memory_order_acquire) == true)
 		{
@@ -37,31 +37,80 @@ public:
 		}
 	}
 
-	concurrent_memory_block(const concurrent_memory_block& other_cref_p) noexcept = delete;
-	concurrent_memory_block(concurrent_memory_block&& rvalue_p) noexcept = delete;
+	_FORCE_INLINE_ concurrent_memory_block(const concurrent_memory_block& other_cref_p) noexcept : m_is_block_constructed(other_cref_p.m_is_block_constructed), m_memory(), m_memory_ptrc(reinterpret_cast<T*>(m_memory))
+	{
+		if (other_cref_p.m_is_block_constructed.load(std::memory_order_acquire) == true)
+		{
+			new(this->m_memory_ptrc) T();
+			*this->m_memory_ptrc = *other_cref_p.m_memory_ptrc;
+		}
+	}
 
-	concurrent_memory_block& operator=(const concurrent_memory_block other_cref_p) noexcept = delete;
-	concurrent_memory_block& operator=(concurrent_memory_block&& rvalue_p) noexcept = delete;
+	_FORCE_INLINE_ concurrent_memory_block(concurrent_memory_block&& rvalue_p) noexcept : m_is_block_constructed(rvalue_p.m_is_block_constructed), m_memory(), m_memory_ptrc(reinterpret_cast<T*>(m_memory))
+	{
+		if (rvalue_p.m_is_block_constructed.load(std::memory_order_acquire) == false)
+		{
+			return;
+		}
+
+		new(this->m_memory_ptrc) T();
+		*this->m_memory_ptrc = std::move(*rvalue_p.m_memory_ptrc);
+	}
+
+	_FORCE_INLINE_ concurrent_memory_block& operator=(const concurrent_memory_block& other_cref_p) noexcept
+	{
+		if (other_cref_p.m_is_block_constructed.load(std::memory_order_acquire) == false)
+		{
+			return *this;
+		}
+
+		if (this->m_is_block_constructed.load(std::memory_order_acquire) == false)
+		{
+			new(this->m_memory_ptrc) T();
+			this->m_is_block_constructed.store(true, std::memory_order_release);
+		}
+
+		*this->m_memory_ptrc = *other_cref_p.m_memory_ptrc;
+
+		return *this;
+	}
+
+	_FORCE_INLINE_ concurrent_memory_block& operator=(concurrent_memory_block&& rvalue_p) noexcept
+	{
+		if (rvalue_p.m_is_block_constructed.load(std::memory_order_acquire) == false)
+		{
+			return *this;
+		}
+
+		if (this->m_is_block_constructed.load(std::memory_order_acquire) == false)
+		{
+			new(this->m_memory_ptrc) T();
+			this->m_is_block_constructed.store(true, std::memory_order_release);
+		}
+
+		*this->m_memory_ptrc = std::move(*rvalue_p.m_memory_ptrc);
+
+		return *this;
+	}
 
 	_NODISCARD_ _FORCE_INLINE_ movable_scoped_ref<T> operator*() noexcept
 	{
-		
-FE_ASSERT(this->m_is_block_constructed.load() == false, "${%s@0}: Attempted to dereference an uninitialized memory block.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_ACCESS_VIOLATION));
-		return ::std::move(movable_scoped_ref(this->m_memory_ptrc, &this->m_is_being_used, true));
+		FE_ASSERT(this->m_is_block_constructed.load(std::memory_order_acquire) == false, "${%s@0}: Attempted to dereference an uninitialized memory block.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_ACCESS_VIOLATION));
+		return std::move(movable_scoped_ref<T>(this->m_memory_ptrc, &this->m_is_being_used, true));
 	}
 
 	_NODISCARD_ _FORCE_INLINE_ movable_scoped_ref<T> try_access() noexcept
 	{
-		if (FE_EXCEPTION_LOG(this->m_is_block_constructed.load() == false, "WARNING: failed to access the memory block because the block is not constructed. The function will return early with a null object."))
+		if (FE_EXCEPTION_LOG(this->m_is_block_constructed.load(std::memory_order_acquire) == false, "WARNING: failed to access the memory block because the block is not constructed. The function will return early with a null object."))
 		{
-			return movable_scoped_ref(&concurrent_memory_block<T, alignment>::tl_s_null_object, nullptr, false);
+			return movable_scoped_ref<T>(&concurrent_memory_block<T, alignment>::tl_s_null_object, nullptr, false);
 		}
 
-		return ::std::move(movable_scoped_ref(this->m_memory_ptrc, &this->m_is_being_used, true));
+		return std::move(movable_scoped_ref<T>(this->m_memory_ptrc, &this->m_is_being_used, true));
 	}
 
 public:
-	_FORCE_INLINE_ var::boolean is_constructed() noexcept { return this->m_is_block_constructed.load(::std::memory_order_relaxed); }
+	_FORCE_INLINE_ var::boolean is_constructed() const noexcept { return this->m_is_block_constructed.load(std::memory_order_acquire); }
 
 	_FORCE_INLINE_ var::boolean call_constructor() noexcept
 	{

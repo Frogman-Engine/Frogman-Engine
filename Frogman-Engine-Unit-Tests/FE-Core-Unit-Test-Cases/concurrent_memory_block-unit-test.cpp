@@ -1,7 +1,7 @@
 ﻿#include <gtest/gtest.h>
 // Copyright © from 2023 to current, UNKNOWN STRYKER. All Rights Reserved.
 #include <FE/miscellaneous/google_test_extension.h>
-#include <FE/core/heap_memory_tracker.hpp>
+#include <FE/core/heap_memory.hpp>
 #include <FE/core/concurrent_memory_block.hxx>
 #include <FE/core/thread.hpp>
 

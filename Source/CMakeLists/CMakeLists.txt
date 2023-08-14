@@ -96,10 +96,9 @@ SET(_MEMORY_POOL_
 
 SET(_PRIVATE_
 	${CMAKE_CURRENT_SOURCE_DIR}/../FE/core/private/clock.cpp 	
-	${CMAKE_CURRENT_SOURCE_DIR}/../FE/core/private/heap_memory_tracker.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/../FE/core/private/heap_memory.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/../FE/core/private/hash.cpp  
 	${CMAKE_CURRENT_SOURCE_DIR}/../FE/core/private/memory_metrics.cpp 
-	${CMAKE_CURRENT_SOURCE_DIR}/../FE/core/private/mutex.cpp 
 	${CMAKE_CURRENT_SOURCE_DIR}/../FE/core/private/strlen.h 
 	${CMAKE_CURRENT_SOURCE_DIR}/../FE/core/private/thread.cpp
 	)
@@ -133,12 +132,11 @@ SET(_CORE_
 	${CMAKE_CURRENT_SOURCE_DIR}/../FE/core/fstring.hxx 
 	${CMAKE_CURRENT_SOURCE_DIR}/../FE/core/function.hxx 
 	${CMAKE_CURRENT_SOURCE_DIR}/../FE/core/hash.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/../FE/core/heap_memory_tracker.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/../FE/core/heap_memory.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/../FE/core/iterator.hxx
 	${CMAKE_CURRENT_SOURCE_DIR}/../FE/core/memory.hxx
 	${CMAKE_CURRENT_SOURCE_DIR}/../FE/core/memory_metrics.h 
 	${CMAKE_CURRENT_SOURCE_DIR}/../FE/core/movable_scoped_ref.hxx 
-	${CMAKE_CURRENT_SOURCE_DIR}/../FE/core/mutex.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/../FE/core/memory_block.hxx 
 	${CMAKE_CURRENT_SOURCE_DIR}/../FE/core/optional.hxx 
 	${CMAKE_CURRENT_SOURCE_DIR}/../FE/core/prerequisite_symbols.h

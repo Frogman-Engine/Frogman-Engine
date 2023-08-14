@@ -132,10 +132,10 @@ _NODISCARD_ _FORCE_INLINE_ T* trackable_calloc(length_t count_p, size_t bytes_p)
 	::FE::heap_memory_tracker<T, alignment>::add(count_p * bytes_p);
 #endif
 	T* const l_result_ptrc = (T*)::scalable_aligned_malloc(count_p * bytes_p, alignment::size);
-	UNALIGNED_MEMSET(l_result_ptrc, _NULL_, count_p * bytes_p);
-	FE_ASSERT(l_result_ptrc == nullptr, "UNRECOVERABLE CRITICAL ERROR!: l_result_ptr is nullptr. Failed to allocate memory from scalable_aligned_malloc()");
+	ALIGNED_MEMSET(l_result_ptrc, _NULL_, count_p * bytes_p);
+	FE_ASSERT(l_result_ptrc == nullptr, "${%s@0}: Failed to allocate memory from scalable_aligned_malloc()", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR));
 
-	FE_ASSERT((reinterpret_cast<uintptr_t>(l_result_ptrc) % 8) != 0, "WANRING: The allocated heap memory address not aligned by QWORD.");
+	FE_ASSERT((reinterpret_cast<uintptr_t>(l_result_ptrc) % alignment::size) != 0, "${%s@0}: The allocated heap memory address not aligned by ${%lu@1}.", TO_STRING(MEMORY_ERROR_1XX::_ERROR_ILLEGAL_ADDRESS_ALIGNMENT), &alignment::size);
 	return l_result_ptrc;
 }
 
@@ -163,15 +163,15 @@ _NODISCARD_ _FORCE_INLINE_ T* trackable_realloc(T* const memblock_ptrc_p, length
 	if (l_realloc_result_ptr == nullptr) _UNLIKELY_
 	{
 		l_realloc_result_ptr = (T*)::scalable_aligned_malloc(new_length_p * new_bytes_p, alignment::size);
-		UNALIGNED_MEMSET(l_realloc_result_ptr, _NULL_, new_length_p * new_bytes_p);
+		ALIGNED_MEMSET(l_realloc_result_ptr, _NULL_, new_length_p * new_bytes_p);
 
-		FE_ASSERT(l_realloc_result_ptr == nullptr, "CRITICAL ERROR: Failed to re-allocate memory");
+		FE_ASSERT(l_realloc_result_ptr == nullptr, "${%s@0}: Failed to re-allocate memory from scalable_aligned_malloc()", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR));
 
-		::FE::unaligned_memcpy(l_realloc_result_ptr, new_length_p, new_bytes_p, memblock_ptrc_p, prev_length_p, prev_bytes_p);
+		FE::aligned_memcpy(l_realloc_result_ptr, new_length_p, new_bytes_p, memblock_ptrc_p, prev_length_p, prev_bytes_p);
 		::scalable_aligned_free(memblock_ptrc_p);
 	}
 
-	FE_ASSERT((reinterpret_cast<uintptr_t>(l_realloc_result_ptr) % 8) != 0, "WANRING: The allocated heap memory address not by QWORD.");
+	FE_ASSERT((reinterpret_cast<uintptr_t>(l_realloc_result_ptr) % alignment::size) != 0, "${%s@0}: The allocated heap memory address not aligned by ${%lu@1}.", TO_STRING(MEMORY_ERROR_1XX::_ERROR_ILLEGAL_ADDRESS_ALIGNMENT), &alignment::size);
 	return l_realloc_result_ptr;
 }
 

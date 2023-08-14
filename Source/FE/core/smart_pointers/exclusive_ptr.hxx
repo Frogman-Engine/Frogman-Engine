@@ -10,10 +10,10 @@ BEGIN_NAMESPACE(FE)
 
 
 template<typename T>
-class exclusive_ptr_base : public engine_smart_ptr_base<T>
+class exclusive_ptr_base : public smart_ptr_variant_base<T>
 {
 protected:
-	using base_type = engine_smart_ptr_base<T>;
+	using base_type = smart_ptr_variant_base<T>;
 	using pointer = typename base_type::pointer;
 	using element_type = typename base_type::element_type;
 	using ref_table_type = typename base_type::ref_table_type;

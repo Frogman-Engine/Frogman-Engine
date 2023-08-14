@@ -2,7 +2,7 @@
 // Copyright © from 2023 to current, UNKNOWN STRYKER. All Rights Reserved.
 #include <FE/miscellaneous/google_test_extension.h>
 #include <FE/core/allocator_adaptor.hxx>
-#include <FE/core/heap_memory_tracker.hpp>
+#include <FE/core/heap_memory.hpp>
 #include <vector>
 #include <deque>
 #include <list>

@@ -6,13 +6,15 @@
 #include <future>
 
 
+
+
 struct my_struct
 {
 	bool _has_constructor_been_called;
 	bool _has_copy_constructor_been_called;
 	bool _has_move_constructor_been_called;
 	bool _has_destructor_been_called;
-	int _field = 0;
+	int _field_variable = 0;
 
 	my_struct() noexcept
 	{
@@ -50,7 +52,7 @@ TEST(movable_scoped_ref, serial)
 		
 		EXPECT_TRUE(l_movable_scoped_ref.is_being_used());
 
-		(*l_movable_scoped_ref)._field = 5; // Critical Section.
+		(*l_movable_scoped_ref)._field_variable = 5; // Critical Section.
 
 		if (l_concurrent_memory_block.call_destructor() == FE::_FAILED_) // It always fail to invoke the destructor, since l_concurrent_memory_block is being referenced by l_movable_scoped_ref.
 		{
@@ -77,19 +79,19 @@ void fn(std::promise<bool>& promise_p, FE::concurrent_memory_block<my_struct>& c
 
 TEST(movable_scoped_ref, parallel)
 {
-	FE::c_style_task<void(std::promise<bool>&, FE::concurrent_memory_block<my_struct>&)> l_function;
-	l_function._arguments._second.call_constructor();
+	FE::c_style_task<void(std::promise<bool>&, FE::concurrent_memory_block<my_struct>&), FE::FORWARD_DATA::_AS_LVALUE_REF, std::promise<bool>, FE::concurrent_memory_block<my_struct>> l_function;
+	l_function._arguments_buffer._second.call_constructor();
 	l_function._function = fn;
-	std::future<bool> l_future = l_function._arguments._first.get_future();
+	std::future<bool> l_future = l_function._arguments_buffer._first.get_future();
 
 	FE::thread l_worker;
 	l_worker.fork(&l_function);
 
 	EXPECT_TRUE(l_future.get());
 
-	while (l_function._arguments._second.call_destructor() == false) {} // Busy waiting l_worker's job to be done 
+	while (l_function._arguments_buffer._second.call_destructor() == false) {} // Busy waiting l_worker's job to be done 
 
-	EXPECT_EQ(l_function._arguments._second.is_constructed(), false);
+	EXPECT_EQ(l_function._arguments_buffer._second.is_constructed(), false);
 
 	l_worker.join();
 }
