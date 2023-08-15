@@ -32,9 +32,9 @@ protected:
 };
 
 
-#if _AVX512_ == true
+#ifdef _AVX512_
 template<typename U, class address_alignment = align_64bytes>
-#elif _AVX_ == true
+#elif defined(_AVX_)
 template<typename U, class address_alignment = align_32bytes>
 #endif
 class heap_memory_tracker final : public heap_memory_tracker_base
@@ -129,9 +129,9 @@ template<typename T, class address_alignment>
 thread_local var::size_t FE::heap_memory_tracker<T, address_alignment>::tl_s_thread_local_total_bytes_by_type = 0;
 
 
-#if _AVX512_ == true
+#ifdef _AVX512_
 template<typename T, class alignment = align_64bytes>
-#elif _AVX_ == true
+#elif defined(_AVX_)
 template<typename T, class alignment = align_32bytes>
 #endif
 _NODISCARD_ _FORCE_INLINE_ T* trackable_calloc(length_t count_p, size_t bytes_p) noexcept
@@ -148,9 +148,9 @@ _NODISCARD_ _FORCE_INLINE_ T* trackable_calloc(length_t count_p, size_t bytes_p)
 }
 
 
-#if _AVX512_ == true
+#ifdef _AVX512_
 template<typename T, class alignment = align_64bytes>
-#elif _AVX_ == true
+#elif defined(_AVX_)
 template<typename T, class alignment = align_32bytes>
 #endif
 _FORCE_INLINE_ void trackable_free(T* const memblock_ptrc_p, _MAYBE_UNUSED_ length_t count_p, _MAYBE_UNUSED_ size_t bytes_p) noexcept
@@ -162,9 +162,9 @@ _FORCE_INLINE_ void trackable_free(T* const memblock_ptrc_p, _MAYBE_UNUSED_ leng
 }
 
 
-#if _AVX512_ == true
+#ifdef _AVX512_
 template<typename T, class alignment = align_64bytes>
-#elif _AVX_ == true
+#elif defined(_AVX_)
 template<typename T, class alignment = align_32bytes>
 #endif
 _NODISCARD_ _FORCE_INLINE_ T* trackable_realloc(T* const memblock_ptrc_p, length_t prev_length_p, size_t prev_bytes_p, length_t new_length_p, size_t new_bytes_p) noexcept

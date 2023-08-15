@@ -31,15 +31,11 @@
 #define ABS(x) ((x < 0) ? x * -1 : x)
 
 #ifdef __AVX__
-#define _AVX_ true
-#else
-#define _AVX_ false
+#define _AVX_
 #endif
 
 #ifdef __AVX512F__
-#define _AVX512_ true
-#else
-#define _AVX512_ false
+#define _AVX512_
 #endif
 
 #include <immintrin.h>
@@ -58,7 +54,7 @@ enum struct OBJECT_STATUS : boolean
 };
 
 
-#if _AVX512_ == true
+#ifdef _AVX512_
 _FORCE_INLINE_ void unaligned_memset_with_avx512(void* const dest_ptrc_p, int8 value_p, size_t total_bytes_p) noexcept
 {
 	FE_ASSERT(dest_ptrc_p == nullptr, "ERROR: dest_ptrc_p is nullptr.");
@@ -192,7 +188,7 @@ _FORCE_INLINE_ void aligned_memcpy_with_avx512(void* const dest_ptrc_p, const vo
 		++l_source_byte_ptr;
 	}
 }
-#elif _AVX_ == true
+#elif defined(_AVX_)
 _FORCE_INLINE_ void unaligned_memset_with_avx(void* const dest_ptrc_p, int8 value_p, size_t total_bytes_p) noexcept
 {
 	FE_ASSERT(dest_ptrc_p == nullptr, "ERROR: dest_ptrc_p is nullptr.");
@@ -341,13 +337,13 @@ _FORCE_INLINE_ void aligned_memcpy_with_avx(void* const dest_ptrc_p, const void*
 #endif
 
 
-#if _AVX512_ == true
+#ifdef _AVX512_
 #define UNALIGNED_MEMSET(dest_ptrc_p, value_p, total_bytes_p) ::FE::unaligned_memset_with_avx512(dest_ptrc_p, value_p, total_bytes_p)
 #define ALIGNED_MEMSET(dest_ptrc_p, value_p, total_bytes_p) ::FE::aligned_memset_with_avx512(dest_ptrc_p, value_p, total_bytes_p)
 #define UNALIGNED_MEMCPY(dest_ptrc_p, source_ptrc_p, bytes_to_copy_p) ::FE::unaligned_memcpy_with_avx512(dest_ptrc_p, source_ptrc_p, bytes_to_copy_p)
 #define ALIGNED_MEMCPY(dest_ptrc_p, source_ptrc_p, bytes_to_copy_p) ::FE::aligned_memcpy_with_avx512(dest_ptrc_p, source_ptrc_p, bytes_to_copy_p)
 
-#elif _AVX_ == true
+#elif defined(_AVX_)
 #define UNALIGNED_MEMSET(dest_ptrc_p, value_p, total_bytes_p) ::FE::unaligned_memset_with_avx(dest_ptrc_p, value_p, total_bytes_p)
 #define ALIGNED_MEMSET(dest_ptrc_p, value_p, total_bytes_p) ::FE::aligned_memset_with_avx(dest_ptrc_p, value_p, total_bytes_p)
 #define UNALIGNED_MEMCPY(dest_ptrc_p, source_ptrc_p, bytes_to_copy_p) ::FE::unaligned_memcpy_with_avx(dest_ptrc_p, source_ptrc_p, bytes_to_copy_p)
@@ -534,9 +530,9 @@ struct align_custom_bytes final
 };
 
 
-#if _AVX512_ == true
+#ifdef _AVX512_
 template<typename T, class alignment = align_64bytes>
-#elif _AVX_ == true
+#elif defined(_AVX_)
 template<typename T, class alignment = align_32bytes>
 #endif
 struct alignas(alignment::size) align

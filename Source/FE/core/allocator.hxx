@@ -80,9 +80,9 @@ public:
 };
 
 
-#if _AVX512_ == true
+#ifdef _AVX512_
 template<typename T, class alignment = align_64bytes>
-#elif _AVX_ == true
+#elif defined(_AVX_)
 template<typename T, class alignment = align_32bytes>
 #endif
 class scalable_aligned_allocator final
