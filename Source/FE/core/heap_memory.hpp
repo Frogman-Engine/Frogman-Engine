@@ -1,7 +1,7 @@
 ﻿#ifndef _FE_CORE_HEAP_MEMORY_TRACKER_HPP_
 #define _FE_CORE_HEAP_MEMORY_TRACKER_HPP_
 // Copyright © from 2023 to current, UNKNOWN STRYKER. All Rights Reserved.
-#include "prerequisite_symbols.h"
+#include <FE/core/prerequisites.h>
 #include <FE/miscellaneous/misc.h>
 #include <FE/core/memory_metrics.h>
 #include <tbb/scalable_allocator.h>
@@ -32,7 +32,11 @@ protected:
 };
 
 
-template<typename U, class address_alignment = align_8bytes>
+#if _AVX512_ == true
+template<typename U, class address_alignment = align_64bytes>
+#elif _AVX_ == true
+template<typename U, class address_alignment = align_32bytes>
+#endif
 class heap_memory_tracker final : public heap_memory_tracker_base
 {
 	friend class scalable_aligned_allocator<U, address_alignment>;
@@ -125,7 +129,11 @@ template<typename T, class address_alignment>
 thread_local var::size_t FE::heap_memory_tracker<T, address_alignment>::tl_s_thread_local_total_bytes_by_type = 0;
 
 
-template<typename T, class alignment = align_8bytes>
+#if _AVX512_ == true
+template<typename T, class alignment = align_64bytes>
+#elif _AVX_ == true
+template<typename T, class alignment = align_32bytes>
+#endif
 _NODISCARD_ _FORCE_INLINE_ T* trackable_calloc(length_t count_p, size_t bytes_p) noexcept
 {
 #ifdef _ENABLE_MEMORY_TRACKER_
@@ -140,7 +148,11 @@ _NODISCARD_ _FORCE_INLINE_ T* trackable_calloc(length_t count_p, size_t bytes_p)
 }
 
 
-template<typename T, class alignment = align_8bytes>
+#if _AVX512_ == true
+template<typename T, class alignment = align_64bytes>
+#elif _AVX_ == true
+template<typename T, class alignment = align_32bytes>
+#endif
 _FORCE_INLINE_ void trackable_free(T* const memblock_ptrc_p, _MAYBE_UNUSED_ length_t count_p, _MAYBE_UNUSED_ size_t bytes_p) noexcept
 {
 #ifdef _ENABLE_MEMORY_TRACKER_
@@ -150,7 +162,11 @@ _FORCE_INLINE_ void trackable_free(T* const memblock_ptrc_p, _MAYBE_UNUSED_ leng
 }
 
 
-template<typename T, class alignment = align_8bytes>
+#if _AVX512_ == true
+template<typename T, class alignment = align_64bytes>
+#elif _AVX_ == true
+template<typename T, class alignment = align_32bytes>
+#endif
 _NODISCARD_ _FORCE_INLINE_ T* trackable_realloc(T* const memblock_ptrc_p, length_t prev_length_p, size_t prev_bytes_p, length_t new_length_p, size_t new_bytes_p) noexcept
 {
 #ifdef _ENABLE_MEMORY_TRACKER_

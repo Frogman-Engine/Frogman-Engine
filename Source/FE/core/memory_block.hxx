@@ -8,7 +8,7 @@ BEGIN_NAMESPACE(FE)
 
 
 #pragma pack(push, _DWORD_SIZE_)
-template<typename T, class alignment = FE::align_null>
+template<typename T, class alignment = FE::align_8bytes>
 class alignas(alignment::size) memory_block final
 {
 private:

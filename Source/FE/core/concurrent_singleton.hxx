@@ -1,8 +1,8 @@
 ﻿#ifndef _FE_CORE_CONCURRENT_SINGLETON_HXX_
 #define _FE_CORE_CONCURRENT_SINGLETON_HXX_
 // Copyright © from 2023 to current, UNKNOWN STRYKER. All Rights Reserved.
-#include "prerequisite_symbols.h"
-#include "concurrent_memory_block.hxx"
+#include <FE/core/prerequisites.h>
+#include <FE/core/concurrent_memory_block.hxx>
 
 
 #define FRIEND_CLASS_CONCURRENT_SINGLETON(typename_p) friend class ::FE::concurrent_memory_block<typename_p>; friend class ::FE::concurrent_singleton<typename_p>

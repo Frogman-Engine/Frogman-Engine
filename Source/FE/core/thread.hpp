@@ -1,12 +1,16 @@
 ﻿#ifndef _FE_CORE_THREAD_HPP_
 #define _FE_CORE_THREAD_HPP_
 // Copyright © from 2023 to current, UNKNOWN STRYKER. All Rights Reserved.
-#include "prerequisite_symbols.h"
-#include "function.hxx"
+#include <FE/core/prerequisites.h>
 #include <thread>
 
 
+
+
 BEGIN_NAMESPACE(FE)
+
+
+struct task_base;
 
 
 class thread final
@@ -20,8 +24,8 @@ public:
 	typedef ::std::thread thread_type;
 	typedef var::uint64 id_type;
 
-	_MAYBE_UNUSED_ static constexpr var::uint16 _MINIMUM_SUITABLE_THREAD_COUNT_ = 6;
-	_MAYBE_UNUSED_ static constexpr var::uint16 _MAX_THRED_ID_DIGIT_LENGTH_ = 24;
+	_MAYBE_UNUSED_ static constexpr var::uint16 minimum_suitable_thread_count = 6;
+	_MAYBE_UNUSED_ static constexpr var::uint16 max_thread_id_digit_length = 24;
 
 	thread() noexcept = default;
 

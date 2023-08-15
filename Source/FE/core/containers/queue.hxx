@@ -1,7 +1,7 @@
 ﻿#ifndef _FE_CORE_QUEUE_HXX_
 #define _FE_CORE_QUEUE_HXX_
 // Copyright © from 2023 to current, UNKNOWN STRYKER. All Rights Reserved.
-#include <FE/core/prerequisite_symbols.h>
+#include <FE/core/prerequisites.h>
 #include <FE/core/iterator.hxx>
 #include <FE/core/memory.hxx>
 #include <initializer_list>
@@ -10,7 +10,7 @@
 BEGIN_NAMESPACE(FE)
 
 
-template<class T, size_t max_element_count = 0, FE::OBJECT_TRIVIALITY is_trivial = FE::is_trivially_constructible_and_destructible<T>::_VALUE_>
+template<class T, size_t max_element_count = 0, FE::TYPE_TRIVIALITY is_trivial = FE::is_trivially_constructible_and_destructible<T>::value>
 class queue final
 {
 public:
@@ -46,7 +46,7 @@ protected:
 
 
 template<class T>
-class queue<T, 0, FE::OBJECT_TRIVIALITY::_TRIVIAL> final : dynamic_queue_base<T>
+class queue<T, 0, FE::TYPE_TRIVIALITY::_TRIVIAL> final : dynamic_queue_base<T>
 {
 public:
 	using base_type = dynamic_queue_base<T>;
@@ -69,7 +69,7 @@ public:
 
 
 template<class T>
-class queue<T, 0, FE::OBJECT_TRIVIALITY::_NOT_TRIVIAL> final : dynamic_queue_base<T>
+class queue<T, 0, FE::TYPE_TRIVIALITY::_NOT_TRIVIAL> final : dynamic_queue_base<T>
 {
 public:
 	using base_type = dynamic_queue_base<T>;
@@ -174,7 +174,7 @@ public:
 		return this->m_front_ptr - 1;
 	}
 
-	template<FE::OBJECT_TRIVIALITY is_trivial = FE::is_trivially_constructible_and_destructible<T>::_VALUE_>
+	template<FE::TYPE_TRIVIALITY is_trivial = FE::is_trivially_constructible_and_destructible<T>::value>
 	_FORCE_INLINE_ static void swap(queue<T, max_element_count, is_trivial>& first_ref_p, queue<T, max_element_count, is_trivial>& second_ref_p) noexcept
 	{
 		queue<T, max_element_count, is_trivial> l_temporary = std::move(first_ref_p);
@@ -182,13 +182,13 @@ public:
 		second_ref_p = std::move(l_temporary);
 	}
 
-	template<FE::OBJECT_TRIVIALITY is_trivial = FE::is_trivially_constructible_and_destructible<T>::_VALUE_>
+	template<FE::TYPE_TRIVIALITY is_trivial = FE::is_trivially_constructible_and_destructible<T>::value>
 	var::boolean operator==(queue<T, max_element_count, is_trivial>& other_ref_p) noexcept
 	{
 		return FE::memcmp_s(this->cbegin(), this->cend(), other_ref_p.cbegin(), other_ref_p.cend());
 	}
 
-	template<FE::OBJECT_TRIVIALITY is_trivial = FE::is_trivially_constructible_and_destructible<T>::_VALUE_>
+	template<FE::TYPE_TRIVIALITY is_trivial = FE::is_trivially_constructible_and_destructible<T>::value>
 	var::boolean operator!=(queue<T, max_element_count, is_trivial>& other_ref_p) noexcept
 	{
 		return !FE::memcmp_s(this->cbegin(), this->cend(), other_ref_p.cbegin(), other_ref_p.cend());
@@ -218,7 +218,7 @@ protected:
 
 
 template<class T, count_t max_element_count>
-class queue<T, max_element_count, FE::OBJECT_TRIVIALITY::_TRIVIAL> final : public static_queue_base<T, max_element_count>
+class queue<T, max_element_count, FE::TYPE_TRIVIALITY::_TRIVIAL> final : public static_queue_base<T, max_element_count>
 {
 public:
 	using base_type = static_queue_base<T, max_element_count>;
@@ -354,9 +354,9 @@ public:
 
 
 template<class T, count_t max_element_count>
-class queue<T, max_element_count, FE::OBJECT_TRIVIALITY::_NOT_TRIVIAL> final : public static_queue_base<T, max_element_count>
+class queue<T, max_element_count, FE::TYPE_TRIVIALITY::_NOT_TRIVIAL> final : public static_queue_base<T, max_element_count>
 {
-	OBJECT_LIFECYCLE m_bool_mask[max_element_count];
+	OBJECT_STATUS m_bool_mask[max_element_count];
 
 public:
 	using base_type = static_queue_base<T, max_element_count>;
@@ -392,8 +392,8 @@ public:
 
 	_FORCE_INLINE_ queue(queue& other_ref_p) noexcept : base_type(), m_bool_mask()
 	{
-		FE::copy_construct<FE::iterator<FE::contiguous_iterator<value_type>>>(this->m_absolute_begin_ptrc, max_element_count, static_cast<OBJECT_LIFECYCLE*>(this->m_bool_mask),
-			other_ref_p.m_front_ptr, other_ref_p.m_back_ptr - other_ref_p.m_front_ptr, static_cast<const OBJECT_LIFECYCLE*>(other_ref_p.m_bool_mask + (other_ref_p.m_front_ptr - other_ref_p.m_absolute_begin_ptrc)));
+		FE::copy_construct<FE::iterator<FE::contiguous_iterator<value_type>>>(this->m_absolute_begin_ptrc, max_element_count, static_cast<OBJECT_STATUS*>(this->m_bool_mask),
+			other_ref_p.m_front_ptr, other_ref_p.m_back_ptr - other_ref_p.m_front_ptr, static_cast<const OBJECT_STATUS*>(other_ref_p.m_bool_mask + (other_ref_p.m_front_ptr - other_ref_p.m_absolute_begin_ptrc)));
 		
 		this->__jump_front_pointer(other_ref_p.m_front_ptr - other_ref_p.m_absolute_begin_ptrc);
 		this->__jump_back_pointer(other_ref_p.m_back_ptr - other_ref_p.m_front_ptr);
@@ -401,8 +401,8 @@ public:
 
 	_FORCE_INLINE_ queue(queue&& rvalue_p) noexcept : base_type(), m_bool_mask()
 	{
-		FE::move_construct<FE::iterator<FE::contiguous_iterator<value_type>>>(this->m_absolute_begin_ptrc, max_element_count, static_cast<OBJECT_LIFECYCLE*>(this->m_bool_mask),
-			rvalue_p.m_front_ptr, rvalue_p.m_back_ptr - rvalue_p.m_front_ptr, static_cast<OBJECT_LIFECYCLE*>(rvalue_p.m_bool_mask + (rvalue_p.m_front_ptr - rvalue_p.m_absolute_begin_ptrc)));
+		FE::move_construct<FE::iterator<FE::contiguous_iterator<value_type>>>(this->m_absolute_begin_ptrc, max_element_count, static_cast<OBJECT_STATUS*>(this->m_bool_mask),
+			rvalue_p.m_front_ptr, rvalue_p.m_back_ptr - rvalue_p.m_front_ptr, static_cast<OBJECT_STATUS*>(rvalue_p.m_bool_mask + (rvalue_p.m_front_ptr - rvalue_p.m_absolute_begin_ptrc)));
 
 		FE::destruct<FE::iterator<FE::contiguous_iterator<value_type>>>(rvalue_p.m_front_ptr, rvalue_p.m_back_ptr, rvalue_p.m_bool_mask + (rvalue_p.m_front_ptr - rvalue_p.m_absolute_begin_ptrc));
 
@@ -427,8 +427,8 @@ public:
 
 	_FORCE_INLINE_ queue& operator=(queue& other_ref_p) noexcept
 	{
-		FE::copy_assign<FE::iterator<FE::contiguous_iterator<value_type>>>(this->m_absolute_begin_ptrc, max_element_count, static_cast<OBJECT_LIFECYCLE*>(this->m_bool_mask),
-			other_ref_p.m_front_ptr, other_ref_p.m_back_ptr - other_ref_p.m_front_ptr, static_cast<const OBJECT_LIFECYCLE*>(other_ref_p.m_bool_mask + (other_ref_p.m_front_ptr - other_ref_p.m_absolute_begin_ptrc)));
+		FE::copy_assign<FE::iterator<FE::contiguous_iterator<value_type>>>(this->m_absolute_begin_ptrc, max_element_count, static_cast<OBJECT_STATUS*>(this->m_bool_mask),
+			other_ref_p.m_front_ptr, other_ref_p.m_back_ptr - other_ref_p.m_front_ptr, static_cast<const OBJECT_STATUS*>(other_ref_p.m_bool_mask + (other_ref_p.m_front_ptr - other_ref_p.m_absolute_begin_ptrc)));
 
 		this->__set_front_pointer_to_zero();
 		this->__set_back_pointer_to_zero();
@@ -439,8 +439,8 @@ public:
 
 	_FORCE_INLINE_ queue& operator=(queue&& rvalue_p) noexcept
 	{
-		FE::move_assign<FE::iterator<FE::contiguous_iterator<value_type>>>(this->m_absolute_begin_ptrc, max_element_count, static_cast<OBJECT_LIFECYCLE*>(this->m_bool_mask),
-			rvalue_p.m_front_ptr, rvalue_p.m_back_ptr - rvalue_p.m_front_ptr, static_cast<OBJECT_LIFECYCLE*>(rvalue_p.m_bool_mask + (rvalue_p.m_front_ptr - rvalue_p.m_absolute_begin_ptrc)));
+		FE::move_assign<FE::iterator<FE::contiguous_iterator<value_type>>>(this->m_absolute_begin_ptrc, max_element_count, static_cast<OBJECT_STATUS*>(this->m_bool_mask),
+			rvalue_p.m_front_ptr, rvalue_p.m_back_ptr - rvalue_p.m_front_ptr, static_cast<OBJECT_STATUS*>(rvalue_p.m_bool_mask + (rvalue_p.m_front_ptr - rvalue_p.m_absolute_begin_ptrc)));
 
 		FE::destruct<FE::iterator<FE::contiguous_iterator<value_type>>>(rvalue_p.m_front_ptr, rvalue_p.m_back_ptr, rvalue_p.m_bool_mask + (rvalue_p.m_front_ptr - rvalue_p.m_absolute_begin_ptrc));
 

@@ -1,11 +1,12 @@
 ﻿#ifndef _FE_CORE_ALGORITHM_UTILITY_HXX_
 #define _FE_CORE_ALGORITHM_UTILITY_HXX_
 // Copyright © from 2023 to current, UNKNOWN STRYKER. All Rights Reserved.
-#include <FE/core/types.h>
+#include <FE/core/type_traits.hxx>
 #include <FE/core/debug.h>
 #include <FE/core/private/strlen.h>
 #include <bitset>
-
+#pragma warning(push)
+#pragma warning(disable: 4244)
 
 #define CHAR_TO_INT(c) (c - '0')
 
@@ -52,7 +53,7 @@ template<typename unsigned_integral_type, typename char_type>
 _FORCE_INLINE_ integral_info<unsigned_integral_type> string_to_uint(const char_type* const integral_string_ptrc_p) noexcept
 {
     static_assert(std::is_unsigned<unsigned_integral_type>::value == true, "static assertion failed: the template argument unsigned_integral_type is not an unsigned integral type.");
-    static_assert(FE::is_character<char_type>::value == true, "static assertion failed: the template argument char_type is not a character type.");
+    static_assert(FE::is_char<char_type>::value == true, "static assertion failed: the template argument char_type is not a character type.");
 
     const char_type* l_integral_string_ptr = integral_string_ptrc_p;
     unsigned_integral_type l_result = 0;
@@ -71,7 +72,7 @@ template<typename unsigned_integral_type, typename char_type>
 _FORCE_INLINE_ constexpr integral_info<unsigned_integral_type> constexpr_string_to_uint(const char_type* const integral_string_ptrc_p) noexcept
 {
     static_assert(std::is_unsigned<unsigned_integral_type>::value == true, "static assertion failed: the template argument unsigned_integral_type is not an unsigned integral type.");
-    static_assert(FE::is_character<char_type>::value == true, "static assertion failed: the template argument char_type is not a character type.");
+    static_assert(FE::is_char<char_type>::value == true, "static assertion failed: the template argument char_type is not a character type.");
 
     const char_type* l_integral_string_ptr = integral_string_ptrc_p;
     unsigned_integral_type l_result = 0;
@@ -91,7 +92,7 @@ template<typename signed_integral_type, typename char_type>
 _FORCE_INLINE_ integral_info<signed_integral_type> string_to_int(const char_type* integral_string_ptr_p) noexcept
 {
     static_assert(std::is_signed<signed_integral_type>::value == true, "static assertion failed: the template argument signed_integral_type is not a signed integral type.");
-    static_assert(FE::is_character<char_type>::value == true, "static assertion failed: the template argument char_type is not a character type.");
+    static_assert(FE::is_char<char_type>::value == true, "static assertion failed: the template argument char_type is not a character type.");
 
     const char_type* l_integral_string_ptr = integral_string_ptr_p;
     signed_integral_type l_result = 0;
@@ -126,7 +127,7 @@ template<typename signed_integral_type, typename char_type>
 _FORCE_INLINE_ constexpr integral_info<signed_integral_type> constexpr_string_to_int(const char_type* integral_string_ptr_p) noexcept
 {
     static_assert(std::is_signed<signed_integral_type>::value == true, "static assertion failed: the template argument signed_integral_type is not a signed integral type.");
-    static_assert(FE::is_character<char_type>::value == true, "static assertion failed: the template argument char_type is not a character type.");
+    static_assert(FE::is_char<char_type>::value == true, "static assertion failed: the template argument char_type is not a character type.");
 
     const char_type* l_integral_string_ptr = integral_string_ptr_p;
     signed_integral_type l_result = 0;
@@ -349,7 +350,7 @@ _NODISCARD_ _FORCE_INLINE_ constexpr var::uint8 constexpr_count_integral_digit_l
 template<typename char_type>
 _FORCE_INLINE_ void int_to_string(char_type* const string_out_ptrc_p, _MAYBE_UNUSED_ length_t input_string_capacity_p, var::int64 value_p) noexcept
 {
-    static_assert(FE::is_character<char_type>::value, "an illegal type of value_p assigned to the template argument char_type");
+    static_assert(FE::is_char<char_type>::value, "an illegal type of value_p assigned to the template argument char_type");
     ABORT_IF(string_out_ptrc_p == nullptr, "NULLPTR DETECTED: string_out_ptrc_p is nullptr.");
     ABORT_IF(value_p == FE::_MIN_VALUE_<var::int64>, "NaCN ERROR: value_p is not a calculatable number");
 
@@ -388,7 +389,7 @@ _FORCE_INLINE_ void int_to_string(char_type* const string_out_ptrc_p, _MAYBE_UNU
 template<typename char_type>
 _FORCE_INLINE_ constexpr void constexpr_int_to_string(char_type* const string_out_ptrc_p, _MAYBE_UNUSED_ length_t input_string_capacity_p, var::int64 value_p) noexcept
 {
-    static_assert(FE::is_character<char_type>::value, "an illegal type of value_p assigned to the template argument char_type");
+    static_assert(FE::is_char<char_type>::value, "an illegal type of value_p assigned to the template argument char_type");
     ABORT_IF(string_out_ptrc_p == nullptr, "NULLPTR DETECTED: string_out_ptrc_p is nullptr.");
 
     var::int8 l_integral_digits = count_integral_digit_length<var::int64>(value_p);
@@ -427,7 +428,7 @@ _FORCE_INLINE_ constexpr void constexpr_int_to_string(char_type* const string_ou
 template<typename char_type>
 _FORCE_INLINE_ void uint_to_string(char_type* const string_out_ptrc_p, _MAYBE_UNUSED_ length_t input_string_capacity_p, var::uint64 value_p) noexcept
 {
-    static_assert(FE::is_character<char_type>::value, "an illegal type of value_p assigned to the template argument char_type");
+    static_assert(FE::is_char<char_type>::value, "an illegal type of value_p assigned to the template argument char_type");
     ABORT_IF(string_out_ptrc_p == nullptr, "NULLPTR DETECTED: string_out_ptrc_p is nullptr.");
 
     var::int8 l_integral_digits = count_integral_digit_length<var::uint64>(value_p);
@@ -459,7 +460,7 @@ _FORCE_INLINE_ void uint_to_string(char_type* const string_out_ptrc_p, _MAYBE_UN
 template<typename char_type>
 _FORCE_INLINE_ constexpr void constexpr_uint_to_string(char_type* const string_out_ptrc_p, _MAYBE_UNUSED_ length_t input_string_capacity_p, var::uint64 value_p) noexcept
 {
-    static_assert(FE::is_character<char_type>::value, "an illegal type of value_p assigned to the template argument char_type");
+    static_assert(FE::is_char<char_type>::value, "an illegal type of value_p assigned to the template argument char_type");
     ABORT_IF(string_out_ptrc_p == nullptr, "NULLPTR DETECTED: string_out_ptrc_p is nullptr.");
 
     var::int8 l_integral_digits = count_integral_digit_length<var::uint64>(value_p);
@@ -492,7 +493,7 @@ _FORCE_INLINE_ constexpr void constexpr_uint_to_string(char_type* const string_o
 template<typename char_type>
 _FORCE_INLINE_ void float_to_string(char_type* const string_out_ptrc_p, length_t input_string_capacity_p, float64 value_p) noexcept
 {
-    static_assert(FE::is_character<char_type>::value, "an illegal type of value_p assigned to the template argument char_type");
+    static_assert(FE::is_char<char_type>::value, "an illegal type of value_p assigned to the template argument char_type");
     ABORT_IF(string_out_ptrc_p == nullptr, "NULLPTR DETECTED: string_out_ptrc_p is nullptr.");
 
     int_to_string<char_type>(string_out_ptrc_p, input_string_capacity_p, static_cast<var::int64>(value_p));
@@ -515,7 +516,7 @@ _FORCE_INLINE_ void float_to_string(char_type* const string_out_ptrc_p, length_t
 template<typename char_type>
 _FORCE_INLINE_ constexpr void constexpr_float_to_string(char_type* const string_out_ptrc_p, length_t input_string_capacity_p, float64 value_p) noexcept
 {
-    static_assert(FE::is_character<char_type>::value, "an illegal type of value_p assigned to the template argument char_type");
+    static_assert(FE::is_char<char_type>::value, "an illegal type of value_p assigned to the template argument char_type");
     ABORT_IF(string_out_ptrc_p == nullptr, "NULLPTR DETECTED: string_out_ptrc_p is nullptr.");
 
     constexpr_int_to_string<char_type>(string_out_ptrc_p, input_string_capacity_p, static_cast<int64>(value_p));
@@ -539,7 +540,7 @@ _FORCE_INLINE_ constexpr void constexpr_float_to_string(char_type* const string_
 template<typename char_type>
 _FORCE_INLINE_ const char_type* boolean_to_string(boolean value_p) noexcept
 {
-    static_assert(FE::is_character<char_type>::value, "an illegal type of value_p assigned to the template argument char_type");
+    static_assert(FE::is_char<char_type>::value, "an illegal type of value_p assigned to the template argument char_type");
 
     return (value_p == true) ? static_cast<const char_type*>("true") : static_cast <const char_type*>("false");
 }
@@ -547,7 +548,7 @@ _FORCE_INLINE_ const char_type* boolean_to_string(boolean value_p) noexcept
 template<typename char_type>
 _FORCE_INLINE_ constexpr const char_type* constexpr_boolean_to_string(boolean value_p) noexcept
 {
-    static_assert(FE::is_character<char_type>::value, "an illegal type of value_p assigned to the template argument char_type");
+    static_assert(FE::is_char<char_type>::value, "an illegal type of value_p assigned to the template argument char_type");
 
     return (value_p == true) ? static_cast<const char_type*>("true") : static_cast <const char_type*>("false");
 }
@@ -604,7 +605,7 @@ _FORCE_INLINE_ const char_type* any_primitive_to_string(T value_p) noexcept
         std::memset(tl_s_buffer, _NULL_, sizeof(char_type) * internal::strlen(tl_s_buffer));
         return boolean_to_string<char_type>(value_p);
     }
-    else if constexpr (FE::is_character<T>::value)
+    else if constexpr (FE::is_char<T>::value)
     {
         thread_local static char_type tl_s_buffer[2] = "\0";
         tl_s_buffer[0] = value_p;
@@ -662,7 +663,7 @@ _FORCE_INLINE_ void any_primitive_to_string(char_type* const dest_buffer_ptrc_p,
         std::memcpy(dest_buffer_ptrc_p, l_result_ptrc, l_length * sizeof(char_type));
         dest_buffer_ptrc_p[l_length] = '\0';
     }
-    else if constexpr (FE::is_character<T>::value)
+    else if constexpr (FE::is_char<T>::value)
     {
         dest_buffer_ptrc_p[0] = value_p;
         dest_buffer_ptrc_p[1] = _NULL_;
@@ -738,4 +739,5 @@ _FORCE_INLINE_ void any_to_string(char_type* const dest_buffer_ptrc_p, capacity_
 
 
 END_NAMESPACE
+#pragma warning(pop)
 #endif

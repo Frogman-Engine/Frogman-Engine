@@ -1,7 +1,7 @@
 ﻿#ifndef _FE_CORE_FUNCTION_TABLE_HXX_
 #define _FE_CORE_FUNCTION_TABLE_HXX_
 // Copyright © from 2023 to current, UNKNOWN STRYKER. All Rights Reserved.
-#include <FE/core/prerequisite_symbols.h>
+#include <FE/core/prerequisites.h>
 #include <FE/core/allocator_adaptor.hxx>
 #include <FE/core/function.hxx>
 #include <FE/core/hash.hpp>
@@ -18,7 +18,7 @@ class application;
 class function_table
 {
 	friend class application;
-
+	
 public:												
 	using underlying_container = ::std::unordered_map< const char*, FE::task_base*, FE::hash<const char*>, std::equal_to<const char*>, FE::std_style::scalable_aligned_allocator<std::pair<const char* const, FE::task_base*>> >;
 	/* 

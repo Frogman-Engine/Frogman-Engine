@@ -1,8 +1,9 @@
 ﻿#ifndef _FE_CORE_UNIQUE_PTR_HXX_
 #define _FE_CORE_UNIQUE_PTR_HXX_
 // Copyright © from 2023 to current, UNKNOWN STRYKER. All Rights Reserved.
-#include <FE/core/prerequisite_symbols.h>
+#include <FE/core/prerequisites.h>
 #include <FE/core/allocator.hxx>
+#include <FE/core/memory.hxx>
 
 
 
@@ -10,9 +11,10 @@
 BEGIN_NAMESPACE(FE)
 
 
-template<typename T, class allocator = FE::new_delete_proxy_allocator<FE::scalable_aligned_allocator<typename std::remove_all_extents<T>::type, FE::align_8bytes>>>
+template<typename T, class allocator = FE::new_delete_proxy_allocator<FE::scalable_aligned_allocator<typename std::remove_all_extents<T>::type>>, class type_trait = FE::type_trait<typename std::remove_all_extents<T>::type, allocator>>
 class unique_ptr final
 {
+	static_assert(std::is_pointer<T>::value == false, "static assertion failed: The typename T cannot be a pointer type. Use a nested smart pointer instead. e.g. FE::unique_ptr<FE::unique_ptr<T>> l_unique_ptr;");
 public:
 	using pointer = typename allocator::pointer;
 	using element_type = typename allocator::value_type;
@@ -107,6 +109,11 @@ public:
 		return (this->m_smart_ptr != nullptr) ? true : false;
 	}
 
+	_CONSTEXPR23_ _FORCE_INLINE_ bool operator!() const noexcept
+	{
+		return (this->m_smart_ptr == nullptr) ? true : false;
+	}
+
 	_CONSTEXPR23_ _FORCE_INLINE_ element_type& operator*() const noexcept
 	{
 		FE_ASSERT(this->m_smart_ptr == nullptr, "${%s@0}: ${%s@1} is nullptr", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(this->m_smart_ptr));
@@ -125,30 +132,31 @@ public:
 	}
 };
 
-template<typename T, class allocator = FE::new_delete_proxy_allocator<FE::scalable_aligned_allocator<T, FE::align_8bytes>>>
-_CONSTEXPR23_ _NODISCARD_ _FORCE_INLINE_ unique_ptr<T, allocator> make_unique() noexcept
+template<typename T, class allocator = FE::new_delete_proxy_allocator<FE::scalable_aligned_allocator<T>>, class type_trait = FE::type_trait<typename std::remove_all_extents<T>::type, allocator>>
+_CONSTEXPR23_ _NODISCARD_ _FORCE_INLINE_ unique_ptr<T, allocator, type_trait> make_unique() noexcept
 {
-	return unique_ptr<T, allocator>(T());
+	return unique_ptr<T, allocator, type_trait>(T());
 }
 
-template<typename T, class allocator = FE::new_delete_proxy_allocator<FE::scalable_aligned_allocator<T, FE::align_8bytes>>>
-_CONSTEXPR23_ _NODISCARD_ _FORCE_INLINE_ unique_ptr<T, allocator> make_unique(T value_p) noexcept
+template<typename T, class allocator = FE::new_delete_proxy_allocator<FE::scalable_aligned_allocator<T>>, class type_trait = FE::type_trait<typename std::remove_all_extents<T>::type, allocator>>
+_CONSTEXPR23_ _NODISCARD_ _FORCE_INLINE_ unique_ptr<T, allocator, type_trait> make_unique(T value_p) noexcept
 {
-	return unique_ptr<T, allocator>( T( std::move(value_p) ) );
+	return unique_ptr<T, allocator, type_trait>( T( std::move(value_p) ) );
 }
 
-template<typename T, class allocator = FE::new_delete_proxy_allocator<FE::scalable_aligned_allocator<T, FE::align_8bytes>>, typename... arguments>
-_CONSTEXPR23_ _NODISCARD_ _FORCE_INLINE_ unique_ptr<T, allocator> make_unique(arguments... arguments_p) noexcept
+template<typename T, class allocator = FE::new_delete_proxy_allocator<FE::scalable_aligned_allocator<T>>, class type_trait = FE::type_trait<typename std::remove_all_extents<T>::type, allocator>, typename... arguments>
+_CONSTEXPR23_ _NODISCARD_ _FORCE_INLINE_ unique_ptr<T, allocator, type_trait> make_unique(arguments... arguments_p) noexcept
 {
-	return unique_ptr<T, allocator>( T( std::move(arguments_p...) ) );
+	return unique_ptr<T, allocator, type_trait>( T( std::move(arguments_p...) ) );
 }
 
 
 
 
-template<typename T, class allocator>
-class unique_ptr<T[], allocator> final
+template<typename T, class allocator, class type_trait>
+class unique_ptr<T[], allocator, type_trait> final
 {
+	static_assert(std::is_pointer<T>::value == false, "static assertion failed: The typename T cannot be a pointer type. Use a nested smart pointer instead. e.g. FE::unique_ptr<FE::unique_ptr<T[]>> l_unique_ptr;");
 public:
 	using pointer = typename allocator::pointer;
 	using element_type = typename allocator::value_type;
@@ -183,12 +191,7 @@ public:
 
 	_CONSTEXPR23_ _FORCE_INLINE_ unique_ptr(std::initializer_list<element_type>&& values_p) noexcept : m_smart_ptr(allocator::allocate( values_p.size() )), m_smart_ptr_end(m_smart_ptr + values_p.size())
 	{
-		pointer l_array_smart_ptr_iterator = this->m_smart_ptr;
-		for (element_type* initializer_list_iterator = const_cast<element_type*>(values_p.begin()); initializer_list_iterator != values_p.end(); ++initializer_list_iterator)
-		{
-			*l_array_smart_ptr_iterator = std::move(*initializer_list_iterator);
-			++l_array_smart_ptr_iterator;
-		}
+		type_trait::copy_assign(this->m_smart_ptr, const_cast<element_type*>(values_p.begin()), values_p.size());
 	}
 
 	_CONSTEXPR23_ _FORCE_INLINE_ unique_ptr& operator=(const unique_ptr& other_cref_p) noexcept = delete;
@@ -210,14 +213,13 @@ public:
 
 	_CONSTEXPR23_ _FORCE_INLINE_ unique_ptr& operator=(std::initializer_list<element_type>&& values_p) noexcept
 	{
-		this->m_smart_ptr = allocator::reallocate(this->m_smart_ptr, this->m_smart_ptr_end - this->m_smart_ptr, values_p.size());
-
-		pointer l_array_smart_ptr_iterator = this->m_smart_ptr;
-		for (element_type* initializer_list_iterator = const_cast<element_type*>(values_p.begin()); initializer_list_iterator != values_p.end(); ++initializer_list_iterator)
+		if (static_cast<size_t>((this->m_smart_ptr_end - this->m_smart_ptr)) != values_p.size())
 		{
-			*l_array_smart_ptr_iterator = std::move(*initializer_list_iterator);
-			++l_array_smart_ptr_iterator;
+			this->m_smart_ptr = allocator::reallocate(this->m_smart_ptr, this->m_smart_ptr_end - this->m_smart_ptr, values_p.size());
+			this->m_smart_ptr_end = this->m_smart_ptr + values_p.size();
 		}
+
+		type_trait::copy_assign(this->m_smart_ptr, const_cast<element_type*>(values_p.begin()), values_p.size());
 		return *this;
 	}
 
@@ -234,18 +236,16 @@ public:
 		this->~unique_ptr();
 	}
 
+
 	_CONSTEXPR23_ _FORCE_INLINE_ void reset(std::initializer_list<element_type>&& values_p) noexcept
 	{
-		this->~unique_ptr();
-		this->m_smart_ptr = allocator::allocate(values_p.size());
-		this->m_smart_ptr_end = this->m_smart_ptr + values_p.size();
-
-		pointer l_array_smart_ptr_iterator = this->m_smart_ptr;
-		for (element_type* initializer_list_iterator = const_cast<element_type*>(values_p.begin()); initializer_list_iterator != values_p.end(); ++initializer_list_iterator)
+		if ((this->m_smart_ptr_end - this->m_smart_ptr) != values_p.size())
 		{
-			*l_array_smart_ptr_iterator = std::move(*initializer_list_iterator);
-			++l_array_smart_ptr_iterator;
+			this->m_smart_ptr = allocator::reallocate(this->m_smart_ptr, this->m_smart_ptr_end - this->m_smart_ptr, values_p.size());
+			this->m_smart_ptr_end = this->m_smart_ptr + values_p.size();
 		}
+
+		type_trait::copy_assign(this->m_smart_ptr, const_cast<element_type*>(values_p.begin()), values_p.size());
 	}
 
 	_FORCE_INLINE_ void swap(unique_ptr& other_ref_p) noexcept
@@ -266,6 +266,11 @@ public:
 	_CONSTEXPR23_ _FORCE_INLINE_ explicit operator bool() const noexcept
 	{
 		return (this->m_smart_ptr != nullptr) ? true : false;
+	}
+
+	_CONSTEXPR23_ _FORCE_INLINE_ bool operator!() const noexcept
+	{
+		return (this->m_smart_ptr == nullptr) ? true : false;
 	}
 
 	_CONSTEXPR23_ _FORCE_INLINE_ element_type& operator*() const noexcept

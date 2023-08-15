@@ -1,6 +1,6 @@
 ﻿// Copyright © from 2023 to current, UNKNOWN STRYKER. All Rights Reserved.
 #include <gtest/gtest.h>
-#include <FE/core/prerequisite_symbols.h>
+#include <FE/core/prerequisites.h>
 #include <FE/framework/framework.hpp>
 #include <FE/core/function.hxx>
 #include <FE/miscellaneous/undefine_max_min.h>

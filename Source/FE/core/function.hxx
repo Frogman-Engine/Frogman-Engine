@@ -1,7 +1,7 @@
 ﻿#ifndef _FE_CORE_FUNCTION_HXX_
 #define _FE_CORE_FUNCTION_HXX_
 // Copyright © from 2023 to current, UNKNOWN STRYKER. All Rights Reserved.
-#include "prerequisite_symbols.h"
+#include <FE/core/prerequisites.h>
 #define PASS_RETURN_BUFFER(return_buffer) (&return_buffer)
 
 

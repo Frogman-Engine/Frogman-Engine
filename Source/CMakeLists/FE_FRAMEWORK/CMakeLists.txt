@@ -17,6 +17,7 @@ SOURCE_GROUP("FE\\framework\\reflection" FILES ${_FRAMEWORK_REFLECTION_})
 SET(_FRAMEWORK_PRIVATE_
 	${CMAKE_CURRENT_SOURCE_DIR}/../../FE/framework/private/framework.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/../../FE/framework/private/function_table.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/../../FE/framework/private/internal_functions.h
 	)
 SOURCE_GROUP("FE\\framework\\private" FILES ${_FRAMEWORK_PRIVATE_})
 

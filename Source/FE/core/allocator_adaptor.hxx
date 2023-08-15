@@ -23,6 +23,10 @@ namespace std_style
 		using size_type = typename implementation::size_type;
 		using allocator = implementation;
 
+		_MAYBE_UNUSED_ static constexpr inline auto is_trivially_constructible_and_destructible = FE::is_trivially_constructible_and_destructible<value_type>::value;
+		_MAYBE_UNUSED_ static constexpr inline boolean is_allocated_from_an_address_aligned_allocator = implementation::is_allocated_from_an_address_aligned_allocator;
+
+
 		constexpr new_delete_proxy_allocator() noexcept {}
 
 		template <typename another_implementation>
@@ -35,12 +39,10 @@ namespace std_style
 
 			pointer l_result = allocator::allocate(count_p);
 
-			pointer const l_end = l_result + count_p;
-			for (pointer begin = l_result; begin != l_end; ++begin)
+			if constexpr (is_trivially_constructible_and_destructible == FE::TYPE_TRIVIALITY::_NOT_TRIVIAL)
 			{
-				new(begin) value_type();
+				new(l_result) value_type[count_p]{};
 			}
-
 			return l_result;
 		}
 
@@ -48,6 +50,7 @@ namespace std_style
 		{
 			FE_ASSERT(pointer_p == nullptr, "${%s@0}: ${%s@1} is nullptr.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(pointer_p));
 
+			if constexpr (is_trivially_constructible_and_destructible == FE::TYPE_TRIVIALITY::_NOT_TRIVIAL)
 			{
 				pointer const l_end = pointer_p + prev_count_p;
 				for (pointer begin = pointer_p; begin != l_end; ++begin)
@@ -58,12 +61,10 @@ namespace std_style
 
 			pointer l_result = allocator::reallocate(pointer_p, prev_count_p, new_count_p);
 
-			pointer const l_end = l_result + new_count_p;
-			for (pointer begin = l_result; begin != l_end; ++begin)
+			if constexpr (is_trivially_constructible_and_destructible == FE::TYPE_TRIVIALITY::_NOT_TRIVIAL)
 			{
-				new(begin) value_type();
+				new(l_result) value_type[new_count_p]{};
 			}
-
 			return l_result;
 		}
 
@@ -72,18 +73,25 @@ namespace std_style
 			FE_ASSERT(count_p == 0, "${%s@0}: queried allocation size is ${%lu@1}.", TO_STRING(MEMORY_ERROR_1XX::_ERROR_INVALID_SIZE), &count_p);
 			FE_ASSERT(pointer_p == nullptr, "${%s@0}: attempted to delete ${%p@1}.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), pointer_p);
 
-			pointer const l_end = pointer_p + count_p;
-			for (pointer begin = pointer_p; begin != l_end; ++begin)
+			if constexpr (is_trivially_constructible_and_destructible == FE::TYPE_TRIVIALITY::_NOT_TRIVIAL)
 			{
-				begin->~value_type();
+				pointer const l_end = pointer_p + count_p;
+				for (pointer begin = pointer_p; begin != l_end; ++begin)
+				{
+					begin->~value_type();
+				}
 			}
 			allocator::deallocate(pointer_p, count_p);
 		}
 	};
 
-	// trackable scalable_aligned_allocator
-	template<typename T, class alignment = align_8bytes>
-	class scalable_aligned_allocator 
+	
+#if _AVX512_ == true
+	template<typename T, class alignment = align_64bytes>
+#elif _AVX_ == true
+	template<typename T, class alignment = align_32bytes>
+#endif
+	class scalable_aligned_allocator // trackable scalable_aligned_allocator
 	{
 	public:
 		using value_type = T;
@@ -94,9 +102,13 @@ namespace std_style
 		using size_type = var::size_t;
 		using allocator = FE::scalable_aligned_allocator<T, alignment>;
 
+		_MAYBE_UNUSED_ static constexpr inline auto is_trivially_constructible_and_destructible = FE::is_trivially_constructible_and_destructible<value_type>::value;
+		_MAYBE_UNUSED_ static constexpr inline boolean is_allocated_from_an_address_aligned_allocator = true;
+
+
 		constexpr scalable_aligned_allocator() noexcept {}
 
-		template <typename U, class alignment = align_8bytes>
+		template <typename U>
 		constexpr scalable_aligned_allocator(_MAYBE_UNUSED_ const scalable_aligned_allocator<U, alignment>& standard_allocator_cref_p) noexcept {}
 
 
@@ -135,6 +147,9 @@ namespace std_style
 		using const_reference = const T&;
 		using size_type = var::size_t;
 		using allocator = FE::cache_aligned_allocator<T>;
+
+		_MAYBE_UNUSED_ static constexpr inline auto is_trivially_constructible_and_destructible = FE::is_trivially_constructible_and_destructible<value_type>::value;
+		_MAYBE_UNUSED_ static constexpr inline boolean is_allocated_from_an_address_aligned_allocator = true;
 
 
 		constexpr cache_aligned_allocator() noexcept {}

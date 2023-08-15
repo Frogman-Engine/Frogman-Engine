@@ -1,7 +1,7 @@
 ﻿#ifndef _MACRO_RESTRICTIONS_H_
 #define _MACRO_RESTRICTIONS_H_
 // Copyright © from 2023 to current, UNKNOWN STRYKER. All Rights Reserved.
-#include "../../core/types.h"
+#include <FE/core/types.hxx>
 
 
 #if !defined(_VISUAL_STUDIO_CPP_) && !defined(_GNUC_)&& !defined(_CLANG_)

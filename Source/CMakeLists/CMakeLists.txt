@@ -29,14 +29,13 @@ SET(_ALGORITHM_
 SET(_LOG_
 	${CMAKE_CURRENT_SOURCE_DIR}/../FE/core/log/logger.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/../FE/core/log/format_string.h
-	${CMAKE_CURRENT_SOURCE_DIR}/../FE/core/log/debug_macros.h
+	${CMAKE_CURRENT_SOURCE_DIR}/../FE/core/log/macros.h
 	)
 #SOURCE_GROUP("FE\\core\\log" FILES ${_LOG_})
 
 SET(_LOG_PRIVATE_
 	${CMAKE_CURRENT_SOURCE_DIR}/../FE/core/log/private/logger.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/../FE/core/log/private/format_string.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/../FE/core/log/private/internal_functions.h
 	)
 #SOURCE_GROUP("FE\\core\\log\\private" FILES ${_LOG_PRIVATE_})
 
@@ -139,13 +138,14 @@ SET(_CORE_
 	${CMAKE_CURRENT_SOURCE_DIR}/../FE/core/movable_scoped_ref.hxx 
 	${CMAKE_CURRENT_SOURCE_DIR}/../FE/core/memory_block.hxx 
 	${CMAKE_CURRENT_SOURCE_DIR}/../FE/core/optional.hxx 
-	${CMAKE_CURRENT_SOURCE_DIR}/../FE/core/prerequisite_symbols.h
+	${CMAKE_CURRENT_SOURCE_DIR}/../FE/core/prerequisites.h
 	${CMAKE_CURRENT_SOURCE_DIR}/../FE/core/random.hxx
 	${CMAKE_CURRENT_SOURCE_DIR}/../FE/core/singleton.hxx
 	${CMAKE_CURRENT_SOURCE_DIR}/../FE/core/string.hxx
 	${CMAKE_CURRENT_SOURCE_DIR}/../FE/core/tagged_object.hxx
 	${CMAKE_CURRENT_SOURCE_DIR}/../FE/core/thread.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/../FE/core/types.h
+	${CMAKE_CURRENT_SOURCE_DIR}/../FE/core/types.hxx
+	${CMAKE_CURRENT_SOURCE_DIR}/../FE/core/type_traits.hxx
 	)
 #SOURCE_GROUP("FE\\core" FILES ${_CORE_})
 

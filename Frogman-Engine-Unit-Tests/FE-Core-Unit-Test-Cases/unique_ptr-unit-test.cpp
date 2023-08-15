@@ -80,7 +80,6 @@ TEST(unique_ptr, swap)
 TEST(unique_ptr, is_nullptr)
 {
 	using namespace FE;
-
 	{
 		FE::unique_ptr<std::string> l_unique_ptr;
 		if (l_unique_ptr.is_nullptr())
@@ -167,9 +166,11 @@ TEST(unique_ptr, release_array)
 
 	{
 		FE::unique_ptr<std::string[]> l_unique_ptr = { "std::string" };
+		FE::size_t l_prev_size = l_unique_ptr.size();
+
 		FE::unique_ptr<std::string[]>::pointer l_pointer = l_unique_ptr.release();
 		EXPECT_EQ(l_unique_ptr.get(), nullptr);
-		FE::unique_ptr<std::string[]>::allocator_type::deallocate(l_pointer, l_unique_ptr.size());
+		FE::unique_ptr<std::string[]>::allocator_type::deallocate(l_pointer, l_prev_size);
 	}
 }
 

@@ -1,7 +1,7 @@
 ﻿#ifndef _FE_LOG_FORMAT_STRING_H_
 #define _FE_LOG_FORMAT_STRING_H_
 // Copyright © from 2023 to current, UNKNOWN STRYKER. All Rights Reserved.
-#include "FE/core/types.h"
+#include <FE/core/types.hxx>
 #include <initializer_list>
 
 

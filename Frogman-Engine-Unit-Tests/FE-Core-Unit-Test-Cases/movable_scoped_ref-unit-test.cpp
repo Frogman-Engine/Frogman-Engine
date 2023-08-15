@@ -3,6 +3,7 @@
 #include <FE/miscellaneous/google_test_extension.h>
 #include <FE/core/concurrent_memory_block.hxx>
 #include <FE/core/thread.hpp>
+#include <FE/core/function.hxx>
 #include <future>
 
 

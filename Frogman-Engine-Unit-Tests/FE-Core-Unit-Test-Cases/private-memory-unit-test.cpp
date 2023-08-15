@@ -46,7 +46,7 @@ struct my_struct
 	}
 };
 
-TEST(OBJECT_LIFECYCLE, all)
+TEST(OBJECT_STATUS, all)
 {
 
 }

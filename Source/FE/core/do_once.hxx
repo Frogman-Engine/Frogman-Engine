@@ -1,7 +1,7 @@
 ﻿#ifndef _FE_CORE_DO_ONCE_HXX_
 #define _FE_CORE_DO_ONCE_HXX_
 // Copyright © from 2023 to current, UNKNOWN STRYKER. All Rights Reserved.
-#include "prerequisite_symbols.h"
+#include <FE/core/prerequisites.h>
 #include <functional>
 
 

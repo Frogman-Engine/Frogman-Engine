@@ -1,7 +1,7 @@
 ﻿#ifndef _FE_CORE_CLOCK_HPP_
 #define _FE_CORE_CLOCK_HPP_
 // Copyright © from 2023 to current, UNKNOWN STRYKER. All Rights Reserved.
-#include "types.h"
+#include <FE/core/types.hxx>
 #include <chrono>
 #include <memory>
 
@@ -37,7 +37,7 @@ public:
         return this->m_delta_time.count();
     }
 
-    const char_type* get_current_local_time() noexcept;
+    static const char_type* get_current_local_time() noexcept;
 };
 
 

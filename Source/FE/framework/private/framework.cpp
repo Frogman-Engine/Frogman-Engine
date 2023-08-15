@@ -1,10 +1,14 @@
 ﻿// Copyright © from 2023 to current, UNKNOWN STRYKER. All Rights Reserved.
 #include <FE/framework/framework.hpp>
 #include <FE/framework/reflection/function_table.hpp>
+#include <FE/framework/private/internal_functions.h>
 #include <FE/core/fstream_guard.hxx>
+#include <FE/core/fstring.hxx>
 #include <boost/stacktrace.hpp>
 #include <csignal>
 
+
+#define _DUMP_FILE_NAME_LENGTH_ 128
 
 
 BEGIN_NAMESPACE(FE::framework)
@@ -54,8 +58,11 @@ _NORETURN_ void application::__abnormal_shutdown_with_exit_code(int32 signal_p) 
 
 	std::ofstream l_release_build_crash_report;
 	{
-		FE::ofstream_guard l_release_build_crash_report_guard(l_release_build_crash_report, "Crashed Thread Stack Frame Dump Report.txt");
-
+		FE::fstring<_DUMP_FILE_NAME_LENGTH_> l_dump_filename = "Crashed Thread Stack Frame Dump Report from ";
+		l_dump_filename += internal::get_current_local_time();
+		l_dump_filename += ".txt";
+		FE::ofstream_guard l_release_build_crash_report_guard(l_release_build_crash_report, l_dump_filename.c_str());
+		l_release_build_crash_report << "Compilation Date: " << " " << __DATE__ << " - " << __TIME__ << "\n\n";
 		l_release_build_crash_report << "\n-------------------------------------------------- BEGIN STACK TRACE RECORD --------------------------------------------------\n\n";
 
 		auto l_crend = l_stack_frame_dumps.crend();

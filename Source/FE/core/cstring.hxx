@@ -1,8 +1,8 @@
 ﻿#ifndef _FE_CORE_CSTRING_HXX_
 #define _FE_CORE_CSTRING_HXX_
 // Copyright © from 2023 to current, UNKNOWN STRYKER. All Rights Reserved.
-#include "prerequisite_symbols.h"
-#include "algorithm/string.hxx"
+#include <FE/core/prerequisites.h>
+#include <FE/core/algorithm/string.hxx>
 #include <cstring>
 
 
@@ -12,13 +12,10 @@ BEGIN_NAMESPACE(FE)
 
 
 template< typename char_type = char >
-#ifdef _HAS_CXX20_
-    requires character_type<char_type>
-#endif
 class compile_time_constant_string final
 {
-    static_assert(FE::is_character<char_type>::value == true, "char_type is not a valid character type");
-    static_assert(FE::is_trivially_constructible_and_destructible<char_type>::_VALUE_ == FE::OBJECT_TRIVIALITY::_TRIVIAL, "char_type is not a valid character type");
+    static_assert(FE::is_char<char_type>::value == true, "char_type is not a valid character type");
+    static_assert(FE::is_trivially_constructible_and_destructible<char_type>::value == FE::TYPE_TRIVIALITY::_TRIVIAL, "char_type is not a valid character type");
 
 public:
     using value_type = const char_type*;

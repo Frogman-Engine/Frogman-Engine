@@ -1,8 +1,8 @@
 ﻿#ifndef _FE_CORE_SINGLETON_HXX_
 #define _FE_CORE_SINGLETON_HXX_
 // Copyright © from 2023 to current, UNKNOWN STRYKER. All Rights Reserved.
-#include "prerequisite_symbols.h"
-#include "memory_block.hxx"
+#include <FE/core/prerequisites.h>
+#include <FE/core/memory_block.hxx>
 
 
 #define FRIEND_CLASS_SINGLETON(typename_p) friend class ::FE::memory_block<typename_p>; friend class ::FE::singleton<typename_p>

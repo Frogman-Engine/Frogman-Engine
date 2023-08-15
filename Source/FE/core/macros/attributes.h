@@ -1,6 +1,6 @@
 ﻿#ifndef _FE_CORE_MACROS_ATTRIBUTES_H_
 #define _FE_CORE_MACROS_ATTRIBUTES_H_
-#include "macro_definitions.h"
+#include <FE/core/macros/macro_definitions.h>
 // Copyright © from 2023 to current, UNKNOWN STRYKER. All Rights Reserved.
 
 

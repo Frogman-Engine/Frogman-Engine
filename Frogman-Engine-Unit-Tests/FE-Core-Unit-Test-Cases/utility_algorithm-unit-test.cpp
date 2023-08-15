@@ -2,9 +2,12 @@
 // Copyright © from 2023 to current, UNKNOWN STRYKER. All Rights Reserved.
 #include <FE/core/algorithm/utility.hxx>
 #include <FE/core/algorithm/string.hxx>
+#pragma warning(disable: 4389)
 using namespace FE;
 using namespace algorithm;
 using namespace utility;
+
+
 
 
 TEST(count_integral_digit_length, _)

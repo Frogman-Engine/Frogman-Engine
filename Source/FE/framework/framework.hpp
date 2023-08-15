@@ -1,7 +1,7 @@
 ﻿#ifndef _FE_FRAMEWORK_HPP_
 #define _FE_FRAMEWORK_HPP_
 // Copyright © from 2023 to current, UNKNOWN STRYKER. All Rights Reserved.
-#include <FE/core/prerequisite_symbols.h>
+#include <FE/core/prerequisites.h>
 
 
 

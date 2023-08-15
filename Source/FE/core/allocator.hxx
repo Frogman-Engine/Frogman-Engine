@@ -1,10 +1,10 @@
 ﻿#ifndef _FE_CORE_ALLOCATOR_HXX_
 #define _FE_CORE_ALLOCATOR_HXX_
 // Copyright © from 2023 to current, UNKNOWN STRYKER. All Rights Reserved.
-#include "prerequisite_symbols.h"
+#include <FE/core/prerequisites.h>
 #include <tbb/cache_aligned_allocator.h>
 #include <tbb/scalable_allocator.h>
-#include "heap_memory.hpp"
+#include <FE/core/heap_memory.hpp>
 
 
 
@@ -24,6 +24,8 @@ public:
 	using size_type = typename implementation::size_type;
 	using allocator = implementation;
 
+	_MAYBE_UNUSED_ static constexpr inline auto is_trivially_constructible_and_destructible = FE::is_trivially_constructible_and_destructible<value_type>::value;
+	_MAYBE_UNUSED_ static constexpr inline boolean is_allocated_from_an_address_aligned_allocator = implementation::is_allocated_from_an_address_aligned_allocator;
 
 	_NODISCARD_ _FORCE_INLINE_ static pointer allocate(size_type count_p) noexcept
 	{
@@ -31,20 +33,17 @@ public:
 
 		pointer l_result = allocator::allocate(count_p);
 
-		pointer const l_end = l_result + count_p;
-		for (pointer begin = l_result; begin != l_end; ++begin)
+		if constexpr (is_trivially_constructible_and_destructible == FE::TYPE_TRIVIALITY::_NOT_TRIVIAL)
 		{
-			new(begin) value_type();
+			new(l_result) value_type[count_p]{};
 		}
-
 		return l_result;
 	}
 
 
 	_NODISCARD_ _FORCE_INLINE_ static pointer reallocate(pointer const pointer_p, size_type prev_count_p, size_type new_count_p) noexcept
 	{
-		FE_ASSERT(pointer_p == nullptr, "${%s@0}: ${%s@1} is nullptr.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(pointer_p));
-
+		if constexpr (is_trivially_constructible_and_destructible == FE::TYPE_TRIVIALITY::_NOT_TRIVIAL)
 		{
 			pointer const l_end = pointer_p + prev_count_p;
 			for (pointer begin = pointer_p; begin != l_end; ++begin)
@@ -55,12 +54,10 @@ public:
 
 		pointer l_result = allocator::reallocate(pointer_p, prev_count_p, new_count_p);
 
-		pointer const l_end = l_result + new_count_p;
-		for (pointer begin = l_result; begin != l_end; ++begin)
+		if constexpr (is_trivially_constructible_and_destructible == FE::TYPE_TRIVIALITY::_NOT_TRIVIAL)
 		{
-			new(begin) value_type();
+			new(l_result) value_type[new_count_p]{};
 		}
-		
 		return l_result;
 	}
 
@@ -70,17 +67,24 @@ public:
 		FE_ASSERT(count_p == 0, "${%s@0}: queried allocation size is ${%lu@1}.", TO_STRING(MEMORY_ERROR_1XX::_ERROR_INVALID_SIZE), &count_p);
 		FE_ASSERT(pointer_p == nullptr, "${%s@0}: attempted to delete ${%p@1}.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), pointer_p);
 		
-		pointer const l_end = pointer_p + count_p;
-		for (pointer begin = pointer_p; begin != l_end; ++begin)
+		if constexpr (is_trivially_constructible_and_destructible == FE::TYPE_TRIVIALITY::_NOT_TRIVIAL)
 		{
-			begin->~value_type();
+			pointer const l_end = pointer_p + count_p;
+			for (pointer begin = pointer_p; begin != l_end; ++begin)
+			{
+				begin->~value_type();
+			}
 		}
 		allocator::deallocate(pointer_p, count_p);
 	}
 };
 
 
-template <typename T, class alignment = align_8bytes>
+#if _AVX512_ == true
+template<typename T, class alignment = align_64bytes>
+#elif _AVX_ == true
+template<typename T, class alignment = align_32bytes>
+#endif
 class scalable_aligned_allocator final
 {
 public:
@@ -90,6 +94,9 @@ public:
 	using reference = T&;
 	using const_reference = const T&;
 	using size_type = var::size_t;
+
+	_MAYBE_UNUSED_ static constexpr inline auto is_trivially_constructible_and_destructible = FE::is_trivially_constructible_and_destructible<value_type>::value;
+	_MAYBE_UNUSED_ static constexpr inline boolean is_allocated_from_an_address_aligned_allocator = true;
 
 
 	_NODISCARD_ _FORCE_INLINE_ static pointer allocate(size_type count_p) noexcept
@@ -102,8 +109,6 @@ public:
 
 	_NODISCARD_ _FORCE_INLINE_ static pointer reallocate(pointer const pointer_p, size_type prev_count_p, size_type new_count_p) noexcept
 	{
-		FE_ASSERT(pointer_p == nullptr, "${%s@0}: ${%s@1} is nullptr.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(pointer_p));
-
 		if (new_count_p == 0) _UNLIKELY_
 		{
 			deallocate(pointer_p, prev_count_p);
@@ -134,6 +139,9 @@ public:
 	typedef T& reference;
 	typedef const T& const_reference;
 	typedef var::size_t size_type;
+
+	_MAYBE_UNUSED_ static constexpr inline auto is_trivially_constructible_and_destructible = FE::is_trivially_constructible_and_destructible<value_type>::value;
+	_MAYBE_UNUSED_ static constexpr inline boolean is_allocated_from_an_address_aligned_allocator = true;
 
 
 	_NODISCARD_ _FORCE_INLINE_ static pointer allocate(size_type count_p) noexcept

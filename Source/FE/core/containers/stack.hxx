@@ -1,7 +1,7 @@
 ﻿#ifndef _FE_CORE_STACK_HXX_
 #define _FE_CORE_STACK_HXX_
 // Copyright © from 2023 to current, UNKNOWN STRYKER. All Rights Reserved.
-#include <FE/core/prerequisite_symbols.h>
+#include <FE/core/prerequisites.h>
 #include <FE/core/iterator.hxx>
 #include <FE/core/memory.hxx>
 #include <initializer_list>
@@ -10,7 +10,7 @@
 BEGIN_NAMESPACE(FE)
 
 
-template<class T, size_t max_element_count = 0, FE::OBJECT_TRIVIALITY is_trivial = FE::is_trivially_constructible_and_destructible<T>::_VALUE_>
+template<class T, size_t max_element_count = 0, FE::TYPE_TRIVIALITY is_trivial = FE::is_trivially_constructible_and_destructible<T>::value>
 class stack final
 {
 public:
@@ -46,7 +46,7 @@ protected:
 
 
 template<class T>
-class stack<T, 0, FE::OBJECT_TRIVIALITY::_TRIVIAL> final : dynamic_stack_base<T>
+class stack<T, 0, FE::TYPE_TRIVIALITY::_TRIVIAL> final : dynamic_stack_base<T>
 {
 public:
 	using base_type = dynamic_stack_base<T>;
@@ -69,7 +69,7 @@ public:
 
 
 template<class T>
-class stack<T, 0, FE::OBJECT_TRIVIALITY::_NOT_TRIVIAL> final : dynamic_stack_base<T>
+class stack<T, 0, FE::TYPE_TRIVIALITY::_NOT_TRIVIAL> final : dynamic_stack_base<T>
 {
 public:
 	using base_type = dynamic_stack_base<T>;
@@ -167,9 +167,9 @@ public:
 		return this->m_absolute_begin_ptrc - 1;
 	}
 
-	_FORCE_INLINE_ constexpr FE::OBJECT_TRIVIALITY is_trivial() noexcept { return FE::is_trivially_constructible_and_destructible<T>::_VALUE_; }
+	_FORCE_INLINE_ constexpr FE::TYPE_TRIVIALITY is_trivial() noexcept { return FE::is_trivially_constructible_and_destructible<T>::value; }
 
-	template<FE::OBJECT_TRIVIALITY is_trivial = FE::is_trivially_constructible_and_destructible<T>::_VALUE_>
+	template<FE::TYPE_TRIVIALITY is_trivial = FE::is_trivially_constructible_and_destructible<T>::value>
 	_FORCE_INLINE_ static void swap(stack<T, max_element_count, is_trivial>& first_ref_p, stack<T, max_element_count, is_trivial>& second_ref_p) noexcept
 	{
 		stack<T, max_element_count, is_trivial> l_temporary = std::move(first_ref_p);
@@ -177,13 +177,13 @@ public:
 		second_ref_p = std::move(l_temporary);
 	}
 
-	template<FE::OBJECT_TRIVIALITY is_trivial = FE::is_trivially_constructible_and_destructible<T>::_VALUE_>
+	template<FE::TYPE_TRIVIALITY is_trivial = FE::is_trivially_constructible_and_destructible<T>::value>
 	var::boolean operator==(stack<T, max_element_count, is_trivial>& other_ref_p) noexcept
 	{
 		return FE::memcmp_s(this->cbegin(), this->cend(), other_ref_p.cbegin(), other_ref_p.cend());
 	}
 
-	template<FE::OBJECT_TRIVIALITY is_trivial = FE::is_trivially_constructible_and_destructible<T>::_VALUE_>
+	template<FE::TYPE_TRIVIALITY is_trivial = FE::is_trivially_constructible_and_destructible<T>::value>
 	var::boolean operator!=(stack<T, max_element_count, is_trivial>& other_ref_p) noexcept
 	{
 		return !FE::memcmp_s(this->cbegin(), this->cend(), other_ref_p.cbegin(), other_ref_p.cend());
@@ -203,7 +203,7 @@ protected:
 
 
 template<class T, size_t max_element_count>
-class stack<T, max_element_count, FE::OBJECT_TRIVIALITY::_TRIVIAL> final : public static_stack_base<T, max_element_count>
+class stack<T, max_element_count, FE::TYPE_TRIVIALITY::_TRIVIAL> final : public static_stack_base<T, max_element_count>
 {
 public:
 	using base_type = static_stack_base<T, max_element_count>;
@@ -320,9 +320,9 @@ public:
 
 
 template<class T, size_t max_element_count>
-class stack<T, max_element_count, FE::OBJECT_TRIVIALITY::_NOT_TRIVIAL> final : public static_stack_base<T, max_element_count>
+class stack<T, max_element_count, FE::TYPE_TRIVIALITY::_NOT_TRIVIAL> final : public static_stack_base<T, max_element_count>
 {
-	OBJECT_LIFECYCLE m_bool_mask[max_element_count];
+	OBJECT_STATUS m_bool_mask[max_element_count];
 
 public:
 	using base_type = static_stack_base<T, max_element_count>;
@@ -357,15 +357,15 @@ public:
 
 	_FORCE_INLINE_ stack(stack& other_ref_p) noexcept : base_type(), m_bool_mask()
 	{
-		FE::copy_construct<FE::iterator<FE::contiguous_iterator<value_type>>>(this->m_absolute_begin_ptrc, max_element_count, static_cast<OBJECT_LIFECYCLE*>(this->m_bool_mask),
-                                                                              other_ref_p.m_absolute_begin_ptrc, other_ref_p.m_top_ptr - other_ref_p.m_absolute_begin_ptrc, static_cast<const OBJECT_LIFECYCLE*>(other_ref_p.m_bool_mask));
+		FE::copy_construct<FE::iterator<FE::contiguous_iterator<value_type>>>(this->m_absolute_begin_ptrc, max_element_count, static_cast<OBJECT_STATUS*>(this->m_bool_mask),
+                                                                              other_ref_p.m_absolute_begin_ptrc, other_ref_p.m_top_ptr - other_ref_p.m_absolute_begin_ptrc, static_cast<const OBJECT_STATUS*>(other_ref_p.m_bool_mask));
 		this->__jump_top_pointer(other_ref_p.m_top_ptr - other_ref_p.m_absolute_begin_ptrc);
 	}
 
 	_FORCE_INLINE_ stack(stack&& rvalue_p) noexcept : base_type(), m_bool_mask()
 	{
-		FE::move_construct<FE::iterator<FE::contiguous_iterator<value_type>>>(this->m_absolute_begin_ptrc, max_element_count, static_cast<OBJECT_LIFECYCLE*>(this->m_bool_mask),
-                                                                              rvalue_p.m_absolute_begin_ptrc, rvalue_p.m_top_ptr - rvalue_p.m_absolute_begin_ptrc, static_cast<OBJECT_LIFECYCLE*>(rvalue_p.m_bool_mask));
+		FE::move_construct<FE::iterator<FE::contiguous_iterator<value_type>>>(this->m_absolute_begin_ptrc, max_element_count, static_cast<OBJECT_STATUS*>(this->m_bool_mask),
+                                                                              rvalue_p.m_absolute_begin_ptrc, rvalue_p.m_top_ptr - rvalue_p.m_absolute_begin_ptrc, static_cast<OBJECT_STATUS*>(rvalue_p.m_bool_mask));
 	
 		FE::destruct<FE::iterator<FE::contiguous_iterator<value_type>>>(rvalue_p.m_absolute_begin_ptrc, rvalue_p.m_top_ptr, rvalue_p.m_bool_mask);
 
@@ -386,8 +386,8 @@ public:
 
 	_FORCE_INLINE_ stack& operator=(stack& other_ref_p) noexcept
 	{
-		FE::copy_assign<FE::iterator<FE::contiguous_iterator<value_type>>>(this->m_absolute_begin_ptrc, max_element_count, static_cast<OBJECT_LIFECYCLE*>(this->m_bool_mask),
-                                                                           other_ref_p.m_absolute_begin_ptrc, other_ref_p.m_top_ptr - other_ref_p.m_absolute_begin_ptrc, static_cast<const OBJECT_LIFECYCLE*>(other_ref_p.m_bool_mask));
+		FE::copy_assign<FE::iterator<FE::contiguous_iterator<value_type>>>(this->m_absolute_begin_ptrc, max_element_count, static_cast<OBJECT_STATUS*>(this->m_bool_mask),
+                                                                           other_ref_p.m_absolute_begin_ptrc, other_ref_p.m_top_ptr - other_ref_p.m_absolute_begin_ptrc, static_cast<const OBJECT_STATUS*>(other_ref_p.m_bool_mask));
 		this->__set_top_pointer_to_zero();
 		this->__jump_top_pointer(other_ref_p.m_top_ptr - other_ref_p.m_absolute_begin_ptrc);
 		return *this;
@@ -395,8 +395,8 @@ public:
 
 	_FORCE_INLINE_ stack& operator=(stack&& rvalue_p) noexcept
 	{
-		FE::move_assign<FE::iterator<FE::contiguous_iterator<value_type>>>(this->m_absolute_begin_ptrc, max_element_count, static_cast<OBJECT_LIFECYCLE*>(this->m_bool_mask),
-                                                                          rvalue_p.m_absolute_begin_ptrc, rvalue_p.m_top_ptr - rvalue_p.m_absolute_begin_ptrc, static_cast<OBJECT_LIFECYCLE*>(rvalue_p.m_bool_mask));
+		FE::move_assign<FE::iterator<FE::contiguous_iterator<value_type>>>(this->m_absolute_begin_ptrc, max_element_count, static_cast<OBJECT_STATUS*>(this->m_bool_mask),
+                                                                          rvalue_p.m_absolute_begin_ptrc, rvalue_p.m_top_ptr - rvalue_p.m_absolute_begin_ptrc, static_cast<OBJECT_STATUS*>(rvalue_p.m_bool_mask));
 		
 		FE::destruct<FE::iterator<FE::contiguous_iterator<value_type>>>(rvalue_p.m_absolute_begin_ptrc, rvalue_p.m_top_ptr, rvalue_p.m_bool_mask);
 		

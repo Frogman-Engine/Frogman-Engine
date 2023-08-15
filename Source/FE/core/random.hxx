@@ -2,7 +2,7 @@
 #define _FE_CORE_RANDOM_HXX_
 // Copyright © from 2023 to current, UNKNOWN STRYKER. All Rights Reserved.
 #pragma warning(disable: 4714)
-#include "prerequisite_symbols.h"
+#include <FE/core/prerequisites.h>
 #include <FE/core/optional.hxx>
 #include <random>
 

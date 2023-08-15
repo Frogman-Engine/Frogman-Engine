@@ -51,7 +51,7 @@ protected:
 };
 
 
-template<typename T, class allocator = FE::scalable_aligned_allocator<T, FE::align_8bytes>>
+template<typename T, class allocator = FE::scalable_aligned_allocator<T>>
 class exclusive_ptr final : public exclusive_ptr_base<T>
 {
 public:

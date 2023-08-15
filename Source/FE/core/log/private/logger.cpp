@@ -5,7 +5,8 @@
 #include <FE/miscellaneous/misc.h>
 #include <FE/core/algorithm/string.hxx>
 #include <FE/core/do_once.hxx>
-#include <FE/core/log/private/internal_functions.h>
+#include <FE/core/clock.hpp>
+#include <FE/core/thread.hpp>
 #include <filesystem>
 
 
@@ -36,11 +37,11 @@ logger::initializer::initializer(character* const logfile_folder_name_ptrc_p,
     std::memset(tl_s_log_buffer.data(), _NULL_, default_debug_log_buffer_size * sizeof(buffer_type));
 
 #ifdef _WINDOWS_64BIT_OS_
-    var::wchar l_thread_id[_BUFFER_SIZE_] = L"\0";
-    ::swprintf(l_thread_id, _BUFFER_SIZE_, L"%llu", internal::this_thread_id()); // hashed thread-ids from std::hash are too long and hard to read 
+    var::wchar l_thread_id[FE::thread::max_thread_id_digit_length] = L"\0";
+    ::swprintf(l_thread_id, FE::thread::max_thread_id_digit_length, L"%llu", FE::thread::this_thread_id()); // hashed thread-ids from std::hash are too long and hard to read 
 
-    var::wchar l_date_info_wstring[_BUFFER_SIZE_] = L"\0";
-    ::std::mbstowcs(l_date_info_wstring, internal::get_current_local_time(), _BUFFER_SIZE_);
+    var::wchar l_date_info_wstring[FE::clock::current_local_time_buffer_size] = L"\0";
+    ::std::mbstowcs(l_date_info_wstring, FE::clock::get_current_local_time(), FE::clock::current_local_time_buffer_size);
 
     ::std::filesystem::path l_path_to_log_dump_file = l_directory_name / logfile_inner_folder_name_ptrc_p;
 
@@ -61,11 +62,11 @@ logger::initializer::initializer(character* const logfile_folder_name_ptrc_p,
     );
 
 #elif defined(_LINUX_64BIT_OS_)
-    var::character l_thread_id[_BUFFER_SIZE_] = "\0";
-    snprintf(l_thread_id, _BUFFER_SIZE_, "%llu", internal::this_thread_id());
+    var::character l_thread_id[FE::thread::max_thread_id_digit_length] = "\0";
+    snprintf(l_thread_id, FE::thread::max_thread_id_digit_length, "%llu", FE::thread::this_thread_id());
 
-    var::character l_date_info_string[_BUFFER_SIZE_] = "\0";
-    ::std::strcpy(l_date_info_string, internal::get_current_local_time());
+    var::character l_date_info_string[FE::clock::current_local_time_buffer_size] = "\0";
+    ::std::strcpy(l_date_info_string, FE::clock::get_current_local_time());
     ::std::filesystem::path l_path_to_log_dump_file = l_directory_name / logfile_inner_folder_name_ptrc_p;
 
     var::character l_full_path_to_the_file[_FULL_PATH_TO_FILE_MAX_LENGTH_] = "\0";
@@ -112,7 +113,7 @@ logger::initializer::~initializer() noexcept
 void logger::log(character* const logfile_folder_name_ptrc_p, character* const message_ptrc_p, character* const file_name_ptrc_p, character* const function_name_ptrc_p, int32 line_p) noexcept
 {
 #ifdef _WINDOWS_64BIT_OS_
-    static var::wchar l_date_info_string[_BUFFER_SIZE_] = L"\0";
+    static var::wchar l_date_info_string[FE::clock::current_local_time_buffer_size] = L"\0";
 #elif defined(_LINUX_64BIT_OS_)
     static var::character l_date_info_string[_BUFFER_SIZE_] = "\0";
 #endif
@@ -122,7 +123,7 @@ void logger::log(character* const logfile_folder_name_ptrc_p, character* const m
         [&]()
         {
 #ifdef _WINDOWS_64BIT_OS_
-            ::std::mbstowcs(l_date_info_string, internal::get_current_local_time(), _BUFFER_SIZE_);
+            ::std::mbstowcs(l_date_info_string, FE::clock::get_current_local_time(), FE::clock::current_local_time_buffer_size);
 #elif defined(_LINUX_64BIT_OS_)
             ::std::strcpy(l_date_info_string, internal::get_current_local_time());
 #endif
@@ -144,7 +145,7 @@ void logger::log(character* const logfile_folder_name_ptrc_p, character* const m
             tl_s_log_buffer.data(),
             default_debug_log_buffer_size,
             {
-                "[Time: ", internal::get_current_local_time(), "]\t", message_ptrc_p, "\n",
+                "[Time: ", FE::clock::get_current_local_time(), "]\t", message_ptrc_p, "\n",
                 "File Directory: ", file_name_ptrc_p, "\n",
                 "Function Name: ", function_name_ptrc_p, "\n",
                 "Code Line Number: ", l_source_code_line_info_buffer

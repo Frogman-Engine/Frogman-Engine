@@ -10,13 +10,10 @@ BEGIN_NAMESPACE(FE)
 
 
 template< typename char_type = char, class allocator = FE::scalable_aligned_allocator<char_type>, typename integral_length_type = var::uint32>
-#if _HAS_CXX20 == 1
-    requires character_type<char_type>
-#endif
 class basic_string final
 {
-    static_assert(FE::is_character<char_type>::value == true, "char_type is not a valid character type");
-    static_assert(FE::is_trivially_constructible_and_destructible<char_type>::_VALUE_ == FE::OBJECT_TRIVIALITY::_TRIVIAL, "char_type is not a valid character type");
+    static_assert(FE::is_char<char_type>::value == true, "char_type is not a valid character type");
+    static_assert(FE::is_trivially_constructible_and_destructible<char_type>::value == FE::TYPE_TRIVIALITY::_TRIVIAL, "char_type is not a valid character type");
     static_assert(std::is_class<allocator>::value == true, "allocator is not a valid class nor struct type");
     static_assert(std::is_integral<integral_length_type>::value, "length_type is not a valid integral type");
 

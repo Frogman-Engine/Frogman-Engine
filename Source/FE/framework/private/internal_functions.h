@@ -1,6 +1,6 @@
-#ifndef _FE_LOG_PRIVATE_INTERNAL_FUNCTIONS_H_
-#define _FE_LOG_PRIVATE_INTERNAL_FUNCTIONS_H_
-#include "FE/core/types.h"
+#ifndef _FE_FRAMEWORK_PRIVATE_INTERNAL_FUNCTIONS_H_
+#define _FE_FRAMEWORK_PRIVATE_INTERNAL_FUNCTIONS_H_
+#include <FE/core/types.hxx>
 
 #include <chrono>
 #ifdef _WINDOWS_64BIT_OS_
@@ -17,7 +17,7 @@
 
 
 
-BEGIN_NAMESPACE(FE::log::internal)
+BEGIN_NAMESPACE(FE::framework::internal)
 
 
 _FORCE_INLINE_ var::uint64 this_thread_id() noexcept

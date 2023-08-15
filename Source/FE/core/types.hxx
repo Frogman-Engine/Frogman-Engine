@@ -1,22 +1,15 @@
-﻿#ifndef _FE_CORE_TYPES_H_
-#define _FE_CORE_TYPES_H_
+﻿#ifndef _FE_CORE_TYPES_HXX_
+#define _FE_CORE_TYPES_HXX_
 // Copyright © from 2023 to current, UNKNOWN STRYKER. All Rights Reserved.
 #include <FE/miscellaneous/configuration.h>
-#include "macros/attributes.h"
-#include <any>
+#include <FE/core/macros/attributes.h>
 #include <atomic>
 #include <cstdint>
-#include <cstring>
-#include <functional>
 #include <limits>
-#include <string>
 #include <typeinfo>
-#include <type_traits>
 #include <utility>
 #pragma warning(push)
 #pragma warning(disable: 4530) // disable no-exception warnings
-
-
 #ifdef _VISUAL_STUDIO_CPP_
 #ifdef max
 #undef max
@@ -25,6 +18,8 @@
 #undef min
 #endif
 #endif
+
+
 
 
 BEGIN_NAMESPACE(FE)
@@ -189,8 +184,6 @@ _MAYBE_UNUSED_	constexpr inline FE::uint16 _UINT16_MAX_ = _MAX_VALUE_<FE::uint16
 _MAYBE_UNUSED_	constexpr inline FE::uint32 _UINT32_MAX_ = _MAX_VALUE_<FE::uint32>;
 _MAYBE_UNUSED_	constexpr inline FE::uint64 _UINT64_MAX_ = _MAX_VALUE_<FE::uint64>;
 
-_MAYBE_UNUSED_	constexpr inline FE::float64 _ACCURATE_MINIMUM_FLOAT_VALUE_ = 0.000001f;
-
 #define _NULL_ 0
 
 _MAYBE_UNUSED_	constexpr inline FE::int8 _TRUE_ = 1;
@@ -205,397 +198,109 @@ _MAYBE_UNUSED_	constexpr inline FE::boolean _SUCCESSFUL_ = true;
 _MAYBE_UNUSED_	constexpr inline FE::boolean _FAILED_ = false;
 
 struct null {};
+END_NAMESPACE
 
 
-namespace internal
-{
-	template <bool compile_time_test_result, typename true_type, typename false_type>
-	struct conditional_type {};
-
-	template<typename true_type, typename false_type>
-	struct conditional_type<true, true_type, false_type> { using type = true_type; };
-
-	template<typename true_type, typename false_type>
-	struct conditional_type<false, true_type, false_type> { using type = false_type; };
-}
-
-template <bool compile_time_test_result, typename true_type, typename false_type>
-using conditional_type = internal::conditional_type< compile_time_test_result, true_type, false_type>;
 
 
-template<typename T>
-struct is_c_style_constant_string
-{
-	_MAYBE_UNUSED_ static constexpr inline bool value = false;
-};
-
-template<>
-struct is_c_style_constant_string<character*>
-{
-	_MAYBE_UNUSED_ static constexpr inline bool value = true;
-};
-
-template<>
-struct is_c_style_constant_string<schar*>
-{
-	_MAYBE_UNUSED_ static constexpr inline bool value = true;
-};
-
-template<>
-struct is_c_style_constant_string<uchar*>
-{
-	_MAYBE_UNUSED_ static constexpr inline bool value = true;
-};
-
-template<>
-struct is_c_style_constant_string<wchar*>
-{
-	_MAYBE_UNUSED_ static constexpr inline bool value = true;
-};
-
-#ifdef _HAS_CXX20_
-template<>
-struct is_c_style_constant_string<UTF8*>
-{
-	_MAYBE_UNUSED_ static constexpr inline bool value = true;
-};
-#endif
-
-template<>
-struct is_c_style_constant_string<UTF16*>
-{
-	_MAYBE_UNUSED_ static constexpr inline bool value = true;
-};
-
-template<>
-struct is_c_style_constant_string<UTF32*>
-{
-	_MAYBE_UNUSED_ static constexpr inline bool value = true;
-};
-
-template<>
-struct is_c_style_constant_string<character[]>
-{
-	_MAYBE_UNUSED_ static constexpr inline bool value = true;
-};
-
-template<>
-struct is_c_style_constant_string<schar[]>
-{
-	_MAYBE_UNUSED_ static constexpr inline bool value = true;
-};
-
-template<>
-struct is_c_style_constant_string<uchar[]>
-{
-	_MAYBE_UNUSED_ static constexpr inline bool value = true;
-};
-
-template<>
-struct is_c_style_constant_string<wchar[]>
-{
-	_MAYBE_UNUSED_ static constexpr inline bool value = true;
-};
-
-#ifdef _HAS_CXX20_
-template<>
-struct is_c_style_constant_string<UTF8[]>
-{
-	_MAYBE_UNUSED_ static constexpr inline bool value = true;
-};
-#endif
-
-template<>
-struct is_c_style_constant_string<UTF16[]>
-{
-	_MAYBE_UNUSED_ static constexpr inline bool value = true;
-};
-
-template<>
-struct is_c_style_constant_string<UTF32[]>
-{
-	_MAYBE_UNUSED_ static constexpr inline bool value = true;
-};
-
-
-template<typename T>
-struct is_character 
-{
-	_MAYBE_UNUSED_ static constexpr inline bool value = false;
-};
-
-template<>
-struct is_character<character>
-{
-	_MAYBE_UNUSED_ static constexpr inline bool value = true;
-};
-
-template<>
-struct is_character<var::character>
-{
-	_MAYBE_UNUSED_ static constexpr inline bool value = true;
-};
-
-template<>
-struct is_character<schar>
-{
-	_MAYBE_UNUSED_ static constexpr inline bool value = true;
-};
-
-template<>
-struct is_character<var::schar>
-{
-	_MAYBE_UNUSED_ static constexpr inline bool value = true;
-};
-
-template<>
-struct is_character<uchar>
-{
-	_MAYBE_UNUSED_ static constexpr inline bool value = true;
-};
-
-template<>
-struct is_character<var::uchar>
-{
-	_MAYBE_UNUSED_ static constexpr inline bool value = true;
-};
-
-template<>
-struct is_character<wchar>
-{
-	_MAYBE_UNUSED_ static constexpr inline bool value = true;
-};
-
-template<>
-struct is_character<var::wchar>
-{
-	_MAYBE_UNUSED_ static constexpr inline bool value = true;
-};
-
-#ifdef _HAS_CXX20_
-template<>
-struct is_character<UTF8>
-{
-	_MAYBE_UNUSED_ static constexpr inline bool value = true;
-};
-
-template<>
-struct is_character<var::UTF8>
-{
-	_MAYBE_UNUSED_ static constexpr inline bool value = true;
-};
-#endif
-
-template<>
-struct is_character<UTF16>
-{
-	_MAYBE_UNUSED_ static constexpr inline bool value = true;
-};
-
-template<>
-struct is_character<var::UTF16>
-{
-	_MAYBE_UNUSED_ static constexpr inline bool value = true;
-};
-
-template<>
-struct is_character<UTF32>
-{
-	_MAYBE_UNUSED_ static constexpr inline bool value = true;
-};
-
-template<>
-struct is_character<var::UTF32>
-{
-	_MAYBE_UNUSED_ static constexpr inline bool value = true;
-};
-
-
-template<typename T>
-struct is_boolean
-{
-	_MAYBE_UNUSED_ static constexpr inline bool value = false;
-};
-
-template<>
-struct is_boolean<var::boolean>
-{
-	_MAYBE_UNUSED_ static constexpr inline bool value = true;
-};
-
-template<>
-struct is_boolean<boolean>
-{
-	_MAYBE_UNUSED_ static constexpr inline bool value = true;
-};
-
-
-template<typename T>
-struct is_nullptr
-{
-	_MAYBE_UNUSED_ static constexpr inline bool value = false;
-};
-
-template<>
-struct is_nullptr<std::nullptr_t>
-{
-	_MAYBE_UNUSED_ static constexpr inline bool value = true;
-};
-
-
-template<typename T>
-struct is_primitive
-{
-	_MAYBE_UNUSED_ static constexpr inline bool value = ((FE::is_boolean<T>::value == true) || (FE::is_character<T>::value == true) || (std::is_integral<T>::value == true) || (std::is_floating_point<T>::value == true) || (FE::is_c_style_constant_string<T>::value == true) || (std::is_pointer<T>::value == true) || (FE::is_nullptr<T>::value == true));
-};
-
-
-enum struct TYPE_TRAIT : int8
-{
-	_UNDEFINED = -1,
-	_PRIMITIVE = 0,
-	_BOOLEAN = 1,
-	_CHARACTER = 2,
-	_SIGNED_INTEGER = 3,
-	_UNSIGNED_INTEGER = 4,
-	_FLOAT = 5,
-	_C_STYLE_STRING = 6,
-	_POINTER = 7,
-	_NULLPTR = 8,
-	_CLASS = 9,
-	_FUNCTION = 10
-};
-
-template<typename T>
-constexpr inline TYPE_TRAIT type_trait() noexcept
-{
-	if constexpr (FE::is_boolean<T>::value)
-	{
-		return TYPE_TRAIT::_BOOLEAN;
-	}
-	else if constexpr (FE::is_character<T>::value)
-	{
-		return TYPE_TRAIT::_CHARACTER;
-	}
-	else if constexpr (std::is_signed<T>::value)
-	{
-		return TYPE_TRAIT::_SIGNED_INTEGER;
-	}
-	else if constexpr (std::is_unsigned<T>::value)
-	{
-		return TYPE_TRAIT::_UNSIGNED_INTEGER;
-	}
-	else if constexpr (std::is_floating_point<T>::value)
-	{
-		return TYPE_TRAIT::_FLOAT;
-	}
-	else if constexpr (FE::is_c_style_constant_string<T>::value)
-	{
-		return TYPE_TRAIT::_C_STYLE_STRING;
-	}
-	else if constexpr (std::is_pointer<T>::value)
-	{
-		return TYPE_TRAIT::_POINTER;
-	}
-	else if constexpr (FE::is_nullptr<T>::value)
-	{
-		return TYPE_TRAIT::_NULLPTR;
-	}
-	else if constexpr (std::is_function<T>::value)
-	{
-		return TYPE_TRAIT::_FUNCTION;
-	}
-
-	return TYPE_TRAIT::_UNDEFINED;
-}
-
-
-enum struct OBJECT_TRIVIALITY : boolean
-{
-	_TRIVIAL = true,
-	_NOT_TRIVIAL = false
-};
-
-template <typename T>
-struct is_trivially_constructible_and_destructible
-{
-	_MAYBE_UNUSED_ static constexpr inline OBJECT_TRIVIALITY _VALUE_ = static_cast<OBJECT_TRIVIALITY>(std::is_trivially_constructible<T>::value && std::is_trivially_destructible<T>::value);
-};
-
-
-enum struct OBJECT_LIFECYCLE : boolean
-{
-	_CONSTRUCTED = true,
-	_DESTRUCTED = false
-};
+BEGIN_NAMESPACE(FE)
 
 
 template <typename T>
-struct lazy_const
+class lazy_const
 {
-private:
-	T _data;
-	var::boolean _is_initialized;
+	T m_data;
+	var::boolean m_is_initialized;
 
 public:
-	constexpr lazy_const() noexcept : _data(), _is_initialized(false) {}
-	constexpr lazy_const(T&& data_p) noexcept : _data(std::move(data_p)), _is_initialized(true) {}
+	constexpr lazy_const() noexcept : m_data(), m_is_initialized(false) {}
+	constexpr lazy_const(T&& data_p) noexcept : m_data(std::move(data_p)), m_is_initialized(true) {}
 	constexpr ~lazy_const() noexcept {};
 
-	_FORCE_INLINE_ lazy_const(const lazy_const& other_cref_p) noexcept : _data(other_cref_p._data), _is_initialized(true) {}
-	_FORCE_INLINE_ lazy_const(lazy_const&& rvalue_p) noexcept : _data(std::move(rvalue_p._data)), _is_initialized(true) {}
+	_FORCE_INLINE_ lazy_const(const lazy_const& other_cref_p) noexcept : m_data(other_cref_p.m_data), m_is_initialized(true) {}
+	_FORCE_INLINE_ lazy_const(lazy_const&& rvalue_p) noexcept : m_data(std::move(rvalue_p.m_data)), m_is_initialized(true) {}
 
 	_FORCE_INLINE_ lazy_const& operator=(T&& data_p) noexcept
 	{
-		if (this->_is_initialized == true)
-		{
-			::abort();
-		}
+		assert(this->m_is_initialized == false);
 
-		this->_data = std::move(data_p);
-		this->_is_initialized = true;
+		this->m_data = std::move(data_p);
+		this->m_is_initialized = true;
 		
 		return *this;
 	}
 
 	_FORCE_INLINE_ lazy_const& operator=(const lazy_const& other_cref_p) noexcept
 	{
-		if (this->_is_initialized == true)
-		{
-			::abort();
-		}
+		assert(this->m_is_initialized == false);
 
-		this->_data = other_cref_p._data;
-		this->_is_initialized = true;
+		this->m_data = other_cref_p.m_data;
+		this->m_is_initialized = true;
 		
 		return *this;
 	}
 
 	_FORCE_INLINE_ lazy_const& operator=(lazy_const&& rvalue_p) noexcept
 	{
-		if constexpr (this->_is_initialized == true)
-		{
-			::abort();
-		}
+		assert(this->m_is_initialized == false);
 
-		this->_data = std::move(rvalue_p._data);
-		this->_is_initialized = true;
+		this->m_data = std::move(rvalue_p.m_data);
+		this->m_is_initialized = true;
 		
 		return *this;
 	}
 
-	_FORCE_INLINE_ const T& load() noexcept { return this->_data; }
+	_FORCE_INLINE_ const T& load() noexcept { return this->m_data; }
 };
 
 
-#ifdef _HAS_CXX20_
-template <typename T>
-concept integral_type = std::is_integral<T>::value;
+// ref is a non-deletable pointer class template.
+template<typename T>
+class ref
+{
+	T* m_ref_ptr;
 
-template <typename T>
-concept character_type = FE::is_character<T>::value;
-#endif
+public:
+	constexpr _FORCE_INLINE_ ref() noexcept : m_ref_ptr() {}
+	constexpr _FORCE_INLINE_ ~ref() noexcept {}
 
+	_CONSTEXPR23_ _FORCE_INLINE_ ref(T& ref_p) noexcept : m_ref_ptr(&ref_p) {}
+
+	_CONSTEXPR23_ _FORCE_INLINE_ ref(const ref& cref_p) noexcept : m_ref_ptr(cref_p.m_ref_ptr) {}
+	_CONSTEXPR23_ _FORCE_INLINE_ ref(ref&& ref_p) noexcept : m_ref_ptr(ref_p.m_ref_ptr) { ref_p.m_ref_ptr = nullptr; }
+
+	_CONSTEXPR23_ _FORCE_INLINE_ ref& operator=(T& ref_p) noexcept
+	{
+		this->m_ref_ptr = &ref_p;
+	}
+
+	_CONSTEXPR23_ _FORCE_INLINE_ ref& operator=(const ref& cref_p) noexcept
+	{
+		this->m_ref_ptr = cref_p.m_ref_ptr;
+	}
+
+	_CONSTEXPR23_ _FORCE_INLINE_ ref& operator=(ref&& ref_p) noexcept
+	{
+		this->m_ref_ptr = ref_p.m_ref_ptr;
+		ref_p.m_ref_ptr = nullptr; 
+	}
+
+	_CONSTEXPR23_ _FORCE_INLINE_ operator bool() noexcept
+	{
+		return (this->m_ref_ptr != nullptr) ? true : false;
+	}
+
+	_CONSTEXPR23_ _FORCE_INLINE_ bool operator!() noexcept
+	{
+		return (this->m_ref_ptr == nullptr) ? true : false;
+	}
+
+	_CONSTEXPR23_ _FORCE_INLINE_ T& operator->() noexcept
+	{
+		assert(this->m_ref_ptr != nullptr);
+		return *this->m_ref_ptr;
+	}
+};
 
 END_NAMESPACE
 
@@ -608,7 +313,5 @@ END_NAMESPACE
 #define min(a,b)            (((a) < (b)) ? (a) : (b))
 #endif
 #endif
-
-
 #pragma warning(pop)
 #endif

@@ -25,7 +25,7 @@ struct char_count
 template<typename char_type>
 _NODISCARD_ _FORCE_INLINE_ char_count<char_type> count_chars(char_type* string_ptr_p, const char_type target_char_p) noexcept
 {
-    static_assert(FE::is_character<char_type>::value, "char_type is not a valid character type");
+    static_assert(FE::is_char<char_type>::value, "char_type is not a valid character type");
     FE_ASSERT(string_ptr_p == nullptr, "${%s@0}: ${%s@1} is ${%p@2}.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(string_ptr_p), nullptr);
 
     var::count_t l_match_count = 0;
@@ -52,7 +52,7 @@ _NODISCARD_ _FORCE_INLINE_ char_count<char_type> count_chars(char_type* string_p
 template<typename char_type>
 _NODISCARD_ _FORCE_INLINE_ constexpr char_count<char_type> count_chars(const char_type* string_ptr_p, const char_type target_char_p) noexcept
 {
-    static_assert(FE::is_character<char_type>::value, "char_type is not a valid character type");
+    static_assert(FE::is_char<char_type>::value, "char_type is not a valid character type");
     FE_ASSERT(string_ptr_p == nullptr, "${%s@0}: ${%s@1} is ${%p@2}.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(string_ptr_p), nullptr);
 
     var::count_t l_match_count = 0;
@@ -90,7 +90,7 @@ _MAYBE_UNUSED_ constexpr int8 _ASCII_GAP_BETWEEN_UPPERCASE_and_lowercase_ = 32;
 template<typename char_type>
 _FORCE_INLINE_ void capitalize(char_type* in_out_string_buffer_ptr_p) noexcept
 {
-    static_assert(FE::is_character<char_type>::value, "char_type is not a valid character type");
+    static_assert(FE::is_char<char_type>::value, "char_type is not a valid character type");
     FE_ASSERT(in_out_string_buffer_ptr_p == nullptr, "${%s@0}: ${%s@1} is ${%p@2}.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(in_out_string_buffer_ptr_p), nullptr);
 
     while (*in_out_string_buffer_ptr_p != static_cast<char_type>('\0'))
@@ -106,7 +106,7 @@ _FORCE_INLINE_ void capitalize(char_type* in_out_string_buffer_ptr_p) noexcept
 template<typename char_type>
 _FORCE_INLINE_ char_type capitalize(const char_type char_value_p) noexcept
 {
-    static_assert(FE::is_character<char_type>::value, "char_type is not a valid character type");
+    static_assert(FE::is_char<char_type>::value, "char_type is not a valid character type");
 
     if (_ASCII_a_ <= static_cast<uint8>(char_value_p) && static_cast<uint8>(char_value_p) <= _ASCII_z_)
     {
@@ -120,7 +120,7 @@ _FORCE_INLINE_ char_type capitalize(const char_type char_value_p) noexcept
 template<typename char_type>
 _FORCE_INLINE_ void to_lowercase(char_type* in_out_string_buffer_ptr_p) noexcept
 {
-    static_assert(FE::is_character<char_type>::value, "char_type is not a valid character type");
+    static_assert(FE::is_char<char_type>::value, "char_type is not a valid character type");
     FE_ASSERT(in_out_string_buffer_ptr_p == nullptr, "${%s@0}: ${%s@1} is ${%p@2}.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(in_out_string_buffer_ptr_p), nullptr);
 
     while (*in_out_string_buffer_ptr_p != static_cast<char_type>('\0'))
@@ -152,7 +152,7 @@ _FORCE_INLINE_ char_type to_lowercase(const char_type char_value_p) noexcept
 template<typename char_type>
 _FORCE_INLINE_ void capitalize_every_first_letter_of_words(char_type* in_out_string_ptr_p) noexcept
 {
-    static_assert(FE::is_character<char_type>::value, "char_type is not a valid character type");
+    static_assert(FE::is_char<char_type>::value, "char_type is not a valid character type");
     FE_ASSERT(in_out_string_ptr_p == nullptr, "${%s@0}: ${%s@1} is ${%p@2}.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(in_out_string_ptr_p), nullptr);
 
     if ((*in_out_string_ptr_p != static_cast<char_type>(' ')) || (*in_out_string_ptr_p != static_cast<char_type>('_')))
@@ -181,7 +181,7 @@ _FORCE_INLINE_ void capitalize_every_first_letter_of_words(char_type* in_out_str
 template <typename char_type>
 _FORCE_INLINE_ void copy_string(char_type* const destination_out_ptrc_p, capacity_t destination_size_p, const char_type* const source_ptrc_p, capacity_t source_size_p) noexcept
 {
-    static_assert(FE::is_character<char_type>::value, "char_type is not a valid character type");
+    static_assert(FE::is_char<char_type>::value, "char_type is not a valid character type");
     FE_ASSERT(destination_out_ptrc_p == nullptr, "${%s@0}: ${%s@1} is ${%p@2}.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(destination_out_ptrc_p), nullptr);
     FE_ASSERT(source_ptrc_p == nullptr, "${%s@0}: ${%s@1} is ${%p@2}.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(source_ptrc_p), nullptr);
 
@@ -200,7 +200,7 @@ _FORCE_INLINE_ void copy_string(char_type* const destination_out_ptrc_p, capacit
 template <typename char_type>
 _NODISCARD_ _FORCE_INLINE_ var::uint64 string_length(char_type* const str_ptrc_p) noexcept
 {
-    static_assert(FE::is_character<char_type>::value, "char_type is not a valid character type");
+    static_assert(FE::is_char<char_type>::value, "char_type is not a valid character type");
     FE_ASSERT(str_ptrc_p == nullptr, "${%s@0}: ${%s@1} is ${%p@2}.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(str_ptrc_p), nullptr);
 
     const char_type* l_iterator_ptr = str_ptrc_p;
@@ -218,7 +218,7 @@ _NODISCARD_ _FORCE_INLINE_ var::uint64 string_length(char_type* const str_ptrc_p
 template <typename char_type>
 _NODISCARD_ _FORCE_INLINE_ constexpr var::uint64 string_length(const char_type* const str_ptrc_p) noexcept 
 {
-    static_assert(FE::is_character<char_type>::value, "char_type is not a valid character type");
+    static_assert(FE::is_char<char_type>::value, "char_type is not a valid character type");
     FE_ASSERT(str_ptrc_p == nullptr, "${%s@0}: ${%s@1} is ${%p@2}.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(str_ptrc_p), nullptr);
 
     const char_type* l_iterator_ptr = str_ptrc_p;
@@ -246,7 +246,7 @@ struct range
 template<typename char_type>
 _NODISCARD_ _FORCE_INLINE_ char_count<char_type> count_chars_within_range(char_type* string_ptr_p, const range string_range_p, const char_type target_char_p) noexcept
 {
-    static_assert(FE::is_character<char_type>::value, "char_type is not a valid character type");
+    static_assert(FE::is_char<char_type>::value, "char_type is not a valid character type");
     FE_ASSERT(string_ptr_p == nullptr, "${%s@0}: ${%s@1} is ${%p@2}.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(string_ptr_p), nullptr);
     FE_ASSERT(string_range_p._begin > string_range_p._end, "${%s@0}: the ${%s@1} cannot be greater than ${%s@2}. ${%s@1} was ${%lu@3}, and ${%s@2} was ${%lu@4}", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_RANGE), TO_STRING(string_range_p._begin), TO_STRING(string_range_p._end), &string_range_p._begin, &string_range_p._end);
     FE_ASSERT(string_length(string_ptr_p) > string_range_p._end, "${%s@0}: the ${%s@1} cannot be greater than ${%s@2}.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_RANGE), TO_STRING(string_length(string_ptr_p)), TO_STRING(string_range_p._end));
@@ -276,7 +276,7 @@ _NODISCARD_ _FORCE_INLINE_ char_count<char_type> count_chars_within_range(char_t
 template<typename char_type>
 _NODISCARD_ _FORCE_INLINE_ constexpr char_count<char_type> count_chars_within_range(const char_type* string_ptr_p, const range string_range_p, const char_type target_char_p) noexcept
 {
-    static_assert(FE::is_character<char_type>::value, "char_type is not a valid character type");
+    static_assert(FE::is_char<char_type>::value, "char_type is not a valid character type");
     FE_ASSERT(string_ptr_p == nullptr, "${%s@0}: ${%s@1} is ${%p@2}.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(string_ptr_p), nullptr);
     FE_ASSERT(string_range_p._begin > string_range_p._end, "${%s@0}: the ${%s@1} cannot be greater than ${%s@2}. ${%s@1} was ${%lu@3}, and ${%s@2} was ${%lu@4}", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_RANGE), TO_STRING(string_range_p._begin), TO_STRING(string_range_p._end), &string_range_p._begin, &string_range_p._end);
     FE_ASSERT(string_length(string_ptr_p) > string_range_p._end, "${%s@0}: the ${%s@1} cannot be greater than ${%s@2}. ${%s@1} was ${%lu@3}, and ${%s@2} was ${%lu@4}", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_RANGE), TO_STRING(string_length(string_ptr_p)), TO_STRING(string_range_p._end), &string_length(string_ptr_p), &string_range_p._end);
@@ -309,7 +309,7 @@ _NODISCARD_ _FORCE_INLINE_ constexpr char_count<char_type> count_chars_within_ra
 template <typename char_type>
 _NODISCARD_ _FORCE_INLINE_ var::boolean string_comparison(const char_type* lstr_ptr_p, char_type* rstr_ptr_p) noexcept
 {
-    static_assert(FE::is_character<char_type>::value, "char_type is not a valid character type");
+    static_assert(FE::is_char<char_type>::value, "char_type is not a valid character type");
     FE_ASSERT(lstr_ptr_p == nullptr, "${%s@0}: ${%s@1} is ${%p@2}.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(lstr_ptr_p), nullptr);
     FE_ASSERT(rstr_ptr_p == nullptr, "${%s@0}: ${%s@1} is ${%p@2}.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(rstr_ptr_p), nullptr);
 
@@ -330,7 +330,7 @@ _NODISCARD_ _FORCE_INLINE_ var::boolean string_comparison(const char_type* lstr_
 template <typename char_type>
 _NODISCARD_ _FORCE_INLINE_ var::boolean string_comparison(char_type* lstr_ptr_p, const char_type* rstr_ptr_p) noexcept
 {
-    static_assert(FE::is_character<char_type>::value, "char_type is not a valid character type");
+    static_assert(FE::is_char<char_type>::value, "char_type is not a valid character type");
     FE_ASSERT(lstr_ptr_p == nullptr, "${%s@0}: ${%s@1} is ${%p@2}.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(lstr_ptr_p), nullptr);
     FE_ASSERT(rstr_ptr_p == nullptr, "${%s@0}: ${%s@1} is ${%p@2}.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(rstr_ptr_p), nullptr);
 
@@ -351,7 +351,7 @@ _NODISCARD_ _FORCE_INLINE_ var::boolean string_comparison(char_type* lstr_ptr_p,
 template <typename char_type>
 _NODISCARD_ _FORCE_INLINE_ var::boolean string_comparison(char_type* lstr_ptr_p, char_type* rstr_ptr_p) noexcept
 {
-    static_assert(FE::is_character<char_type>::value, "char_type is not a valid character type");
+    static_assert(FE::is_char<char_type>::value, "char_type is not a valid character type");
     FE_ASSERT(lstr_ptr_p == nullptr, "${%s@0}: ${%s@1} is ${%p@2}.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(lstr_ptr_p), nullptr);
     FE_ASSERT(rstr_ptr_p == nullptr, "${%s@0}: ${%s@1} is ${%p@2}.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(rstr_ptr_p), nullptr);
 
@@ -372,7 +372,7 @@ _NODISCARD_ _FORCE_INLINE_ var::boolean string_comparison(char_type* lstr_ptr_p,
 template <typename char_type>
 _NODISCARD_ _FORCE_INLINE_ constexpr var::boolean string_comparison(const char_type* lstr_ptr_p, const char_type* rstr_ptr_p) noexcept
 {
-    static_assert(FE::is_character<char_type>::value, "char_type is not a valid character type");
+    static_assert(FE::is_char<char_type>::value, "char_type is not a valid character type");
     FE_ASSERT(lstr_ptr_p == nullptr, "${%s@0}: ${%s@1} is ${%p@2}.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(lstr_ptr_p), nullptr);
     FE_ASSERT(rstr_ptr_p == nullptr, "${%s@0}: ${%s@1} is ${%p@2}.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(rstr_ptr_p), nullptr);
 
@@ -396,7 +396,7 @@ _NODISCARD_ _FORCE_INLINE_ constexpr var::boolean string_comparison(const char_t
 template <typename char_type>
 _NODISCARD_ _FORCE_INLINE_ var::boolean compare_ranged_strings(const char_type* const lstr_ptrc_p, const range lstr_range_p, char_type* const rstr_ptrc_p, const range rstr_range_p) noexcept
 {
-    static_assert(FE::is_character<char_type>::value, "char_type is not a valid character type");
+    static_assert(FE::is_char<char_type>::value, "char_type is not a valid character type");
     FE_ASSERT(lstr_ptrc_p == nullptr, "${%s@0}: ${%s@1} is ${%p@2}.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(lstr_ptr_p), nullptr);
     FE_ASSERT(rstr_ptrc_p == nullptr, "${%s@0}: ${%s@1} is ${%p@2}.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(rstr_ptr_p), nullptr);
 
@@ -431,7 +431,7 @@ _NODISCARD_ _FORCE_INLINE_ var::boolean compare_ranged_strings(const char_type* 
 template <typename char_type>
 _NODISCARD_ _FORCE_INLINE_ var::boolean compare_ranged_strings(char_type* const lstr_ptrc_p, const range lstr_range_p, const char_type* const rstr_ptrc_p, const range rstr_range_p) noexcept
 {
-    static_assert(FE::is_character<char_type>::value, "char_type is not a valid character type");
+    static_assert(FE::is_char<char_type>::value, "char_type is not a valid character type");
     FE_ASSERT(lstr_ptrc_p == nullptr, "${%s@0}: ${%s@1} is ${%p@2}.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(lstr_ptr_p), nullptr);
     FE_ASSERT(rstr_ptrc_p == nullptr, "${%s@0}: ${%s@1} is ${%p@2}.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(rstr_ptr_p), nullptr);
 
@@ -466,7 +466,7 @@ _NODISCARD_ _FORCE_INLINE_ var::boolean compare_ranged_strings(char_type* const 
 template <typename char_type>
 _NODISCARD_ _FORCE_INLINE_ var::boolean compare_ranged_strings(char_type* const lstr_ptrc_p, const range lstr_range_p, char_type* const rstr_ptrc_p, const range rstr_range_p) noexcept
 {
-    static_assert(FE::is_character<char_type>::value, "char_type is not a valid character type");
+    static_assert(FE::is_char<char_type>::value, "char_type is not a valid character type");
     FE_ASSERT(lstr_ptrc_p == nullptr, "${%s@0}: ${%s@1} is ${%p@2}.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(lstr_ptr_p), nullptr);
     FE_ASSERT(rstr_ptrc_p == nullptr, "${%s@0}: ${%s@1} is ${%p@2}.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(rstr_ptr_p), nullptr);
 
@@ -501,7 +501,7 @@ _NODISCARD_ _FORCE_INLINE_ var::boolean compare_ranged_strings(char_type* const 
 template <typename char_type>
 _NODISCARD_ _FORCE_INLINE_ constexpr var::boolean compare_ranged_strings(const char_type* const lstr_ptrc_p, const range lstr_range_p, const char_type* const rstr_ptrc_p, const range rstr_range_p) noexcept
 {
-    static_assert(FE::is_character<char_type>::value, "char_type is not a valid character type");
+    static_assert(FE::is_char<char_type>::value, "char_type is not a valid character type");
     FE_ASSERT(lstr_ptrc_p == nullptr, "${%s@0}: ${%s@1} is ${%p@2}.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(lstr_ptr_p), nullptr);
     FE_ASSERT(rstr_ptrc_p == nullptr, "${%s@0}: ${%s@1} is ${%p@2}.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(rstr_ptr_p), nullptr);
 
@@ -539,7 +539,7 @@ _NODISCARD_ _FORCE_INLINE_ constexpr var::boolean compare_ranged_strings(const c
 template <typename char_type>
 _NODISCARD_ _FORCE_INLINE_ var::boolean insensitive_string_comparison(const char_type* const lstr_ptrc_p, char_type* const rstr_ptrc_p) noexcept
 {
-    static_assert(FE::is_character<char_type>::value, "char_type is not a valid character type");
+    static_assert(FE::is_char<char_type>::value, "char_type is not a valid character type");
     FE_ASSERT(lstr_ptrc_p == nullptr, "${%s@0}: ${%s@1} is ${%p@2}.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(lstr_ptr_p), nullptr);
     FE_ASSERT(rstr_ptrc_p == nullptr, "${%s@0}: ${%s@1} is ${%p@2}.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(rstr_ptr_p), nullptr);
 
@@ -563,7 +563,7 @@ _NODISCARD_ _FORCE_INLINE_ var::boolean insensitive_string_comparison(const char
 template <typename char_type>
 _NODISCARD_ _FORCE_INLINE_ var::boolean insensitive_string_comparison(char_type* const lstr_ptrc_p, const char_type* const rstr_ptrc_p) noexcept
 {
-    static_assert(FE::is_character<char_type>::value, "char_type is not a valid character type");
+    static_assert(FE::is_char<char_type>::value, "char_type is not a valid character type");
     FE_ASSERT(lstr_ptrc_p == nullptr, "${%s@0}: ${%s@1} is ${%p@2}.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(lstr_ptr_p), nullptr);
     FE_ASSERT(rstr_ptrc_p == nullptr, "${%s@0}: ${%s@1} is ${%p@2}.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(rstr_ptr_p), nullptr);
 
@@ -587,7 +587,7 @@ _NODISCARD_ _FORCE_INLINE_ var::boolean insensitive_string_comparison(char_type*
 template <typename char_type>
 _NODISCARD_ _FORCE_INLINE_ var::boolean insensitive_string_comparison(char_type* const lstr_ptrc_p, char_type* const rstr_ptrc_p) noexcept
 {
-    static_assert(FE::is_character<char_type>::value, "char_type is not a valid character type");
+    static_assert(FE::is_char<char_type>::value, "char_type is not a valid character type");
     FE_ASSERT(lstr_ptrc_p == nullptr, "${%s@0}: ${%s@1} is ${%p@2}.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(lstr_ptr_p), nullptr);
     FE_ASSERT(rstr_ptrc_p == nullptr, "${%s@0}: ${%s@1} is ${%p@2}.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(rstr_ptr_p), nullptr);
 
@@ -611,7 +611,7 @@ _NODISCARD_ _FORCE_INLINE_ var::boolean insensitive_string_comparison(char_type*
 template <typename char_type>
 _NODISCARD_ _FORCE_INLINE_ var::boolean insensitive_string_comparison(const char_type* const lstr_ptrc_p, const char_type* const rstr_ptrc_p) noexcept
 {
-    static_assert(FE::is_character<char_type>::value, "char_type is not a valid character type");
+    static_assert(FE::is_char<char_type>::value, "char_type is not a valid character type");
     FE_ASSERT(lstr_ptrc_p == nullptr, "${%s@0}: ${%s@1} is ${%p@2}.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(lstr_ptr_p), nullptr);
     FE_ASSERT(rstr_ptrc_p == nullptr, "${%s@0}: ${%s@1} is ${%p@2}.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(rstr_ptr_p), nullptr);
 
@@ -638,7 +638,7 @@ _NODISCARD_ _FORCE_INLINE_ var::boolean insensitive_string_comparison(const char
 template <typename char_type>
 _NODISCARD_ _FORCE_INLINE_ var::boolean insensitive_ranged_string_comparison(const char_type* const lstr_ptrc_p, const range lstr_range_p, char_type* const rstr_ptrc_p, const range rstr_range_p) noexcept
 {
-    static_assert(FE::is_character<char_type>::value, "char_type is not a valid character type");
+    static_assert(FE::is_char<char_type>::value, "char_type is not a valid character type");
     FE_ASSERT(lstr_ptrc_p == nullptr, "${%s@0}: ${%s@1} is ${%p@2}.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(lstr_ptr_p), nullptr);
     FE_ASSERT(rstr_ptrc_p == nullptr, "${%s@0}: ${%s@1} is ${%p@2}.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(rstr_ptr_p), nullptr);
 
@@ -673,7 +673,7 @@ _NODISCARD_ _FORCE_INLINE_ var::boolean insensitive_ranged_string_comparison(con
 template <typename char_type>
 _NODISCARD_ _FORCE_INLINE_ var::boolean insensitive_ranged_string_comparison(char_type* const lstr_ptrc_p, const range lstr_range_p, const char_type* const rstr_ptrc_p, const range rstr_range_p) noexcept
 {
-    static_assert(FE::is_character<char_type>::value, "char_type is not a valid character type");
+    static_assert(FE::is_char<char_type>::value, "char_type is not a valid character type");
     FE_ASSERT(lstr_ptrc_p == nullptr, "${%s@0}: ${%s@1} is ${%p@2}.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(lstr_ptr_p), nullptr);
     FE_ASSERT(rstr_ptrc_p == nullptr, "${%s@0}: ${%s@1} is ${%p@2}.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(rstr_ptr_p), nullptr);
 
@@ -708,7 +708,7 @@ _NODISCARD_ _FORCE_INLINE_ var::boolean insensitive_ranged_string_comparison(cha
 template <typename char_type>
 _NODISCARD_ _FORCE_INLINE_ var::boolean insensitive_ranged_string_comparison(char_type* const lstr_ptrc_p, const range lstr_range_p, char_type* const rstr_ptrc_p, const range rstr_range_p) noexcept
 {
-    static_assert(FE::is_character<char_type>::value, "char_type is not a valid character type");
+    static_assert(FE::is_char<char_type>::value, "char_type is not a valid character type");
     FE_ASSERT(lstr_ptrc_p == nullptr, "${%s@0}: ${%s@1} is ${%p@2}.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(lstr_ptr_p), nullptr);
     FE_ASSERT(rstr_ptrc_p == nullptr, "${%s@0}: ${%s@1} is ${%p@2}.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(rstr_ptr_p), nullptr);
 
@@ -743,7 +743,7 @@ _NODISCARD_ _FORCE_INLINE_ var::boolean insensitive_ranged_string_comparison(cha
 template <typename char_type>
 _NODISCARD_ _FORCE_INLINE_ _CONSTEXPR23_ var::boolean insensitive_ranged_string_comparison(const char_type* const lstr_ptrc_p, const range lstr_range_p, const char_type* const rstr_ptrc_p, const range rstr_range_p) noexcept
 {
-    static_assert(FE::is_character<char_type>::value, "char_type is not a valid character type");
+    static_assert(FE::is_char<char_type>::value, "char_type is not a valid character type");
     FE_ASSERT(lstr_ptrc_p == nullptr, "${%s@0}: ${%s@1} is ${%p@2}.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(lstr_ptr_p), nullptr);
     FE_ASSERT(rstr_ptrc_p == nullptr, "${%s@0}: ${%s@1} is ${%p@2}.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(rstr_ptr_p), nullptr);
 
@@ -781,7 +781,7 @@ _NODISCARD_ _FORCE_INLINE_ _CONSTEXPR23_ var::boolean insensitive_ranged_string_
 template <typename char_type>
 _FORCE_INLINE_ void string_concatenation(char_type* const destination_out_ptrc_p, count_t destination_total_count_p, const char_type* const source_ptrc_p, count_t source_total_count_p) noexcept
 {
-    static_assert(FE::is_character<char_type>::value, "char_type is not a valid character type");
+    static_assert(FE::is_char<char_type>::value, "char_type is not a valid character type");
     FE_ASSERT(destination_out_ptrc_p == nullptr, "${%s@0}: ${%s@1} is ${%p@2}.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(destination_out_ptrc_p), nullptr);
     FE_ASSERT(source_ptrc_p == nullptr, "${%s@0}: ${%s@1} is ${%p@2}.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(source_ptrc_p), nullptr);
 
@@ -796,7 +796,7 @@ _FORCE_INLINE_ void string_concatenation(char_type* const destination_out_ptrc_p
 template<typename char_type>
 _FORCE_INLINE_ void concatenate_strings(char_type* const out_string_buffer_ptrc_p, size_t string_buffer_size_p, ::std::initializer_list<const char_type* const>&& strings_p) noexcept
 {
-    static_assert(FE::is_character<char_type>::value, "char_type is not a valid character type");
+    static_assert(FE::is_char<char_type>::value, "char_type is not a valid character type");
     ABORT_IF(out_string_buffer_ptrc_p == nullptr, "NULLPTR DETECTED: out_string_buffer_ptrc_p is nullptr.");
 
     var::size_t l_current_begin_index = algorithm::string::string_length(out_string_buffer_ptrc_p);
@@ -816,7 +816,7 @@ _FORCE_INLINE_ void concatenate_strings(char_type* const out_string_buffer_ptrc_
 template<typename char_type>
 _FORCE_INLINE_ void concatenate_characters(char_type* const out_string_buffer_ptrc_p, _MAYBE_UNUSED_ size_t string_buffer_size_p, ::std::initializer_list<const char_type>&& chars_p) noexcept
 {
-    static_assert(FE::is_character<char_type>::value, "char_type is not a valid character type");
+    static_assert(FE::is_char<char_type>::value, "char_type is not a valid character type");
     FE_ASSERT(out_string_buffer_ptrc_p == nullptr, "${%s@0}: ${%s@1} is nullptr.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(out_string_buffer_ptrc_p));
 
     var::length_t l_string_buffer_length = algorithm::string::string_length(out_string_buffer_ptrc_p);
@@ -840,7 +840,7 @@ struct char_search_result
 template<typename char_type>
 _NODISCARD_ _FORCE_INLINE_ char_search_result<char_type> search_first_char(const char_type* const string_ptrc_p, const char_type target_char_p) noexcept
 {
-    static_assert(FE::is_character<char_type>::value, "char_type is not a valid character type");
+    static_assert(FE::is_char<char_type>::value, "char_type is not a valid character type");
     FE_ASSERT(string_ptrc_p == nullptr, "${%s@0}: ${%s@1} is nullptr.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(string_ptrc_p));
 
     const char_type* l_string_ptr = string_ptrc_p;
@@ -860,7 +860,7 @@ _NODISCARD_ _FORCE_INLINE_ char_search_result<char_type> search_first_char(const
 template<typename char_type>
 _NODISCARD_ _FORCE_INLINE_ char_search_result<char_type> search_last_char(const char_type* const string_ptrc_p, const char_type target_char_p) noexcept
 {
-    static_assert(FE::is_character<char_type>::value, "char_type is not a valid character type");
+    static_assert(FE::is_char<char_type>::value, "char_type is not a valid character type");
     FE_ASSERT(string_ptrc_p == nullptr, "${%s@0}: ${%s@1} is nullptr.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(string_ptrc_p));
 
     FE::const_reverse_iterator<FE::contiguous_iterator<const char_type>> l_string_rbegin = string_ptrc_p + (string_length(string_ptrc_p)-1);
@@ -884,7 +884,7 @@ _NODISCARD_ _FORCE_INLINE_ char_search_result<char_type> search_last_char(const 
 template<typename char_type>
 _NODISCARD_ _FORCE_INLINE_ char_search_result<char_type> search_first_char_within_range(const char_type* const string_ptrc_p, const range string_range_p, const char_type target_char_p) noexcept
 {
-    static_assert(FE::is_character<char_type>::value, "char_type is not a valid character type");
+    static_assert(FE::is_char<char_type>::value, "char_type is not a valid character type");
     FE_ASSERT(string_ptrc_p == nullptr, "${%s@0}: ${%s@1} is nullptr.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(string_ptrc_p));
     FE_ASSERT(string_range_p._begin > string_range_p._end, "${%s@0}: ${%s@1} cannot be greater than ${%s@2}.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_RANGE), TO_STRING(string_range_p._begin), TO_STRING(string_range_p._end));
     FE_ASSERT(string_length(string_ptrc_p) < string_range_p._end, "${%s@0}: ${%s@2} cannot be greater than the length of ${%s@1}.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_RANGE), TO_STRING(string_length(string_ptrc_p)), TO_STRING(string_range_p._end));
@@ -906,7 +906,7 @@ _NODISCARD_ _FORCE_INLINE_ char_search_result<char_type> search_first_char_withi
 template<typename char_type>
 _NODISCARD_ _FORCE_INLINE_ char_search_result<char_type> search_last_char_within_range(const char_type* const string_ptrc_p, const range string_range_p, const char_type target_char_p) noexcept
 {
-    static_assert(FE::is_character<char_type>::value, "char_type is not a valid character type");
+    static_assert(FE::is_char<char_type>::value, "char_type is not a valid character type");
     FE_ASSERT(string_ptrc_p == nullptr, "${%s@0}: ${%s@1} is nullptr.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(string_ptrc_p));
     FE_ASSERT(string_range_p._begin > string_range_p._end, "${%s@0}: ${%s@1} cannot be greater than ${%s@2}.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_RANGE), TO_STRING(string_range_p._begin), TO_STRING(string_range_p._end));
     FE_ASSERT(string_length(string_ptrc_p) < string_range_p._end, "${%s@0}: ${%s@2} cannot be greater than the length of ${%s@1}.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_RANGE), TO_STRING(string_length(string_ptrc_p)), TO_STRING(string_range_p._end));
@@ -932,7 +932,7 @@ _NODISCARD_ _FORCE_INLINE_ char_search_result<char_type> search_last_char_within
 template<typename char_type>
 _NODISCARD_ _FORCE_INLINE_ FE::optional<range> search_first_substring(const char_type* const string_ptrc_p, const char_type* const target_substring_ptrc_p) noexcept
 {
-    static_assert(FE::is_character<char_type>::value, "char_type is not a valid character type");
+    static_assert(FE::is_char<char_type>::value, "char_type is not a valid character type");
     FE_ASSERT(string_ptrc_p == nullptr, "${%s@0}: ${%s@1} is nullptr.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(string_ptrc_p));
     FE_ASSERT(target_substring_ptrc_p == nullptr, "${%s@0}: ${%s@1} is nullptr.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(target_substring_ptrc_p));
 
@@ -972,7 +972,7 @@ _NODISCARD_ _FORCE_INLINE_ FE::optional<range> search_first_substring(const char
 template<typename char_type>
 _NODISCARD_ _FORCE_INLINE_ FE::optional<range> search_last_substring(const char_type* const string_ptrc_p, const char_type* const target_substring_ptrc_p) noexcept
 {
-    static_assert(FE::is_character<char_type>::value, "char_type is not a valid character type");
+    static_assert(FE::is_char<char_type>::value, "char_type is not a valid character type");
     FE_ASSERT(string_ptrc_p == nullptr, "${%s@0}: ${%s@1} is nullptr.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(string_ptrc_p));
     FE_ASSERT(target_substring_ptrc_p == nullptr, "${%s@0}: ${%s@1} is nullptr.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(target_substring_ptrc_p));
 
@@ -1017,7 +1017,7 @@ _NODISCARD_ _FORCE_INLINE_ FE::optional<range> search_last_substring(const char_
 template<typename char_type>
 _NODISCARD_ _FORCE_INLINE_ FE::optional<range> search_first_substring_within_range(const char_type* const string_ptrc_p, const range string_range_p, const char_type* const target_substring_ptrc_p) noexcept
 {
-    static_assert(FE::is_character<char_type>::value, "char_type is not a valid character type");
+    static_assert(FE::is_char<char_type>::value, "char_type is not a valid character type");
     FE_ASSERT(string_range_p._begin > string_range_p._end, "${%s@0}: ${%s@1} cannot be greater than ${%s@2}.", TO_STRING(string_range_p._begin), TO_STRING(string_range_p._end));
     FE_ASSERT(string_length(string_ptrc_p) < string_range_p._end, "${%s@0}: ${%s@1} cannot be greater than the length of ${%s@2}.", TO_STRING(string_length(string_ptrc_p)), TO_STRING(string_range_p._end));
 
@@ -1060,7 +1060,7 @@ _NODISCARD_ _FORCE_INLINE_ FE::optional<range> search_first_substring_within_ran
 template<typename char_type>
 _NODISCARD_ _FORCE_INLINE_ FE::optional<range> search_last_substring_within_range(const char_type* const string_ptrc_p, const range string_range_p, const char_type* const target_substring_ptrc_p) noexcept
 {
-    static_assert(FE::is_character<char_type>::value, "char_type is not a valid character type");
+    static_assert(FE::is_char<char_type>::value, "char_type is not a valid character type");
     FE_ASSERT(string_range_p._begin > string_range_p._end, "${%s@0}: ${%s@1} cannot be greater than ${%s@2}.", TO_STRING(string_range_p._begin), TO_STRING(string_range_p._end));
     FE_ASSERT(string_length(string_ptrc_p) < string_range_p._end, "${%s@0}: ${%s@1} cannot be greater than the length of ${%s@2}.", TO_STRING(string_length(string_ptrc_p)), TO_STRING(string_range_p._end));
 
@@ -1109,7 +1109,7 @@ _NODISCARD_ _FORCE_INLINE_ FE::optional<range> search_last_substring_within_rang
 template<typename char_type, typename int_type>
 _FORCE_INLINE_ int_type char_to_integer(char_type target_char_p) noexcept
 {
-    static_assert(FE::is_character<char_type>::value, "char_type is not a valid character type");
+    static_assert(FE::is_char<char_type>::value, "char_type is not a valid character type");
     static_assert(::std::is_integral<int_type>::value == true, "typename int_type is not an integer");
 
     return static_cast<int_type>(target_char_p) - 48;
@@ -1119,7 +1119,7 @@ _FORCE_INLINE_ int_type char_to_integer(char_type target_char_p) noexcept
 template <typename char_type, typename int_type>
 _NODISCARD_ _FORCE_INLINE_ int_type string_to_integer(char_type* cstr_ptr_p) noexcept
 {
-    static_assert(FE::is_character<char_type>::value, "char_type is not a valid character type");
+    static_assert(FE::is_char<char_type>::value, "char_type is not a valid character type");
     FE_ASSERT(cstr_ptr_p == nullptr, "${%s@0}: ${%s@1} is nullptr.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(cstr_ptr_p));
 
     var::int16 l_sign = 1;
@@ -1144,7 +1144,7 @@ _NODISCARD_ _FORCE_INLINE_ int_type string_to_integer(char_type* cstr_ptr_p) noe
 template <typename char_type, typename int_type>
 _NODISCARD_ _FORCE_INLINE_ constexpr int_type string_to_integer(const char_type* cstr_ptr_p) noexcept
 {
-    static_assert(FE::is_character<char_type>::value, "char_type is not a valid character type");
+    static_assert(FE::is_char<char_type>::value, "char_type is not a valid character type");
     FE_ASSERT(cstr_ptr_p == nullptr, "${%s@0}: ${%s@1} is nullptr.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(cstr_ptr_p));
 
     var::int16 l_sign = 1;
@@ -1172,7 +1172,7 @@ _NODISCARD_ _FORCE_INLINE_ constexpr int_type string_to_integer(const char_type*
 template<typename char_type>
 _FORCE_INLINE_ void invert_string(char_type* const in_out_string_ptrc_p) noexcept
 {
-    static_assert(FE::is_character<char_type>::value, "char_type is not a valid character type");
+    static_assert(FE::is_char<char_type>::value, "char_type is not a valid character type");
     FE_ASSERT(in_out_string_ptrc_p == nullptr, "${%s@0}: ${%s@1} is nullptr.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(cstr_ptr_p));
 
     var::index_t l_start = 0;
@@ -1199,7 +1199,7 @@ TIP: use this function with switch cases.
 template<typename char_type>
 _FORCE_INLINE_ constexpr var::uint64 hash_string(const char_type* const string_ptrc_p) noexcept
 {
-    static_assert(FE::is_character<char_type>::value, "char_type is not a valid character type");
+    static_assert(FE::is_char<char_type>::value, "char_type is not a valid character type");
     FE_ASSERT(string_ptrc_p == nullptr, "${%s@0}: ${%s@1} is nullptr.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(cstr_ptr_p));
 
     length_t l_string_length = string_length(string_ptrc_p);

@@ -3,7 +3,7 @@
 // Copyright © from 2023 to current, UNKNOWN STRYKER. All Rights Reserved.
 #include <FE/core/memory.hxx>
 #include "movable_scoped_ref.hxx"
-
+#pragma warning(disable: 4324)
 
 
 
@@ -12,7 +12,7 @@ BEGIN_NAMESPACE(FE)
 
 #pragma pack(push, _DWORD_SIZE_)
 // construction and destruction operations are lock-free and thread-safe but the instance may not be safe from data race condition.
-template<typename T, class alignment = FE::align_null>
+template<typename T, class alignment = FE::align_64bytes>
 class alignas(alignment::size) concurrent_memory_block final
 {
 private:

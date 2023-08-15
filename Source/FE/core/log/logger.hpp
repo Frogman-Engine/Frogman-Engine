@@ -1,7 +1,7 @@
 ﻿#ifndef _FE_LOG_HPP_
 #define _FE_LOG_HPP_
 // Copyright © from 2023 to current, UNKNOWN STRYKER. All Rights Reserved.
-#include <FE/core/types.h>
+#include <FE/core/types.hxx>
 #include <FE/core/debug.h>
 #include <fstream>
 #include <string>

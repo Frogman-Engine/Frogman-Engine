@@ -1,9 +1,11 @@
 ﻿#ifndef _FE_CORE_TAGGED_OBJECT_HXX_
 #define _FE_CORE_TAGGED_OBJECT_HXX_
 // Copyright © from 2023 to current, UNKNOWN STRYKER. All Rights Reserved.
-#include "prerequisite_symbols.h"
-#include "memory.hxx"
-#include "cstring.hxx"
+#include <FE/core/prerequisites.h>
+#include <FE/core/memory.hxx>
+#include <FE/core/cstring.hxx>
+
+
 
 
 BEGIN_NAMESPACE(FE)
@@ -11,7 +13,7 @@ BEGIN_NAMESPACE(FE)
 
 #pragma pack(push, _DWORD_SIZE_)
 
-template <typename T, class alignment = ::FE::align_null, class string = compile_time_constant_string<char>>
+template <typename T, class alignment = ::FE::align_8bytes, class string = compile_time_constant_string<char>>
 class alignas(alignment::size) tagged_object final
 {
 private:

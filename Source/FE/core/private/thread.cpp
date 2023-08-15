@@ -1,6 +1,8 @@
 ﻿// Copyright © from 2023 to current, UNKNOWN STRYKER. All Rights Reserved.
 #include <FE/core/thread.hpp>
 #include <FE/core/algorithm/utility.hxx>
+#include <FE/core/function.hxx>
+
 
 #ifdef _WINDOWS_64BIT_OS_
 #define WIN32_LEAN_AND_MEAN
@@ -62,9 +64,9 @@ void FE::thread::swap(thread& left_thread_ref_p, thread right_thread_ref_p) noex
 
 ::FE::var::uint64 FE::thread::calculate_suitable_thread_count() noexcept
 {
-	if ( ((::std::thread::hardware_concurrency() >> 1) + (::std::thread::hardware_concurrency() / 8)) < _MINIMUM_SUITABLE_THREAD_COUNT_)
+	if ( ((::std::thread::hardware_concurrency() >> 1) + (::std::thread::hardware_concurrency() / 8)) < minimum_suitable_thread_count)
 	{
-		return _MINIMUM_SUITABLE_THREAD_COUNT_;
+		return minimum_suitable_thread_count;
 	}
 
 	return static_cast<var::uint64>(::std::thread::hardware_concurrency() >> 1) + static_cast<var::uint64>(::std::thread::hardware_concurrency() / 8);

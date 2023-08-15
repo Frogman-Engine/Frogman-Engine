@@ -1,7 +1,7 @@
 ﻿#ifndef _FE_CORE_OPTIONAL_HXX_
 #define _FE_CORE_OPTIONAL_HXX_
 // Copyright © from 2023 to current, UNKNOWN STRYKER. All Rights Reserved.
-#include "prerequisite_symbols.h"
+#include <FE/core/prerequisites.h>
 
 
 BEGIN_NAMESPACE(FE)
@@ -11,7 +11,7 @@ struct nullopt_t {};
 _MAYBE_UNUSED_ constexpr inline nullopt_t nullopt;
 
 
-template<typename T, FE::OBJECT_TRIVIALITY object_triviality = FE::is_trivially_constructible_and_destructible<T>::_VALUE_>
+template<typename T, FE::TYPE_TRIVIALITY object_triviality = FE::is_trivially_constructible_and_destructible<T>::value>
 class optional final 
 {
 public:
@@ -29,7 +29,7 @@ protected:
 	_FORCE_INLINE_ constexpr optional_base(boolean is_constructed_p) noexcept : m_is_constructed(is_constructed_p) {}
 	_FORCE_INLINE_ constexpr ~optional_base() noexcept {}
 
-	template<typename T, FE::OBJECT_TRIVIALITY object_triviality = FE::is_trivially_constructible_and_destructible<T>::_VALUE_>
+	template<typename T, FE::TYPE_TRIVIALITY object_triviality = FE::is_trivially_constructible_and_destructible<T>::value>
 	_FORCE_INLINE_ static void swap(optional<T, object_triviality>& left_p, optional<T, object_triviality>& right_p)
 	{
 		optional<T, object_triviality> l_temporary = std::move(left_p);
@@ -40,7 +40,7 @@ protected:
 
 
 template<typename T>
-class optional<T, FE::OBJECT_TRIVIALITY::_NOT_TRIVIAL> final : public optional_base
+class optional<T, FE::TYPE_TRIVIALITY::_NOT_TRIVIAL> final : public optional_base
 {
 	var::byte m_memory[sizeof(T)];
 	T* const m_memory_ptrc;
@@ -167,26 +167,6 @@ public:
 		return this->m_is_constructed;
 	}
 
-	_FORCE_INLINE_ var::boolean copy_construct(T& other_ref_p) noexcept
-	{
-		if (this->m_is_constructed == false)
-		{
-			this->m_is_constructed = true;
-			new(this->m_memory_ptrc) T(other_ref_p);
-		}
-		return this->m_is_constructed;
-	}
-
-	_FORCE_INLINE_ var::boolean move_construct(T&& rvalue_p) noexcept
-	{
-		if (this->m_is_constructed == false)
-		{
-			this->m_is_constructed = true;
-			new(this->m_memory_ptrc) T(std::move(rvalue_p));
-		}
-		return this->m_is_constructed;
-	}
-
 	template<typename ... arguments>
 	_FORCE_INLINE_ var::boolean construct(arguments&& ...arguments_p) noexcept
 	{
@@ -212,7 +192,7 @@ public:
 
 
 template<typename T>
-class optional<T, FE::OBJECT_TRIVIALITY::_TRIVIAL> final : public optional_base
+class optional<T, FE::TYPE_TRIVIALITY::_TRIVIAL> final : public optional_base
 {
 	T m_plain_old_data;
 
