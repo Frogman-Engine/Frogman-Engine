@@ -6,8 +6,6 @@
 #include <FE/core/memory.hxx>
 
 
-
-
 BEGIN_NAMESPACE(FE)
 
 
@@ -19,6 +17,7 @@ public:
 	using pointer = typename allocator::pointer;
 	using element_type = typename allocator::value_type;
 	using allocator_type = allocator;
+	using traits_type = type_trait;
 
 private:
 	pointer m_smart_ptr;
@@ -126,28 +125,61 @@ public:
 		return this->m_smart_ptr;
 	}
 
-	_CONSTEXPR23_ _FORCE_INLINE_ var::boolean is_nullptr() const noexcept
+
+	_CONSTEXPR23_ _FORCE_INLINE_ var::boolean operator==(std::nullptr_t nullptr_p) noexcept
 	{
-		return (this->m_smart_ptr == nullptr) ? true : false;
+		return this->m_smart_ptr == nullptr_p;
+	}
+
+	_CONSTEXPR23_ _FORCE_INLINE_ var::boolean operator!=(std::nullptr_t nullptr_p) noexcept
+	{
+		return this->m_smart_ptr != nullptr_p;
+	}
+
+
+	_CONSTEXPR23_ _FORCE_INLINE_ var::boolean operator==(const unique_ptr& other_cref_p) noexcept
+	{
+		return this->m_smart_ptr == other_cref_p.m_smart_ptr;
+	}
+
+	_CONSTEXPR23_ _FORCE_INLINE_ var::boolean operator!=(const unique_ptr& other_cref_p) noexcept
+	{
+		return this->m_smart_ptr != other_cref_p.m_smart_ptr;
+	}
+
+	_CONSTEXPR23_ _FORCE_INLINE_ var::boolean operator>(const unique_ptr& other_cref_p) noexcept
+	{
+		return this->m_smart_ptr > other_cref_p.m_smart_ptr;
+	}
+
+	_CONSTEXPR23_ _FORCE_INLINE_ var::boolean operator>=(const unique_ptr& other_cref_p) noexcept
+	{
+		return this->m_smart_ptr >= other_cref_p.m_smart_ptr;
+	}
+
+	_CONSTEXPR23_ _FORCE_INLINE_ var::boolean operator<(const unique_ptr& other_cref_p) noexcept
+	{
+		return this->m_smart_ptr < other_cref_p.m_smart_ptr;
+	}
+
+	_CONSTEXPR23_ _FORCE_INLINE_ var::boolean operator<=(const unique_ptr& other_cref_p) noexcept
+	{
+		return this->m_smart_ptr <= other_cref_p.m_smart_ptr;
 	}
 };
 
-template<typename T, class allocator = FE::new_delete_proxy_allocator<FE::scalable_aligned_allocator<T>>, class type_trait = FE::type_trait<typename std::remove_all_extents<T>::type, allocator>>
+template<typename T, class allocator = FE::new_delete_proxy_allocator<FE::scalable_aligned_allocator<T>>, class type_trait = FE::type_trait<T, allocator>>
 _CONSTEXPR23_ _NODISCARD_ _FORCE_INLINE_ unique_ptr<T, allocator, type_trait> make_unique() noexcept
 {
+	static_assert(std::is_array<T>::value == false, "static assertion failed: The typename T must not be an array type");
 	return unique_ptr<T, allocator, type_trait>(T());
 }
 
-template<typename T, class allocator = FE::new_delete_proxy_allocator<FE::scalable_aligned_allocator<T>>, class type_trait = FE::type_trait<typename std::remove_all_extents<T>::type, allocator>>
+template<typename T, class allocator = FE::new_delete_proxy_allocator<FE::scalable_aligned_allocator<T>>, class type_trait = FE::type_trait<T, allocator>>
 _CONSTEXPR23_ _NODISCARD_ _FORCE_INLINE_ unique_ptr<T, allocator, type_trait> make_unique(T value_p) noexcept
 {
+	static_assert(std::is_array<T>::value == false, "static assertion failed: The typename T must not be an array type");
 	return unique_ptr<T, allocator, type_trait>( T( std::move(value_p) ) );
-}
-
-template<typename T, class allocator = FE::new_delete_proxy_allocator<FE::scalable_aligned_allocator<T>>, class type_trait = FE::type_trait<typename std::remove_all_extents<T>::type, allocator>, typename... arguments>
-_CONSTEXPR23_ _NODISCARD_ _FORCE_INLINE_ unique_ptr<T, allocator, type_trait> make_unique(arguments... arguments_p) noexcept
-{
-	return unique_ptr<T, allocator, type_trait>( T( std::move(arguments_p...) ) );
 }
 
 
@@ -161,6 +193,7 @@ public:
 	using pointer = typename allocator::pointer;
 	using element_type = typename allocator::value_type;
 	using allocator_type = allocator;
+	using traits_type = type_trait;
 
 private:
 	pointer m_smart_ptr;
@@ -189,9 +222,13 @@ public:
 		rvalue_p.m_smart_ptr_end = nullptr;
 	}
 
+	_CONSTEXPR23_ _FORCE_INLINE_ unique_ptr(FE::reserve&& array_size_p) noexcept : m_smart_ptr(allocator::allocate(array_size_p._length)), m_smart_ptr_end(m_smart_ptr + array_size_p._length)
+	{
+	}
+
 	_CONSTEXPR23_ _FORCE_INLINE_ unique_ptr(std::initializer_list<element_type>&& values_p) noexcept : m_smart_ptr(allocator::allocate( values_p.size() )), m_smart_ptr_end(m_smart_ptr + values_p.size())
 	{
-		type_trait::copy_assign(this->m_smart_ptr, const_cast<element_type*>(values_p.begin()), values_p.size());
+		type_trait::assign(this->m_smart_ptr, const_cast<element_type*>(values_p.begin()), values_p.size());
 	}
 
 	_CONSTEXPR23_ _FORCE_INLINE_ unique_ptr& operator=(const unique_ptr& other_cref_p) noexcept = delete;
@@ -219,7 +256,7 @@ public:
 			this->m_smart_ptr_end = this->m_smart_ptr + values_p.size();
 		}
 
-		type_trait::copy_assign(this->m_smart_ptr, const_cast<element_type*>(values_p.begin()), values_p.size());
+		type_trait::assign(this->m_smart_ptr, const_cast<element_type*>(values_p.begin()), values_p.size());
 		return *this;
 	}
 
@@ -245,7 +282,7 @@ public:
 			this->m_smart_ptr_end = this->m_smart_ptr + values_p.size();
 		}
 
-		type_trait::copy_assign(this->m_smart_ptr, const_cast<element_type*>(values_p.begin()), values_p.size());
+		type_trait::assign(this->m_smart_ptr, const_cast<element_type*>(values_p.begin()), values_p.size());
 	}
 
 	_FORCE_INLINE_ void swap(unique_ptr& other_ref_p) noexcept
@@ -293,19 +330,68 @@ public:
 		return this->m_smart_ptr[index_p];
 	}
 
-	_CONSTEXPR23_ _FORCE_INLINE_ var::boolean is_nullptr() const noexcept
-	{
-		return (this->m_smart_ptr == nullptr) ? true : false;
-	}
-
 	_CONSTEXPR23_ _FORCE_INLINE_ var::size_t size() const noexcept
 	{
 		return this->m_smart_ptr_end - this->m_smart_ptr;
 	}
+
+
+	_CONSTEXPR23_ _FORCE_INLINE_ var::boolean operator==(std::nullptr_t nullptr_p) noexcept
+	{
+		return this->m_smart_ptr == nullptr_p;
+	}
+
+	_CONSTEXPR23_ _FORCE_INLINE_ var::boolean operator!=(std::nullptr_t nullptr_p) noexcept
+	{
+		return this->m_smart_ptr != nullptr_p;
+	}
+
+
+	_CONSTEXPR23_ _FORCE_INLINE_ var::boolean operator==(const unique_ptr& other_cref_p) noexcept
+	{
+		return this->m_smart_ptr == other_cref_p.m_smart_ptr;
+	}
+
+	_CONSTEXPR23_ _FORCE_INLINE_ var::boolean operator!=(const unique_ptr& other_cref_p) noexcept
+	{
+		return this->m_smart_ptr != other_cref_p.m_smart_ptr;
+	}
+
+	_CONSTEXPR23_ _FORCE_INLINE_ var::boolean operator>(const unique_ptr& other_cref_p) noexcept
+	{
+		return this->m_smart_ptr > other_cref_p.m_smart_ptr;
+	}
+
+	_CONSTEXPR23_ _FORCE_INLINE_ var::boolean operator>=(const unique_ptr& other_cref_p) noexcept
+	{
+		return this->m_smart_ptr >= other_cref_p.m_smart_ptr;
+	}
+
+	_CONSTEXPR23_ _FORCE_INLINE_ var::boolean operator<(const unique_ptr& other_cref_p) noexcept
+	{
+		return this->m_smart_ptr < other_cref_p.m_smart_ptr;
+	}
+
+	_CONSTEXPR23_ _FORCE_INLINE_ var::boolean operator<=(const unique_ptr& other_cref_p) noexcept
+	{
+		return this->m_smart_ptr <= other_cref_p.m_smart_ptr;
+	}
 };
 
 
+template<typename T, class allocator = FE::new_delete_proxy_allocator<FE::scalable_aligned_allocator<typename std::remove_all_extents<T>::type>>, class type_trait = FE::type_trait<typename std::remove_all_extents<T>::type, allocator>>
+_CONSTEXPR23_ _NODISCARD_ _FORCE_INLINE_ unique_ptr<typename std::remove_all_extents<T>::type[], allocator, type_trait> make_unique(size_t array_size_p) noexcept
+{
+	static_assert(std::is_array<T>::value == true, "static assertion failed: The typename T must be an array type");
+	return unique_ptr<typename std::remove_all_extents<T>::type[], allocator, type_trait>(FE::reserve{ array_size_p });
+}
 
+template<typename T, class allocator = FE::new_delete_proxy_allocator<FE::scalable_aligned_allocator<typename std::remove_all_extents<T>::type>>, class type_trait = FE::type_trait<typename std::remove_all_extents<T>::type, allocator>>
+_CONSTEXPR23_ _NODISCARD_ _FORCE_INLINE_ unique_ptr<typename std::remove_all_extents<T>::type[], allocator, type_trait> make_unique(std::initializer_list<typename std::remove_all_extents<T>::type>&& values_p) noexcept
+{
+	static_assert(std::is_array<T>::value == true, "static assertion failed: The typename T must be an array type");
+	return unique_ptr<typename std::remove_all_extents<T>::type[], allocator, type_trait>(std::move(values_p));
+}
 
 END_NAMESPACE
 #endif

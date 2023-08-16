@@ -2,16 +2,16 @@
 #define _FE_CORE_PRIVATE_MEMORY_HXX_
 // Copyright © 2023~ UNKNOWN STRYKER. All Rights Reserved.
 #ifdef UNALIGNED_MEMSET
-#error UNALIGNED_MEMSET is a reserved macro keyword
+#error UNALIGNED_MEMSET is a reserved Frogman Engine macro keyword.
 #endif
 #ifdef ALIGNED_MEMSET
-#error ALIGNED_MEMSET is a reserved macro keyword
+#error ALIGNED_MEMSET is a reserved Frogman Engine macro keyword.
 #endif
 #ifdef UNALIGNED_MEMCPY
-#error UNALIGNED_MEMCPY is a reserved macro keyword
+#error UNALIGNED_MEMCPY is a reserved Frogman Engine macro keyword.
 #endif
 #ifdef ALIGNED_MEMCPY
-#error ALIGNED_MEMCPY is a reserved macro keyword
+#error ALIGNED_MEMCPY is a reserved Frogman Engine macro keyword.
 #endif
 #define DIVIDE_BY_2(input_p) ((input_p) >> 1)
 #define DIVIDE_BY_4(input_p) ((input_p) >> 2)
@@ -583,7 +583,7 @@ var::boolean memcmp_s(iterator left_iterator_begin_p, iterator left_iterator_end
 
 
 template <class T, typename ... arguments>
-_FORCE_INLINE_ void assign(T& dest_object_ref_p, OBJECT_STATUS& dest_bool_mask_ref_p, arguments&& ...arguments_p) noexcept
+_DEPRECATED_ _FORCE_INLINE_ void assign(T& dest_object_ref_p, OBJECT_STATUS& dest_bool_mask_ref_p, arguments&& ...arguments_p) noexcept
 {
 	static_assert(FE::is_trivially_constructible_and_destructible<T>::value == FE::TYPE_TRIVIALITY::_NOT_TRIVIAL, "WARNING: T must not be trivially constructible and destructible. This function call has no effect and is a waste of computing resource");
 	if (dest_bool_mask_ref_p == FE::OBJECT_STATUS::_DESTRUCTED)
@@ -597,7 +597,7 @@ _FORCE_INLINE_ void assign(T& dest_object_ref_p, OBJECT_STATUS& dest_bool_mask_r
 }
 
 template <class T>
-_FORCE_INLINE_ void copy_assign(T& dest_object_ref_p, OBJECT_STATUS& dest_bool_mask_ref_p, const T& source_cref_p, _MAYBE_UNUSED_ OBJECT_STATUS source_bool_mask_p) noexcept
+_DEPRECATED_ _FORCE_INLINE_ void copy_assign(T& dest_object_ref_p, OBJECT_STATUS& dest_bool_mask_ref_p, const T& source_cref_p, _MAYBE_UNUSED_ OBJECT_STATUS source_bool_mask_p) noexcept
 {
 	static_assert(FE::is_trivially_constructible_and_destructible<T>::value == FE::TYPE_TRIVIALITY::_NOT_TRIVIAL, "WARNING: T must not be trivially constructible and destructible. This function call has no effect and is a waste of computing resource");
 	FE_ASSERT(source_bool_mask_p == FE::OBJECT_STATUS::_DESTRUCTED, "ERROR: cannot copy a null object");
@@ -613,7 +613,7 @@ _FORCE_INLINE_ void copy_assign(T& dest_object_ref_p, OBJECT_STATUS& dest_bool_m
 }
 
 template <class T>
-_FORCE_INLINE_ void move_assign(T& dest_object_ref_p, OBJECT_STATUS& dest_bool_mask_ref_p, T&& source_rvalue_reference_p, _MAYBE_UNUSED_ OBJECT_STATUS source_bool_mask_p) noexcept
+_DEPRECATED_ _FORCE_INLINE_ void move_assign(T& dest_object_ref_p, OBJECT_STATUS& dest_bool_mask_ref_p, T&& source_rvalue_reference_p, _MAYBE_UNUSED_ OBJECT_STATUS source_bool_mask_p) noexcept
 {
 	static_assert(FE::is_trivially_constructible_and_destructible<T>::value == FE::TYPE_TRIVIALITY::_NOT_TRIVIAL, "WARNING: T must not be trivially constructible and destructible. This function call has no effect and is a waste of computing resource");
 	FE_ASSERT(source_bool_mask_p == FE::OBJECT_STATUS::_DESTRUCTED, "ERROR: cannot copy a null object");
@@ -632,7 +632,7 @@ _FORCE_INLINE_ void move_assign(T& dest_object_ref_p, OBJECT_STATUS& dest_bool_m
 
 
 template <class T>
-_FORCE_INLINE_ void construct(T& dest_ref_p, OBJECT_STATUS& dest_bool_mask_ref_p) noexcept
+_DEPRECATED_ _FORCE_INLINE_ void construct(T& dest_ref_p, OBJECT_STATUS& dest_bool_mask_ref_p) noexcept
 {
 	static_assert(FE::is_trivially_constructible_and_destructible<T>::value == FE::TYPE_TRIVIALITY::_NOT_TRIVIAL, "WARNING: T must not be trivially constructible and destructible. This function call has no effect and is a waste of computing resource");
 	FE_ASSERT(dest_bool_mask_ref_p == FE::OBJECT_STATUS::_CONSTRUCTED, "ERROR: unable to double-construct.");
@@ -642,7 +642,7 @@ _FORCE_INLINE_ void construct(T& dest_ref_p, OBJECT_STATUS& dest_bool_mask_ref_p
 }
 
 template <class T>
-_FORCE_INLINE_ void copy_construct(T& dest_ref_p, OBJECT_STATUS& dest_bool_mask_ref_p, const T& source_cref_p, _MAYBE_UNUSED_ OBJECT_STATUS source_bool_mask_p) noexcept
+_DEPRECATED_ _FORCE_INLINE_ void copy_construct(T& dest_ref_p, OBJECT_STATUS& dest_bool_mask_ref_p, const T& source_cref_p, _MAYBE_UNUSED_ OBJECT_STATUS source_bool_mask_p) noexcept
 {
 	static_assert(FE::is_trivially_constructible_and_destructible<T>::value == FE::TYPE_TRIVIALITY::_NOT_TRIVIAL, "WARNING: T must not be trivially constructible and destructible. This function call has no effect and is a waste of computing resource");
 	FE_ASSERT(dest_bool_mask_ref_p == FE::OBJECT_STATUS::_CONSTRUCTED, "ERROR: unable to double-construct.");
@@ -653,7 +653,7 @@ _FORCE_INLINE_ void copy_construct(T& dest_ref_p, OBJECT_STATUS& dest_bool_mask_
 }
 
 template <class T>
-_FORCE_INLINE_ void move_construct(T& dest_ref_p, OBJECT_STATUS& dest_bool_mask_ref_p, T&& source_rvalue_reference_p, _MAYBE_UNUSED_ OBJECT_STATUS source_bool_mask_p) noexcept
+_DEPRECATED_ _FORCE_INLINE_ void move_construct(T& dest_ref_p, OBJECT_STATUS& dest_bool_mask_ref_p, T&& source_rvalue_reference_p, _MAYBE_UNUSED_ OBJECT_STATUS source_bool_mask_p) noexcept
 {
 	static_assert(FE::is_trivially_constructible_and_destructible<T>::value == FE::TYPE_TRIVIALITY::_NOT_TRIVIAL, "WARNING: T must not be trivially constructible and destructible. This function call has no effect and is a waste of computing resource");
 	FE_ASSERT(dest_bool_mask_ref_p == FE::OBJECT_STATUS::_CONSTRUCTED, "ERROR: unable to double-construct.");
@@ -667,7 +667,7 @@ _FORCE_INLINE_ void move_construct(T& dest_ref_p, OBJECT_STATUS& dest_bool_mask_
 
 
 template <typename iterator, typename ... arguments>
-_FORCE_INLINE_ void assign(iterator begin_p, iterator end_p, OBJECT_STATUS* const boolean_mask_ptrc_p, arguments && ...arguments_p) noexcept
+_DEPRECATED_ _FORCE_INLINE_ void assign(iterator begin_p, iterator end_p, OBJECT_STATUS* const boolean_mask_ptrc_p, arguments && ...arguments_p) noexcept
 {
 	using T = typename iterator::value_type;
 	static_assert(std::is_class<iterator>::value == true);
@@ -695,7 +695,7 @@ _FORCE_INLINE_ void assign(iterator begin_p, iterator end_p, OBJECT_STATUS* cons
 }
 
 template<class iterator>
-_FORCE_INLINE_ void copy_assign(iterator dest_begin_p, capacity_t dest_length_p, OBJECT_STATUS* const dest_bool_mask_ptrc_p, iterator data_source_begin_p, capacity_t source_data_length_p) noexcept
+_DEPRECATED_ _FORCE_INLINE_ void copy_assign(iterator dest_begin_p, capacity_t dest_length_p, OBJECT_STATUS* const dest_bool_mask_ptrc_p, iterator data_source_begin_p, capacity_t source_data_length_p) noexcept
 {
 	using T = typename iterator::value_type;
 	static_assert(std::is_class<iterator>::value == true);
@@ -758,7 +758,7 @@ _FORCE_INLINE_ void copy_assign(iterator dest_begin_p, capacity_t dest_length_p,
 }
 
 template<class iterator>
-_FORCE_INLINE_ void move_assign(iterator dest_begin_p, capacity_t dest_length_p, OBJECT_STATUS* const dest_bool_mask_ptrc_p, iterator data_source_begin_p, capacity_t source_data_length_p) noexcept
+_DEPRECATED_ _FORCE_INLINE_ void move_assign(iterator dest_begin_p, capacity_t dest_length_p, OBJECT_STATUS* const dest_bool_mask_ptrc_p, iterator data_source_begin_p, capacity_t source_data_length_p) noexcept
 {
 	using T = typename iterator::value_type;
 	static_assert(std::is_class<iterator>::value == true);
@@ -821,7 +821,7 @@ _FORCE_INLINE_ void move_assign(iterator dest_begin_p, capacity_t dest_length_p,
 }
 
 template<class iterator>
-_FORCE_INLINE_ void copy_assign(iterator dest_begin_p, capacity_t dest_length_p, OBJECT_STATUS* const dest_bool_mask_ptrc_p, iterator source_data_begin_p, capacity_t source_data_length_p, const OBJECT_STATUS* const source_data_bool_mask_ptrc_p) noexcept
+_DEPRECATED_ _FORCE_INLINE_ void copy_assign(iterator dest_begin_p, capacity_t dest_length_p, OBJECT_STATUS* const dest_bool_mask_ptrc_p, iterator source_data_begin_p, capacity_t source_data_length_p, const OBJECT_STATUS* const source_data_bool_mask_ptrc_p) noexcept
 {
 	using T = typename iterator::value_type;
 	static_assert(std::is_class<iterator>::value == true);
@@ -895,7 +895,7 @@ _FORCE_INLINE_ void copy_assign(iterator dest_begin_p, capacity_t dest_length_p,
 }
 
 template<class iterator>
-_FORCE_INLINE_ void move_assign(iterator dest_begin_p, capacity_t dest_length_p, OBJECT_STATUS* const dest_bool_mask_ptrc_p, iterator source_data_begin_p, capacity_t source_data_length_p, OBJECT_STATUS* const source_data_bool_mask_ptrc_p) noexcept
+_DEPRECATED_ _FORCE_INLINE_ void move_assign(iterator dest_begin_p, capacity_t dest_length_p, OBJECT_STATUS* const dest_bool_mask_ptrc_p, iterator source_data_begin_p, capacity_t source_data_length_p, OBJECT_STATUS* const source_data_bool_mask_ptrc_p) noexcept
 {
 	using T = typename iterator::value_type;
 	static_assert(std::is_class<iterator>::value == true);
@@ -972,7 +972,7 @@ _FORCE_INLINE_ void move_assign(iterator dest_begin_p, capacity_t dest_length_p,
 
 
 template <class T>
-_FORCE_INLINE_ void destruct(T& dest_ref_p, OBJECT_STATUS& dest_bool_mask_ref_p) noexcept
+_DEPRECATED_ _FORCE_INLINE_ void destruct(T& dest_ref_p, OBJECT_STATUS& dest_bool_mask_ref_p) noexcept
 {
 	static_assert(FE::is_trivially_constructible_and_destructible<T>::value == FE::TYPE_TRIVIALITY::_NOT_TRIVIAL, "WARNING: T must not be trivially constructible and destructible. This function call has no effect and is a waste of computing resource");
 	FE_ASSERT(dest_bool_mask_ref_p == FE::OBJECT_STATUS::_DESTRUCTED, "ERROR: unable to destruct.");
@@ -982,7 +982,7 @@ _FORCE_INLINE_ void destruct(T& dest_ref_p, OBJECT_STATUS& dest_bool_mask_ref_p)
 }
 
 template<class iterator>
-_FORCE_INLINE_ void destruct(iterator begin_p, iterator end_p, OBJECT_STATUS* const boolean_mask_ptrc_p) noexcept
+_DEPRECATED_ _FORCE_INLINE_ void destruct(iterator begin_p, iterator end_p, OBJECT_STATUS* const boolean_mask_ptrc_p) noexcept
 {
 	using T = typename iterator::value_type;
 	static_assert(std::is_class<iterator>::value == true);
@@ -1009,7 +1009,7 @@ _FORCE_INLINE_ void destruct(iterator begin_p, iterator end_p, OBJECT_STATUS* co
 
 
 template<class iterator>
-_FORCE_INLINE_ void copy_construct(iterator dest_begin_p, capacity_t dest_length_p, OBJECT_STATUS* const dest_bool_mask_ptrc_p, iterator data_source_begin_p, capacity_t source_data_length_p) noexcept
+_DEPRECATED_ _FORCE_INLINE_ void copy_construct(iterator dest_begin_p, capacity_t dest_length_p, OBJECT_STATUS* const dest_bool_mask_ptrc_p, iterator data_source_begin_p, capacity_t source_data_length_p) noexcept
 {
 	using T = typename iterator::value_type;
 	static_assert(std::is_class<iterator>::value == true);
@@ -1058,7 +1058,7 @@ _FORCE_INLINE_ void copy_construct(iterator dest_begin_p, capacity_t dest_length
 }
 
 template<class iterator>
-_FORCE_INLINE_ void move_construct(iterator dest_begin_p, capacity_t dest_length_p, OBJECT_STATUS* const dest_bool_mask_ptrc_p, iterator data_source_begin_p, capacity_t source_data_length_p) noexcept
+_DEPRECATED_ _FORCE_INLINE_ void move_construct(iterator dest_begin_p, capacity_t dest_length_p, OBJECT_STATUS* const dest_bool_mask_ptrc_p, iterator data_source_begin_p, capacity_t source_data_length_p) noexcept
 {
 	using T = typename iterator::value_type;
 	static_assert(std::is_class<iterator>::value == true);
@@ -1107,7 +1107,7 @@ _FORCE_INLINE_ void move_construct(iterator dest_begin_p, capacity_t dest_length
 }
 
 template<class iterator>
-_FORCE_INLINE_ void copy_construct(iterator dest_begin_p, capacity_t dest_length_p, OBJECT_STATUS* const dest_bool_mask_ptrc_p, iterator source_data_begin_p, capacity_t source_data_length_p, const OBJECT_STATUS* const source_data_bool_mask_ptrc_p) noexcept
+_DEPRECATED_ _FORCE_INLINE_ void copy_construct(iterator dest_begin_p, capacity_t dest_length_p, OBJECT_STATUS* const dest_bool_mask_ptrc_p, iterator source_data_begin_p, capacity_t source_data_length_p, const OBJECT_STATUS* const source_data_bool_mask_ptrc_p) noexcept
 {
 	using T = typename iterator::value_type;
 	static_assert(std::is_class<iterator>::value == true);
@@ -1163,7 +1163,7 @@ _FORCE_INLINE_ void copy_construct(iterator dest_begin_p, capacity_t dest_length
 }
 
 template<class iterator>
-_FORCE_INLINE_ void move_construct(iterator dest_begin_p, capacity_t dest_length_p, OBJECT_STATUS* const dest_bool_mask_ptrc_p, iterator source_data_begin_p, capacity_t source_data_length_p, OBJECT_STATUS* const source_data_bool_mask_ptrc_p) noexcept
+_DEPRECATED_ _FORCE_INLINE_ void move_construct(iterator dest_begin_p, capacity_t dest_length_p, OBJECT_STATUS* const dest_bool_mask_ptrc_p, iterator source_data_begin_p, capacity_t source_data_length_p, OBJECT_STATUS* const source_data_bool_mask_ptrc_p) noexcept
 {
 	using T = typename iterator::value_type;
 	static_assert(std::is_class<iterator>::value == true);
@@ -1231,6 +1231,17 @@ END_NAMESPACE
 BEGIN_NAMESPACE(FE)
 
 
+// refactor smart_ptrs and add new features to type_trait
+// T must be (copy/move) (constructible/assignable). 
+// 
+// void construct(T* const ptrc_p, T value_p) noecept;
+// void construct(T* const dest_begin_ptrc_p, T* const dest_end_ptrc_p, T value_p) noecept;
+// void construct(T* const dest_begin_ptrc_p, T* const dest_end_ptrc_p, T* const begin_source_p, T* const end_source_p) noecept;
+// 
+// void destruct(T* const ptrc_p) noecept;
+// void destruct(T* const begin_ptrc_p, T* const end_ptrc_p) noecept;
+
+
 template<typename T, class allocated_from, TYPE_TRIVIALITY is_trivial = allocated_from::is_trivially_constructible_and_destructible>
 class type_trait;
 
@@ -1241,8 +1252,8 @@ public:
 	_MAYBE_UNUSED_ static constexpr inline TYPE_TRIVIALITY is_trivially_constructible_and_destructible = TYPE_TRIVIALITY::_TRIVIAL;
 
 
-	// copy assigns a contiguous memory chucnk to another
-	_FORCE_INLINE_ static void copy_assign(T* dest_ptr_p, count_t dest_count_p, T* source_ptr_p, count_t source_count_p) noexcept
+	// assigns a contiguous memory chucnk to another
+	_FORCE_INLINE_ static void assign(T* dest_ptr_p, count_t dest_count_p, T* source_ptr_p, count_t source_count_p) noexcept
 	{
 		if constexpr (allocated_from::is_allocated_from_an_address_aligned_allocator == true)
 		{
@@ -1253,42 +1264,16 @@ public:
 			FE::unaligned_memcpy(dest_ptr_p, sizeof(T) * dest_count_p, source_ptr_p, sizeof(T) * source_count_p);
 		}
 	}
-	// copy assigns a contiguous memory chucnk to another
-	_FORCE_INLINE_ static void copy_assign(T* dest_ptr_p, T* source_ptr_p, count_t count_to_copy_p) noexcept
+	// assigns a contiguous memory chucnk to another
+	_FORCE_INLINE_ static void assign(T* dest_ptr_p, T* source_ptr_p, count_t count_to_copy_or_move_p) noexcept
 	{
 		if constexpr (allocated_from::is_allocated_from_an_address_aligned_allocator == true)
 		{
-			ALIGNED_MEMCPY(dest_ptr_p, source_ptr_p, sizeof(T) * count_to_copy_p);
+			ALIGNED_MEMCPY(dest_ptr_p, source_ptr_p, sizeof(T) * count_to_copy_or_move_p);
 		}
 		else if constexpr (allocated_from::is_allocated_from_an_address_aligned_allocator == false)
 		{
-			UNALIGNED_MEMCPY(dest_ptr_p, source_ptr_p, sizeof(T) * count_to_copy_p);
-		}
-	}
-
-
-	// move assigns a contiguous memory chucnk to another
-	_FORCE_INLINE_ static void move_assign(T* dest_ptr_p, count_t dest_count_p, T* source_ptr_p, count_t source_count_p) noexcept
-	{
-		if constexpr (allocated_from::is_allocated_from_an_address_aligned_allocator == true)
-		{
-			FE::aligned_memcpy(dest_ptr_p, sizeof(T) * dest_count_p, source_ptr_p, sizeof(T) * source_count_p);
-		}
-		else if constexpr (allocated_from::is_allocated_from_an_address_aligned_allocator == false)
-		{
-			FE::unaligned_memcpy(dest_ptr_p, sizeof(T) * dest_count_p, source_ptr_p, sizeof(T) * source_count_p);
-		}
-	}
-	// move assigns a contiguous memory chucnk to another
-	_FORCE_INLINE_ static void move_assign(T* dest_ptr_p, T* source_ptr_p, count_t count_to_copy_p) noexcept
-	{
-		if constexpr (allocated_from::is_allocated_from_an_address_aligned_allocator == true)
-		{
-			ALIGNED_MEMCPY(dest_ptr_p, source_ptr_p, sizeof(T) * count_to_copy_p);
-		}
-		else if constexpr (allocated_from::is_allocated_from_an_address_aligned_allocator == false)
-		{
-			UNALIGNED_MEMCPY(dest_ptr_p, source_ptr_p, sizeof(T) * count_to_copy_p);
+			UNALIGNED_MEMCPY(dest_ptr_p, source_ptr_p, sizeof(T) * count_to_copy_or_move_p);
 		}
 	}
 };
@@ -1302,61 +1287,9 @@ public:
 
 
 	// copy assigns a contiguous memory chucnk to another
-	_FORCE_INLINE_ static void copy_assign(T* dest_ptr_p, count_t dest_count_p, T* source_ptr_p, count_t source_count_p) noexcept
+	_FORCE_INLINE_ static void assign(T* dest_ptr_p, count_t dest_count_p, T* source_ptr_p, count_t source_count_p) noexcept
 	{
 		static_assert(std::is_copy_assignable<T>::value == true, "static assertion failed: The typename T must be copy assignable.");
-
-		FE_ASSERT(dest_ptr_p == nullptr, "MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR: ${%s@0} is nullptr", TO_STRING(dest_ptr_p));
-		FE_ASSERT(source_ptr_p == nullptr, "MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR: ${%s@0} is nullptr", TO_STRING(source_ptr_p));
-
-		FE_ASSERT(dest_count_p == 0, "MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR: ${%s@0} is zero", TO_STRING(dest_count_p));
-		FE_ASSERT(source_count_p == 0, "MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR: ${%s@0} is zero", TO_STRING(source_count_p));
-
-		if (dest_count_p <= source_count_p)
-		{
-			T* const dest_end_ptrc = dest_ptr_p + dest_count_p;
-			while (dest_ptr_p != dest_end_ptrc)
-			{
-				*dest_ptr_p = *source_ptr_p;
-				++dest_ptr_p;
-				++source_ptr_p;
-			}
-			return;
-		}
-		else
-		{
-			T* const source_end_ptrc = source_ptr_p + source_count_p;
-			while (source_ptr_p != source_end_ptrc)
-			{
-				*dest_ptr_p = *source_ptr_p;
-				++dest_ptr_p;
-				++source_ptr_p;
-			}
-			return;
-		}
-	}
-	// copy assigns a contiguous memory chucnk to another
-	_FORCE_INLINE_ static void copy_assign(T* dest_ptr_p, T* source_ptr_p, count_t count_to_copy_p) noexcept
-	{
-		static_assert(std::is_copy_assignable<T>::value == true, "static assertion failed: The typename T must be copy assignable.");
-
-		FE_ASSERT(dest_ptr_p == nullptr, "MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR: ${%s@0} is nullptr", TO_STRING(dest_ptr_p));
-		FE_ASSERT(source_ptr_p == nullptr, "MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR: ${%s@0} is nullptr", TO_STRING(source_ptr_p));
-
-		FE_ASSERT(count_to_copy_p == 0, "MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR: ${%s@0} is zero", TO_STRING(count_to_copy_p));
-
-		for (var::count_t i = 0; i < count_to_copy_p; ++i)
-		{
-			*dest_ptr_p = *source_ptr_p;
-			++dest_ptr_p;
-			++source_ptr_p;
-		}
-	}
-
-
-	// move assigns a contiguous memory chucnk to another
-	_FORCE_INLINE_ static void move_assign(T* dest_ptr_p, count_t dest_count_p, T* source_ptr_p, count_t source_count_p) noexcept
-	{
 		static_assert(std::is_move_assignable<T>::value == true, "static assertion failed: The typename T must be move assignable.");
 
 		FE_ASSERT(dest_ptr_p == nullptr, "MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR: ${%s@0} is nullptr", TO_STRING(dest_ptr_p));
@@ -1388,17 +1321,19 @@ public:
 			return;
 		}
 	}
-	// move assigns a contiguous memory chucnk to another
-	_FORCE_INLINE_ static void move_assign(T* dest_ptr_p, T* source_ptr_p, count_t count_to_move_p) noexcept
+
+	// assigns a contiguous memory chucnk to another
+	_FORCE_INLINE_ static void assign(T* dest_ptr_p, T* source_ptr_p, count_t count_to_copy_or_move_p) noexcept
 	{
+		static_assert(std::is_copy_assignable<T>::value == true, "static assertion failed: The typename T must be copy assignable.");
 		static_assert(std::is_move_assignable<T>::value == true, "static assertion failed: The typename T must be move assignable.");
 
 		FE_ASSERT(dest_ptr_p == nullptr, "MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR: ${%s@0} is nullptr", TO_STRING(dest_ptr_p));
 		FE_ASSERT(source_ptr_p == nullptr, "MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR: ${%s@0} is nullptr", TO_STRING(source_ptr_p));
 
-		FE_ASSERT(count_to_move_p == 0, "MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR: ${%s@0} is zero", TO_STRING(count_to_move_p));
+		FE_ASSERT(count_to_copy_or_move_p == 0, "MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR: ${%s@0} is zero", TO_STRING(count_to_copy_or_move_p));
 
-		for (var::count_t i = 0; i < count_to_move_p; ++i)
+		for (var::count_t i = 0; i < count_to_copy_or_move_p; ++i)
 		{
 			*dest_ptr_p = std::move(*source_ptr_p);
 			++dest_ptr_p;

@@ -4,6 +4,7 @@
 #include <FE/miscellaneous/configuration.h>
 #include <FE/core/macros/attributes.h>
 #include <atomic>
+#include <cassert>
 #include <cstdint>
 #include <limits>
 #include <typeinfo>

@@ -100,7 +100,7 @@
 
 #ifndef GOOGLETEST_INCLUDE_GTEST_GTEST_PRINTERS_H_
 #define GOOGLETEST_INCLUDE_GTEST_GTEST_PRINTERS_H_
-
+#pragma warning(disable: 4530)
 #include <functional>
 #include <memory>
 #include <ostream>  // NOLINT

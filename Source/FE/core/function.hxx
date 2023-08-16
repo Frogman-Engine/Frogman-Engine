@@ -63,8 +63,8 @@ public:
     using function_type = decltype(m_function_ptr);
     using return_type = R;
 
-    constexpr function() noexcept : m_function_ptr() {}
-    constexpr ~function() noexcept {}
+    constexpr _FORCE_INLINE_ function() noexcept : m_function_ptr() {}
+    _CONSTEXPR23_ _FORCE_INLINE_ ~function() noexcept {}
 
     _CONSTEXPR20_ _FORCE_INLINE_ function(function_type function_ptr_p) noexcept : m_function_ptr(function_ptr_p) {}
     _CONSTEXPR20_ _FORCE_INLINE_ function(const function& other_cref_p) noexcept : m_function_ptr(other_cref_p.m_function_ptr) {}
@@ -122,8 +122,8 @@ public:
     using function_type = decltype(m_function_ptr);
     using return_type = void;
 
-    constexpr function() noexcept : m_function_ptr() {}
-    constexpr ~function() noexcept {}
+    constexpr _FORCE_INLINE_ function() noexcept : m_function_ptr() {}
+    _CONSTEXPR23_ _FORCE_INLINE_ ~function() noexcept {}
 
     _CONSTEXPR20_ _FORCE_INLINE_ function(function_type function_ptr_p) noexcept : m_function_ptr(function_ptr_p) {}
     _CONSTEXPR20_ _FORCE_INLINE_ function(const function& other_cref_p) noexcept : m_function_ptr(other_cref_p.m_function_ptr) {}
@@ -184,8 +184,8 @@ public:
     using function_type = decltype(m_function_ptr);
     using return_type = R;
 
-    constexpr function() noexcept : m_function_ptr() {}
-    constexpr ~function() noexcept {}
+    constexpr _FORCE_INLINE_ function() noexcept : m_function_ptr() {}
+    _CONSTEXPR23_ _FORCE_INLINE_ ~function() noexcept {}
 
     _CONSTEXPR20_ _FORCE_INLINE_ function(function_type function_ptr_p) noexcept : m_function_ptr(function_ptr_p) {}
     _CONSTEXPR20_ _FORCE_INLINE_ function(const function& other_cref_p) noexcept : m_function_ptr(other_cref_p.m_function_ptr) {}
@@ -243,8 +243,8 @@ public:
     using function_type = decltype(m_function_ptr);
     using return_type = void;
 
-    constexpr function() noexcept : m_function_ptr() {}
-    constexpr ~function() noexcept {}
+    constexpr _FORCE_INLINE_ function() noexcept : m_function_ptr() {}
+    _CONSTEXPR23_ _FORCE_INLINE_ ~function() noexcept {}
 
     _CONSTEXPR20_ _FORCE_INLINE_ function(function_type function_ptr_p) noexcept : m_function_ptr(function_ptr_p) {}
     _CONSTEXPR20_ _FORCE_INLINE_ function(const function& other_cref_p) noexcept : m_function_ptr(other_cref_p.m_function_ptr) {}
@@ -309,8 +309,8 @@ public:
     using return_type = R;
     using class_type = C;
 
-    constexpr method() noexcept : m_method_ptr() {}
-    constexpr ~method() noexcept {}
+    constexpr _FORCE_INLINE_ method() noexcept : m_method_ptr() {}
+    _CONSTEXPR23_ _FORCE_INLINE_ ~method() noexcept {}
 
     _CONSTEXPR20_ _FORCE_INLINE_ method(method_type method_ptr_p) noexcept : m_method_ptr(method_ptr_p) {}
     _CONSTEXPR20_ _FORCE_INLINE_ method(const method& other_cref_p) noexcept : m_method_ptr(other_cref_p.m_method_ptr) {}
@@ -369,8 +369,8 @@ public:
     using return_type = void;
     using class_type = C;
 
-    constexpr method() noexcept : m_method_ptr() {}
-    constexpr ~method() noexcept {}
+    constexpr _FORCE_INLINE_ method() noexcept : m_method_ptr() {}
+    _CONSTEXPR23_ _FORCE_INLINE_ ~method() noexcept {}
 
     _CONSTEXPR20_ _FORCE_INLINE_ method(method_type method_ptr_p) noexcept : m_method_ptr(method_ptr_p) {}
     _CONSTEXPR20_ _FORCE_INLINE_ method(const method& other_cref_p) noexcept : m_method_ptr(other_cref_p.m_method_ptr) {}
@@ -429,8 +429,8 @@ public:
     using return_type = R;
     using class_type = C;
 
-    constexpr method() noexcept : m_method_ptr() {}
-    constexpr ~method() noexcept {}
+    constexpr _FORCE_INLINE_ method() noexcept : m_method_ptr() {}
+    _CONSTEXPR23_ _FORCE_INLINE_ ~method() noexcept {}
 
     _CONSTEXPR20_ _FORCE_INLINE_ method(method_type method_ptr_p) noexcept : m_method_ptr(method_ptr_p) {}
     _CONSTEXPR20_ _FORCE_INLINE_ method(const method& other_cref_p) noexcept : m_method_ptr(other_cref_p.m_method_ptr) {}
@@ -489,8 +489,8 @@ public:
     using return_type = void;
     using class_type = C;
 
-    constexpr method() noexcept : m_method_ptr() {}
-    constexpr ~method() noexcept {}
+    constexpr _FORCE_INLINE_ method() noexcept : m_method_ptr() {}
+    _CONSTEXPR23_ _FORCE_INLINE_ ~method() noexcept {}
 
     _CONSTEXPR20_ _FORCE_INLINE_ method(method_type method_ptr_p) noexcept : m_method_ptr(method_ptr_p) {}
     _CONSTEXPR20_ _FORCE_INLINE_ method(const method& other_cref_p) noexcept : m_method_ptr(other_cref_p.m_method_ptr) {}
@@ -550,8 +550,8 @@ public:
     using return_type = R;
     using class_type = C;
 
-    constexpr method() noexcept : m_method_ptr() {}
-    constexpr ~method() noexcept {}
+    constexpr _FORCE_INLINE_ method() noexcept : m_method_ptr() {}
+    _CONSTEXPR23_ _FORCE_INLINE_ ~method() noexcept {}
 
     _CONSTEXPR20_ _FORCE_INLINE_ method(method_type method_ptr_p) noexcept : m_method_ptr(method_ptr_p) {}
     _CONSTEXPR20_ _FORCE_INLINE_ method(const method& other_cref_p) noexcept : m_method_ptr(other_cref_p.m_method_ptr) {}
@@ -610,8 +610,8 @@ public:
     using return_type = void;
     using class_type = C;
 
-    _FORCE_INLINE_ constexpr method() noexcept : m_method_ptr() {}
-    _FORCE_INLINE_ constexpr ~method() noexcept {}
+    constexpr _FORCE_INLINE_ method() noexcept : m_method_ptr() {}
+    _CONSTEXPR23_ _FORCE_INLINE_ ~method() noexcept {}
 
     _CONSTEXPR20_ _FORCE_INLINE_ method(method_type method_ptr_p) noexcept : m_method_ptr(method_ptr_p) {}
     _CONSTEXPR20_ _FORCE_INLINE_ method(const method& other_cref_p) noexcept : m_method_ptr(other_cref_p.m_method_ptr) {}
@@ -670,8 +670,8 @@ public:
     using return_type = R;
     using class_type = C;
 
-    _FORCE_INLINE_ constexpr method() noexcept : m_method_ptr() {}
-    _FORCE_INLINE_ constexpr ~method() noexcept {}
+     constexpr _FORCE_INLINE_ method() noexcept : m_method_ptr() {}
+     _CONSTEXPR23_ _FORCE_INLINE_ ~method() noexcept {}
 
     _CONSTEXPR20_ _FORCE_INLINE_ method(method_type method_ptr_p) noexcept : m_method_ptr(method_ptr_p) {}
     _CONSTEXPR20_ _FORCE_INLINE_ method(const method& other_cref_p) noexcept : m_method_ptr(other_cref_p.m_method_ptr) {}
@@ -731,7 +731,7 @@ public:
     using class_type = C;
 
     constexpr _FORCE_INLINE_ method() noexcept : m_method_ptr() {}
-    constexpr _FORCE_INLINE_ ~method() noexcept {}
+    _CONSTEXPR23_ _FORCE_INLINE_ ~method() noexcept {}
 
     _CONSTEXPR20_ _FORCE_INLINE_ method(method_type method_ptr_p) noexcept : m_method_ptr(method_ptr_p) {}
     _CONSTEXPR20_ _FORCE_INLINE_ method(const method& other_cref_p) noexcept : m_method_ptr(other_cref_p.m_method_ptr) {}
@@ -1153,7 +1153,7 @@ struct arguments : public arguments<first, second, third, fourth, fifth, sixth, 
 
 struct task_base
 {
-    _NODISCARD_ virtual void operator()(_MAYBE_UNUSED_ void* out_return_buffer_ptr_p = nullptr) noexcept = 0;
+    virtual void operator()(_MAYBE_UNUSED_ void* out_return_buffer_ptr_p = nullptr) noexcept = 0;
 };
 
 
@@ -1211,7 +1211,7 @@ struct cpp_style_task<C, task_impl, FE::FORWARD_DATA::_AS_RVALUE_REF, arguments_
         return *this;
     }
 
-    _NODISCARD_ virtual void operator()(_MAYBE_UNUSED_ void* out_return_buffer_ptr_p = nullptr) noexcept override
+    virtual void operator()(_MAYBE_UNUSED_ void* out_return_buffer_ptr_p = nullptr) noexcept override
     {
         FE_ASSERT(this->_instance_ptr == nullptr, "${%s@0}: ${%s@1} is nullptr", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(this->_instance_ptr));
 
@@ -1389,7 +1389,7 @@ struct cpp_style_task<C, task_impl, FE::FORWARD_DATA::_AS_LVALUE_REF, arguments_
         return *this;
     }
 
-    _NODISCARD_ virtual void operator()(_MAYBE_UNUSED_ void* out_return_buffer_ptr_p = nullptr) noexcept override
+    virtual void operator()(_MAYBE_UNUSED_ void* out_return_buffer_ptr_p = nullptr) noexcept override
     {
         FE_ASSERT(this->_instance_ptr == nullptr, "${%s@0}: ${%s@1} is nullptr", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(this->_instance_ptr));
 
@@ -1561,7 +1561,7 @@ struct c_style_task<task_impl, FE::FORWARD_DATA::_AS_RVALUE_REF, arguments_buffe
         return *this;
     }
 
-    _NODISCARD_ virtual void operator()(_MAYBE_UNUSED_ void* out_return_buffer_ptr_p = nullptr) noexcept override
+    virtual void operator()(_MAYBE_UNUSED_ void* out_return_buffer_ptr_p = nullptr) noexcept override
     {
         if constexpr (task_type::has_void_return_type == true)
         {
@@ -1725,7 +1725,7 @@ struct c_style_task<task_impl, FE::FORWARD_DATA::_AS_LVALUE_REF, arguments_buffe
         return *this;
     }
 
-    _NODISCARD_ virtual void operator()(_MAYBE_UNUSED_ void* out_return_buffer_ptr_p = nullptr) noexcept override
+    virtual void operator()(_MAYBE_UNUSED_ void* out_return_buffer_ptr_p = nullptr) noexcept override
     {
         if constexpr (task_type::has_void_return_type == true)
         {

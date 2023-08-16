@@ -13,7 +13,7 @@ BEGIN_NAMESPACE(FE)
 template <typename F>
 struct do_once
 {
-	do_once(F lambda_p) noexcept
+	_FORCE_INLINE_ do_once(F lambda_p) noexcept
 	{
 		lambda_p();
 	}

@@ -49,6 +49,8 @@ ADD_LIBRARY(${FE_AVX} STATIC
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
 	MESSAGE("Configurating The Build Environment for Linux X86-64 Distributions")
 
+	ADD_COMPILE_DEFINITIONS(__AVX__=1)
+
 	if(GNU_CPP)
 		TARGET_COMPILE_OPTIONS(${FE_AVX} PRIVATE
 			$<$<CONFIG:DEBUG>:			${DEBUG_COMPILE_OPTIONS} 			-mavx>
@@ -86,6 +88,8 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
 
 elseif(CMAKE_SYSTEM_NAME STREQUAL "Windows")
 	MESSAGE("Configurating The Build Environment for Windows X86-64 Distributions")
+
+	ADD_COMPILE_DEFINITIONS(_HAS_EXCEPTIONS=0)
 
 	TARGET_COMPILE_OPTIONS(${FE_AVX} PRIVATE
         $<$<CONFIG:DEBUG>:			${DEBUG_COMPILE_OPTIONS} 			/arch:AVX>

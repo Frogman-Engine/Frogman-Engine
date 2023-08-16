@@ -92,7 +92,7 @@ public:
 
 
 
-
+// refactor stack
 template<class T, size_t max_element_count>
 class static_stack_base
 {

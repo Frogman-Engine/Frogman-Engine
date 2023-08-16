@@ -108,6 +108,7 @@ SET(_SMART_POINTERS_
 	${CMAKE_CURRENT_SOURCE_DIR}/../FE/core/smart_pointers/exclusive_ptr.hxx 	
 	${CMAKE_CURRENT_SOURCE_DIR}/../FE/core/smart_pointers/proxy_ptr.hxx
 	${CMAKE_CURRENT_SOURCE_DIR}/../FE/core/smart_pointers/unique_ptr.hxx
+	${CMAKE_CURRENT_SOURCE_DIR}/../FE/core/smart_pointers/smart_ptrs.h
 	)
 #SOURCE_GROUP("FE\\core\\smart_pointers" FILES ${_SMART_POINTERS_})
 

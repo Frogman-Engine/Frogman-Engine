@@ -1,8 +1,22 @@
 ﻿#ifndef _FE_LOG_MACRO_H_
 #define _FE_LOG_MACRO_H_
 // Copyright © from 2023 to current, UNKNOWN STRYKER. All Rights Reserved.
+#ifdef FE_LOG
+#error FE_LOG is a reserved Frogman Engine macro keyword.
+#endif 
+#ifdef FE_CONDITIONAL_LOG
+#error FE_CONDITIONAL_LOG is a reserved Frogman Engine macro keyword.
+#endif 
+#ifdef FE_ASSERT
+#error FE_ASSERT is a reserved Frogman Engine macro keyword.
+#endif 
+#ifdef FE_EXCEPTION_LOG
+#error FE_EXCEPTION_LOG is a reserved Frogman Engine macro keyword.
+#endif 
 #include <FE/core/log/logger.hpp>
 #include <FE/core/log/format_string.h>
+
+
 
 
 #ifdef _ENABLE_LOG_

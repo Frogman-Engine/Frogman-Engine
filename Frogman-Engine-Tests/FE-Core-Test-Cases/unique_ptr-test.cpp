@@ -77,50 +77,18 @@ TEST(unique_ptr, swap)
 
 
 
-TEST(unique_ptr, is_nullptr)
-{
-	using namespace FE;
-	{
-		FE::unique_ptr<std::string> l_unique_ptr;
-		if (l_unique_ptr.is_nullptr())
-		{
-			l_unique_ptr = std::string();
-		}
-		EXPECT_FALSE(l_unique_ptr.is_nullptr());
-	}
-
-	{
-		FE::unique_ptr<std::string> l_unique_ptr = std::string("std::string");
-		if (l_unique_ptr)
-		{
-			EXPECT_EQ(0, strcmp(l_unique_ptr->c_str(), "std::string"));
-		}
-	}
-}
-
-
-
-
 TEST(unique_ptr, make_unique)
 {
 	{
 		FE::unique_ptr<std::string> l_unique_ptr = FE::make_unique<std::string>();
 
-		EXPECT_FALSE(l_unique_ptr.is_nullptr());
-	}
-
-	{
-		FE::unique_ptr<std::string> l_unique_ptr = FE::make_unique<std::string>(std::string("std::string"));
-
-		EXPECT_FALSE(l_unique_ptr.is_nullptr());
-
-		EXPECT_EQ(strcmp(l_unique_ptr->c_str(), "std::string"), 0);
+		EXPECT_FALSE(l_unique_ptr == nullptr);
 	}
 
 	{
 		FE::unique_ptr<std::string> l_unique_ptr = FE::make_unique<std::string>("std::string");
 
-		EXPECT_FALSE(l_unique_ptr.is_nullptr());
+		EXPECT_FALSE(l_unique_ptr == nullptr);
 
 		EXPECT_EQ(strcmp(l_unique_ptr->c_str(), "std::string"), 0);
 	}
@@ -146,7 +114,6 @@ TEST(unique_ptr, construct_array_by_value_assignment)
 		l_unique_ptr = { 0, 1, 2, 3 };
 	}
 
-
 	{
 		{
 			FE::unique_ptr<std::string[]> l_unique_ptr = { "std::string" };
@@ -154,6 +121,18 @@ TEST(unique_ptr, construct_array_by_value_assignment)
 
 		FE::unique_ptr<std::string[]> l_unique_ptr;
 		l_unique_ptr = { "std::string" };
+	}
+
+
+
+
+	{
+		FE::unique_ptr<var::int64[]> l_unique_ptr = FE::reserve{ 10 };
+	}
+
+	{
+		FE::unique_ptr<std::string[]> l_unique_ptr = FE::reserve{ 10 };
+		
 	}
 }
 
@@ -207,51 +186,19 @@ TEST(unique_ptr, swap_array)
 
 
 
-TEST(unique_ptr, array_is_nullptr)
+TEST(unique_ptr, make_unique_array)
 {
-	using namespace FE;
-
 	{
-		FE::unique_ptr<std::string[]> l_unique_ptr;
-		if (l_unique_ptr.is_nullptr())
-		{
-			l_unique_ptr = { "std::string" };
-		}
-		EXPECT_FALSE(l_unique_ptr.is_nullptr());
+		FE::unique_ptr<std::string[]> l_unique_ptr = FE::make_unique<std::string[]>(4);
+		EXPECT_FALSE(l_unique_ptr == nullptr);
 	}
 
 	{
-		FE::unique_ptr<std::string[]> l_unique_ptr = { "std::string" };
-		if (l_unique_ptr)
-		{
-			EXPECT_EQ(0, strcmp(l_unique_ptr[0].c_str(), "std::string"));
-		}
+		FE::unique_ptr<std::string[]> l_unique_ptr = FE::make_unique<std::string[]>({ "std", "string" });
+
+		EXPECT_FALSE(l_unique_ptr == nullptr);
+
+		EXPECT_EQ(strcmp(l_unique_ptr[0].c_str(), "std"), 0);
+		EXPECT_EQ(strcmp(l_unique_ptr[1].c_str(), "string"), 0);
 	}
 }
-
-
-
-
-//TEST(unique_ptr, make_unique_array)
-//{
-//	{
-//		FE::unique_ptr<std::string[]> l_unique_ptr;
-//		EXPECT_FALSE(l_unique_ptr.is_nullptr());
-//	}
-//
-//	{
-//		FE::unique_ptr<std::string> l_unique_ptr;
-//
-//		EXPECT_FALSE(l_unique_ptr.is_nullptr());
-//
-//		EXPECT_EQ(strcmp(l_unique_ptr->c_str(), "std::string"), 0);
-//	}
-//
-//	{
-//		FE::unique_ptr<std::string> l_unique_ptr;
-//
-//		EXPECT_FALSE(l_unique_ptr.is_nullptr());
-//
-//		EXPECT_EQ(strcmp(l_unique_ptr->c_str(), "std::string"), 0);
-//	}
-//}

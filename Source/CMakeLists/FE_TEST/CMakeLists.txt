@@ -4,8 +4,8 @@ CMAKE_MINIMUM_REQUIRED(VERSION 3.2)
 SET(FE_TEST "FE_TEST")
 
 
-INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/../../../Frogman-Engine-Unit-Tests/Unit-Test-Include)
-INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/../../../Frogman-Engine-Unit-Tests/FE-Core-Unit-Test-Cases)
+INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/../../../Frogman-Engine-Tests/Unit-Test-Include)
+INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/../../../Frogman-Engine-Tests/FE-Core-Test-Cases)
 
 
 SOURCE_GROUP("Third-Party\\City-Hash" FILES ${_THIRD_PARTY_CITY_HASH_})
@@ -26,28 +26,29 @@ SOURCE_GROUP("FE\\miscellaneous\\private" FILES ${_MISCELLANEOUS_PRIVATE_})
 SOURCE_GROUP("FE\\miscellaneous" FILES ${_MISCELLANEOUS_})
 
 
-SET(_UNIT_TEST_CODE_
-	${CMAKE_CURRENT_SOURCE_DIR}/../../../Frogman-Engine-Unit-Tests/FE-Core-Unit-Test-Cases/allocator_adaptor-unit-test.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/../../../Frogman-Engine-Unit-Tests/FE-Core-Unit-Test-Cases/allocator-unit-test.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/../../../Frogman-Engine-Unit-Tests/FE-Core-Unit-Test-Cases/cstring-unit-test.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/../../../Frogman-Engine-Unit-Tests/FE-Core-Unit-Test-Cases/fstring-unit-test.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/../../../Frogman-Engine-Unit-Tests/FE-Core-Unit-Test-Cases/hash-unit-test.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/../../../Frogman-Engine-Unit-Tests/FE-Core-Unit-Test-Cases/iterator-unit-test.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/../../../Frogman-Engine-Unit-Tests/FE-Core-Unit-Test-Cases/concurrent_memory_block-unit-test.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/../../../Frogman-Engine-Unit-Tests/FE-Core-Unit-Test-Cases/movable_scoped_ref-unit-test.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/../../../Frogman-Engine-Unit-Tests/FE-Core-Unit-Test-Cases/unique_ptr-unit-test.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/../../../Frogman-Engine-Unit-Tests/FE-Core-Unit-Test-Cases/utility_algorithm-unit-test.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/../../../Frogman-Engine-Unit-Tests/FE-Core-Unit-Test-Cases/optional-unit-test.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/../../../Frogman-Engine-Unit-Tests/FE-Core-Unit-Test-Cases/private-memory-unit-test.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/../../../Frogman-Engine-Unit-Tests/FE-Core-Unit-Test-Cases/singleton_templates-unit-test.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/../../../Frogman-Engine-Unit-Tests/FE-Core-Unit-Test-Cases/stack-unit-test.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/../../../Frogman-Engine-Unit-Tests/FE-Core-Unit-Test-Cases/queue-unit-test.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/../../../Frogman-Engine-Unit-Tests/FE-Core-Unit-Test-Cases/string_algorithm-unit-test.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/../../../Frogman-Engine-Unit-Tests/FE-Core-Unit-Test-Cases/string-unit-test.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/../../../Frogman-Engine-Unit-Tests/FE-Core-Unit-Test-Cases/tagged_object-unit-test.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/../../../Frogman-Engine-Unit-Tests/FE-Core-Unit-Test-Cases/function-thread-unit-test.cpp
+SET(_TEST_CODE_
+	${CMAKE_CURRENT_SOURCE_DIR}/../../../Frogman-Engine-Tests/FE-Core-Test-Cases/allocator_adaptor-test.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/../../../Frogman-Engine-Tests/FE-Core-Test-Cases/allocator-test.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/../../../Frogman-Engine-Tests/FE-Core-Test-Cases/cstring-test.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/../../../Frogman-Engine-Tests/FE-Core-Test-Cases/fstring-test.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/../../../Frogman-Engine-Tests/FE-Core-Test-Cases/hash-test.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/../../../Frogman-Engine-Tests/FE-Core-Test-Cases/iterator-test.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/../../../Frogman-Engine-Tests/FE-Core-Test-Cases/concurrent_memory_block-test.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/../../../Frogman-Engine-Tests/FE-Core-Test-Cases/movable_scoped_ref-test.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/../../../Frogman-Engine-Tests/FE-Core-Test-Cases/unique_ptr-test.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/../../../Frogman-Engine-Tests/FE-Core-Test-Cases/utility_algorithm-test.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/../../../Frogman-Engine-Tests/FE-Core-Test-Cases/optional-test.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/../../../Frogman-Engine-Tests/FE-Core-Test-Cases/private-memory-test.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/../../../Frogman-Engine-Tests/FE-Core-Test-Cases/singleton_templates-test.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/../../../Frogman-Engine-Tests/FE-Core-Test-Cases/smart_ptr_variants-test.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/../../../Frogman-Engine-Tests/FE-Core-Test-Cases/stack-test.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/../../../Frogman-Engine-Tests/FE-Core-Test-Cases/queue-test.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/../../../Frogman-Engine-Tests/FE-Core-Test-Cases/string_algorithm-test.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/../../../Frogman-Engine-Tests/FE-Core-Test-Cases/string-test.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/../../../Frogman-Engine-Tests/FE-Core-Test-Cases/tagged_object-test.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/../../../Frogman-Engine-Tests/FE-Core-Test-Cases/function-thread-test.cpp
 	)
-SOURCE_GROUP("unit-tests" FILES ${_UNIT_TEST_CODE_})
+SOURCE_GROUP("Tests" FILES ${_TEST_CODE_})
 
 
 ADD_EXECUTABLE(	${FE_TEST} 
@@ -68,12 +69,14 @@ ADD_EXECUTABLE(	${FE_TEST}
 				${_CORE_}
 				${_MISCELLANEOUS_PRIVATE_}
 				${_MISCELLANEOUS_}
-				${_UNIT_TEST_CODE_}
+				${_TEST_CODE_}
 				)
 
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
 	MESSAGE("Configurating The Build Environment for Linux X86-64 Distributions")
+
+	ADD_COMPILE_DEFINITIONS(__AVX__=1)
 
 	if(GNU_CPP)
 		TARGET_COMPILE_OPTIONS(${FE_TEST} PRIVATE
@@ -100,10 +103,10 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
     )
 
 	SET(UNIT_TEST_LINUX			
-		$<$<CONFIG:DEBUG>:			${CMAKE_CURRENT_SOURCE_DIR}/../../../Frogman-Engine-Unit-Tests/Unit-Test-Linux-Packages/libgtest.a>
-		$<$<CONFIG:RELWITHDEBINFO>: ${CMAKE_CURRENT_SOURCE_DIR}/../../../Frogman-Engine-Unit-Tests/Unit-Test-Linux-Packages/libgtest.a>
-		$<$<CONFIG:RELEASE>:		${CMAKE_CURRENT_SOURCE_DIR}/../../../Frogman-Engine-Unit-Tests/Unit-Test-Linux-Packages/libgtest.a>
-		$<$<CONFIG:MINSIZEREL>:		${CMAKE_CURRENT_SOURCE_DIR}/../../../Frogman-Engine-Unit-Tests/Unit-Test-Linux-Packages/libgtest.a>
+		$<$<CONFIG:DEBUG>:			${CMAKE_CURRENT_SOURCE_DIR}/../../../Frogman-Engine-Tests/Unit-Test-Linux-Packages/libgtest.a>
+		$<$<CONFIG:RELWITHDEBINFO>: ${CMAKE_CURRENT_SOURCE_DIR}/../../../Frogman-Engine-Tests/Unit-Test-Linux-Packages/libgtest.a>
+		$<$<CONFIG:RELEASE>:		${CMAKE_CURRENT_SOURCE_DIR}/../../../Frogman-Engine-Tests/Unit-Test-Linux-Packages/libgtest.a>
+		$<$<CONFIG:MINSIZEREL>:		${CMAKE_CURRENT_SOURCE_DIR}/../../../Frogman-Engine-Tests/Unit-Test-Linux-Packages/libgtest.a>
 	)
 
 	TARGET_LINK_LIBRARIES(${FE_TEST} 
@@ -138,10 +141,10 @@ elseif(CMAKE_SYSTEM_NAME STREQUAL "Windows")
 
 
 	SET(UNIT_TEST_WINDOWS			
-		$<$<CONFIG:DEBUG>:			${CMAKE_CURRENT_SOURCE_DIR}/../../../Frogman-Engine-Unit-Tests/Unit-Test-Windows-Packages/lib/Debug/gtest.lib>
-		$<$<CONFIG:RELWITHDEBINFO>: ${CMAKE_CURRENT_SOURCE_DIR}/../../../Frogman-Engine-Unit-Tests/Unit-Test-Windows-Packages/lib/Release/gtest.lib>
-		$<$<CONFIG:RELEASE>:		${CMAKE_CURRENT_SOURCE_DIR}/../../../Frogman-Engine-Unit-Tests/Unit-Test-Windows-Packages/lib/Release/gtest.lib>
-		$<$<CONFIG:MINSIZEREL>:		${CMAKE_CURRENT_SOURCE_DIR}/../../../Frogman-Engine-Unit-Tests/Unit-Test-Windows-Packages/lib/Release/gtest.lib>
+		$<$<CONFIG:DEBUG>:			${CMAKE_CURRENT_SOURCE_DIR}/../../../Frogman-Engine-Tests/Unit-Test-Windows-Packages/lib/Debug/gtest.lib>
+		$<$<CONFIG:RELWITHDEBINFO>: ${CMAKE_CURRENT_SOURCE_DIR}/../../../Frogman-Engine-Tests/Unit-Test-Windows-Packages/lib/Release/gtest.lib>
+		$<$<CONFIG:RELEASE>:		${CMAKE_CURRENT_SOURCE_DIR}/../../../Frogman-Engine-Tests/Unit-Test-Windows-Packages/lib/Release/gtest.lib>
+		$<$<CONFIG:MINSIZEREL>:		${CMAKE_CURRENT_SOURCE_DIR}/../../../Frogman-Engine-Tests/Unit-Test-Windows-Packages/lib/Release/gtest.lib>
 	)
 
 
@@ -181,8 +184,8 @@ endif()
 ADD_COMPILE_DEFINITIONS(_USE_CMAKE_MACRO_=true)
 
 TARGET_COMPILE_DEFINITIONS(${FE_TEST} PRIVATE
-	$<$<CONFIG:DEBUG>:			_DEBUG_			_ENABLE_MEMORY_TRACKER_ _ENABLE_EXCEPTION_LOG_ _ENABLE_ASSERT_ _ENABLE_ABORT_IF_ _ENABLE_LOG_ _ENABLE_CONDITIONAL_LOG_ _ENABLE_FE_CHECK_ONCE_>
-	$<$<CONFIG:RELWITHDEBINFO>:	_RELWITHDEBINFO_						_ENABLE_EXCEPTION_LOG_ _ENABLE_ASSERT_					 _ENABLE_LOG_ _ENABLE_CONDITIONAL_LOG_ _ENABLE_FE_CHECK_ONCE_>
-	$<$<CONFIG:RELEASE>:		_RELEASE_>
-	$<$<CONFIG:MINSIZEREL>:		_RELEASE_>
+	$<$<CONFIG:DEBUG>:			_HAS_EXCEPTIONS=0 _DEBUG_			_ENABLE_MEMORY_TRACKER_ _ENABLE_EXCEPTION_LOG_ _ENABLE_ASSERT_ _ENABLE_ABORT_IF_ _ENABLE_LOG_ _ENABLE_CONDITIONAL_LOG_ _ENABLE_FE_CHECK_ONCE_>
+	$<$<CONFIG:RELWITHDEBINFO>:	_HAS_EXCEPTIONS=0 _RELWITHDEBINFO_							_ENABLE_EXCEPTION_LOG_ _ENABLE_ASSERT_ _ENABLE_ABORT_IF_ _ENABLE_LOG_ _ENABLE_CONDITIONAL_LOG_ _ENABLE_FE_CHECK_ONCE_>
+	$<$<CONFIG:RELEASE>:		_HAS_EXCEPTIONS=0 _RELEASE_				 _DISABLE_SMART_PTR_VARIANT_REF_TABLE_>
+	$<$<CONFIG:MINSIZEREL>:		_HAS_EXCEPTIONS=0 _RELEASE_ _MINSIZEREL_ _DISABLE_SMART_PTR_VARIANT_REF_TABLE_>
 )

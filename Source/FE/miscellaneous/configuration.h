@@ -1,7 +1,8 @@
 ﻿#ifndef _FE_CONFIGURATION_H_
 #define _FE_CONFIGURATION_H_
+#pragma warning(disable: 4530)
 // Copyright © from 2023 to current, UNKNOWN STRYKER. All Rights Reserved.
-// To enable or disable a certain feature, modify the macro definition to true or false.
+// To enable or disable a certain feature, remove the macro.
 // 
 // Modifying the macro will not immediately affect your project.
 // The binary files e.g. (.lib, .a, .dll, or .so) need to be rebuilt to apply changes that have been made.
@@ -11,6 +12,14 @@ constexpr inline auto _FULL_PATH_TO_FILE_MAX_LENGTH_ = 512;
 
 
 #if _USE_CMAKE_MACRO_ == false
+
+#ifndef _HAS_EXCEPTIONS
+#define _HAS_EXCEPTIONS 0
+#elif _HAS_EXCEPTIONS == 1
+#undef _HAS_EXCEPTIONS
+#define _HAS_EXCEPTIONS 0
+#endif 
+
 
 // Frogman Engine Memory Tracker generates a memory utilization report over frames at the end of an app process.
 // The output file can be visualized as a graph image via Frogman Engine Memory Utilization Analyzer.
@@ -36,7 +45,7 @@ constexpr inline auto _FULL_PATH_TO_FILE_MAX_LENGTH_ = 512;
 #define _ENABLE_LOG_ 
 #define _ENABLE_CONDITIONAL_LOG_
 
-
 #endif
+
 
 #endif 
