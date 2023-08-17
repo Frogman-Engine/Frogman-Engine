@@ -113,7 +113,7 @@ protected:
 
 
 // Do not predict the size of exclusive_ptr. Use sizeof() operator instead.
-template<typename T, class allocator = FE::new_delete_proxy_allocator<FE::scalable_aligned_allocator<typename std::remove_all_extents<T>::type>>, class type_trait = FE::type_trait<typename std::remove_all_extents<T>::type, allocator>>
+template<typename T, class allocator = FE::new_delete_proxy_allocator<FE::scalable_aligned_allocator<typename std::remove_all_extents<T>::type>>>
 class exclusive_ptr final
 #ifndef _DISABLE_SMART_PTR_VARIANT_REF_TABLE_
 	: public exclusive_ptr_base<T>
@@ -132,7 +132,6 @@ public:
 	using element_type = typename std::remove_all_extents<T>::type;
 #endif
 	using allocator_type = allocator;
-	using traits_type = type_trait;
 
 #ifndef _DISABLE_SMART_PTR_VARIANT_REF_TABLE_
 public:
@@ -370,26 +369,26 @@ public:
 	}
 };
 
-template<typename T, class allocator = FE::new_delete_proxy_allocator<FE::scalable_aligned_allocator<T>>, class type_trait = FE::type_trait<T, allocator>>
-_CONSTEXPR23_ _NODISCARD_ _FORCE_INLINE_ exclusive_ptr<T, allocator, type_trait> make_exclusive() noexcept
+template<typename T, class allocator = FE::new_delete_proxy_allocator<FE::scalable_aligned_allocator<T>>>
+_CONSTEXPR23_ _NODISCARD_ _FORCE_INLINE_ exclusive_ptr<T, allocator> make_exclusive() noexcept
 {
 	static_assert(std::is_array<T>::value == false, "static assertion failed: The typename T must not be an array type");
-	return exclusive_ptr<T, allocator, type_trait>(T());
+	return exclusive_ptr<T, allocator>(T());
 }
 
-template<typename T, class allocator = FE::new_delete_proxy_allocator<FE::scalable_aligned_allocator<T>>, class type_trait = FE::type_trait<T, allocator>>
-_CONSTEXPR23_ _NODISCARD_ _FORCE_INLINE_ exclusive_ptr<T, allocator, type_trait> make_exclusive(T value_p) noexcept
+template<typename T, class allocator = FE::new_delete_proxy_allocator<FE::scalable_aligned_allocator<T>>>
+_CONSTEXPR23_ _NODISCARD_ _FORCE_INLINE_ exclusive_ptr<T, allocator> make_exclusive(T value_p) noexcept
 {
 	static_assert(std::is_array<T>::value == false, "static assertion failed: The typename T must not be an array type");
-	return exclusive_ptr<T, allocator, type_trait>(T(std::move(value_p)));
+	return exclusive_ptr<T, allocator>(T(std::move(value_p)));
 }
 
 
 
 
 // Do not predict the size of exclusive_ptr. Use sizeof() operator instead.
-template<typename T, class allocator, class type_trait>
-class exclusive_ptr<T[], allocator, type_trait> final 
+template<typename T, class allocator>
+class exclusive_ptr<T[], allocator> final 
 #ifndef _DISABLE_SMART_PTR_VARIANT_REF_TABLE_
 	: public exclusive_ptr_base<T>
 #endif
@@ -407,7 +406,6 @@ public:
 	using element_type = typename std::remove_all_extents<T>::type;
 #endif
 	using allocator_type = allocator;
-	using traits_type = type_trait;
 
 #ifdef _DISABLE_SMART_PTR_VARIANT_REF_TABLE_
 private:

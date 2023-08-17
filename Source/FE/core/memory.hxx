@@ -1,5 +1,5 @@
-﻿#ifndef _FE_CORE_PRIVATE_MEMORY_HXX_
-#define _FE_CORE_PRIVATE_MEMORY_HXX_
+﻿#ifndef _FE_CORE_MEMORY_HXX_
+#define _FE_CORE_MEMORY_HXX_
 // Copyright © 2023~ UNKNOWN STRYKER. All Rights Reserved.
 #ifdef UNALIGNED_MEMSET
 #error UNALIGNED_MEMSET is a reserved Frogman Engine macro keyword.
@@ -1230,7 +1230,6 @@ END_NAMESPACE
 
 BEGIN_NAMESPACE(FE)
 
-
 // refactor smart_ptrs and add new features to type_trait
 // T must be (copy/move) (constructible/assignable). 
 // 
@@ -1240,6 +1239,25 @@ BEGIN_NAMESPACE(FE)
 // 
 // void destruct(T* const ptrc_p) noecept;
 // void destruct(T* const begin_ptrc_p, T* const end_ptrc_p) noecept;
+
+template<typename T, TYPE_TRIVIALITY is_trivial = FE::is_trivially_constructible_and_destructible<T>::value>
+struct stack_memory;
+
+template<typename T>
+struct stack_memory<T, TYPE_TRIVIALITY::_TRIVIAL>
+{
+	_MAYBE_UNUSED_ static constexpr inline TYPE_TRIVIALITY is_trivially_constructible_and_destructible = TYPE_TRIVIALITY::_TRIVIAL;
+	_MAYBE_UNUSED_ static constexpr inline boolean is_allocated_from_an_address_aligned_allocator = false;
+};
+
+template<typename T>
+struct stack_memory<T, TYPE_TRIVIALITY::_NOT_TRIVIAL>
+{
+	_MAYBE_UNUSED_ static constexpr inline TYPE_TRIVIALITY is_trivially_constructible_and_destructible = TYPE_TRIVIALITY::_NOT_TRIVIAL;
+	_MAYBE_UNUSED_ static constexpr inline boolean is_allocated_from_an_address_aligned_allocator = false;
+};
+
+
 
 
 template<typename T, class allocated_from, TYPE_TRIVIALITY is_trivial = allocated_from::is_trivially_constructible_and_destructible>
@@ -1252,8 +1270,17 @@ public:
 	_MAYBE_UNUSED_ static constexpr inline TYPE_TRIVIALITY is_trivially_constructible_and_destructible = TYPE_TRIVIALITY::_TRIVIAL;
 
 
-	// assigns a contiguous memory chucnk to another
-	_FORCE_INLINE_ static void assign(T* dest_ptr_p, count_t dest_count_p, T* source_ptr_p, count_t source_count_p) noexcept
+	_FORCE_INLINE_ static void construct(_MAYBE_UNUSED_ T& dest_ref_p) noexcept
+	{
+	}
+
+	_FORCE_INLINE_ static void construct(T& dest_ref_p, T value_p) noexcept
+	{
+		dest_ref_p = value_p;
+	}
+
+
+	_FORCE_INLINE_ static void copy_construct(T* dest_ptr_p, count_t dest_count_p, T* source_ptr_p, count_t source_count_p) noexcept
 	{
 		if constexpr (allocated_from::is_allocated_from_an_address_aligned_allocator == true)
 		{
@@ -1264,8 +1291,92 @@ public:
 			FE::unaligned_memcpy(dest_ptr_p, sizeof(T) * dest_count_p, source_ptr_p, sizeof(T) * source_count_p);
 		}
 	}
-	// assigns a contiguous memory chucnk to another
-	_FORCE_INLINE_ static void assign(T* dest_ptr_p, T* source_ptr_p, count_t count_to_copy_or_move_p) noexcept
+	
+	_FORCE_INLINE_ static void copy_construct(T* dest_ptr_p, T* source_ptr_p, count_t count_to_copy_or_move_p) noexcept
+	{
+		if constexpr (allocated_from::is_allocated_from_an_address_aligned_allocator == true)
+		{
+			ALIGNED_MEMCPY(dest_ptr_p, source_ptr_p, sizeof(T) * count_to_copy_or_move_p);
+		}
+		else if constexpr (allocated_from::is_allocated_from_an_address_aligned_allocator == false)
+		{
+			UNALIGNED_MEMCPY(dest_ptr_p, source_ptr_p, sizeof(T) * count_to_copy_or_move_p);
+		}
+	}
+
+
+	_FORCE_INLINE_ static void move_construct(T* dest_ptr_p, count_t dest_count_p, T* source_ptr_p, count_t source_count_p) noexcept
+	{
+		if constexpr (allocated_from::is_allocated_from_an_address_aligned_allocator == true)
+		{
+			FE::aligned_memcpy(dest_ptr_p, sizeof(T) * dest_count_p, source_ptr_p, sizeof(T) * source_count_p);
+		}
+		else if constexpr (allocated_from::is_allocated_from_an_address_aligned_allocator == false)
+		{
+			FE::unaligned_memcpy(dest_ptr_p, sizeof(T) * dest_count_p, source_ptr_p, sizeof(T) * source_count_p);
+		}
+	}
+
+	_FORCE_INLINE_ static void move_construct(T* dest_ptr_p, T* source_ptr_p, count_t count_to_copy_or_move_p) noexcept
+	{
+		if constexpr (allocated_from::is_allocated_from_an_address_aligned_allocator == true)
+		{
+			ALIGNED_MEMCPY(dest_ptr_p, source_ptr_p, sizeof(T) * count_to_copy_or_move_p);
+		}
+		else if constexpr (allocated_from::is_allocated_from_an_address_aligned_allocator == false)
+		{
+			UNALIGNED_MEMCPY(dest_ptr_p, source_ptr_p, sizeof(T) * count_to_copy_or_move_p);
+		}
+	}
+
+
+	_FORCE_INLINE_ static void destruct(_MAYBE_UNUSED_ T& dest_ref_p) noexcept
+	{
+	}
+
+	_FORCE_INLINE_ static void destruct(_MAYBE_UNUSED_ T* dest_begin_ptr_p, _MAYBE_UNUSED_ T* dest_end_ptr_p) noexcept
+	{
+	}
+
+
+	_FORCE_INLINE_ static void copy_assign(T* dest_ptr_p, count_t dest_count_p, T* source_ptr_p, count_t source_count_p) noexcept
+	{
+		if constexpr (allocated_from::is_allocated_from_an_address_aligned_allocator == true)
+		{
+			FE::aligned_memcpy(dest_ptr_p, sizeof(T) * dest_count_p, source_ptr_p, sizeof(T) * source_count_p);
+		}
+		else if constexpr (allocated_from::is_allocated_from_an_address_aligned_allocator == false)
+		{
+			FE::unaligned_memcpy(dest_ptr_p, sizeof(T) * dest_count_p, source_ptr_p, sizeof(T) * source_count_p);
+		}
+	}
+
+	_FORCE_INLINE_ static void copy_assign(T* dest_ptr_p, T* source_ptr_p, count_t count_to_copy_or_move_p) noexcept
+	{
+		if constexpr (allocated_from::is_allocated_from_an_address_aligned_allocator == true)
+		{
+			ALIGNED_MEMCPY(dest_ptr_p, source_ptr_p, sizeof(T) * count_to_copy_or_move_p);
+		}
+		else if constexpr (allocated_from::is_allocated_from_an_address_aligned_allocator == false)
+		{
+			UNALIGNED_MEMCPY(dest_ptr_p, source_ptr_p, sizeof(T) * count_to_copy_or_move_p);
+		}
+	}
+
+
+	_FORCE_INLINE_ static void move_assign(T* dest_ptr_p, count_t dest_count_p, T* source_ptr_p, count_t source_count_p) noexcept
+	{
+		if constexpr (allocated_from::is_allocated_from_an_address_aligned_allocator == true)
+		{
+			FE::aligned_memcpy(dest_ptr_p, sizeof(T) * dest_count_p, source_ptr_p, sizeof(T) * source_count_p);
+		}
+		else if constexpr (allocated_from::is_allocated_from_an_address_aligned_allocator == false)
+		{
+			FE::unaligned_memcpy(dest_ptr_p, sizeof(T) * dest_count_p, source_ptr_p, sizeof(T) * source_count_p);
+		}
+	}
+
+	_FORCE_INLINE_ static void move_assign(T* dest_ptr_p, T* source_ptr_p, count_t count_to_copy_or_move_p) noexcept
 	{
 		if constexpr (allocated_from::is_allocated_from_an_address_aligned_allocator == true)
 		{
@@ -1286,12 +1397,185 @@ public:
 	_MAYBE_UNUSED_ static constexpr inline TYPE_TRIVIALITY is_trivially_constructible_and_destructible = TYPE_TRIVIALITY::_NOT_TRIVIAL;
 
 
-	// copy assigns a contiguous memory chucnk to another
-	_FORCE_INLINE_ static void assign(T* dest_ptr_p, count_t dest_count_p, T* source_ptr_p, count_t source_count_p) noexcept
+	_FORCE_INLINE_ static void construct(_MAYBE_UNUSED_ T& dest_ref_p) noexcept
 	{
-		static_assert(std::is_copy_assignable<T>::value == true, "static assertion failed: The typename T must be copy assignable.");
-		static_assert(std::is_move_assignable<T>::value == true, "static assertion failed: The typename T must be move assignable.");
+		static_assert(std::is_constructible<T>::value == true, "static assertion failed: The typename T must be copy constructible.");
 
+		new(&dest_ref_p) T();
+	}
+
+	_FORCE_INLINE_ static void construct(T& dest_ref_p, T value_p) noexcept
+	{
+		static_assert(std::is_constructible<T>::value == true, "static assertion failed: The typename T must be copy constructible.");
+
+		new(&dest_ref_p) T(std::move(value_p));
+	}
+
+
+	_FORCE_INLINE_ static void copy_construct(T* dest_ptr_p, count_t dest_count_p, T* source_ptr_p, count_t source_count_p) noexcept
+	{
+		FE_ASSERT(dest_ptr_p == nullptr, "MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR: ${%s@0} is nullptr", TO_STRING(dest_ptr_p));
+		FE_ASSERT(source_ptr_p == nullptr, "MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR: ${%s@0} is nullptr", TO_STRING(source_ptr_p));
+
+		FE_ASSERT(dest_count_p == 0, "MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR: ${%s@0} is zero", TO_STRING(dest_count_p));
+		FE_ASSERT(source_count_p == 0, "MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR: ${%s@0} is zero", TO_STRING(source_count_p));
+
+		if (dest_count_p <= source_count_p)
+		{
+			T* const dest_end_ptrc = dest_ptr_p + dest_count_p;
+			while (dest_ptr_p != dest_end_ptrc)
+			{
+				new(dest_ptr_p) T(*source_ptr_p);
+				++dest_ptr_p;
+				++source_ptr_p;
+			}
+			return;
+		}
+		else
+		{
+			T* const source_end_ptrc = source_ptr_p + source_count_p;
+			while (source_ptr_p != source_end_ptrc)
+			{
+				new(dest_ptr_p) T(*source_ptr_p);
+				++dest_ptr_p;
+				++source_ptr_p;
+			}
+			return;
+		}
+	}
+
+	_FORCE_INLINE_ static void copy_construct(T* dest_ptr_p, T* source_ptr_p, count_t count_to_copy_or_move_p) noexcept
+	{
+		FE_ASSERT(dest_ptr_p == nullptr, "MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR: ${%s@0} is nullptr", TO_STRING(dest_ptr_p));
+		FE_ASSERT(source_ptr_p == nullptr, "MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR: ${%s@0} is nullptr", TO_STRING(source_ptr_p));
+
+		FE_ASSERT(count_to_copy_or_move_p == 0, "MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR: ${%s@0} is zero", TO_STRING(count_to_copy_or_move_p));
+
+		for (var::count_t i = 0; i < count_to_copy_or_move_p; ++i)
+		{
+			new(dest_ptr_p) T(*source_ptr_p);
+			++dest_ptr_p;
+			++source_ptr_p;
+		}
+	}
+
+
+	_FORCE_INLINE_ static void move_construct(T* dest_ptr_p, count_t dest_count_p, T* source_ptr_p, count_t source_count_p) noexcept
+	{
+		FE_ASSERT(dest_ptr_p == nullptr, "MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR: ${%s@0} is nullptr", TO_STRING(dest_ptr_p));
+		FE_ASSERT(source_ptr_p == nullptr, "MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR: ${%s@0} is nullptr", TO_STRING(source_ptr_p));
+
+		FE_ASSERT(dest_count_p == 0, "MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR: ${%s@0} is zero", TO_STRING(dest_count_p));
+		FE_ASSERT(source_count_p == 0, "MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR: ${%s@0} is zero", TO_STRING(source_count_p));
+
+		if (dest_count_p <= source_count_p)
+		{
+			T* const dest_end_ptrc = dest_ptr_p + dest_count_p;
+			while (dest_ptr_p != dest_end_ptrc)
+			{
+				new(dest_ptr_p) T(std::move(*source_ptr_p));
+				++dest_ptr_p;
+				++source_ptr_p;
+			}
+			return;
+		}
+		else
+		{
+			T* const source_end_ptrc = source_ptr_p + source_count_p;
+			while (source_ptr_p != source_end_ptrc)
+			{
+				new(dest_ptr_p) T(std::move(*source_ptr_p));
+				++dest_ptr_p;
+				++source_ptr_p;
+			}
+			return;
+		}
+	}
+
+	_FORCE_INLINE_ static void move_construct(T* dest_ptr_p, T* source_ptr_p, count_t count_to_copy_or_move_p) noexcept
+	{
+		FE_ASSERT(dest_ptr_p == nullptr, "MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR: ${%s@0} is nullptr", TO_STRING(dest_ptr_p));
+		FE_ASSERT(source_ptr_p == nullptr, "MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR: ${%s@0} is nullptr", TO_STRING(source_ptr_p));
+
+		FE_ASSERT(count_to_copy_or_move_p == 0, "MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR: ${%s@0} is zero", TO_STRING(count_to_copy_or_move_p));
+
+		for (var::count_t i = 0; i < count_to_copy_or_move_p; ++i)
+		{
+			new(dest_ptr_p) T(std::move(*source_ptr_p));
+			++dest_ptr_p;
+			++source_ptr_p;
+		}
+	}
+
+
+	_FORCE_INLINE_ static void destruct(_MAYBE_UNUSED_ T& dest_ref_p) noexcept
+	{
+		static_assert(std::is_destructible<T>::value == true, "static assertion failed: The typename T must be destructible.");
+		dest_ref_p.~T();
+	}
+
+	_FORCE_INLINE_ static void destruct(_MAYBE_UNUSED_ T* dest_begin_ptr_p, _MAYBE_UNUSED_ T* const dest_end_ptrc_p) noexcept
+	{
+		static_assert(std::is_destructible<T>::value == true, "static assertion failed: The typename T must be destructible.");
+
+		while (dest_begin_ptr_p != dest_end_ptrc_p)
+		{
+			dest_begin_ptr_p->~T();
+			++dest_begin_ptr_p;
+		}
+	}
+
+
+	_FORCE_INLINE_ static void copy_assign(T* dest_ptr_p, count_t dest_count_p, T* source_ptr_p, count_t source_count_p) noexcept
+	{
+		FE_ASSERT(dest_ptr_p == nullptr, "MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR: ${%s@0} is nullptr", TO_STRING(dest_ptr_p));
+		FE_ASSERT(source_ptr_p == nullptr, "MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR: ${%s@0} is nullptr", TO_STRING(source_ptr_p));
+
+		FE_ASSERT(dest_count_p == 0, "MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR: ${%s@0} is zero", TO_STRING(dest_count_p));
+		FE_ASSERT(source_count_p == 0, "MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR: ${%s@0} is zero", TO_STRING(source_count_p));
+
+		if (dest_count_p <= source_count_p)
+		{
+			T* const dest_end_ptrc = dest_ptr_p + dest_count_p;
+			while (dest_ptr_p != dest_end_ptrc)
+			{
+				*dest_ptr_p = *source_ptr_p;
+				++dest_ptr_p;
+				++source_ptr_p;
+			}
+			return;
+		}
+		else
+		{
+			T* const source_end_ptrc = source_ptr_p + source_count_p;
+			while (source_ptr_p != source_end_ptrc)
+			{
+				*dest_ptr_p = *source_ptr_p;
+				++dest_ptr_p;
+				++source_ptr_p;
+			}
+			return;
+		}
+	}
+
+	_FORCE_INLINE_ static void copy_assign(T* dest_ptr_p, T* source_ptr_p, count_t count_to_copy_or_move_p) noexcept
+	{
+		FE_ASSERT(dest_ptr_p == nullptr, "MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR: ${%s@0} is nullptr", TO_STRING(dest_ptr_p));
+		FE_ASSERT(source_ptr_p == nullptr, "MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR: ${%s@0} is nullptr", TO_STRING(source_ptr_p));
+
+		FE_ASSERT(count_to_copy_or_move_p == 0, "MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR: ${%s@0} is zero", TO_STRING(count_to_copy_or_move_p));
+
+		for (var::count_t i = 0; i < count_to_copy_or_move_p; ++i)
+		{
+			*dest_ptr_p = *source_ptr_p;
+			++dest_ptr_p;
+			++source_ptr_p;
+		}
+	}
+
+
+	_FORCE_INLINE_ static void move_assign(T* dest_ptr_p, count_t dest_count_p, T* source_ptr_p, count_t source_count_p) noexcept
+	{
 		FE_ASSERT(dest_ptr_p == nullptr, "MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR: ${%s@0} is nullptr", TO_STRING(dest_ptr_p));
 		FE_ASSERT(source_ptr_p == nullptr, "MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR: ${%s@0} is nullptr", TO_STRING(source_ptr_p));
 
@@ -1322,12 +1606,8 @@ public:
 		}
 	}
 
-	// assigns a contiguous memory chucnk to another
-	_FORCE_INLINE_ static void assign(T* dest_ptr_p, T* source_ptr_p, count_t count_to_copy_or_move_p) noexcept
+	_FORCE_INLINE_ static void move_assign(T* dest_ptr_p, T* source_ptr_p, count_t count_to_copy_or_move_p) noexcept
 	{
-		static_assert(std::is_copy_assignable<T>::value == true, "static assertion failed: The typename T must be copy assignable.");
-		static_assert(std::is_move_assignable<T>::value == true, "static assertion failed: The typename T must be move assignable.");
-
 		FE_ASSERT(dest_ptr_p == nullptr, "MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR: ${%s@0} is nullptr", TO_STRING(dest_ptr_p));
 		FE_ASSERT(source_ptr_p == nullptr, "MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR: ${%s@0} is nullptr", TO_STRING(source_ptr_p));
 
