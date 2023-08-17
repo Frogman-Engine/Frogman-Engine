@@ -6,19 +6,19 @@
 #include <string>
 
 
-TEST(stack, trivially_constructible_and_destructible)
+TEST(fstack, trivially_constructible_and_destructible)
 {
-	FE::stack<int, 10> l_stack = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
-	FE::stack<int, 10>::const_iterator l_const_stack_iterator_begin = l_stack.cbegin();
-	FE::stack<int, 10>::const_iterator l_const_stack_iterator_end = l_stack.cend();
+	FE::fstack<int, 10> l_stack = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+	FE::fstack<int, 10>::const_iterator l_const_stack_iterator_begin = l_stack.cbegin();
+	FE::fstack<int, 10>::const_iterator l_const_stack_iterator_end = l_stack.cend();
 
-	FE::stack<int, 10>::const_reverse_iterator l_const_stack_iterator_rbegin = l_stack.crbegin();
-	FE::stack<int, 10>::const_reverse_iterator l_const_stack_iterator_rend = l_stack.crend();
+	FE::fstack<int, 10>::const_reverse_iterator l_const_stack_iterator_rbegin = l_stack.crbegin();
+	FE::fstack<int, 10>::const_reverse_iterator l_const_stack_iterator_rend = l_stack.crend();
 
 	{
-		FE::stack<int, 10> l_copied_stack = l_stack;
-		FE::stack<int, 10>::const_iterator l_const_copied_stack_iterator_begin = l_copied_stack.cbegin();
-		FE::stack<int, 10>::const_iterator l_const_copied_stack_iterator_end = l_copied_stack.cend();
+		FE::fstack<int, 10> l_copied_stack = l_stack;
+		FE::fstack<int, 10>::const_iterator l_const_copied_stack_iterator_begin = l_copied_stack.cbegin();
+		FE::fstack<int, 10>::const_iterator l_const_copied_stack_iterator_end = l_copied_stack.cend();
 		
 		int l_expected_value = 0;
 		while(l_const_stack_iterator_begin != l_const_stack_iterator_end)
@@ -34,9 +34,9 @@ TEST(stack, trivially_constructible_and_destructible)
 		l_const_copied_stack_iterator_begin = l_copied_stack.cbegin();
 
 
-		FE::stack<int, 10> l_moved_stack = std::move(l_copied_stack);
-		FE::stack<int, 10>::const_iterator l_const_moved_stack_iterator_begin = l_moved_stack.cbegin();
-		FE::stack<int, 10>::const_iterator l_const_moved_stack_iterator_end = l_moved_stack.cend();
+		FE::fstack<int, 10> l_moved_stack = std::move(l_copied_stack);
+		FE::fstack<int, 10>::const_iterator l_const_moved_stack_iterator_begin = l_moved_stack.cbegin();
+		FE::fstack<int, 10>::const_iterator l_const_moved_stack_iterator_end = l_moved_stack.cend();
 
 		while (l_const_moved_stack_iterator_begin != l_const_moved_stack_iterator_end)
 		{
@@ -48,23 +48,23 @@ TEST(stack, trivially_constructible_and_destructible)
 		}
 
 		l_copied_stack = { 5, 4, 3, 2, 1 };
-		FE::stack<int, 10>::swap(l_copied_stack, l_stack);
+		l_copied_stack.swap(l_stack);
 	}
 }
 
-TEST(stack, constructible_and_destructible)
+TEST(fstack, constructible_and_destructible)
 {
-	FE::stack<std::string, 5> l_stack = { "hi", ",", " ", "world", "."};
-	FE::stack<std::string, 5>::const_iterator l_const_stack_iterator_begin = l_stack.cbegin();
-	FE::stack<std::string, 5>::const_iterator l_const_stack_iterator_end = l_stack.cend();
+	FE::fstack<std::string, 5> l_stack = { "hi", ",", " ", "world", "."};
+	FE::fstack<std::string, 5>::const_iterator l_const_stack_iterator_begin = l_stack.cbegin();
+	FE::fstack<std::string, 5>::const_iterator l_const_stack_iterator_end = l_stack.cend();
 
-	FE::stack<std::string, 5>::const_reverse_iterator l_const_stack_iterator_rbegin = l_stack.crbegin();
-	FE::stack<std::string, 5>::const_reverse_iterator l_const_stack_iterator_rend = l_stack.crend();
+	FE::fstack<std::string, 5>::const_reverse_iterator l_const_stack_iterator_rbegin = l_stack.crbegin();
+	FE::fstack<std::string, 5>::const_reverse_iterator l_const_stack_iterator_rend = l_stack.crend();
 
 	{
-		FE::stack<std::string, 5> l_copied_stack = l_stack;
-		FE::stack<std::string, 5>::const_iterator l_const_copied_stack_iterator_begin = l_copied_stack.cbegin();
-		FE::stack<std::string, 5>::const_iterator l_const_copied_stack_iterator_end = l_copied_stack.cend();
+		FE::fstack<std::string, 5> l_copied_stack = l_stack;
+		FE::fstack<std::string, 5>::const_iterator l_const_copied_stack_iterator_begin = l_copied_stack.cbegin();
+		FE::fstack<std::string, 5>::const_iterator l_const_copied_stack_iterator_end = l_copied_stack.cend();
 
 		while (l_const_stack_iterator_begin != l_const_stack_iterator_end)
 		{
@@ -78,9 +78,9 @@ TEST(stack, constructible_and_destructible)
 		l_const_copied_stack_iterator_begin = l_copied_stack.cbegin();
 
 
-		FE::stack<std::string, 5> l_moved_stack = std::move(l_copied_stack);
-		FE::stack<std::string, 5>::const_iterator l_const_moved_stack_iterator_begin = l_moved_stack.cbegin();
-		FE::stack<std::string, 5>::const_iterator l_const_moved_stack_iterator_end = l_moved_stack.cend();
+		FE::fstack<std::string, 5> l_moved_stack = std::move(l_copied_stack);
+		FE::fstack<std::string, 5>::const_iterator l_const_moved_stack_iterator_begin = l_moved_stack.cbegin();
+		FE::fstack<std::string, 5>::const_iterator l_const_moved_stack_iterator_end = l_moved_stack.cend();
 
 		while (l_const_moved_stack_iterator_begin != l_const_moved_stack_iterator_end)
 		{
@@ -92,35 +92,35 @@ TEST(stack, constructible_and_destructible)
 		}
 
 		l_copied_stack = { "hello", ",", " ", "C++", "."};
-		FE::stack<std::string, 5>::swap(l_copied_stack, l_stack);
+		l_copied_stack.swap(l_stack);
 	}
 }
 
 
-TEST(stack, push_pop)
+TEST(fstack, push_pop)
 {
 	{
-		FE::stack<int, 5> l_integral_stack;
-		for (int i = 0; i < l_integral_stack.max_length(); ++i)
+		FE::fstack<int, 5> l_integral_stack;
+		for (int i = 0; i < l_integral_stack.capacity(); ++i)
 		{
 			l_integral_stack.push(i);
 		}
 
-		std::size_t l_expected_value = l_integral_stack.max_length();
-		for (int i = 0; i < l_integral_stack.max_length(); ++i)
+		std::size_t l_expected_value = l_integral_stack.capacity();
+		for (int i = 0; i < l_integral_stack.capacity(); ++i)
 		{
 			--l_expected_value;
 			EXPECT_EQ(l_expected_value, l_integral_stack.pop());
 		}
 
-		for (int i = 0; i < l_integral_stack.max_length(); ++i)
+		for (int i = 0; i < l_integral_stack.capacity(); ++i)
 		{
 			l_integral_stack.push(i);
 		}
 
 		l_integral_stack.pop_all();
 
-		FE::stack<int, 5>::const_reverse_iterator l_const_iterator_begin = l_integral_stack.crbegin();
+		FE::fstack<int, 5>::const_reverse_iterator l_const_iterator_begin = l_integral_stack.crbegin();
 
 		while (l_const_iterator_begin != l_integral_stack.crend())
 		{
@@ -131,15 +131,15 @@ TEST(stack, push_pop)
 
 
 	std::initializer_list<FE::cstring> l_initializer_list = { "hello", ",", " ", "C++", "." };
-	FE::stack<FE::cstring, 5> l_cstring_stack = { ".", "C++", " ", ",", "hello" };
-	FE::stack<FE::fstring<10>, 5> l_fstring_stack;
+	FE::fstack<FE::cstring, 5> l_cstring_stack = { ".", "C++", " ", ",", "hello" };
+	FE::fstack<FE::fstring<10>, 5> l_fstring_stack;
 
-	FE::stack<FE::cstring, 5>::const_iterator L_cstring_const_iterator_begin = l_cstring_stack.cbegin();
-	FE::stack<FE::fstring<10>, 5>::const_iterator L_fstring_const_iterator_begin = l_fstring_stack.cbegin();
+	FE::fstack<FE::cstring, 5>::const_iterator L_cstring_const_iterator_begin = l_cstring_stack.cbegin();
+	FE::fstack<FE::fstring<10>, 5>::const_iterator L_fstring_const_iterator_begin = l_fstring_stack.cbegin();
 
-	EXPECT_EQ(l_cstring_stack.max_length(), l_fstring_stack.max_length());
+	EXPECT_EQ(l_cstring_stack.capacity(), l_fstring_stack.capacity());
 
-	for (int i = 0; i < l_cstring_stack.max_length(); ++i)
+	for (int i = 0; i < l_cstring_stack.capacity(); ++i)
 	{
 		l_fstring_stack.push(l_cstring_stack.pop().c_str());
 		
@@ -147,9 +147,9 @@ TEST(stack, push_pop)
 	}
 }
 
-TEST(stack, multiple_assignments_)
+TEST(fstack, multiple_assignments_)
 {
-	FE::stack<std::string, 5> l_stack = { "hi", ",", " ", "world", "." };
+	FE::fstack<std::string, 5> l_stack = { "hi", ",", " ", "world", "." };
 	l_stack = { "hello", ",", " ", "C++", "." };
 	EXPECT_TRUE(FE::algorithm::string::string_comparison((l_stack.cbegin())->c_str(), "hello"));
 	EXPECT_TRUE(FE::algorithm::string::string_comparison((l_stack.cend() - 1)->c_str(), "."));
@@ -165,7 +165,7 @@ TEST(stack, multiple_assignments_)
 	}
 
 
-	FE::stack<std::string, 5> l_another_stack = { "hi", ",", " ", "world", "." };
+	FE::fstack<std::string, 5> l_another_stack = { "hi", ",", " ", "world", "." };
 	l_stack = std::move(l_another_stack);
 	{
 		std::initializer_list<const char*> l_initializer_list = { "hi", ",", " ", "world", "." };
@@ -179,11 +179,11 @@ TEST(stack, multiple_assignments_)
 	l_stack = std::move(l_another_stack);
 }
 
-TEST(stack, container_comparison_)
+TEST(fstack, container_comparison_)
 {
-	FE::stack<std::string, 5> l_languages1 = { "C++", "C#", "Python", "Java", "C"};
+	FE::fstack<std::string, 5> l_languages1 = { "C++", "C#", "Python", "Java", "C"};
     EXPECT_TRUE(FE::algorithm::string::string_comparison(l_languages1.top().c_str(), "C"));
-	FE::stack<std::string, 5> l_languages2 = { "C++", "C#", "Python", "Java", "C" };
+	FE::fstack<std::string, 5> l_languages2 = { "C++", "C#", "Python", "Java", "C" };
     EXPECT_TRUE(FE::algorithm::string::string_comparison(l_languages2.top().c_str(), "C"));
 	EXPECT_TRUE(l_languages1 == l_languages2);
 
