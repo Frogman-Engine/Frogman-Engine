@@ -9,7 +9,7 @@
 BEGIN_NAMESPACE(FE)
 
 
-template<typename T, class allocator, class type_trait>
+template<typename T, class allocator>
 class exclusive_ptr;
 
 
@@ -100,15 +100,15 @@ public:
 		rvalue_p.m_smart_ptr = nullptr;
 	}
 
-	template<class allocator = FE::new_delete_proxy_allocator<FE::scalable_aligned_allocator<typename std::remove_all_extents<T>::type>>, class type_trait = FE::type_trait<typename std::remove_all_extents<T>::type, allocator>>
-	_FORCE_INLINE_ proxy_ptr(const FE::exclusive_ptr<T, allocator, type_trait>& exclusive_ptr_cref_p) noexcept :
+	template<class allocator = FE::new_delete_proxy_allocator<FE::scalable_aligned_allocator<typename std::remove_all_extents<T>::type>>>
+	_FORCE_INLINE_ proxy_ptr(const FE::exclusive_ptr<T, allocator>& exclusive_ptr_cref_p) noexcept :
 #ifndef _DISABLE_SMART_PTR_VARIANT_REF_TABLE_
 		base_type(base_type::__check_ref(exclusive_ptr_cref_p.__retrieve_ref_table_key(), exclusive_ptr_cref_p.get()))
 #else
 		m_smart_ptr(exclusive_ptr_cref_p.m_smart_ptr)
 #endif
 	{
-		using owner_type = FE::exclusive_ptr<T, allocator, type_trait>;
+		using owner_type = FE::exclusive_ptr<T, allocator>;
 
 #ifndef _DISABLE_SMART_PTR_VARIANT_REF_TABLE_
 		if (this->m_smart_ptr != nullptr)
@@ -159,10 +159,10 @@ public:
 		return *this;
 	}
 
-	template<class allocator = FE::new_delete_proxy_allocator<FE::scalable_aligned_allocator<typename std::remove_all_extents<T>::type>>, class type_trait = FE::type_trait<typename std::remove_all_extents<T>::type, allocator>>
-	_FORCE_INLINE_ proxy_ptr& operator=(const FE::exclusive_ptr<T, allocator, type_trait>& exclusive_ptr_cref_p) noexcept
+	template<class allocator = FE::new_delete_proxy_allocator<FE::scalable_aligned_allocator<typename std::remove_all_extents<T>::type>>>
+	_FORCE_INLINE_ proxy_ptr& operator=(const FE::exclusive_ptr<T, allocator>& exclusive_ptr_cref_p) noexcept
 	{
-		using owner_type = FE::exclusive_ptr<T, allocator, type_trait>;
+		using owner_type = FE::exclusive_ptr<T, allocator>;
 		
 		if (!exclusive_ptr_cref_p)
 		{
@@ -277,38 +277,38 @@ public:
 	}
 
 
-	template<class allocator = FE::new_delete_proxy_allocator<FE::scalable_aligned_allocator<typename std::remove_all_extents<T>::type>>, class type_trait = FE::type_trait<typename std::remove_all_extents<T>::type, allocator>>
-	_CONSTEXPR23_ _FORCE_INLINE_ var::boolean operator==(const FE::exclusive_ptr<T, allocator, type_trait>& other_cref_p) noexcept
+	template<class allocator = FE::new_delete_proxy_allocator<FE::scalable_aligned_allocator<typename std::remove_all_extents<T>::type>>>
+	_CONSTEXPR23_ _FORCE_INLINE_ var::boolean operator==(const FE::exclusive_ptr<T, allocator>& other_cref_p) noexcept
 	{
 		return this->m_smart_ptr == other_cref_p.m_smart_ptr;
 	}
 
-	template<class allocator = FE::new_delete_proxy_allocator<FE::scalable_aligned_allocator<typename std::remove_all_extents<T>::type>>, class type_trait = FE::type_trait<typename std::remove_all_extents<T>::type, allocator>>
-	_CONSTEXPR23_ _FORCE_INLINE_ var::boolean operator!=(const FE::exclusive_ptr<T, allocator, type_trait>& other_cref_p) noexcept
+	template<class allocator = FE::new_delete_proxy_allocator<FE::scalable_aligned_allocator<typename std::remove_all_extents<T>::type>>>
+	_CONSTEXPR23_ _FORCE_INLINE_ var::boolean operator!=(const FE::exclusive_ptr<T, allocator>& other_cref_p) noexcept
 	{
 		return this->m_smart_ptr != other_cref_p.m_smart_ptr;
 	}
 
-	template<class allocator = FE::new_delete_proxy_allocator<FE::scalable_aligned_allocator<typename std::remove_all_extents<T>::type>>, class type_trait = FE::type_trait<typename std::remove_all_extents<T>::type, allocator>>
-	_CONSTEXPR23_ _FORCE_INLINE_ var::boolean operator>(const FE::exclusive_ptr<T, allocator, type_trait>& other_cref_p) noexcept
+	template<class allocator = FE::new_delete_proxy_allocator<FE::scalable_aligned_allocator<typename std::remove_all_extents<T>::type>>>
+	_CONSTEXPR23_ _FORCE_INLINE_ var::boolean operator>(const FE::exclusive_ptr<T, allocator>& other_cref_p) noexcept
 	{
 		return this->m_smart_ptr > other_cref_p.m_smart_ptr;
 	}
 
-	template<class allocator = FE::new_delete_proxy_allocator<FE::scalable_aligned_allocator<typename std::remove_all_extents<T>::type>>, class type_trait = FE::type_trait<typename std::remove_all_extents<T>::type, allocator>>
-	_CONSTEXPR23_ _FORCE_INLINE_ var::boolean operator>=(const FE::exclusive_ptr<T, allocator, type_trait>& other_cref_p) noexcept
+	template<class allocator = FE::new_delete_proxy_allocator<FE::scalable_aligned_allocator<typename std::remove_all_extents<T>::type>>>
+	_CONSTEXPR23_ _FORCE_INLINE_ var::boolean operator>=(const FE::exclusive_ptr<T, allocator>& other_cref_p) noexcept
 	{
 		return this->m_smart_ptr >= other_cref_p.m_smart_ptr;
 	}
 
-	template<class allocator = FE::new_delete_proxy_allocator<FE::scalable_aligned_allocator<typename std::remove_all_extents<T>::type>>, class type_trait = FE::type_trait<typename std::remove_all_extents<T>::type, allocator>>
-	_CONSTEXPR23_ _FORCE_INLINE_ var::boolean operator<(const FE::exclusive_ptr<T, allocator, type_trait>& other_cref_p) noexcept
+	template<class allocator = FE::new_delete_proxy_allocator<FE::scalable_aligned_allocator<typename std::remove_all_extents<T>::type>>>
+	_CONSTEXPR23_ _FORCE_INLINE_ var::boolean operator<(const FE::exclusive_ptr<T, allocator>& other_cref_p) noexcept
 	{
 		return this->m_smart_ptr < other_cref_p.m_smart_ptr;
 	}
 
-	template<class allocator = FE::new_delete_proxy_allocator<FE::scalable_aligned_allocator<typename std::remove_all_extents<T>::type>>, class type_trait = FE::type_trait<typename std::remove_all_extents<T>::type, allocator>>
-	_CONSTEXPR23_ _FORCE_INLINE_ var::boolean operator<=(const FE::exclusive_ptr<T, allocator, type_trait>& other_cref_p) noexcept
+	template<class allocator = FE::new_delete_proxy_allocator<FE::scalable_aligned_allocator<typename std::remove_all_extents<T>::type>>>
+	_CONSTEXPR23_ _FORCE_INLINE_ var::boolean operator<=(const FE::exclusive_ptr<T, allocator>& other_cref_p) noexcept
 	{
 		return this->m_smart_ptr <= other_cref_p.m_smart_ptr;
 	}

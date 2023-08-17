@@ -9,7 +9,7 @@
 BEGIN_NAMESPACE(FE)
 
 
-template<typename T, class allocator = FE::new_delete_proxy_allocator<FE::scalable_aligned_allocator<typename std::remove_all_extents<T>::type>>, class type_trait = FE::type_trait<typename std::remove_all_extents<T>::type, allocator>>
+template<typename T, class allocator = FE::new_delete_proxy_allocator<FE::scalable_aligned_allocator<typename std::remove_all_extents<T>::type>>>
 class unique_ptr final
 {
 	static_assert(std::is_pointer<T>::value == false, "static assertion failed: The typename T cannot be a pointer type. Use a nested smart pointer instead. e.g. FE::unique_ptr<FE::unique_ptr<T>> l_unique_ptr;");
@@ -17,7 +17,6 @@ public:
 	using pointer = typename allocator::pointer;
 	using element_type = typename allocator::value_type;
 	using allocator_type = allocator;
-	using traits_type = type_trait;
 
 private:
 	pointer m_smart_ptr;
@@ -168,32 +167,31 @@ public:
 	}
 };
 
-template<typename T, class allocator = FE::new_delete_proxy_allocator<FE::scalable_aligned_allocator<T>>, class type_trait = FE::type_trait<T, allocator>>
-_CONSTEXPR23_ _NODISCARD_ _FORCE_INLINE_ unique_ptr<T, allocator, type_trait> make_unique() noexcept
+template<typename T, class allocator = FE::new_delete_proxy_allocator<FE::scalable_aligned_allocator<T>>>
+_CONSTEXPR23_ _NODISCARD_ _FORCE_INLINE_ unique_ptr<T, allocator> make_unique() noexcept
 {
 	static_assert(std::is_array<T>::value == false, "static assertion failed: The typename T must not be an array type");
-	return unique_ptr<T, allocator, type_trait>(T());
+	return unique_ptr<T, allocator>(T());
 }
 
-template<typename T, class allocator = FE::new_delete_proxy_allocator<FE::scalable_aligned_allocator<T>>, class type_trait = FE::type_trait<T, allocator>>
-_CONSTEXPR23_ _NODISCARD_ _FORCE_INLINE_ unique_ptr<T, allocator, type_trait> make_unique(T value_p) noexcept
+template<typename T, class allocator = FE::new_delete_proxy_allocator<FE::scalable_aligned_allocator<T>>>
+_CONSTEXPR23_ _NODISCARD_ _FORCE_INLINE_ unique_ptr<T, allocator> make_unique(T value_p) noexcept
 {
 	static_assert(std::is_array<T>::value == false, "static assertion failed: The typename T must not be an array type");
-	return unique_ptr<T, allocator, type_trait>( T( std::move(value_p) ) );
+	return unique_ptr<T, allocator>( T( std::move(value_p) ) );
 }
 
 
 
 
-template<typename T, class allocator, class type_trait>
-class unique_ptr<T[], allocator, type_trait> final
+template<typename T, class allocator>
+class unique_ptr<T[], allocator> final
 {
 	static_assert(std::is_pointer<T>::value == false, "static assertion failed: The typename T cannot be a pointer type. Use a nested smart pointer instead. e.g. FE::unique_ptr<FE::unique_ptr<T[]>> l_unique_ptr;");
 public:
 	using pointer = typename allocator::pointer;
 	using element_type = typename allocator::value_type;
 	using allocator_type = allocator;
-	using traits_type = type_trait;
 
 private:
 	pointer m_smart_ptr;
@@ -208,7 +206,7 @@ public:
 		{
 			return;
 		}
-
+	
 		allocator::deallocate(this->m_smart_ptr, this->m_smart_ptr_end - this->m_smart_ptr);
 		this->m_smart_ptr = nullptr;
 		this->m_smart_ptr_end = nullptr;
@@ -228,7 +226,7 @@ public:
 
 	_CONSTEXPR23_ _FORCE_INLINE_ unique_ptr(std::initializer_list<element_type>&& values_p) noexcept : m_smart_ptr(allocator::allocate( values_p.size() )), m_smart_ptr_end(m_smart_ptr + values_p.size())
 	{
-		type_trait::assign(this->m_smart_ptr, const_cast<element_type*>(values_p.begin()), values_p.size());
+		this->__copy_from_initializer_list(std::move(values_p));
 	}
 
 	_CONSTEXPR23_ _FORCE_INLINE_ unique_ptr& operator=(const unique_ptr& other_cref_p) noexcept = delete;
@@ -250,13 +248,8 @@ public:
 
 	_CONSTEXPR23_ _FORCE_INLINE_ unique_ptr& operator=(std::initializer_list<element_type>&& values_p) noexcept
 	{
-		if (static_cast<size_t>((this->m_smart_ptr_end - this->m_smart_ptr)) != values_p.size())
-		{
-			this->m_smart_ptr = allocator::reallocate(this->m_smart_ptr, this->m_smart_ptr_end - this->m_smart_ptr, values_p.size());
-			this->m_smart_ptr_end = this->m_smart_ptr + values_p.size();
-		}
-
-		type_trait::assign(this->m_smart_ptr, const_cast<element_type*>(values_p.begin()), values_p.size());
+		this->__reallocate(values_p.size());
+		this->__copy_from_initializer_list(std::move(values_p));
 		return *this;
 	}
 
@@ -276,13 +269,8 @@ public:
 
 	_CONSTEXPR23_ _FORCE_INLINE_ void reset(std::initializer_list<element_type>&& values_p) noexcept
 	{
-		if ((this->m_smart_ptr_end - this->m_smart_ptr) != values_p.size())
-		{
-			this->m_smart_ptr = allocator::reallocate(this->m_smart_ptr, this->m_smart_ptr_end - this->m_smart_ptr, values_p.size());
-			this->m_smart_ptr_end = this->m_smart_ptr + values_p.size();
-		}
-
-		type_trait::assign(this->m_smart_ptr, const_cast<element_type*>(values_p.begin()), values_p.size());
+		this->__reallocate(values_p.size());
+		this->__copy_from_initializer_list(std::move(values_p));
 	}
 
 	_FORCE_INLINE_ void swap(unique_ptr& other_ref_p) noexcept
@@ -376,21 +364,49 @@ public:
 	{
 		return this->m_smart_ptr <= other_cref_p.m_smart_ptr;
 	}
+
+private:
+	_FORCE_INLINE_ void __copy_from_initializer_list(std::initializer_list<element_type>&& values_p) noexcept
+	{
+		if constexpr (FE::is_trivially_constructible_and_destructible<T>::value == FE::TYPE_TRIVIALITY::_TRIVIAL)
+		{
+			std::memcpy(this->m_smart_ptr, const_cast<element_type*>(values_p.begin()), values_p.size() * sizeof(element_type));
+		}
+		else if constexpr (FE::is_trivially_constructible_and_destructible<T>::value == FE::TYPE_TRIVIALITY::_NOT_TRIVIAL)
+		{
+			count_t l_initializer_list_size = values_p.size();
+
+			pointer l_initializer_list_iterator = const_cast<pointer>(values_p.begin());
+			pointer l_smart_ptr_iterator = this->m_smart_ptr;
+			for (var::count_t i = 0; i < l_initializer_list_size; ++i)
+			{
+				*l_smart_ptr_iterator = std::move(*l_initializer_list_iterator);
+				++l_smart_ptr_iterator;
+				++l_initializer_list_iterator;
+			}
+		}
+	}
+
+	_FORCE_INLINE_ void __reallocate(size_t new_count_p) noexcept
+	{
+		this->m_smart_ptr = allocator::reallocate(this->m_smart_ptr, this->m_smart_ptr_end - this->m_smart_ptr, new_count_p);
+		this->m_smart_ptr_end = this->m_smart_ptr + new_count_p;
+	}
 };
 
 
-template<typename T, class allocator = FE::new_delete_proxy_allocator<FE::scalable_aligned_allocator<typename std::remove_all_extents<T>::type>>, class type_trait = FE::type_trait<typename std::remove_all_extents<T>::type, allocator>>
-_CONSTEXPR23_ _NODISCARD_ _FORCE_INLINE_ unique_ptr<typename std::remove_all_extents<T>::type[], allocator, type_trait> make_unique(size_t array_size_p) noexcept
+template<typename T, class allocator = FE::new_delete_proxy_allocator<FE::scalable_aligned_allocator<typename std::remove_all_extents<T>::type>>>
+_CONSTEXPR23_ _NODISCARD_ _FORCE_INLINE_ unique_ptr<typename std::remove_all_extents<T>::type[], allocator> make_unique(size_t array_size_p) noexcept
 {
 	static_assert(std::is_array<T>::value == true, "static assertion failed: The typename T must be an array type");
-	return unique_ptr<typename std::remove_all_extents<T>::type[], allocator, type_trait>(FE::reserve{ array_size_p });
+	return unique_ptr<typename std::remove_all_extents<T>::type[], allocator>(FE::reserve{ array_size_p });
 }
 
-template<typename T, class allocator = FE::new_delete_proxy_allocator<FE::scalable_aligned_allocator<typename std::remove_all_extents<T>::type>>, class type_trait = FE::type_trait<typename std::remove_all_extents<T>::type, allocator>>
-_CONSTEXPR23_ _NODISCARD_ _FORCE_INLINE_ unique_ptr<typename std::remove_all_extents<T>::type[], allocator, type_trait> make_unique(std::initializer_list<typename std::remove_all_extents<T>::type>&& values_p) noexcept
+template<typename T, class allocator = FE::new_delete_proxy_allocator<FE::scalable_aligned_allocator<typename std::remove_all_extents<T>::type>>>
+_CONSTEXPR23_ _NODISCARD_ _FORCE_INLINE_ unique_ptr<typename std::remove_all_extents<T>::type[], allocator> make_unique(std::initializer_list<typename std::remove_all_extents<T>::type>&& values_p) noexcept
 {
 	static_assert(std::is_array<T>::value == true, "static assertion failed: The typename T must be an array type");
-	return unique_ptr<typename std::remove_all_extents<T>::type[], allocator, type_trait>(std::move(values_p));
+	return unique_ptr<typename std::remove_all_extents<T>::type[], allocator>(std::move(values_p));
 }
 
 END_NAMESPACE
