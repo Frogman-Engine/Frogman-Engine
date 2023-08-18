@@ -7,7 +7,7 @@
 
 #include <FE/miscellaneous/define_max_min.h>
 #include <FE/miscellaneous/private/macro_restrictions.h>
-
+#include <boost/circular_buffer.hpp>
 
 #define _ENABLE_PRE_TEST_ false
 
@@ -28,7 +28,6 @@ class test final : public FE::framework::application
 protected:
 	virtual void set_up() noexcept override final
 	{
-
 	}
 	
 	virtual int run(int argc_p, char** argv_p) noexcept override final

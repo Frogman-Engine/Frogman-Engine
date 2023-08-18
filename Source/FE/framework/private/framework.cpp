@@ -13,6 +13,7 @@
 
 BEGIN_NAMESPACE(FE::framework)
 
+
 initialization_arguments application::s_options;
 
 discard_t application::set_application(initialization_arguments initialization_arguments_p) noexcept
@@ -28,9 +29,6 @@ initialization_arguments application::get_application() noexcept
 	return application::s_options;
 }
 
-
-
-
 void application::__launch_main(initialization_arguments& initialization_arguments_p) noexcept
 {
 	static ::FE::var::boolean l_s_is_initialized = false;
@@ -44,7 +42,8 @@ void application::__launch_main(initialization_arguments& initialization_argumen
 	::std::signal(SIGABRT, __abnormal_shutdown_with_exit_code);
 	::std::signal(SIGFPE, __abnormal_shutdown_with_exit_code);
 
-	//FE::function_table::tl_s_hash_map.reserve(initialization_arguments_p._initial_function_table_size);
+
+	function_table::tl_s_hash_map.reserve(initialization_arguments_p._initial_function_table_size);
 }
 
 void application::__shutdown_main() noexcept
@@ -53,20 +52,20 @@ void application::__shutdown_main() noexcept
 
 _NORETURN_ void application::__abnormal_shutdown_with_exit_code(int32 signal_p) noexcept
 {
-	boost::stacktrace::stacktrace l_stack_frame_dumps;
+	boost::stacktrace::stacktrace l_stack_trace_dumps;
 	var::length_t l_stack_depth = 0;
 
 	std::ofstream l_release_build_crash_report;
 	{
-		FE::fstring<_DUMP_FILE_NAME_LENGTH_> l_dump_filename = "Crashed Thread Stack Dump Report from ";
+		FE::fstring<_DUMP_FILE_NAME_LENGTH_> l_dump_filename = "Crashed Thread Stack Trace Report from ";
 		l_dump_filename += internal::get_current_local_time();
 		l_dump_filename += ".txt";
 		FE::ofstream_guard l_release_build_crash_report_guard(l_release_build_crash_report, l_dump_filename.c_str());
 		l_release_build_crash_report << "Compilation Date: " << " " << __DATE__ << " - " << __TIME__ << "\n\n";
 		l_release_build_crash_report << "\n-------------------------------------------------- BEGIN STACK TRACE RECORD --------------------------------------------------\n\n";
 
-		auto l_crend = l_stack_frame_dumps.crend();
-		for (auto crbegin = l_stack_frame_dumps.crbegin(); crbegin != l_crend; ++crbegin)
+		auto l_crend = l_stack_trace_dumps.crend();
+		for (auto crbegin = l_stack_trace_dumps.crbegin(); crbegin != l_crend; ++crbegin)
 		{
 			l_release_build_crash_report << "#" << l_stack_depth << "\t";
 			l_release_build_crash_report << boost::stacktrace::to_string(*crbegin).data();
@@ -79,7 +78,6 @@ _NORETURN_ void application::__abnormal_shutdown_with_exit_code(int32 signal_p) 
 	}
 	::std::exit(signal_p);
 }
-
 
 END_NAMESPACE
 

@@ -34,12 +34,7 @@
 	========== Build: 0 succeeded, 1 failed, 1 up-to-date, 0 skipped ==========
 	========== Build started at 12:10 AM and took 02.038 seconds ==========
 */
-#ifndef _DISABLE_SMART_PTR_VARIANT_REF_TABLE_
-#include <FE/core/smart_pointers/private/smart_ptr_base.hxx>
-#else
-#include <FE/core/prerequisites.h>
-#include <FE/core/allocator.hxx>
-#endif
+#include <FE/core/smart_pointers/private/ref_table.hxx>
 
 
 
@@ -47,114 +42,27 @@
 BEGIN_NAMESPACE(FE)
 
 
-template<typename T>
-class proxy_ptr;
-
-
-#ifndef _DISABLE_SMART_PTR_VARIANT_REF_TABLE_
-template<typename T>
-class exclusive_ptr_base : public smart_ptr_variant_base<T>
-{
-protected:
-	using base_type = smart_ptr_variant_base<T>;
-	using pointer = typename base_type::pointer;
-	using element_type = typename base_type::element_type;
-	using ref_table_type = typename base_type::ref_table_type;
-	using ref_table_recycler_type = typename base_type::ref_table_recycler_type;
-	using ref_table_key_type = typename base_type::ref_table_key_type;
-
-
-	_CONSTEXPR20_ _FORCE_INLINE_ static void __reserve(size_t new_size_p) noexcept
-	{
-		base_type::tl_s_ref_table.reserve(new_size_p);
-		base_type::tl_s_ref_table_recycler.reserve(new_size_p);
-	}
-
-	_CONSTEXPR20_ _FORCE_INLINE_ static void __shrink_to_fit() noexcept
-	{
-		base_type::tl_s_ref_table.shrink_to_fit();
-		base_type::tl_s_ref_table_recycler.shrink_to_fit();
-	}
-
-	_CONSTEXPR20_ _FORCE_INLINE_ static size_t __register_ref(pointer pointer_p) noexcept
-	{
-		if(base_type::tl_s_ref_table_recycler.empty() != true)
-		{
-			ref_table_key_type l_index_key = base_type::tl_s_ref_table_recycler.front();
-			base_type::tl_s_ref_table_recycler.pop();
-			base_type::tl_s_ref_table[l_index_key] = pointer_p;
-
-			FE_VERIFY_SMART_PTR_VARIANT(base_type::tl_s_ref_table[l_index_key] != pointer_p, "Assertion Failed: failed to register a reference to the table.\n${%s@0} must be equal to ${%p@1}.", TO_STRING(base_type::tl_s_ref_table[l_index_key]), pointer_p);
-			return l_index_key;
-		}
-
-		ref_table_key_type l_index_key = base_type::tl_s_ref_table.size();
-		base_type::tl_s_ref_table.emplace_back(pointer_p);
-
-		FE_VERIFY_SMART_PTR_VARIANT(base_type::tl_s_ref_table[l_index_key] != pointer_p, "Assertion Failed: failed to register a reference to the table.\n${%s@0} must be equal to ${%p@1}.", TO_STRING(base_type::tl_s_ref_table[l_index_key]), pointer_p);
-		return l_index_key;
-	}
-
-	_CONSTEXPR20_ _FORCE_INLINE_ static void __unregister_ref(ref_table_key_type index_key_p, pointer pointer_p) noexcept
-	{
-		FE_VERIFY_SMART_PTR_VARIANT(base_type::tl_s_ref_table[index_key_p] != pointer_p, "Assertion Failed: failed to unregister a reference from the table.\n${%s@0} must be equal to ${%p@1}.", TO_STRING(base_type::tl_s_ref_table[index_key_p]), pointer_p);
-		base_type::tl_s_ref_table[index_key_p] = nullptr;
-		base_type::tl_s_ref_table_recycler.push(index_key_p);
-	}
-
-
-	_CONSTEXPR20_ _FORCE_INLINE_ exclusive_ptr_base(pointer value_p = nullptr, ref_table_key_type key_p = 0) noexcept : base_type(value_p, key_p)
-	{
-	}
-};
-#endif
-
-
-
-
-// Do not predict the size of exclusive_ptr. Use sizeof() operator instead.
 template<typename T, class allocator = FE::new_delete_proxy_allocator<FE::scalable_aligned_allocator<typename std::remove_all_extents<T>::type>>>
 class exclusive_ptr final
-#ifndef _DISABLE_SMART_PTR_VARIANT_REF_TABLE_
-	: public exclusive_ptr_base<T>
-#endif
 {
 	static_assert(std::is_pointer<T>::value == false, "static assertion failed: The typename T cannot be a pointer type. Use a nested smart pointer instead. e.g. FE::exclusive_ptr<FE::exclusive_ptr<T>> l_exclusive_ptr;");
+	
+	using ref_table_type = ref_table_for_exclusive_ptr<T, allocator>;
+	using ref_table_key_type = typename ref_table_type::ref_table_key_type;
 
 public:
-#ifndef _DISABLE_SMART_PTR_VARIANT_REF_TABLE_
-	using base_type = exclusive_ptr_base<T>;
-	using pointer = typename base_type::pointer;
-	using element_type = typename base_type::element_type;
-#else
-	using base_type = void;
+	static constexpr ref_table_key_type invalid_key_value = FE::_MAX_VALUE_<ref_table_key_type>;
+
 	using pointer = typename std::remove_all_extents<T>::type*;
 	using element_type = typename std::remove_all_extents<T>::type;
-#endif
 	using allocator_type = allocator;
 
-#ifndef _DISABLE_SMART_PTR_VARIANT_REF_TABLE_
-public:
-	// this is an internal function and wiil be removed if _DISABLE_SMART_PTR_VARIANT_REF_TABLE_ is defined. DO NOT USE.
-	_FORCE_INLINE_ typename base_type::ref_table_key_type __retrieve_ref_table_key() const noexcept
-	{
-		return this->m_ref_table_key;
-	}
-#else
 private:
 	pointer m_smart_ptr;
+	ref_table_key_type m_ref_table_key;
 
 public:
-#endif
-
-	_FORCE_INLINE_ constexpr exclusive_ptr(pointer value_p = nullptr) noexcept :
-#ifndef _DISABLE_SMART_PTR_VARIANT_REF_TABLE_
-		base_type(value_p)
-#else
-		m_smart_ptr(value_p)
-#endif
-	{
-	}
+	_FORCE_INLINE_ constexpr exclusive_ptr() noexcept : m_smart_ptr(), m_ref_table_key(invalid_key_value) {}
 
 	_CONSTEXPR23_ _FORCE_INLINE_ ~exclusive_ptr() noexcept
 	{
@@ -163,39 +71,22 @@ public:
 			return;
 		}
 
-#ifndef _DISABLE_SMART_PTR_VARIANT_REF_TABLE_
-		base_type::__unregister_ref(this->m_ref_table_key, this->m_smart_ptr);
-#endif
+		ref_table_type::__unregister_ref(this->m_ref_table_key, this->m_smart_ptr);
 		allocator::deallocate(this->m_smart_ptr, 1);
 		this->m_smart_ptr = nullptr;
 	}
 
 	_CONSTEXPR23_ _FORCE_INLINE_ exclusive_ptr(const exclusive_ptr& other_cref_p) noexcept = delete;
 
-	_CONSTEXPR23_ _FORCE_INLINE_ exclusive_ptr(exclusive_ptr&& rvalue_p) noexcept : 
-#ifndef _DISABLE_SMART_PTR_VARIANT_REF_TABLE_
-		base_type(rvalue_p.m_smart_ptr, rvalue_p.m_ref_table_key)
-#else
-		m_smart_ptr(rvalue_p.m_smart_ptr)
-#endif
+	_CONSTEXPR23_ _FORCE_INLINE_ exclusive_ptr(exclusive_ptr&& rvalue_p) noexcept : m_smart_ptr(rvalue_p.m_smart_ptr), m_ref_table_key(rvalue_p.m_ref_table_key)
 	{
 		rvalue_p.m_smart_ptr = nullptr;
-
-#ifndef _DISABLE_SMART_PTR_VARIANT_REF_TABLE_
-		rvalue_p.m_ref_table_key = _MAX_VALUE_<typename base_type::ref_table_key_type>;
-#endif
+		rvalue_p.m_ref_table_key = invalid_key_value;
 	}
 
-	_CONSTEXPR23_ _FORCE_INLINE_ exclusive_ptr(element_type value_p) noexcept :
-#ifndef _DISABLE_SMART_PTR_VARIANT_REF_TABLE_
-		base_type(allocator::allocate(1))
-#else
-		m_smart_ptr(allocator::allocate(1))
-#endif
+	_CONSTEXPR23_ _FORCE_INLINE_ exclusive_ptr(element_type value_p) noexcept : m_smart_ptr(allocator::allocate(1)), m_ref_table_key(invalid_key_value)
 	{
-#ifndef _DISABLE_SMART_PTR_VARIANT_REF_TABLE_
-		this->m_ref_table_key = base_type::__register_ref(this->m_smart_ptr);
-#endif
+		this->m_ref_table_key = ref_table_type::__register_ref(this->m_smart_ptr);
 		*this->m_smart_ptr = std::move(value_p);
 	}
 
@@ -208,13 +99,16 @@ public:
 			return *this;
 		}
 
+		if (this->m_smart_ptr != nullptr)
+		{
+			allocator::deallocate(this->m_smart_ptr, 1);
+		}
+
 		this->m_smart_ptr = rvalue_p.m_smart_ptr;
 		rvalue_p.m_smart_ptr = nullptr;
 
-#ifndef _DISABLE_SMART_PTR_VARIANT_REF_TABLE_
 		this->m_ref_table_key = rvalue_p.m_ref_table_key;
-		rvalue_p.m_ref_table_key = _MAX_VALUE_<typename base_type::ref_table_key_type>;
-#endif
+		rvalue_p.m_ref_table_key = invalid_key_value;
 		return *this;
 	}
 
@@ -226,21 +120,15 @@ public:
 		}
 
 		*this->m_smart_ptr = std::move(value_p);
-
-#ifndef _DISABLE_SMART_PTR_VARIANT_REF_TABLE_
-		this->m_ref_table_key = base_type::__register_ref(this->m_smart_ptr);
-#endif
+		this->m_ref_table_key = ref_table_type::__register_ref(this->m_smart_ptr);
 		return *this;
 	}
 
 	_CONSTEXPR23_ _NODISCARD_ _FORCE_INLINE_ pointer release() noexcept
 	{
 		pointer l_result = this->m_smart_ptr;
-
-#ifndef _DISABLE_SMART_PTR_VARIANT_REF_TABLE_
-		base_type::__unregister_ref(this->m_ref_table_key, this->m_smart_ptr);
-#endif
 		this->m_smart_ptr = nullptr;
+		ref_table_type::__unregister_ref(this->m_ref_table_key, l_result);
 		return l_result;
 	}
 
@@ -261,16 +149,19 @@ public:
 		other_ref_p.m_smart_ptr = this->m_smart_ptr;
 		this->m_smart_ptr = l_temporary_smart_ptr;
 
-#ifndef _DISABLE_SMART_PTR_VARIANT_REF_TABLE_
-		typename base_type::ref_table_key_type l_temporary_key = other_ref_p.m_ref_table_key;
+		ref_table_key_type l_temporary_key = other_ref_p.m_ref_table_key;
 		other_ref_p.m_ref_table_key = this->m_ref_table_key;
 		this->m_ref_table_key = l_temporary_key;
-#endif
 	}
 
 	_CONSTEXPR23_ _FORCE_INLINE_ pointer get() const noexcept
 	{
 		return this->m_smart_ptr;
+	}
+
+	_CONSTEXPR23_ _FORCE_INLINE_ ref_table_key_type get_ref_table_key() const noexcept
+	{
+		return this->m_ref_table_key;
 	}
 
 	_CONSTEXPR23_ _FORCE_INLINE_ explicit operator bool() const noexcept
@@ -285,13 +176,13 @@ public:
 
 	_CONSTEXPR23_ _FORCE_INLINE_ element_type& operator*() const noexcept
 	{
-		FE_VERIFY_SMART_PTR_VARIANT(this->m_smart_ptr == nullptr, "${%s@0}: ${%s@1} is nullptr", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(this->m_smart_ptr));;
+		FE_ASSERT(this->m_smart_ptr == nullptr, "${%s@0}: ${%s@1} is nullptr", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(this->m_smart_ptr));;
 		return *this->m_smart_ptr;
 	}
 
 	_CONSTEXPR23_ _FORCE_INLINE_ pointer operator->() const noexcept
 	{
-		FE_VERIFY_SMART_PTR_VARIANT(this->m_smart_ptr == nullptr, "${%s@0}: ${%s@1} is nullptr", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(this->m_smart_ptr));
+		FE_ASSERT(this->m_smart_ptr == nullptr, "${%s@0}: ${%s@1} is nullptr", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(this->m_smart_ptr));
 		return this->m_smart_ptr;
 	}
 
@@ -389,39 +280,11 @@ _CONSTEXPR23_ _NODISCARD_ _FORCE_INLINE_ exclusive_ptr<T, allocator> make_exclus
 // Do not predict the size of exclusive_ptr. Use sizeof() operator instead.
 template<typename T, class allocator>
 class exclusive_ptr<T[], allocator> final 
-#ifndef _DISABLE_SMART_PTR_VARIANT_REF_TABLE_
-	: public exclusive_ptr_base<T>
-#endif
 {
 	static_assert(std::is_pointer<T>::value == false, "static assertion failed: The typename T cannot be a pointer type. Use a nested smart pointer instead. e.g. FE::exclusive_ptr<FE::exclusive_ptr<T>> l_exclusive_ptr;");
 
 public:
-#ifndef _DISABLE_SMART_PTR_VARIANT_REF_TABLE_
-	using base_type = exclusive_ptr_base<T>;
-	using pointer = typename base_type::pointer;
-	using element_type = typename base_type::element_type;
-#else
-	using base_type = void;
-	using pointer = typename std::remove_all_extents<T>::type*;
-	using element_type = typename std::remove_all_extents<T>::type;
-#endif
-	using allocator_type = allocator;
 
-#ifdef _DISABLE_SMART_PTR_VARIANT_REF_TABLE_
-private:
-	pointer m_smart_ptr;
-
-public:
-#endif
-
-	_FORCE_INLINE_ constexpr exclusive_ptr(pointer value_p = nullptr) noexcept :
-#ifndef _DISABLE_SMART_PTR_VARIANT_REF_TABLE_
-		base_type(value_p)
-#else
-		m_smart_ptr(value_p)
-#endif
-	{
-	}
 };
 
 

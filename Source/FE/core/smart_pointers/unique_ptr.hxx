@@ -56,6 +56,11 @@ public:
 			return *this;
 		}
 
+		if (this->m_smart_ptr != nullptr)
+		{
+			allocator::deallocate(this->m_smart_ptr, 1);
+		}
+
 		this->m_smart_ptr = rvalue_p.m_smart_ptr;
 		rvalue_p.m_smart_ptr = nullptr;
 		return *this;
@@ -236,6 +241,11 @@ public:
 		if (rvalue_p.m_smart_ptr == nullptr)
 		{
 			return *this;
+		}
+
+		if (this->m_smart_ptr != nullptr)
+		{
+			allocator::deallocate(this->m_smart_ptr, this->m_smart_ptr_end - this->m_smart_ptr);
 		}
 
 		this->m_smart_ptr = rvalue_p.m_smart_ptr;

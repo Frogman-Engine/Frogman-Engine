@@ -304,19 +304,6 @@ public:
 };
 
 
-#ifdef Let
-#error Let is a reserved Frogman Engine C++ keyword.
-#endif
-// The keyword for declaring a variable that is a const by default.
-#define Let ::FE::
-
-#ifdef Mut
-#error Mut is a reserved Frogman Engine C++ keyword.
-#endif
-// The keyword for adding a mutable type qualifier to a constant variable.
-#define Mut var::
-
-
 END_NAMESPACE
 
 

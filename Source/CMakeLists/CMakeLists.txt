@@ -113,7 +113,7 @@ SET(_SMART_POINTERS_
 #SOURCE_GROUP("FE\\core\\smart_pointers" FILES ${_SMART_POINTERS_})
 
 SET(_SMART_POINTERS_PRIVATE_
-	${CMAKE_CURRENT_SOURCE_DIR}/../FE/core/smart_pointers/private/smart_ptr_base.hxx 	
+	${CMAKE_CURRENT_SOURCE_DIR}/../FE/core/smart_pointers/private/ref_table.hxx 	
 	)
 #SOURCE_GROUP("FE\\core\\smart_pointers\\private" FILES ${_SMART_POINTERS_PRIVATE_})
 
