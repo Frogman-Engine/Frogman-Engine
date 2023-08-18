@@ -57,11 +57,12 @@ private:
 
 public:
 	_CONSTEXPR20_ _FORCE_INLINE_ fstack() noexcept : m_memory(), m_top_ptr(reinterpret_cast<pointer>(m_memory)), m_absolute_begin_ptrc(m_top_ptr) {}
-	_CONSTEXPR23_ _FORCE_INLINE_ ~fstack() noexcept {}
+	_CONSTEXPR23_ _FORCE_INLINE_ ~fstack() noexcept { this->pop_all(); }
 
 	_FORCE_INLINE_ fstack(std::initializer_list<value_type>&& initializer_list_p) noexcept : m_memory(), m_top_ptr(reinterpret_cast<pointer>(m_memory)), m_absolute_begin_ptrc(m_top_ptr)
 	{
 		FE_ASSERT(initializer_list_p.size() > max_element_count, "ERROR!: The length of std::initializer_list exceeds the max_element_count");
+		FE_ASSERT(initializer_list_p.size() == 0, "${%s@0}!: Cannot assign an empty initializer_list", TO_STRING(MEMORY_ERROR_1XX::_ERROR_INVALID_SIZE));
 
 		type_trait::move_construct(this->m_absolute_begin_ptrc, const_cast<value_type*>(initializer_list_p.begin()), initializer_list_p.size());
 
@@ -70,7 +71,7 @@ public:
 
 	_FORCE_INLINE_ fstack(fstack& other_ref_p) noexcept : m_memory(), m_top_ptr(reinterpret_cast<pointer>(m_memory)), m_absolute_begin_ptrc(m_top_ptr)
 	{
-		if (other_ref_p.size() == 0)
+		if (other_ref_p.is_empty())
 		{
 			return;
 		}
@@ -82,7 +83,7 @@ public:
 
 	_FORCE_INLINE_ fstack(fstack&& rvalue_p) noexcept : m_memory(), m_top_ptr(reinterpret_cast<pointer>(m_memory)), m_absolute_begin_ptrc(m_top_ptr)
 	{
-		if (rvalue_p.size() == 0)
+		if (rvalue_p.is_empty())
 		{
 			return;
 		}
@@ -96,48 +97,38 @@ public:
 	_FORCE_INLINE_ fstack& operator=(std::initializer_list<value_type> initializer_list_p) noexcept
 	{
 		FE_ASSERT(initializer_list_p.size() > max_element_count, "ERROR!: The length of std::initializer_list exceeds the max_element_count");
+		FE_ASSERT(initializer_list_p.size() == 0, "${%s@0}!: Cannot assign an empty initializer_list", TO_STRING(MEMORY_ERROR_1XX::_ERROR_INVALID_SIZE));
 
-		type_trait::move_assign(this->m_absolute_begin_ptrc, const_cast<value_type*>(initializer_list_p.begin()), initializer_list_p.size());
+		if (this->is_empty())
+		{
+			this->~fstack();
+			new(this) fstack(std::move(initializer_list_p));
+			return *this;
+		}
 
+		size_t l_initializer_list_size = initializer_list_p.size();
+		this->__restructrue_fstack_with_move_semantics(const_cast<value_type*>(initializer_list_p.begin()), l_initializer_list_size);
 		this->__set_top_pointer_to_zero();
-		this->__jump_top_pointer(initializer_list_p.size());
+		this->__jump_top_pointer(l_initializer_list_size);
 		return *this;
 	}
 
 	_FORCE_INLINE_ fstack& operator=(fstack& other_ref_p) noexcept
 	{
 		size_t l_other_size = other_ref_p.size();
-		size_t l_this_size = this->size();
-
 		if (l_other_size == 0)
 		{
 			return *this;
 		}
 
-		if (l_this_size == 0)
+		if (this->is_empty())
 		{
 			this->~fstack();
 			new(this) fstack(other_ref_p);
 			return *this;
 		}
 
-		if (l_other_size > l_this_size)
-		{
-			size_t l_count_to_construct = l_other_size - l_this_size;
-			type_trait::copy_construct(this->m_top_ptr, other_ref_p.m_top_ptr - l_count_to_construct, l_count_to_construct);
-
-			type_trait::copy_assign(this->m_absolute_begin_ptrc, other_ref_p.m_absolute_begin_ptrc, l_this_size);
-		}
-		else if(l_other_size < l_this_size)
-		{
-			size_t l_count_to_destruct = l_this_size - l_other_size;
-			type_trait::destruct(this->m_top_ptr - l_count_to_destruct, this->m_top_ptr);
-			type_trait::copy_assign(this->m_absolute_begin_ptrc, other_ref_p.m_absolute_begin_ptrc, l_other_size);
-		}
-		else
-		{
-			type_trait::copy_assign(this->m_absolute_begin_ptrc, other_ref_p.m_absolute_begin_ptrc, l_other_size);
-		}
+		this->__restructrue_fstack_with_copy_semantics(other_ref_p.m_absolute_begin_ptrc, l_other_size);
 
 		this->__set_top_pointer_to_zero();
 		this->__jump_top_pointer(other_ref_p.m_top_ptr - other_ref_p.m_absolute_begin_ptrc);
@@ -147,38 +138,19 @@ public:
 	_FORCE_INLINE_ fstack& operator=(fstack&& rvalue_p) noexcept
 	{
 		size_t l_other_size = rvalue_p.size();
-		size_t l_this_size = this->size();
-
 		if (l_other_size == 0)
 		{
 			return *this;
 		}
 
-		if (l_this_size == 0)
+		if (this->is_empty())
 		{
 			this->~fstack();
 			new(this) fstack(std::move(rvalue_p));
 			return *this;
 		}
 
-		if (l_other_size > l_this_size)
-		{
-			size_t l_count_to_construct = l_other_size - l_this_size;
-			type_trait::move_construct(this->m_top_ptr, rvalue_p.m_top_ptr - l_count_to_construct, l_count_to_construct);
-
-			type_trait::move_assign(this->m_absolute_begin_ptrc, rvalue_p.m_absolute_begin_ptrc, l_this_size);
-		}
-		else if (l_other_size < l_this_size)
-		{
-			size_t l_count_to_destruct = l_this_size - l_other_size;
-			type_trait::destruct(this->m_top_ptr - l_count_to_destruct, this->m_top_ptr);
-
-			type_trait::move_assign(this->m_absolute_begin_ptrc, rvalue_p.m_absolute_begin_ptrc, l_other_size);
-		}
-		else
-		{
-			type_trait::move_assign(this->m_absolute_begin_ptrc, rvalue_p.m_absolute_begin_ptrc, l_other_size);
-		}
+		this->__restructrue_fstack_with_move_semantics(rvalue_p.m_absolute_begin_ptrc, l_other_size);
 
 		this->__set_top_pointer_to_zero();
 		this->__jump_top_pointer(rvalue_p.m_top_ptr - rvalue_p.m_absolute_begin_ptrc);
@@ -206,10 +178,11 @@ public:
 	
 	_FORCE_INLINE_ void pop_all() noexcept
 	{
-		FE_ASSERT(this->is_empty() == true, "WARNING: It is pointless to pop empty elements.");
-
-		type_trait::destruct(this->m_absolute_begin_ptrc, this->m_top_ptr);
-		this->__set_top_pointer_to_zero();
+		if (this->is_empty() == false)
+		{
+			type_trait::destruct(this->m_absolute_begin_ptrc, this->m_top_ptr);
+			this->__set_top_pointer_to_zero();
+		}
 	}
 
 	_FORCE_INLINE_ const_reference top() const noexcept
@@ -290,6 +263,54 @@ private:
 	_FORCE_INLINE_ void __set_top_pointer_to_zero() noexcept
 	{
 		this->m_top_ptr = this->m_absolute_begin_ptrc;
+	}
+
+	_FORCE_INLINE_ void __restructrue_fstack_with_move_semantics(value_type* const source_begin_ptrc_p, size_t source_size_p) noexcept
+	{
+		size_t l_this_size = this->size();
+
+		if (source_size_p > l_this_size)
+		{
+			size_t l_count_to_construct = source_size_p - l_this_size;
+			type_trait::move_construct(this->m_top_ptr, source_begin_ptrc_p - l_count_to_construct, l_count_to_construct);
+
+			type_trait::move_assign(this->m_absolute_begin_ptrc, source_begin_ptrc_p, l_this_size);
+		}
+		else if (source_size_p < l_this_size)
+		{
+			size_t l_count_to_destruct = l_this_size - source_size_p;
+			type_trait::destruct(this->m_top_ptr - l_count_to_destruct, this->m_top_ptr);
+
+			type_trait::move_assign(this->m_absolute_begin_ptrc, source_begin_ptrc_p, source_size_p);
+		}
+		else
+		{
+			type_trait::move_assign(this->m_absolute_begin_ptrc, source_begin_ptrc_p, source_size_p);
+		}
+	}
+
+	_FORCE_INLINE_ void __restructrue_fstack_with_copy_semantics(value_type* const source_begin_ptrc_p, size_t source_size_p) noexcept
+	{
+		size_t l_this_size = this->size();
+
+		if (source_size_p > l_this_size)
+		{
+			size_t l_count_to_construct = source_size_p - l_this_size;
+			type_trait::copy_construct(this->m_top_ptr, source_begin_ptrc_p - l_count_to_construct, l_count_to_construct);
+
+			type_trait::copy_assign(this->m_absolute_begin_ptrc, source_begin_ptrc_p, l_this_size);
+		}
+		else if (source_size_p < l_this_size)
+		{
+			size_t l_count_to_destruct = l_this_size - source_size_p;
+			type_trait::destruct(this->m_top_ptr - l_count_to_destruct, this->m_top_ptr);
+
+			type_trait::copy_assign(this->m_absolute_begin_ptrc, source_begin_ptrc_p, source_size_p);
+		}
+		else
+		{
+			type_trait::copy_assign(this->m_absolute_begin_ptrc, source_begin_ptrc_p, source_size_p);
+		}
 	}
 };
 

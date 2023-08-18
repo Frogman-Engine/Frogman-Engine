@@ -7,7 +7,7 @@
 
 #include <FE/miscellaneous/define_max_min.h>
 #include <FE/miscellaneous/private/macro_restrictions.h>
-
+#include <boost/circular_buffer.hpp>
 
 #define _ENABLE_PRE_TEST_ false
 

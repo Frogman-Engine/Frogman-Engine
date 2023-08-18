@@ -1417,8 +1417,8 @@ public:
 		FE_ASSERT(dest_ptr_p == nullptr, "MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR: ${%s@0} is nullptr", TO_STRING(dest_ptr_p));
 		FE_ASSERT(source_ptr_p == nullptr, "MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR: ${%s@0} is nullptr", TO_STRING(source_ptr_p));
 
-		FE_ASSERT(dest_count_p == 0, "MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR: ${%s@0} is zero", TO_STRING(dest_count_p));
-		FE_ASSERT(source_count_p == 0, "MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR: ${%s@0} is zero", TO_STRING(source_count_p));
+		FE_ASSERT(dest_count_p == 0, "MEMORY_ERROR_1XX::_ERROR_INVALID_SIZE: ${%s@0} is zero", TO_STRING(dest_count_p));
+		FE_ASSERT(source_count_p == 0, "MEMORY_ERROR_1XX::_ERROR_INVALID_SIZE: ${%s@0} is zero", TO_STRING(source_count_p));
 
 		if (dest_count_p <= source_count_p)
 		{
@@ -1449,7 +1449,7 @@ public:
 		FE_ASSERT(dest_ptr_p == nullptr, "MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR: ${%s@0} is nullptr", TO_STRING(dest_ptr_p));
 		FE_ASSERT(source_ptr_p == nullptr, "MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR: ${%s@0} is nullptr", TO_STRING(source_ptr_p));
 
-		FE_ASSERT(count_to_copy_or_move_p == 0, "MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR: ${%s@0} is zero", TO_STRING(count_to_copy_or_move_p));
+		FE_ASSERT(count_to_copy_or_move_p == 0, "MEMORY_ERROR_1XX::_ERROR_INVALID_SIZE: ${%s@0} is zero", TO_STRING(count_to_copy_or_move_p));
 
 		for (var::count_t i = 0; i < count_to_copy_or_move_p; ++i)
 		{
@@ -1465,8 +1465,8 @@ public:
 		FE_ASSERT(dest_ptr_p == nullptr, "MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR: ${%s@0} is nullptr", TO_STRING(dest_ptr_p));
 		FE_ASSERT(source_ptr_p == nullptr, "MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR: ${%s@0} is nullptr", TO_STRING(source_ptr_p));
 
-		FE_ASSERT(dest_count_p == 0, "MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR: ${%s@0} is zero", TO_STRING(dest_count_p));
-		FE_ASSERT(source_count_p == 0, "MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR: ${%s@0} is zero", TO_STRING(source_count_p));
+		FE_ASSERT(dest_count_p == 0, "MEMORY_ERROR_1XX::_ERROR_INVALID_SIZE: ${%s@0} is zero", TO_STRING(dest_count_p));
+		FE_ASSERT(source_count_p == 0, "MEMORY_ERROR_1XX::_ERROR_INVALID_SIZE: ${%s@0} is zero", TO_STRING(source_count_p));
 
 		if (dest_count_p <= source_count_p)
 		{
@@ -1497,7 +1497,7 @@ public:
 		FE_ASSERT(dest_ptr_p == nullptr, "MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR: ${%s@0} is nullptr", TO_STRING(dest_ptr_p));
 		FE_ASSERT(source_ptr_p == nullptr, "MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR: ${%s@0} is nullptr", TO_STRING(source_ptr_p));
 
-		FE_ASSERT(count_to_copy_or_move_p == 0, "MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR: ${%s@0} is zero", TO_STRING(count_to_copy_or_move_p));
+		FE_ASSERT(count_to_copy_or_move_p == 0, "MEMORY_ERROR_1XX::_ERROR_INVALID_SIZE: ${%s@0} is zero", TO_STRING(count_to_copy_or_move_p));
 
 		for (var::count_t i = 0; i < count_to_copy_or_move_p; ++i)
 		{
@@ -1531,8 +1531,8 @@ public:
 		FE_ASSERT(dest_ptr_p == nullptr, "MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR: ${%s@0} is nullptr", TO_STRING(dest_ptr_p));
 		FE_ASSERT(source_ptr_p == nullptr, "MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR: ${%s@0} is nullptr", TO_STRING(source_ptr_p));
 
-		FE_ASSERT(dest_count_p == 0, "MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR: ${%s@0} is zero", TO_STRING(dest_count_p));
-		FE_ASSERT(source_count_p == 0, "MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR: ${%s@0} is zero", TO_STRING(source_count_p));
+		FE_ASSERT(dest_count_p == 0, "MEMORY_ERROR_1XX::_ERROR_INVALID_SIZE: ${%s@0} is zero", TO_STRING(dest_count_p));
+		FE_ASSERT(source_count_p == 0, "MEMORY_ERROR_1XX::_ERROR_INVALID_SIZE: ${%s@0} is zero", TO_STRING(source_count_p));
 
 		if (dest_count_p <= source_count_p)
 		{
@@ -1563,7 +1563,7 @@ public:
 		FE_ASSERT(dest_ptr_p == nullptr, "MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR: ${%s@0} is nullptr", TO_STRING(dest_ptr_p));
 		FE_ASSERT(source_ptr_p == nullptr, "MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR: ${%s@0} is nullptr", TO_STRING(source_ptr_p));
 
-		FE_ASSERT(count_to_copy_or_move_p == 0, "MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR: ${%s@0} is zero", TO_STRING(count_to_copy_or_move_p));
+		FE_ASSERT(count_to_copy_or_move_p == 0, "MEMORY_ERROR_1XX::_ERROR_INVALID_SIZE: ${%s@0} is zero", TO_STRING(count_to_copy_or_move_p));
 
 		for (var::count_t i = 0; i < count_to_copy_or_move_p; ++i)
 		{
@@ -1579,8 +1579,8 @@ public:
 		FE_ASSERT(dest_ptr_p == nullptr, "MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR: ${%s@0} is nullptr", TO_STRING(dest_ptr_p));
 		FE_ASSERT(source_ptr_p == nullptr, "MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR: ${%s@0} is nullptr", TO_STRING(source_ptr_p));
 
-		FE_ASSERT(dest_count_p == 0, "MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR: ${%s@0} is zero", TO_STRING(dest_count_p));
-		FE_ASSERT(source_count_p == 0, "MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR: ${%s@0} is zero", TO_STRING(source_count_p));
+		FE_ASSERT(dest_count_p == 0, "MEMORY_ERROR_1XX::_ERROR_INVALID_SIZE: ${%s@0} is zero", TO_STRING(dest_count_p));
+		FE_ASSERT(source_count_p == 0, "MEMORY_ERROR_1XX::_ERROR_INVALID_SIZE: ${%s@0} is zero", TO_STRING(source_count_p));
 
 		if (dest_count_p <= source_count_p)
 		{
@@ -1611,7 +1611,7 @@ public:
 		FE_ASSERT(dest_ptr_p == nullptr, "MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR: ${%s@0} is nullptr", TO_STRING(dest_ptr_p));
 		FE_ASSERT(source_ptr_p == nullptr, "MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR: ${%s@0} is nullptr", TO_STRING(source_ptr_p));
 
-		FE_ASSERT(count_to_copy_or_move_p == 0, "MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR: ${%s@0} is zero", TO_STRING(count_to_copy_or_move_p));
+		FE_ASSERT(count_to_copy_or_move_p == 0, "MEMORY_ERROR_1XX::_ERROR_INVALID_SIZE: ${%s@0} is zero", TO_STRING(count_to_copy_or_move_p));
 
 		for (var::count_t i = 0; i < count_to_copy_or_move_p; ++i)
 		{

@@ -114,21 +114,27 @@ TEST(smart_ptr_variants, exclusive_ptr_and_proxy_ptrs)
 		l_second_proxy_ptr = l_exclusive_ptr;
 		l_third_proxy_ptr = l_second_proxy_ptr;
 	}
-	
-#ifndef _DISABLE_SMART_PTR_VARIANT_REF_TABLE_
+
 	EXPECT_TRUE(l_first_proxy_ptr.is_expired());
 	EXPECT_TRUE(l_second_proxy_ptr.is_expired());
 	EXPECT_TRUE(l_third_proxy_ptr.is_expired());
-#endif
 
 	{
 		FE::exclusive_ptr<std::vector<int>> l_first_exclusive_ptr = FE::make_exclusive<std::vector<int>>({ 1, 2, 3, 4, 5 });
-		FE::exclusive_ptr<std::vector<int>> l_exclusive_ptr = FE::make_exclusive<std::vector<int>>({ 1, 2, 3, 4, 5 });
-		l_first_proxy_ptr = l_exclusive_ptr;
-		l_second_proxy_ptr = l_exclusive_ptr;
+		FE::exclusive_ptr<std::vector<int>> l_second_exclusive_ptr = FE::make_exclusive<std::vector<int>>({ 1, 2, 3, 4, 5 });
+		l_first_proxy_ptr = l_second_exclusive_ptr;
+		l_second_proxy_ptr = l_second_exclusive_ptr;
 		l_third_proxy_ptr = l_second_proxy_ptr;
 
-		FE::exclusive_ptr<std::vector<int>> l_second_exclusive_ptr = std::move(l_first_exclusive_ptr);
+		EXPECT_FALSE(l_first_proxy_ptr.is_expired());
+		EXPECT_FALSE(l_second_proxy_ptr.is_expired());
+		EXPECT_FALSE(l_third_proxy_ptr.is_expired());
+
+		FE::exclusive_ptr<std::vector<int>> l_third_exclusive_ptr = std::move(l_first_exclusive_ptr);
+
+		EXPECT_FALSE(l_first_proxy_ptr.is_expired());
+		EXPECT_FALSE(l_second_proxy_ptr.is_expired());
+		EXPECT_FALSE(l_third_proxy_ptr.is_expired());
 
 		EXPECT_TRUE(l_first_exclusive_ptr == nullptr);
 
@@ -136,4 +142,8 @@ TEST(smart_ptr_variants, exclusive_ptr_and_proxy_ptrs)
 		EXPECT_EQ((*l_second_proxy_ptr)[0], 1);
 		EXPECT_EQ((*l_third_proxy_ptr)[0], 1);
 	}
+
+	EXPECT_TRUE(l_first_proxy_ptr.is_expired());
+	EXPECT_TRUE(l_second_proxy_ptr.is_expired());
+	EXPECT_TRUE(l_third_proxy_ptr.is_expired());
 }
