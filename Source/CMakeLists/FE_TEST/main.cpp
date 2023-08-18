@@ -28,6 +28,7 @@ class test final : public FE::framework::application
 protected:
 	virtual void set_up() noexcept override final
 	{
+
 	}
 	
 	virtual int run(int argc_p, char** argv_p) noexcept override final

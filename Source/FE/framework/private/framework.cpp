@@ -58,7 +58,7 @@ _NORETURN_ void application::__abnormal_shutdown_with_exit_code(int32 signal_p) 
 
 	std::ofstream l_release_build_crash_report;
 	{
-		FE::fstring<_DUMP_FILE_NAME_LENGTH_> l_dump_filename = "Crashed Thread Stack Frame Dump Report from ";
+		FE::fstring<_DUMP_FILE_NAME_LENGTH_> l_dump_filename = "Crashed Thread Stack Dump Report from ";
 		l_dump_filename += internal::get_current_local_time();
 		l_dump_filename += ".txt";
 		FE::ofstream_guard l_release_build_crash_report_guard(l_release_build_crash_report, l_dump_filename.c_str());

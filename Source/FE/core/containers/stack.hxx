@@ -57,7 +57,7 @@ private:
 
 public:
 	_CONSTEXPR20_ _FORCE_INLINE_ fstack() noexcept : m_memory(), m_top_ptr(reinterpret_cast<pointer>(m_memory)), m_absolute_begin_ptrc(m_top_ptr) {}
-	_CONSTEXPR23_ _FORCE_INLINE_ ~fstack() noexcept {}
+	_CONSTEXPR23_ _FORCE_INLINE_ ~fstack() noexcept { this->pop_all(); }
 
 	_FORCE_INLINE_ fstack(std::initializer_list<value_type>&& initializer_list_p) noexcept : m_memory(), m_top_ptr(reinterpret_cast<pointer>(m_memory)), m_absolute_begin_ptrc(m_top_ptr)
 	{
@@ -71,7 +71,7 @@ public:
 
 	_FORCE_INLINE_ fstack(fstack& other_ref_p) noexcept : m_memory(), m_top_ptr(reinterpret_cast<pointer>(m_memory)), m_absolute_begin_ptrc(m_top_ptr)
 	{
-		if (other_ref_p.size() == 0)
+		if (other_ref_p.is_empty())
 		{
 			return;
 		}
@@ -83,7 +83,7 @@ public:
 
 	_FORCE_INLINE_ fstack(fstack&& rvalue_p) noexcept : m_memory(), m_top_ptr(reinterpret_cast<pointer>(m_memory)), m_absolute_begin_ptrc(m_top_ptr)
 	{
-		if (rvalue_p.size() == 0)
+		if (rvalue_p.is_empty())
 		{
 			return;
 		}
@@ -99,7 +99,7 @@ public:
 		FE_ASSERT(initializer_list_p.size() > max_element_count, "ERROR!: The length of std::initializer_list exceeds the max_element_count");
 		FE_ASSERT(initializer_list_p.size() == 0, "${%s@0}!: Cannot assign an empty initializer_list", TO_STRING(MEMORY_ERROR_1XX::_ERROR_INVALID_SIZE));
 
-		if (this->size() == 0)
+		if (this->is_empty())
 		{
 			this->~fstack();
 			new(this) fstack(std::move(initializer_list_p));
@@ -121,7 +121,7 @@ public:
 			return *this;
 		}
 
-		if (this->size() == 0)
+		if (this->is_empty())
 		{
 			this->~fstack();
 			new(this) fstack(other_ref_p);
@@ -143,7 +143,7 @@ public:
 			return *this;
 		}
 
-		if (this->size() == 0)
+		if (this->is_empty())
 		{
 			this->~fstack();
 			new(this) fstack(std::move(rvalue_p));
@@ -178,10 +178,11 @@ public:
 	
 	_FORCE_INLINE_ void pop_all() noexcept
 	{
-		FE_ASSERT(this->is_empty() == true, "WARNING: It is pointless to pop empty elements.");
-
-		type_trait::destruct(this->m_absolute_begin_ptrc, this->m_top_ptr);
-		this->__set_top_pointer_to_zero();
+		if (this->is_empty() == false)
+		{
+			type_trait::destruct(this->m_absolute_begin_ptrc, this->m_top_ptr);
+			this->__set_top_pointer_to_zero();
+		}
 	}
 
 	_FORCE_INLINE_ const_reference top() const noexcept

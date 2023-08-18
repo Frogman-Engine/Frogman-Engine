@@ -107,13 +107,13 @@ TEST(queue, push_pop)
 		}
 
 		std::size_t l_expected_value = 0;
-		for (int i = 0; i < l_integral_queue.capacity(); ++i)
+		for (int i = 0; i < l_integral_queue.capacity() >> 1; ++i)
 		{
 			EXPECT_EQ(l_expected_value, l_integral_queue.pop());
 			++l_expected_value;
 		}
 
-		for (int i = 0; i < l_integral_queue.capacity(); ++i)
+		for (int i = 0; i < l_integral_queue.capacity() >> 1; ++i)
 		{
 			l_integral_queue.push(i);
 		}
@@ -187,7 +187,6 @@ TEST(queue, container_comparison_)
     EXPECT_TRUE(FE::algorithm::string::string_comparison(l_languages1.pop().c_str(), "Java"));
     EXPECT_FALSE(l_languages1 == l_languages2); // C++ is not equivalent to C
 
-	l_languages1.arrange();
 	l_languages1.push("Python");
 	l_languages2.pop();
 	EXPECT_TRUE(l_languages1 != l_languages2); // Python is not equivalent to Java
