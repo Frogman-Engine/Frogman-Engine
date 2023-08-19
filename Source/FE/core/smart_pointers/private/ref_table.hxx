@@ -60,7 +60,9 @@ template<typename T, class allocator>
 class ref_table_for_exclusive_ptr : public ref_table_base<T>
 {
 	friend class exclusive_ptr<T, allocator>;
+	friend class exclusive_ptr<T[], allocator>;
 
+public:
 	using base_type = ref_table_base<T>;
 	using pointer = typename base_type::pointer;
 	using element_type = typename base_type::element_type;
@@ -68,7 +70,7 @@ class ref_table_for_exclusive_ptr : public ref_table_base<T>
 	using ref_table_recycler_type = typename base_type::ref_table_recycler_type;
 	using ref_table_key_type = typename base_type::ref_table_key_type;
 
-
+private:
 	_CONSTEXPR20_ _FORCE_INLINE_ static void __reserve(size_t new_size_p) noexcept
 	{
 		base_type::tl_s_ref_table.reserve(new_size_p);
@@ -120,14 +122,16 @@ template<typename T>
 class ref_table_for_proxy_ptr : public ref_table_base<T>
 {
 	friend class proxy_ptr<T>;
+	friend class proxy_ptr<T[]>;
 
+public:
 	using base_type = ref_table_base<T>;
 	using pointer = typename base_type::pointer;
 	using element_type = typename base_type::element_type;
 	using ref_table_type = typename base_type::ref_table_type;
 	using ref_table_key_type = typename base_type::ref_table_key_type;
 
-
+private:
 	_CONSTEXPR20_ _FORCE_INLINE_ static pointer __check_ref(typename ref_table_type::size_type index_p, pointer validation_subject_p) noexcept
 	{
 		pointer l_value = base_type::tl_s_ref_table[index_p];

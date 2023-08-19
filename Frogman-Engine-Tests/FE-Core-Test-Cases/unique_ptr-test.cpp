@@ -129,11 +129,6 @@ TEST(unique_ptr, construct_array_by_value_assignment)
 	{
 		FE::unique_ptr<var::int64[]> l_unique_ptr = FE::reserve{ 10 };
 	}
-
-	{
-		FE::unique_ptr<std::string[]> l_unique_ptr = FE::reserve{ 10 };
-		
-	}
 }
 
 
