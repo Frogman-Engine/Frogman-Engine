@@ -148,13 +148,14 @@ public:
 	{
 		FE_ASSERT(count_p == 0, "${%s@0}: queried allocation size is ${%lu@1}.", TO_STRING(MEMORY_ERROR_1XX::_ERROR_INVALID_SIZE), &count_p);
 
-#ifdef _ENABLE_MEMORY_TRACKER_
-		::FE::heap_memory_tracker<value_type>::add(sizeof(value_type) * count_p);
-#endif
 		pointer const l_result_ptrc = static_cast<pointer>(::tbb::detail::r1::cache_aligned_allocate(count_p * sizeof(value_type)));
 		FE_ASSERT(l_result_ptrc == nullptr, "${%s@0}: failed to allocate memory from cache_aligned_allocator.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR));
 
 		FE_ASSERT((reinterpret_cast<uintptr_t>(l_result_ptrc) % 2) != 0 , "ERROR: The allocated heap memory address not aligned by two. The address value was ${%p@0}", l_result_ptrc);
+		
+#ifdef _ENABLE_MEMORY_TRACKER_
+		::FE::heap_memory_tracker<T, align_64bytes>::__log_heap_memory_allocation(count_p * sizeof(value_type), TO_STRING(cache_aligned_allocate), l_result_ptrc, typeid(T).name());
+#endif
 		return l_result_ptrc;
 	}
 	
@@ -171,10 +172,12 @@ public:
 
 		pointer const l_result_ptrc = static_cast<pointer>(cache_aligned_allocator<T>::allocate(new_count_p));
 		FE_ASSERT((reinterpret_cast<uintptr_t>(l_result_ptrc) % 2) != 0, "ERROR: The allocated heap memory address not aligned by two. The address value was ${%p@0}", l_result_ptrc);
-
-		FE::aligned_memcpy(l_result_ptrc, new_count_p, sizeof(value_type), pointer_p, prev_count_p, sizeof(value_type));
-		cache_aligned_allocator<value_type>::deallocate(pointer_p, prev_count_p);
-
+		 
+		if (l_result_ptrc != pointer_p) _LIKELY_
+		{
+			FE::aligned_memcpy(l_result_ptrc, new_count_p, sizeof(value_type), pointer_p, prev_count_p, sizeof(value_type));
+			cache_aligned_allocator<value_type>::deallocate(pointer_p, prev_count_p);
+		}
 		return l_result_ptrc;
 	}
 
@@ -185,7 +188,7 @@ public:
 		FE_ASSERT(pointer_p == nullptr, "${%s@0}: attempted to delete ${%p@1}.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), pointer_p);
 
 #ifdef _ENABLE_MEMORY_TRACKER_
-		FE::heap_memory_tracker<value_type>::sub(sizeof(value_type) * count_p);
+		::FE::heap_memory_tracker<T, align_64bytes>::__log_heap_memory_deallocation(count_p * sizeof(value_type), TO_STRING(cache_aligned_deallocate), pointer_p, typeid(T).name());
 #endif 
 		tbb::detail::r1::cache_aligned_deallocate(pointer_p);
 	}
