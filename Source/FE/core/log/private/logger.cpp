@@ -137,7 +137,6 @@ void logger::log(character* const logfile_folder_name_ptrc_p, character* const m
 
     buffer_type l_source_code_line_info_buffer[line_info_buffer_size] = "\0";
 
-
     ::snprintf(l_source_code_line_info_buffer, line_info_buffer_size, "%d", line_p);
 
     ::FE::algorithm::string::concatenate_strings<var::character>
@@ -152,22 +151,10 @@ void logger::log(character* const logfile_folder_name_ptrc_p, character* const m
             }
     );
 
+    tl_s_file_logger << tl_s_log_buffer.data() << "\n\n\n\n\n";
 
-    tl_s_log_buffer = tl_s_log_buffer.data();
-    length_t l_log_buffer_length = tl_s_log_buffer.length();
-
-    size_t l_divisor = (tl_s_log_buffer.capacity() / _BUFFER_FLUSH_TRIGGERING_POINT_BY_PERCENT);
-
-    ABORT_IF(l_log_buffer_length == 0, "l_log_buffer_length cannot be zero");
-    ABORT_IF(l_divisor == 0, "l_divisor cannot be zero");
-
-    if (l_log_buffer_length >= (l_log_buffer_length / l_divisor))
-    {
-        tl_s_file_logger << tl_s_log_buffer.data() << "\n\n";
-
-        memset(l_source_code_line_info_buffer, _NULL_, line_info_buffer_size * sizeof(buffer_type));
-        memset(tl_s_log_buffer.data(), _NULL_, default_debug_log_buffer_size * sizeof(buffer_type));
-    }
+    memset(l_source_code_line_info_buffer, _NULL_, line_info_buffer_size * sizeof(buffer_type));
+    memset(tl_s_log_buffer.data(), _NULL_, default_debug_log_buffer_size * sizeof(buffer_type));
 }
 
 

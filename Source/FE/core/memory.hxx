@@ -459,23 +459,23 @@ enum struct MEMORY_ERROR_1XX : int16
 
 struct total_memory_utilization_data
 {
-	var::size_t _global_total_bytes = 0;
-	var::size_t _thread_local_total_bytes = 0;
+	var::int64 _global_total_bytes = 0;
+	var::int64 _thread_local_total_bytes = 0;
 
-	var::size_t _global_total_bytes_by_type = 0;
-	var::size_t _thread_local_total_bytes_by_type = 0;
+	var::int64 _global_total_bytes_by_type = 0;
+	var::int64 _thread_local_total_bytes_by_type = 0;
 };
 
 struct global_memory_utilization
 {
-	var::size_t _global_total_bytes = 0;
-	var::size_t _thread_local_total_bytes = 0;
+	var::int64 _global_total_bytes = 0;
+	var::int64 _thread_local_total_bytes = 0;
 };
 
 struct type_memory_utilization
 {
-	var::size_t _global_total_bytes_by_type = 0;
-	var::size_t _thread_local_total_bytes_by_type = 0;
+	var::int64 _global_total_bytes_by_type = 0;
+	var::int64 _thread_local_total_bytes_by_type = 0;
 };
 
 
