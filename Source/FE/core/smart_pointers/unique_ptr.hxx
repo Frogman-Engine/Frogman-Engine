@@ -6,6 +6,8 @@
 #include <FE/core/memory.hxx>
 
 
+
+
 BEGIN_NAMESPACE(FE)
 
 
@@ -380,7 +382,7 @@ private:
 	{
 		if constexpr (FE::is_trivially_constructible_and_destructible<T>::value == FE::TYPE_TRIVIALITY::_TRIVIAL)
 		{
-			std::memcpy(this->m_smart_ptr, const_cast<element_type*>(values_p.begin()), values_p.size() * sizeof(element_type));
+			UNALIGNED_MEMCPY(this->m_smart_ptr, const_cast<element_type*>(values_p.begin()), values_p.size() * sizeof(element_type));
 		}
 		else if constexpr (FE::is_trivially_constructible_and_destructible<T>::value == FE::TYPE_TRIVIALITY::_NOT_TRIVIAL)
 		{
