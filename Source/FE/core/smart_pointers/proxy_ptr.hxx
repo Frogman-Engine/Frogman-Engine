@@ -310,7 +310,7 @@ public:
 	}
 
 	template<class allocator = FE::new_delete_proxy_allocator<FE::scalable_aligned_allocator<typename std::remove_all_extents<T>::type>>>
-	_FORCE_INLINE_ proxy_ptr(const FE::exclusive_ptr<T[], allocator>& exclusive_ptr_cref_p) noexcept : m_smart_ptr(ref_table_type::__check_ref(exclusive_ptr_cref_p.get_ref_table_key(), exclusive_ptr_cref_p.get())), m_smart_ptr_end(exclusive_ptr_cref_p.get_end()), m_ref_table_key(invalid_key_value)
+	_FORCE_INLINE_ proxy_ptr(const FE::exclusive_ptr<T[], allocator>& exclusive_ptr_cref_p) noexcept : m_smart_ptr(ref_table_type::__check_ref(exclusive_ptr_cref_p.get_ref_table_key(), exclusive_ptr_cref_p.get())), m_smart_ptr_end(exclusive_ptr_cref_p.get() + exclusive_ptr_cref_p.size()), m_ref_table_key(invalid_key_value)
 	{
 		if (this->m_smart_ptr != nullptr)
 		{
@@ -361,7 +361,7 @@ public:
 
 		ref_table_key_type l_retrieved_ref_table_key = exclusive_ptr_cref_p.get_ref_table_key();
 		this->m_smart_ptr = ref_table_type::__check_ref(l_retrieved_ref_table_key, exclusive_ptr_cref_p.get());
-		this->m_smart_ptr_end = exclusive_ptr_cref_p.get_end();
+		this->m_smart_ptr_end = this->m_smart_ptr + exclusive_ptr_cref_p.size();
 		if (this->m_smart_ptr != nullptr)
 		{
 			this->m_ref_table_key = l_retrieved_ref_table_key;

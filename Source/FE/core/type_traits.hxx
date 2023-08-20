@@ -9,6 +9,8 @@
 
 BEGIN_NAMESPACE(FE)
 
+template <typename T>
+struct remove_const_reference { using type = typename std::remove_const<typename std::remove_reference<T>::type>::type; };
 
 template <bool compile_time_test_result, typename true_type, typename false_type>
 struct conditional_type {};

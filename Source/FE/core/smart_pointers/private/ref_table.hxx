@@ -5,7 +5,7 @@
 #include <FE/core/allocator_adaptor.hxx>
 #include <FE/core/do_once.hxx>
 #include <vector>
-#include <queue> // this will be replaced with an in-house queue
+#include <stack>
 
 
 
@@ -28,9 +28,10 @@ protected:
 	using element_type = typename std::remove_extent<T>::type;
 	using ref_table_key_type = typename std::vector<pointer, FE::std_style::scalable_aligned_allocator<pointer>>::size_type;
 	using ref_table_type = std::vector<pointer, FE::std_style::scalable_aligned_allocator<pointer>>;
-	using ref_table_recycler_type = std::queue<ref_table_key_type>;  // this will be replaced with an in-house queue
+	using ref_table_recycler_type = std::stack<ref_table_key_type, std::vector<ref_table_key_type, FE::std_style::scalable_aligned_allocator<ref_table_key_type>>>;  // this will be replaced with an in-house queue
 
 	static constexpr auto ref_table_initial_size = 4096;
+	static constexpr auto ref_table_recycler_initial_size = ref_table_initial_size >> 1;
 	thread_local static ref_table_type tl_s_ref_table;
 	thread_local static ref_table_recycler_type tl_s_ref_table_recycler;
 
@@ -42,6 +43,7 @@ protected:
 			[&]()
 			{
 				tl_s_ref_table.reserve(ref_table_initial_size);
+				tl_s_ref_table.reserve(ref_table_recycler_initial_size);
 			}
 		);
 	}
@@ -71,22 +73,11 @@ public:
 	using ref_table_key_type = typename base_type::ref_table_key_type;
 
 private:
-	_CONSTEXPR20_ _FORCE_INLINE_ static void __reserve(size_t new_size_p) noexcept
-	{
-		base_type::tl_s_ref_table.reserve(new_size_p);
-	}
-
-	_CONSTEXPR20_ _FORCE_INLINE_ static void __shrink_to_fit() noexcept
-	{
-		base_type::tl_s_ref_table.shrink_to_fit();
-		base_type::tl_s_ref_table_recycler.shrink_to_fit();
-	}
-
 	_CONSTEXPR20_ _FORCE_INLINE_ static size_t __register_ref(pointer pointer_p) noexcept
 	{
 		if (base_type::tl_s_ref_table_recycler.empty() != true)
 		{
-			ref_table_key_type l_index_key = base_type::tl_s_ref_table_recycler.front();
+			ref_table_key_type l_index_key = base_type::tl_s_ref_table_recycler.top();
 			base_type::tl_s_ref_table_recycler.pop();
 			base_type::tl_s_ref_table[l_index_key] = pointer_p;
 

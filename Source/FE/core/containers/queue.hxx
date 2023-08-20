@@ -62,10 +62,10 @@ protected:
 	size_type m_element_count;
 
 public:
-	_FORCE_INLINE_ fqueue() noexcept : m_memory(), m_front_ptr(reinterpret_cast<pointer>(m_memory)), m_back_ptr(m_front_ptr), m_absolute_begin_ptrc(m_front_ptr), m_element_count() {}
-	_FORCE_INLINE_ _CONSTEXPR20_ ~fqueue() noexcept { this->pop_all(); }
+	_CONSTEXPR20_ _FORCE_INLINE_ fqueue() noexcept : m_memory(), m_front_ptr(reinterpret_cast<pointer>(m_memory)), m_back_ptr(m_front_ptr), m_absolute_begin_ptrc(m_front_ptr), m_element_count() {}
+	_CONSTEXPR20_ _FORCE_INLINE_ ~fqueue() noexcept { this->pop_all(); }
 
-	_FORCE_INLINE_ fqueue(std::initializer_list<value_type>&& initializer_list_p) noexcept : m_memory(), m_front_ptr(reinterpret_cast<pointer>(m_memory)), m_back_ptr(m_front_ptr), m_absolute_begin_ptrc(m_front_ptr), m_element_count(initializer_list_p.size())
+	_CONSTEXPR20_ _FORCE_INLINE_ fqueue(std::initializer_list<value_type>&& initializer_list_p) noexcept : m_memory(), m_front_ptr(reinterpret_cast<pointer>(m_memory)), m_back_ptr(m_front_ptr), m_absolute_begin_ptrc(m_front_ptr), m_element_count(initializer_list_p.size())
 	{
 		FE_ASSERT(initializer_list_p.size() > max_element_count, "${%s@0}!: The length of std::initializer_list exceeds the max_element_count", TO_STRING(MEMORY_ERROR_1XX::_ERROR_INVALID_SIZE));
 		FE_ASSERT(initializer_list_p.size() == 0, "${%s@0}!: Cannot assign an empty initializer_list", TO_STRING(MEMORY_ERROR_1XX::_ERROR_INVALID_SIZE));
@@ -75,7 +75,7 @@ public:
 		this->__jump_back_pointer(initializer_list_p.size());
 	}
 
-	_FORCE_INLINE_ fqueue(fqueue& other_ref_p) noexcept : m_memory(), m_front_ptr(reinterpret_cast<pointer>(m_memory)), m_back_ptr(m_front_ptr), m_absolute_begin_ptrc(m_front_ptr), m_element_count(other_ref_p.m_element_count)
+	_CONSTEXPR20_ _FORCE_INLINE_ fqueue(fqueue& other_ref_p) noexcept : m_memory(), m_front_ptr(reinterpret_cast<pointer>(m_memory)), m_back_ptr(m_front_ptr), m_absolute_begin_ptrc(m_front_ptr), m_element_count(other_ref_p.m_element_count)
 	{
 		if (other_ref_p.is_empty())
 		{
@@ -88,7 +88,7 @@ public:
 		this->__jump_back_pointer(other_ref_p.m_back_ptr - other_ref_p.m_front_ptr);
 	}
 
-	_FORCE_INLINE_ fqueue(fqueue&& rvalue_p) noexcept : m_memory(), m_front_ptr(reinterpret_cast<pointer>(m_memory)), m_back_ptr(m_front_ptr), m_absolute_begin_ptrc(m_front_ptr), m_element_count(rvalue_p.m_element_count)
+	_CONSTEXPR20_ _FORCE_INLINE_ fqueue(fqueue&& rvalue_p) noexcept : m_memory(), m_front_ptr(reinterpret_cast<pointer>(m_memory)), m_back_ptr(m_front_ptr), m_absolute_begin_ptrc(m_front_ptr), m_element_count(rvalue_p.m_element_count)
 	{
 		if (rvalue_p.is_empty())
 		{
@@ -103,7 +103,7 @@ public:
 		rvalue_p.__set_back_pointer_to_zero();
 	}
 
-	_FORCE_INLINE_ fqueue& operator=(std::initializer_list<value_type>&& initializer_list_p) noexcept
+	_CONSTEXPR20_ _FORCE_INLINE_ fqueue& operator=(std::initializer_list<value_type>&& initializer_list_p) noexcept
 	{
 		FE_ASSERT(initializer_list_p.size() > max_element_count, "${%s@0}!: The length of std::initializer_list exceeds the max_element_count", TO_STRING(MEMORY_ERROR_1XX::_ERROR_INVALID_SIZE));
 		FE_ASSERT(initializer_list_p.size() == 0, "${%s@0}!: Cannot assign an empty initializer_list", TO_STRING(MEMORY_ERROR_1XX::_ERROR_INVALID_SIZE));
@@ -113,7 +113,7 @@ public:
 		return *this;
 	}
 
-	_FORCE_INLINE_ fqueue& operator=(fqueue& other_ref_p) noexcept
+	_CONSTEXPR20_ _FORCE_INLINE_ fqueue& operator=(fqueue& other_ref_p) noexcept
 	{
 		if (other_ref_p.is_empty())
 		{
@@ -125,7 +125,7 @@ public:
 		return *this;
 	}
 
-	_FORCE_INLINE_ fqueue& operator=(fqueue&& rvalue_p) noexcept
+	_CONSTEXPR20_ _FORCE_INLINE_ fqueue& operator=(fqueue&& rvalue_p) noexcept
 	{
 		if (rvalue_p.is_empty())
 		{
@@ -137,7 +137,7 @@ public:
 		return *this;
 	}
 
-	_FORCE_INLINE_ void push(value_type value_p) noexcept
+	_CONSTEXPR20_ _FORCE_INLINE_ void push(value_type value_p) noexcept
 	{
 		FE_ASSERT(this->is_empty() && (this->m_absolute_begin_ptrc != this->m_back_ptr), "${%s@0}: Exceeded the queue index boundary", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_RANGE));
 
@@ -152,7 +152,7 @@ public:
 		++this->m_element_count;
 	}
 
-	_FORCE_INLINE_ value_type pop() noexcept
+	_CONSTEXPR20_ _FORCE_INLINE_ value_type pop() noexcept
 	{
 		if ((this->m_absolute_begin_ptrc + max_element_count) == this->m_front_ptr)
 		{
@@ -161,23 +161,31 @@ public:
 		}
 
 		T l_return_value_buffer = std::move(*this->m_front_ptr);
-		type_trait::destruct(*this->m_front_ptr);
+
+		if constexpr (type_trait::is_trivially_constructible_and_destructible == TYPE_TRIVIALITY::_NOT_TRIVIAL)
+		{
+			type_trait::destruct(*this->m_front_ptr);
+		}
+
 		++this->m_front_ptr;
 		--this->m_element_count;
 		return std::move(l_return_value_buffer);
 	}
 
-	_FORCE_INLINE_ void pop_all() noexcept
+	_CONSTEXPR20_ _FORCE_INLINE_ void pop_all() noexcept
 	{
 		if (this->is_empty() == false)
 		{
-			if (this->m_back_ptr > this->m_front_ptr)
+			if constexpr (type_trait::is_trivially_constructible_and_destructible == TYPE_TRIVIALITY::_NOT_TRIVIAL)
 			{
-				type_trait::destruct(this->m_front_ptr, this->m_back_ptr);
-			}
-			else
-			{
-				type_trait::destruct(this->m_back_ptr, this->m_front_ptr);
+				if (this->m_back_ptr > this->m_front_ptr)
+				{
+					type_trait::destruct(this->m_front_ptr, this->m_back_ptr);
+				}
+				else
+				{
+					type_trait::destruct(this->m_back_ptr, this->m_front_ptr);
+				}
 			}
 
 			this->__set_front_pointer_to_zero();
@@ -186,100 +194,95 @@ public:
 		}
 	}
 
-	_FORCE_INLINE_ const_reference front() const noexcept
+	_CONSTEXPR20_ _NODISCARD_ _FORCE_INLINE_ const_reference front() const noexcept
 	{
 		return *this->m_front_ptr;
 	}
 
-	_FORCE_INLINE_ const_reference back() const noexcept
+	_CONSTEXPR20_ _NODISCARD_ _FORCE_INLINE_ const_reference back() const noexcept
 	{
 		return *(this->m_back_ptr - 1);
 	}
 
-	_NODISCARD_ _FORCE_INLINE_ var::boolean is_empty() noexcept
+	_CONSTEXPR20_ _NODISCARD_ _FORCE_INLINE_ var::boolean is_empty() noexcept
 	{
 		return this->m_element_count == 0;
 	}
 
-	_FORCE_INLINE_ length_type length() noexcept
+	_CONSTEXPR20_ _NODISCARD_ _FORCE_INLINE_ size_type count() noexcept
 	{
 		return this->m_element_count;
 	}
 
-	_FORCE_INLINE_ size_type count() noexcept
+	_CONSTEXPR20_ _NODISCARD_ _FORCE_INLINE_ size_type size() noexcept
 	{
 		return this->m_element_count;
 	}
 
-	_FORCE_INLINE_ size_type size() noexcept
-	{
-		return this->m_element_count;
-	}
-
-	_FORCE_INLINE_ constexpr size_type max_size() const noexcept
+	_CONSTEXPR20_ _NODISCARD_ _FORCE_INLINE_ size_type max_size() const noexcept
 	{
 		return max_element_count;
 	}
 
-	_FORCE_INLINE_ constexpr size_type capacity() const noexcept
+	_CONSTEXPR20_ _NODISCARD_ _FORCE_INLINE_ size_type capacity() const noexcept
 	{
 		return max_element_count;
 	}
 
-	_FORCE_INLINE_ const_iterator cbegin() noexcept
+	_CONSTEXPR20_ _NODISCARD_ _FORCE_INLINE_ const_iterator cbegin() noexcept
 	{
 		return this->m_front_ptr;
 	}
 
-	_FORCE_INLINE_ const_iterator cend() noexcept
+	_CONSTEXPR20_ _NODISCARD_ _FORCE_INLINE_ const_iterator cend() noexcept
 	{
 		return this->m_front_ptr + max_element_count;
 	}
 
-	_FORCE_INLINE_ const_reverse_iterator crbegin() noexcept
+	_CONSTEXPR20_ _NODISCARD_ _FORCE_INLINE_ const_reverse_iterator crbegin() noexcept
 	{
 		return (this->m_front_ptr + max_element_count) - 1;
 	}
 
-	_FORCE_INLINE_ const_reverse_iterator crend() noexcept
+	_CONSTEXPR20_ _NODISCARD_ _FORCE_INLINE_ const_reverse_iterator crend() noexcept
 	{
 		return this->m_front_ptr - 1;
 	}
 
-	_FORCE_INLINE_ void swap(fqueue& second_ref_p) noexcept
+	_CONSTEXPR20_ _FORCE_INLINE_ void swap(fqueue& second_ref_p) noexcept
 	{
 		fqueue l_temporary = std::move(*this);
 		*this = std::move(second_ref_p);
 		second_ref_p = std::move(l_temporary);
 	}
 
-	var::boolean operator==(fqueue& other_ref_p) noexcept
+	_CONSTEXPR20_ _NODISCARD_ _FORCE_INLINE_ var::boolean operator==(fqueue& other_ref_p) noexcept
 	{
 		return FE::memcmp_s(this->cbegin(), this->cend(), other_ref_p.cbegin(), other_ref_p.cend());
 	}
 
-	var::boolean operator!=(fqueue& other_ref_p) noexcept
+	_CONSTEXPR20_ _NODISCARD_ _FORCE_INLINE_ var::boolean operator!=(fqueue& other_ref_p) noexcept
 	{
 		return !FE::memcmp_s(this->cbegin(), this->cend(), other_ref_p.cbegin(), other_ref_p.cend());
 	}
 
 protected:
-	_FORCE_INLINE_ void __jump_front_pointer(difference_type ptrdiff_p) noexcept
+	_CONSTEXPR20_ _FORCE_INLINE_ void __jump_front_pointer(difference_type ptrdiff_p) noexcept
 	{
 		this->m_front_ptr += ptrdiff_p;
 	}
 
-	_FORCE_INLINE_ void __set_front_pointer_to_zero() noexcept
+	_CONSTEXPR20_ _FORCE_INLINE_ void __set_front_pointer_to_zero() noexcept
 	{
 		this->m_front_ptr = this->m_absolute_begin_ptrc;
 	}
 
-	_FORCE_INLINE_ void __jump_back_pointer(difference_type ptrdiff_p) noexcept
+	_CONSTEXPR20_ _FORCE_INLINE_ void __jump_back_pointer(difference_type ptrdiff_p) noexcept
 	{
 		this->m_back_ptr += ptrdiff_p;
 	}
 
-	_FORCE_INLINE_ void __set_back_pointer_to_zero() noexcept
+	_CONSTEXPR20_ _FORCE_INLINE_ void __set_back_pointer_to_zero() noexcept
 	{
 		this->m_back_ptr = this->m_absolute_begin_ptrc;
 	}

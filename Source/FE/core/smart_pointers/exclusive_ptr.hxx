@@ -402,11 +402,6 @@ public:
 		return this->m_smart_ptr;
 	}
 
-	_CONSTEXPR23_ _FORCE_INLINE_ pointer get_end() const noexcept
-	{
-		return this->m_smart_ptr_end;
-	}
-
 	_CONSTEXPR23_ _FORCE_INLINE_ ref_table_key_type get_ref_table_key() const noexcept
 	{
 		return this->m_ref_table_key;
