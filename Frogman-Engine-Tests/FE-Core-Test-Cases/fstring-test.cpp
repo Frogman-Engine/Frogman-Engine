@@ -6,45 +6,49 @@ using namespace FE;
 using namespace algorithm;
 
 
-_MAYBE_UNUSED_ constexpr auto _UNIT_TEST_FSTRING_LENGTH_ = 100;
+
+
+_MAYBE_UNUSED_ constexpr auto _TEST_FSTRING_LENGTH_ = 128;
+
+
 
 
 TEST(fstring, constructor)
 {
-	FE::fstring<_UNIT_TEST_FSTRING_LENGTH_> l_fstring = "FE::fstring<_UNIT_TEST_FSTRING_LENGTH_> is a fixed sized string class template.";
+	FE::fstring<_TEST_FSTRING_LENGTH_> l_fstring = "FE::fstring<_UNIT_TEST_FSTRING_LENGTH_> is a fixed sized string class template.";
 
 	EXPECT_TRUE(l_fstring == "FE::fstring<_UNIT_TEST_FSTRING_LENGTH_> is a fixed sized string class template.");
 }
 
 TEST(fstring, constructor_assignment)
 {
-	FE::fstring<_UNIT_TEST_FSTRING_LENGTH_>::value_type l_buffer[] = "FE::fstring<_UNIT_TEST_FSTRING_LENGTH_> is a fixed sized string class template.";
-	FE::fstring<_UNIT_TEST_FSTRING_LENGTH_> l_fstring = l_buffer;
+	FE::fstring<_TEST_FSTRING_LENGTH_>::value_type l_buffer[] = "FE::fstring<_UNIT_TEST_FSTRING_LENGTH_> is a fixed sized string class template.";
+	FE::fstring<_TEST_FSTRING_LENGTH_> l_fstring = l_buffer;
 
 	EXPECT_TRUE(l_fstring == l_buffer);
 }
 
 TEST(fstring, copy_constructor)
 {
-	FE::fstring<_UNIT_TEST_FSTRING_LENGTH_> l_fstring = "FE::fstring<_UNIT_TEST_FSTRING_LENGTH_> is a fixed sized string class template.";
-	FE::fstring<_UNIT_TEST_FSTRING_LENGTH_> l_subject = l_fstring;
+	FE::fstring<_TEST_FSTRING_LENGTH_> l_fstring = "FE::fstring<_UNIT_TEST_FSTRING_LENGTH_> is a fixed sized string class template.";
+	FE::fstring<_TEST_FSTRING_LENGTH_> l_subject = l_fstring;
 
 	EXPECT_TRUE(l_subject == l_fstring);
 }
 
 TEST(fstring, move_constructor)
 {
-	FE::fstring<_UNIT_TEST_FSTRING_LENGTH_> l_fstring = "FE::fstring<_UNIT_TEST_FSTRING_LENGTH_> is a fixed sized string class template.";
-	FE::fstring<_UNIT_TEST_FSTRING_LENGTH_> l_subject = std::move(l_fstring);
+	FE::fstring<_TEST_FSTRING_LENGTH_> l_fstring = "FE::fstring<_UNIT_TEST_FSTRING_LENGTH_> is a fixed sized string class template.";
+	FE::fstring<_TEST_FSTRING_LENGTH_> l_subject = std::move(l_fstring);
 
 	EXPECT_FALSE(l_subject == l_fstring);
 }
 
 TEST(fstring, copy_assignment_operator)
 {
-	FE::fstring<_UNIT_TEST_FSTRING_LENGTH_>::value_type l_buffer[] = "FE::fstring<_UNIT_TEST_FSTRING_LENGTH_> is a fixed sized string class template.";
+	FE::fstring<_TEST_FSTRING_LENGTH_>::value_type l_buffer[] = "FE::fstring<_UNIT_TEST_FSTRING_LENGTH_> is a fixed sized string class template.";
 
-	FE::fstring<_UNIT_TEST_FSTRING_LENGTH_> l_fstring;
+	FE::fstring<_TEST_FSTRING_LENGTH_> l_fstring;
 	l_fstring = l_buffer;
 
 	EXPECT_TRUE(l_fstring == l_buffer);
@@ -52,7 +56,7 @@ TEST(fstring, copy_assignment_operator)
 
 TEST(fstring, assignment_operator)
 {
-	FE::fstring<_UNIT_TEST_FSTRING_LENGTH_> l_fstring;
+	FE::fstring<_TEST_FSTRING_LENGTH_> l_fstring;
 	l_fstring = "FE::fstring<_UNIT_TEST_FSTRING_LENGTH_> is a fixed sized string class template.";
 
 	EXPECT_TRUE("FE::fstring<_UNIT_TEST_FSTRING_LENGTH_> is a fixed sized string class template." == l_fstring);
@@ -60,24 +64,24 @@ TEST(fstring, assignment_operator)
 
 TEST(fstring, index_operator)
 {
-	FE::fstring<_UNIT_TEST_FSTRING_LENGTH_> l_fstring = "FE::fstring<_UNIT_TEST_FSTRING_LENGTH_> is a fixed sized string class template.";
+	FE::fstring<_TEST_FSTRING_LENGTH_> l_fstring = "FE::fstring<_UNIT_TEST_FSTRING_LENGTH_> is a fixed sized string class template.";
 	EXPECT_EQ(l_fstring[4], 'f');
 }
 
 TEST(fstring, assign)
 {
-	FE::fstring<_UNIT_TEST_FSTRING_LENGTH_> l_fstring;
+	FE::fstring<_TEST_FSTRING_LENGTH_> l_fstring;
 	l_fstring.assign(3, '?');
 
 	EXPECT_TRUE("???" == l_fstring);
 
 	l_fstring.clear();
 	l_fstring.assign("C++ 20", 3);
-
+	
 	EXPECT_TRUE("C++" == l_fstring);
 
 
-	FE::fstring<_UNIT_TEST_FSTRING_LENGTH_> l_other = "A bottle of water from the United Kingdom";
+	FE::fstring<_TEST_FSTRING_LENGTH_> l_other = "A bottle of water from the United Kingdom";
 	l_fstring.clear();
 	l_fstring.assign(l_other, 0, 41);
 	EXPECT_TRUE("A bottle of water from the United Kingdom" == l_fstring);
@@ -97,7 +101,7 @@ TEST(fstring, assign)
 
 TEST(fstring, insert)
 {
-	FE::fstring<_UNIT_TEST_FSTRING_LENGTH_> l_fstring = "TD is evil";
+	FE::fstring<_TEST_FSTRING_LENGTH_> l_fstring = "TD is evil";
 	l_fstring.insert(2, 1, 'D');
 	EXPECT_TRUE("TDD is evil" == l_fstring);
 
@@ -108,7 +112,7 @@ TEST(fstring, insert)
 	EXPECT_EQ(l_fstring.length(), strlen(l_fstring.c_str()));
 
 	l_fstring = "Unit testing is  TDD";
-	FE::fstring<_UNIT_TEST_FSTRING_LENGTH_> l_not = "not";
+	FE::fstring<_TEST_FSTRING_LENGTH_> l_not = "not";
 	l_fstring.insert(16, l_not);
 	EXPECT_TRUE("Unit testing is not TDD" == l_fstring);
 
@@ -122,17 +126,17 @@ TEST(fstring, insert)
 
 TEST(fstring, front_back)
 {
-	FE::fstring<_UNIT_TEST_FSTRING_LENGTH_> l_fstring = "FE::fstring<_UNIT_TEST_FSTRING_LENGTH_> is a fixed sized string class template.";
+	FE::fstring<_TEST_FSTRING_LENGTH_> l_fstring = "FE::fstring<_UNIT_TEST_FSTRING_LENGTH_> is a fixed sized string class template.";
 
-	FE::fstring<_UNIT_TEST_FSTRING_LENGTH_>::value_type l_buffer[3] = "\0";
-	string::concatenate_characters<FE::fstring<_UNIT_TEST_FSTRING_LENGTH_>::value_type>(l_buffer, 3, { l_fstring.front(), l_fstring.back() });
+	FE::fstring<_TEST_FSTRING_LENGTH_>::value_type l_buffer[3] = "\0";
+	string::concatenate_characters<FE::fstring<_TEST_FSTRING_LENGTH_>::value_type>(l_buffer, 3, { l_fstring.front(), l_fstring.back() });
 
 	EXPECT_TRUE(string::string_comparison(l_buffer, "F."));
 }
 
 TEST(fstring, c_str)
 {
-	FE::fstring<_UNIT_TEST_FSTRING_LENGTH_> l_fstring = "FE::fstring<_UNIT_TEST_FSTRING_LENGTH_> is a fixed sized string class template.";
+	FE::fstring<_TEST_FSTRING_LENGTH_> l_fstring = "FE::fstring<_UNIT_TEST_FSTRING_LENGTH_> is a fixed sized string class template.";
 
 	EXPECT_TRUE(::FE::algorithm::string::string_comparison("FE::fstring<_UNIT_TEST_FSTRING_LENGTH_> is a fixed sized string class template.", l_fstring.std_str().c_str()));
 
@@ -143,8 +147,8 @@ TEST(fstring, c_str)
 
 TEST(fstring, begin_end)
 {
-	FE::fstring<_UNIT_TEST_FSTRING_LENGTH_> l_fstring = "FE::fstring<_UNIT_TEST_FSTRING_LENGTH_> is a fixed sized string class template.";
-	FE::fstring<_UNIT_TEST_FSTRING_LENGTH_>::value_type l_buffer[_UNIT_TEST_FSTRING_LENGTH_] = "\0";
+	FE::fstring<_TEST_FSTRING_LENGTH_> l_fstring = "FE::fstring<_UNIT_TEST_FSTRING_LENGTH_> is a fixed sized string class template.";
+	FE::fstring<_TEST_FSTRING_LENGTH_>::value_type l_buffer[_TEST_FSTRING_LENGTH_] = "\0";
 	
 	FE::var::index_t l_idx = 0;
 	for (auto character = l_fstring.begin(); character < l_fstring.end(); ++character)
@@ -159,9 +163,9 @@ TEST(fstring, begin_end)
 
 TEST(fstring, capacity_clear_and_is_empty)
 {
-	FE::fstring<_UNIT_TEST_FSTRING_LENGTH_> l_fstring = "FE::fstring<_UNIT_TEST_FSTRING_LENGTH_> is a fixed sized string class template.";
+	FE::fstring<_TEST_FSTRING_LENGTH_> l_fstring = "FE::fstring<_UNIT_TEST_FSTRING_LENGTH_> is a fixed sized string class template.";
 
-	EXPECT_EQ(l_fstring.capacity(), _UNIT_TEST_FSTRING_LENGTH_);
+	EXPECT_EQ(l_fstring.capacity(), _TEST_FSTRING_LENGTH_);
 
 	l_fstring.clear();
 
@@ -170,7 +174,7 @@ TEST(fstring, capacity_clear_and_is_empty)
 
 TEST(fstring, push_pop_back)
 {
-	FE::fstring<_UNIT_TEST_FSTRING_LENGTH_> l_fstring = "FE::fstring<_UNIT_TEST_FSTRING_LENGTH_> is a fixed sized string class template";
+	FE::fstring<_TEST_FSTRING_LENGTH_> l_fstring = "FE::fstring<_UNIT_TEST_FSTRING_LENGTH_> is a fixed sized string class template";
 	l_fstring.push_back('.');
 
 	EXPECT_TRUE(string::string_comparison("FE::fstring<_UNIT_TEST_FSTRING_LENGTH_> is a fixed sized string class template.", l_fstring.data()));
@@ -180,7 +184,7 @@ TEST(fstring, push_pop_back)
 
 TEST(fstring, concatenation)
 {
-	FE::fstring<_UNIT_TEST_FSTRING_LENGTH_> l_fstring = "FE::fstring<_UNIT_TEST_FSTRING_LENGTH_> is a";
+	FE::fstring<_TEST_FSTRING_LENGTH_> l_fstring = "FE::fstring<_UNIT_TEST_FSTRING_LENGTH_> is a";
 	l_fstring += " fixed sized string class template.";
 
 	EXPECT_TRUE(string::string_comparison("FE::fstring<_UNIT_TEST_FSTRING_LENGTH_> is a fixed sized string class template.", l_fstring.data()));
@@ -188,8 +192,8 @@ TEST(fstring, concatenation)
 
 TEST(fstring, starts_with)
 {
-	FE::fstring<_UNIT_TEST_FSTRING_LENGTH_> l_fstring = "FE::fstring is a string class template.";
-	FE::fstring<_UNIT_TEST_FSTRING_LENGTH_> l_substring = "FE";
+	FE::fstring<_TEST_FSTRING_LENGTH_> l_fstring = "FE::fstring is a string class template.";
+	FE::fstring<_TEST_FSTRING_LENGTH_> l_substring = "FE";
 
 	EXPECT_TRUE(l_fstring.starts_with(l_substring));
 
@@ -202,8 +206,8 @@ TEST(fstring, starts_with)
 
 TEST(fstring, ends_with)
 {
-	FE::fstring<_UNIT_TEST_FSTRING_LENGTH_> l_fstring = "FE::fstring is a string class template.";
-	FE::fstring<_UNIT_TEST_FSTRING_LENGTH_> l_substring = "template.";
+	FE::fstring<_TEST_FSTRING_LENGTH_> l_fstring = "FE::fstring is a string class template.";
+	FE::fstring<_TEST_FSTRING_LENGTH_> l_substring = "template.";
 
 	EXPECT_TRUE(l_fstring.ends_with(l_substring));
 
@@ -216,8 +220,8 @@ TEST(fstring, ends_with)
 
 TEST(fstring, contains)
 {
-	FE::fstring<_UNIT_TEST_FSTRING_LENGTH_> l_fstring = "FE::fstring is a string class template.";
-	FE::fstring<_UNIT_TEST_FSTRING_LENGTH_> l_substring = "string";
+	FE::fstring<_TEST_FSTRING_LENGTH_> l_fstring = "FE::fstring is a string class template.";
+	FE::fstring<_TEST_FSTRING_LENGTH_> l_substring = "string";
 
 	EXPECT_TRUE(l_fstring.contains(l_substring));
 			
@@ -230,16 +234,16 @@ TEST(fstring, contains)
 
 TEST(fstring, copy)
 {
-	FE::fstring<_UNIT_TEST_FSTRING_LENGTH_> l_fstring = "FE::fstring is a string class template.";
-	FE::fstring<_UNIT_TEST_FSTRING_LENGTH_>::value_type l_buffer[20] = "\0";
+	FE::fstring<_TEST_FSTRING_LENGTH_> l_fstring = "FE::fstring is a string class template.";
+	FE::fstring<_TEST_FSTRING_LENGTH_>::value_type l_buffer[20] = "\0";
 	l_fstring.copy(l_buffer, 20, 24, 29);
 	EXPECT_TRUE(string::string_comparison(l_buffer, "class"));
 }
 
 TEST(fstring, find)
 {
-	FE::fstring<_UNIT_TEST_FSTRING_LENGTH_> l_fstring = "FE::fstring is a string class template.";
-	FE::fstring<_UNIT_TEST_FSTRING_LENGTH_> l_substring = "fstring";
+	FE::fstring<_TEST_FSTRING_LENGTH_> l_fstring = "FE::fstring is a string class template.";
+	FE::fstring<_TEST_FSTRING_LENGTH_> l_substring = "fstring";
 
 	FE::optional<string::range> l_search_result = l_fstring.find(l_substring);
 	EXPECT_TRUE(l_search_result.has_value());
@@ -256,8 +260,8 @@ TEST(fstring, find)
 
 TEST(fstring, rfind)
 {
-	FE::fstring<_UNIT_TEST_FSTRING_LENGTH_> l_fstring = "FE::fstring is a string class template.";
-	FE::fstring<_UNIT_TEST_FSTRING_LENGTH_> l_substring = "string class";
+	FE::fstring<_TEST_FSTRING_LENGTH_> l_fstring = "FE::fstring is a string class template.";
+	FE::fstring<_TEST_FSTRING_LENGTH_> l_substring = "string class";
 
 	FE::optional<string::range> l_search_result = l_fstring.rfind(l_substring, 39);
 	EXPECT_TRUE(l_search_result.has_value());
@@ -273,7 +277,7 @@ TEST(fstring, rfind)
 
 TEST(fstring, count_chars)
 {
-	FE::fstring<_UNIT_TEST_FSTRING_LENGTH_> l_fstring = "FE::fstring is a string class template.";
+	FE::fstring<_TEST_FSTRING_LENGTH_> l_fstring = "FE::fstring is a string class template.";
 
 	EXPECT_EQ((l_fstring.count_chars('s'))._match_count, 5);
 
@@ -283,10 +287,53 @@ TEST(fstring, count_chars)
 
 TEST(fstring, swap)
 {
-	FE::fstring<_UNIT_TEST_FSTRING_LENGTH_> l_first_fstring = "ABC";
-	FE::fstring<_UNIT_TEST_FSTRING_LENGTH_> l_second_fstring = "CBA";
+	FE::fstring<_TEST_FSTRING_LENGTH_> l_first_fstring = "ABC";
+	FE::fstring<_TEST_FSTRING_LENGTH_> l_second_fstring = "CBA";
 
-	FE::fstring<_UNIT_TEST_FSTRING_LENGTH_>::swap(l_first_fstring, l_second_fstring);
+	l_first_fstring.swap(l_second_fstring);
 
 	EXPECT_TRUE(l_first_fstring == "CBA");
+}
+
+TEST(fstring, erase)
+{
+	FE::fstring<_TEST_FSTRING_LENGTH_> l_first_fstring = "FE::fstring is a fixed-sized string class template.";
+	l_first_fstring.erase(17, 12);
+
+	EXPECT_TRUE(l_first_fstring == "FE::fstring is a string class template.");
+}
+
+TEST(fstring, append1)
+{
+
+}
+
+TEST(fstring, append2)
+{
+
+}
+
+TEST(fstring, append3)
+{
+
+}
+
+TEST(fstring, append4)
+{
+
+}
+
+TEST(fstring, append5)
+{
+
+}
+
+TEST(fstring, append6)
+{
+
+}
+
+TEST(fstring, append7)
+{
+
 }

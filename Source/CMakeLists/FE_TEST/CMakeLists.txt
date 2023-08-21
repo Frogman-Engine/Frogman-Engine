@@ -76,7 +76,6 @@ ADD_EXECUTABLE(	${FE_TEST}
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
 	MESSAGE("Configurating The Build Environment for Linux X86-64 Distributions")
 
-	ADD_COMPILE_DEFINITIONS(__AVX__=1)
 
 	if(GNU_CPP)
 		TARGET_COMPILE_OPTIONS(${FE_TEST} PRIVATE

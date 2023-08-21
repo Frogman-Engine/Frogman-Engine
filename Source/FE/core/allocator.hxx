@@ -43,20 +43,11 @@ public:
 
 	_NODISCARD_ _FORCE_INLINE_ static pointer reallocate(pointer const pointer_p, size_type prev_count_p, size_type new_count_p) noexcept
 	{
-		if constexpr (is_trivially_constructible_and_destructible == FE::TYPE_TRIVIALITY::_NOT_TRIVIAL)
-		{
-			pointer const l_end = pointer_p + prev_count_p;
-			for (pointer begin = pointer_p; begin != l_end; ++begin)
-			{
-				begin->~value_type();
-			}
-		}
-
 		pointer l_result = allocator::reallocate(pointer_p, prev_count_p, new_count_p);
 
 		if constexpr (is_trivially_constructible_and_destructible == FE::TYPE_TRIVIALITY::_NOT_TRIVIAL)
 		{
-			new(l_result) value_type[new_count_p]{};
+			new(l_result + prev_count_p) value_type[new_count_p - prev_count_p]{};
 		}
 		return l_result;
 	}
