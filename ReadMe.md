@@ -16,7 +16,7 @@ The default settings use /MTd (Static C++ Standard Library Debug Build) for debu
 
 All project settings can be adjusted by modifying CMakeLists.txt
 
-# Third Party Libraries: Boost Libraries 1.82, Intel OneAPI TBB 2021.9.0, Google Test, and Google City Hash
+# Third Party Libraries: Boost Libraries 1.82, Intel OneAPI TBB 2021.10.0, Google Test, and Google City Hash
 
 | Platform     | Architecture  | Platform Support | 
 |--------------|---------------|------------------|
