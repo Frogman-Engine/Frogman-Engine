@@ -93,8 +93,12 @@ public:
 
 	_CONSTEXPR23_ _FORCE_INLINE_ void reset(element_type value_p) noexcept
 	{
-		this->~unique_ptr();
-		*this = std::move(value_p);
+		if (this->m_smart_ptr == nullptr)
+		{
+			this->m_smart_ptr = allocator::allocate(1);
+		}
+
+		*this->m_smart_ptr = std::move(value_p);
 	}
 
 	_FORCE_INLINE_ void swap(unique_ptr& other_ref_p) noexcept
@@ -233,6 +237,11 @@ public:
 
 	_CONSTEXPR23_ _FORCE_INLINE_ unique_ptr(std::initializer_list<element_type>&& values_p) noexcept : m_smart_ptr(allocator::allocate( values_p.size() )), m_smart_ptr_end(m_smart_ptr + values_p.size())
 	{
+		if (values_p.size() == 0)
+		{
+			return;
+		}
+
 		this->__copy_from_initializer_list(std::move(values_p));
 	}
 
@@ -260,8 +269,19 @@ public:
 
 	_CONSTEXPR23_ _FORCE_INLINE_ unique_ptr& operator=(std::initializer_list<element_type>&& values_p) noexcept
 	{
+		if (values_p.size() == 0)
+		{
+			return *this;
+		}
+
 		this->__reallocate(values_p.size());
 		this->__copy_from_initializer_list(std::move(values_p));
+		return *this;
+	}
+
+	_CONSTEXPR23_ _FORCE_INLINE_ unique_ptr& operator=(FE::resize_to&& new_array_size_p) noexcept
+	{
+		this->__reallocate(new_array_size_p._length);
 		return *this;
 	}
 
@@ -281,8 +301,17 @@ public:
 
 	_CONSTEXPR23_ _FORCE_INLINE_ void reset(std::initializer_list<element_type>&& values_p) noexcept
 	{
-		this->__reallocate(values_p.size());
-		this->__copy_from_initializer_list(std::move(values_p));
+		this->operator=(std::move(values_p));
+	}
+
+	_CONSTEXPR23_ _FORCE_INLINE_ void reset(FE::resize_to&& new_array_size_p) noexcept
+	{
+		this->operator=(std::move(new_array_size_p));
+	}
+
+	_CONSTEXPR23_ _FORCE_INLINE_ var::size_t size() const noexcept
+	{
+		return this->m_smart_ptr_end - this->m_smart_ptr;
 	}
 
 	_FORCE_INLINE_ void swap(unique_ptr& other_ref_p) noexcept
@@ -328,11 +357,6 @@ public:
 		FE_ASSERT(static_cast<index_t>(this->m_smart_ptr_end - this->m_smart_ptr) <= index_p, "${%s@0}: ${%s@1} exceeds the index boundary. ${%s@1} was ${%lu@2}.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_RANGE), TO_STRING(index_p), &index_p);
 
 		return this->m_smart_ptr[index_p];
-	}
-
-	_CONSTEXPR23_ _FORCE_INLINE_ var::size_t size() const noexcept
-	{
-		return this->m_smart_ptr_end - this->m_smart_ptr;
 	}
 
 

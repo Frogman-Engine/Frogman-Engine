@@ -6,6 +6,7 @@
 
 BEGIN_NAMESPACE(FE)
 
+// refactor optional
 
 struct nullopt_t {};
 _MAYBE_UNUSED_ constexpr inline nullopt_t nullopt;

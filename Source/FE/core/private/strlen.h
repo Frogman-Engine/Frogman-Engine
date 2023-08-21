@@ -7,7 +7,7 @@
 namespace FE::internal
 {
     template<typename char_type>
-    _NODISCARD_ _FORCE_INLINE_ constexpr FE::var::uint64 strlen(const char_type* const str_ptrc_p) noexcept
+    _NODISCARD_ _CONSTEXPR_ _FORCE_INLINE_ FE::var::uint64 strlen(const char_type* const str_ptrc_p) noexcept
     {
         const char_type* l_iterator_ptr = str_ptrc_p;
 

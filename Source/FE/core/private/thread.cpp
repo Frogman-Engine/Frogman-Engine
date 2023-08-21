@@ -14,28 +14,23 @@
 #endif
 
 
-thread_local ::FE::var::uint64 FE::thread::tl_s_this_thread_instance_id = 0;
+thread_local FE::var::uint64 FE::thread::tl_s_this_thread_instance_id = 0;
 
 
-::FE::thread::thread(thread& other_ref_p) noexcept : m_thread(::std::move(other_ref_p.m_thread)) {}
-::FE::thread::thread(thread&& move_p) noexcept : m_thread(::std::move(move_p.m_thread)) {}
+FE::thread::thread(thread& other_ref_p) noexcept : m_thread(::std::move(other_ref_p.m_thread)) {}
+FE::thread::thread(thread&& move_p) noexcept : m_thread(::std::move(move_p.m_thread)) {}
 
-::FE::thread& FE::thread::operator=(thread& other_ref_p) noexcept
+FE::thread& FE::thread::operator=(thread& other_ref_p) noexcept
 {
 	this->m_thread = ::std::move(other_ref_p.m_thread);
 	return *this;
 }
 
-::FE::thread& FE::thread::operator=(thread&& move_p) noexcept
+FE::thread& FE::thread::operator=(thread&& move_p) noexcept
 {
 	this->m_thread = ::std::move(move_p.m_thread);
 	return *this;
 };
-
-::FE::var::boolean FE::thread::is_this_thread_active() noexcept
-{
-	return this->m_thread.joinable();
-}
 
 void FE::thread::fork(FE::task_base* const function_ptrc_p, void* out_return_buffer_ptr_p) noexcept
 {
@@ -51,10 +46,6 @@ void FE::thread::fork(FE::task_base* const function_ptrc_p, void* out_return_buf
 	);
 }
 
-void FE::thread::join() noexcept
-{
-	this->m_thread.join();
-}
 
 void FE::thread::swap(thread& left_thread_ref_p, thread right_thread_ref_p) noexcept
 {
@@ -62,7 +53,7 @@ void FE::thread::swap(thread& left_thread_ref_p, thread right_thread_ref_p) noex
 	::FE::algorithm::utility::swap(left_thread_ref_p.tl_s_this_thread_instance_id, right_thread_ref_p.tl_s_this_thread_instance_id);
 }
 
-::FE::var::uint64 FE::thread::calculate_suitable_thread_count() noexcept
+FE::uint64 FE::thread::calculate_suitable_thread_count() noexcept
 {
 	if ( ((::std::thread::hardware_concurrency() >> 1) + (::std::thread::hardware_concurrency() / 8)) < minimum_suitable_thread_count)
 	{
@@ -72,7 +63,7 @@ void FE::thread::swap(thread& left_thread_ref_p, thread right_thread_ref_p) noex
 	return static_cast<var::uint64>(::std::thread::hardware_concurrency() >> 1) + static_cast<var::uint64>(::std::thread::hardware_concurrency() / 8);
 }
 
-FE::var::uint64 FE::thread::this_thread_id() noexcept
+FE::uint64 FE::thread::this_thread_id() noexcept
 {
 #ifdef _WINDOWS_64BIT_OS_
 	return GetCurrentThreadId();
@@ -81,9 +72,8 @@ FE::var::uint64 FE::thread::this_thread_id() noexcept
 #endif
 }
 
-::FE::var::uint64 FE::thread::__generate_instance_id() noexcept
+FE::uint64 FE::thread::__generate_instance_id() noexcept
 {
 	static var::uint64 l_s_id = 0;
-
 	return ++l_s_id;
 }

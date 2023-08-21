@@ -10,6 +10,9 @@
 BEGIN_NAMESPACE(FE)
 
 
+using void_t = uint8;
+
+
 enum struct FORWARD_DATA : boolean
 {
     _AS_LVALUE_REF = true,
@@ -26,18 +29,18 @@ public:
     using reference = T&;
     using rvalue_reference = T&&;
 
-    _FORCE_INLINE_ static void set(rvalue_reference rvalue_p) noexcept
+    _CONSTEXPR20_ _FORCE_INLINE_ static void set(rvalue_reference rvalue_p) noexcept
     {
         tl_s_rvalue_buffer = std::move(rvalue_p);
     }
 
-    _FORCE_INLINE_ static reference set_and_get(rvalue_reference rvalue_p) noexcept
+    _CONSTEXPR20_ _FORCE_INLINE_ static reference set_and_get(rvalue_reference rvalue_p) noexcept
     {
         tl_s_rvalue_buffer = std::move(rvalue_p);
         return tl_s_rvalue_buffer;
     }
 
-    _FORCE_INLINE_ static reference get() noexcept
+    _CONSTEXPR20_ _FORCE_INLINE_ static reference get() noexcept
     {
         return tl_s_rvalue_buffer;
     }
@@ -63,7 +66,7 @@ public:
     using function_type = decltype(m_function_ptr);
     using return_type = R;
 
-    constexpr _FORCE_INLINE_ function() noexcept : m_function_ptr() {}
+    _CONSTEXPR20_ _FORCE_INLINE_ function() noexcept : m_function_ptr() {}
     _CONSTEXPR23_ _FORCE_INLINE_ ~function() noexcept {}
 
     _CONSTEXPR20_ _FORCE_INLINE_ function(function_type function_ptr_p) noexcept : m_function_ptr(function_ptr_p) {}
@@ -122,7 +125,7 @@ public:
     using function_type = decltype(m_function_ptr);
     using return_type = void;
 
-    constexpr _FORCE_INLINE_ function() noexcept : m_function_ptr() {}
+    _CONSTEXPR20_ _FORCE_INLINE_ function() noexcept : m_function_ptr() {}
     _CONSTEXPR23_ _FORCE_INLINE_ ~function() noexcept {}
 
     _CONSTEXPR20_ _FORCE_INLINE_ function(function_type function_ptr_p) noexcept : m_function_ptr(function_ptr_p) {}
@@ -184,7 +187,7 @@ public:
     using function_type = decltype(m_function_ptr);
     using return_type = R;
 
-    constexpr _FORCE_INLINE_ function() noexcept : m_function_ptr() {}
+    _CONSTEXPR20_ _FORCE_INLINE_ function() noexcept : m_function_ptr() {}
     _CONSTEXPR23_ _FORCE_INLINE_ ~function() noexcept {}
 
     _CONSTEXPR20_ _FORCE_INLINE_ function(function_type function_ptr_p) noexcept : m_function_ptr(function_ptr_p) {}
@@ -243,7 +246,7 @@ public:
     using function_type = decltype(m_function_ptr);
     using return_type = void;
 
-    constexpr _FORCE_INLINE_ function() noexcept : m_function_ptr() {}
+    _CONSTEXPR20_ _FORCE_INLINE_ function() noexcept : m_function_ptr() {}
     _CONSTEXPR23_ _FORCE_INLINE_ ~function() noexcept {}
 
     _CONSTEXPR20_ _FORCE_INLINE_ function(function_type function_ptr_p) noexcept : m_function_ptr(function_ptr_p) {}
@@ -309,7 +312,7 @@ public:
     using return_type = R;
     using class_type = C;
 
-    constexpr _FORCE_INLINE_ method() noexcept : m_method_ptr() {}
+    _CONSTEXPR20_ _FORCE_INLINE_ method() noexcept : m_method_ptr() {}
     _CONSTEXPR23_ _FORCE_INLINE_ ~method() noexcept {}
 
     _CONSTEXPR20_ _FORCE_INLINE_ method(method_type method_ptr_p) noexcept : m_method_ptr(method_ptr_p) {}
@@ -369,7 +372,7 @@ public:
     using return_type = void;
     using class_type = C;
 
-    constexpr _FORCE_INLINE_ method() noexcept : m_method_ptr() {}
+    _CONSTEXPR20_ _FORCE_INLINE_ method() noexcept : m_method_ptr() {}
     _CONSTEXPR23_ _FORCE_INLINE_ ~method() noexcept {}
 
     _CONSTEXPR20_ _FORCE_INLINE_ method(method_type method_ptr_p) noexcept : m_method_ptr(method_ptr_p) {}
@@ -489,7 +492,7 @@ public:
     using return_type = void;
     using class_type = C;
 
-    constexpr _FORCE_INLINE_ method() noexcept : m_method_ptr() {}
+    _CONSTEXPR20_ _FORCE_INLINE_ method() noexcept : m_method_ptr() {}
     _CONSTEXPR23_ _FORCE_INLINE_ ~method() noexcept {}
 
     _CONSTEXPR20_ _FORCE_INLINE_ method(method_type method_ptr_p) noexcept : m_method_ptr(method_ptr_p) {}
@@ -550,7 +553,7 @@ public:
     using return_type = R;
     using class_type = C;
 
-    constexpr _FORCE_INLINE_ method() noexcept : m_method_ptr() {}
+    _CONSTEXPR20_ _FORCE_INLINE_ method() noexcept : m_method_ptr() {}
     _CONSTEXPR23_ _FORCE_INLINE_ ~method() noexcept {}
 
     _CONSTEXPR20_ _FORCE_INLINE_ method(method_type method_ptr_p) noexcept : m_method_ptr(method_ptr_p) {}
@@ -610,7 +613,7 @@ public:
     using return_type = void;
     using class_type = C;
 
-    constexpr _FORCE_INLINE_ method() noexcept : m_method_ptr() {}
+    _CONSTEXPR20_ _FORCE_INLINE_ method() noexcept : m_method_ptr() {}
     _CONSTEXPR23_ _FORCE_INLINE_ ~method() noexcept {}
 
     _CONSTEXPR20_ _FORCE_INLINE_ method(method_type method_ptr_p) noexcept : m_method_ptr(method_ptr_p) {}
@@ -670,7 +673,7 @@ public:
     using return_type = R;
     using class_type = C;
 
-     constexpr _FORCE_INLINE_ method() noexcept : m_method_ptr() {}
+    _CONSTEXPR20_ _FORCE_INLINE_ method() noexcept : m_method_ptr() {}
      _CONSTEXPR23_ _FORCE_INLINE_ ~method() noexcept {}
 
     _CONSTEXPR20_ _FORCE_INLINE_ method(method_type method_ptr_p) noexcept : m_method_ptr(method_ptr_p) {}
@@ -730,7 +733,7 @@ public:
     using return_type = void;
     using class_type = C;
 
-    constexpr _FORCE_INLINE_ method() noexcept : m_method_ptr() {}
+    _CONSTEXPR20_ _FORCE_INLINE_ method() noexcept : m_method_ptr() {}
     _CONSTEXPR23_ _FORCE_INLINE_ ~method() noexcept {}
 
     _CONSTEXPR20_ _FORCE_INLINE_ method(method_type method_ptr_p) noexcept : m_method_ptr(method_ptr_p) {}
@@ -813,19 +816,19 @@ struct arguments<first, void, void, void, void, void, void, void, void, void>
     first _first;
     static constexpr inline ARGUMENTS_COUNT arguments_count = ARGUMENTS_COUNT::_1;
     
-    _FORCE_INLINE_ arguments() noexcept = default;
-    _FORCE_INLINE_ ~arguments() noexcept = default;
+    _CONSTEXPR20_ _FORCE_INLINE_ arguments() noexcept = default;
+    _CONSTEXPR23_ _FORCE_INLINE_ ~arguments() noexcept = default;
 
-    _FORCE_INLINE_ arguments(arguments& arguments_ref_p) noexcept : _first(arguments_ref_p._first) {};
-    _FORCE_INLINE_ arguments(arguments&& arguments_p) noexcept : _first(std::move(arguments_p._first)) {};
+    _CONSTEXPR20_ _FORCE_INLINE_ arguments(arguments& arguments_ref_p) noexcept : _first(arguments_ref_p._first) {};
+    _CONSTEXPR20_ _FORCE_INLINE_ arguments(arguments&& arguments_p) noexcept : _first(std::move(arguments_p._first)) {};
 
-    _FORCE_INLINE_ arguments& operator=(arguments& arguments_ref_p) noexcept
+    _CONSTEXPR20_ _FORCE_INLINE_ arguments& operator=(arguments& arguments_ref_p) noexcept
     {
         this->_first = arguments_ref_p._first;
         return *this;
     }
 
-    _FORCE_INLINE_ arguments& operator=(arguments&& arguments_p) noexcept
+    _CONSTEXPR20_ _FORCE_INLINE_ arguments& operator=(arguments&& arguments_p) noexcept
     {
         this->_first = std::move(arguments_p._first);
         return *this;
@@ -842,20 +845,20 @@ struct arguments<first, second, void, void, void, void, void, void, void, void> 
     second_type _second;
     static constexpr inline ARGUMENTS_COUNT arguments_count = ARGUMENTS_COUNT::_2;
 
-    _FORCE_INLINE_ arguments() noexcept : base_type(), _second() {};
-    _FORCE_INLINE_ ~arguments() noexcept = default;
+    _CONSTEXPR20_ _FORCE_INLINE_ arguments() noexcept : base_type(), _second() {};
+    _CONSTEXPR23_ _FORCE_INLINE_ ~arguments() noexcept = default;
 
-    _FORCE_INLINE_ arguments(arguments& arguments_ref_p) noexcept : base_type(arguments_ref_p), _second(arguments_ref_p._second) {};
-    _FORCE_INLINE_ arguments(arguments&& arguments_p) noexcept : base_type(std::move(arguments_p)), _second(std::move(arguments_p._second)) {};
+    _CONSTEXPR20_ _FORCE_INLINE_ arguments(arguments& arguments_ref_p) noexcept : base_type(arguments_ref_p), _second(arguments_ref_p._second) {};
+    _CONSTEXPR20_ _FORCE_INLINE_ arguments(arguments&& arguments_p) noexcept : base_type(std::move(arguments_p)), _second(std::move(arguments_p._second)) {};
 
-    _FORCE_INLINE_ arguments& operator=(arguments& arguments_ref_p) noexcept
+    _CONSTEXPR20_ _FORCE_INLINE_ arguments& operator=(arguments& arguments_ref_p) noexcept
     {
         base_type::operator=(arguments_ref_p);
         this->_second = arguments_ref_p._second;
         return *this;
     }
 
-    _FORCE_INLINE_ arguments& operator=(arguments&& arguments_p) noexcept
+    _CONSTEXPR20_ _FORCE_INLINE_ arguments& operator=(arguments&& arguments_p) noexcept
     {
         base_type::operator=(arguments_p);
         this->_second = std::move(arguments_p._second);
@@ -874,20 +877,20 @@ struct arguments<first, second, third, void, void, void, void, void, void, void>
     third_type _third;
     static constexpr inline ARGUMENTS_COUNT arguments_count = ARGUMENTS_COUNT::_3;
 
-    _FORCE_INLINE_ arguments() noexcept : base_type(), _third() {};
-    _FORCE_INLINE_ ~arguments() noexcept = default;
+    _CONSTEXPR20_ _FORCE_INLINE_ arguments() noexcept : base_type(), _third() {};
+    _CONSTEXPR23_ _FORCE_INLINE_ ~arguments() noexcept = default;
 
-    _FORCE_INLINE_ arguments(arguments& arguments_ref_p) noexcept : base_type(arguments_ref_p), _third(arguments_ref_p._third) {};
-    _FORCE_INLINE_ arguments(arguments&& arguments_p) noexcept : base_type(std::move(arguments_p)), _third(std::move(arguments_p._third)) {};
+    _CONSTEXPR20_ _FORCE_INLINE_ arguments(arguments& arguments_ref_p) noexcept : base_type(arguments_ref_p), _third(arguments_ref_p._third) {};
+    _CONSTEXPR20_ _FORCE_INLINE_ arguments(arguments&& arguments_p) noexcept : base_type(std::move(arguments_p)), _third(std::move(arguments_p._third)) {};
 
-    _FORCE_INLINE_ arguments& operator=(arguments& arguments_ref_p) noexcept
+    _CONSTEXPR20_ _FORCE_INLINE_ arguments& operator=(arguments& arguments_ref_p) noexcept
     {
         base_type::operator=(arguments_ref_p);
         this->_third = arguments_ref_p._third;
         return *this;
     }
 
-    _FORCE_INLINE_ arguments& operator=(arguments&& arguments_p) noexcept
+    _CONSTEXPR20_ _FORCE_INLINE_ arguments& operator=(arguments&& arguments_p) noexcept
     {
         base_type::operator=(arguments_p);
         this->_third = std::move(arguments_p._third);
@@ -907,20 +910,20 @@ struct arguments<first, second, third, fourth, void, void, void, void, void, voi
     fourth_type _fourth;
     static constexpr inline ARGUMENTS_COUNT arguments_count = ARGUMENTS_COUNT::_4;
 
-    _FORCE_INLINE_ arguments() noexcept : base_type(), _fourth() {};
-    _FORCE_INLINE_ ~arguments() noexcept = default;
+    _CONSTEXPR20_ _FORCE_INLINE_ arguments() noexcept : base_type(), _fourth() {};
+    _CONSTEXPR23_ _FORCE_INLINE_ ~arguments() noexcept = default;
 
-    _FORCE_INLINE_ arguments(arguments& arguments_ref_p) noexcept : base_type(arguments_ref_p), _fourth(arguments_ref_p._fourth) {};
-    _FORCE_INLINE_ arguments(arguments&& arguments_p) noexcept : base_type(std::move(arguments_p)), _fourth(std::move(arguments_p._fourth)) {};
+    _CONSTEXPR20_ _FORCE_INLINE_ arguments(arguments& arguments_ref_p) noexcept : base_type(arguments_ref_p), _fourth(arguments_ref_p._fourth) {};
+    _CONSTEXPR20_ _FORCE_INLINE_ arguments(arguments&& arguments_p) noexcept : base_type(std::move(arguments_p)), _fourth(std::move(arguments_p._fourth)) {};
 
-    _FORCE_INLINE_ arguments& operator=(arguments& arguments_ref_p) noexcept
+    _CONSTEXPR20_ _FORCE_INLINE_ arguments& operator=(arguments& arguments_ref_p) noexcept
     {
         base_type::operator=(arguments_ref_p);
         this->_fourth = arguments_ref_p._fourth;
         return *this;
     }
 
-    _FORCE_INLINE_ arguments& operator=(arguments&& arguments_p) noexcept
+    _CONSTEXPR20_ _FORCE_INLINE_ arguments& operator=(arguments&& arguments_p) noexcept
     {
         base_type::operator=(arguments_p);
         this->_fourth = std::move(arguments_p._fourth);
@@ -941,20 +944,20 @@ struct arguments<first, second, third, fourth, fifth, void, void, void, void, vo
     fifth_type _fifth;
     static constexpr inline ARGUMENTS_COUNT arguments_count = ARGUMENTS_COUNT::_5;
 
-    _FORCE_INLINE_ arguments() noexcept : base_type(), _fifth() {};
-    _FORCE_INLINE_ ~arguments() noexcept = default;
+    _CONSTEXPR20_ _FORCE_INLINE_ arguments() noexcept : base_type(), _fifth() {};
+    _CONSTEXPR23_ _FORCE_INLINE_ ~arguments() noexcept = default;
 
-    _FORCE_INLINE_ arguments(arguments& arguments_ref_p) noexcept : base_type(arguments_ref_p), _fifth(arguments_ref_p._fifth) {};
-    _FORCE_INLINE_ arguments(arguments&& arguments_p) noexcept : base_type(std::move(arguments_p)), _fifth(std::move(arguments_p._fifth)) {};
+    _CONSTEXPR20_ _FORCE_INLINE_ arguments(arguments& arguments_ref_p) noexcept : base_type(arguments_ref_p), _fifth(arguments_ref_p._fifth) {};
+    _CONSTEXPR20_ _FORCE_INLINE_ arguments(arguments&& arguments_p) noexcept : base_type(std::move(arguments_p)), _fifth(std::move(arguments_p._fifth)) {};
 
-    _FORCE_INLINE_ arguments& operator=(arguments& arguments_ref_p) noexcept
+    _CONSTEXPR20_ _FORCE_INLINE_ arguments& operator=(arguments& arguments_ref_p) noexcept
     {
         base_type::operator=(arguments_ref_p);
         this->_fifth = arguments_ref_p._fifth;
         return *this;
     }
 
-    _FORCE_INLINE_ arguments& operator=(arguments&& arguments_p) noexcept
+    _CONSTEXPR20_ _FORCE_INLINE_ arguments& operator=(arguments&& arguments_p) noexcept
     {
         base_type::operator=(arguments_p);
         this->_fifth = std::move(arguments_p._fifth);
@@ -976,20 +979,20 @@ struct arguments<first, second, third, fourth, fifth, sixth, void, void, void, v
     sixth_type _sixth;
     static constexpr inline ARGUMENTS_COUNT arguments_count = ARGUMENTS_COUNT::_6;
 
-    _FORCE_INLINE_ arguments() noexcept : base_type(), _sixth() {};
-    _FORCE_INLINE_ ~arguments() noexcept = default;
+    _CONSTEXPR20_ _FORCE_INLINE_ arguments() noexcept : base_type(), _sixth() {};
+    _CONSTEXPR23_ _FORCE_INLINE_ ~arguments() noexcept = default;
 
-    _FORCE_INLINE_ arguments(arguments& arguments_ref_p) noexcept : base_type(arguments_ref_p), _sixth(arguments_ref_p._sixth) {};
-    _FORCE_INLINE_ arguments(arguments&& arguments_p) noexcept : base_type(std::move(arguments_p)), _sixth(std::move(arguments_p._sixth)) {};
+    _CONSTEXPR20_ _FORCE_INLINE_ arguments(arguments& arguments_ref_p) noexcept : base_type(arguments_ref_p), _sixth(arguments_ref_p._sixth) {};
+    _CONSTEXPR20_ _FORCE_INLINE_ arguments(arguments&& arguments_p) noexcept : base_type(std::move(arguments_p)), _sixth(std::move(arguments_p._sixth)) {};
 
-    _FORCE_INLINE_ arguments& operator=(arguments& arguments_ref_p) noexcept
+    _CONSTEXPR20_ _FORCE_INLINE_ arguments& operator=(arguments& arguments_ref_p) noexcept
     {
         base_type::operator=(arguments_ref_p);
         this->_sixth = arguments_ref_p._sixth;
         return *this;
     }
 
-    _FORCE_INLINE_ arguments& operator=(arguments&& arguments_p) noexcept
+    _CONSTEXPR20_ _FORCE_INLINE_ arguments& operator=(arguments&& arguments_p) noexcept
     {
         base_type::operator=(arguments_p);
         this->_sixth = std::move(arguments_p._sixth);
@@ -1012,20 +1015,20 @@ struct arguments<first, second, third, fourth, fifth, sixth, seventh, void, void
     seventh_type _seventh;
     static constexpr inline ARGUMENTS_COUNT arguments_count = ARGUMENTS_COUNT::_7;
 
-    _FORCE_INLINE_ arguments() noexcept : base_type(), _seventh() {};
-    _FORCE_INLINE_ ~arguments() noexcept = default;
+    _CONSTEXPR20_ _FORCE_INLINE_ arguments() noexcept : base_type(), _seventh() {};
+    _CONSTEXPR23_ _FORCE_INLINE_ ~arguments() noexcept = default;
 
-    _FORCE_INLINE_ arguments(arguments& arguments_ref_p) noexcept : base_type(arguments_ref_p), _seventh(arguments_ref_p._seventh) {};
-    _FORCE_INLINE_ arguments(arguments&& arguments_p) noexcept : base_type(std::move(arguments_p)), _seventh(std::move(arguments_p._seventh)) {};
+    _CONSTEXPR20_ _FORCE_INLINE_ arguments(arguments& arguments_ref_p) noexcept : base_type(arguments_ref_p), _seventh(arguments_ref_p._seventh) {};
+    _CONSTEXPR20_ _FORCE_INLINE_ arguments(arguments&& arguments_p) noexcept : base_type(std::move(arguments_p)), _seventh(std::move(arguments_p._seventh)) {};
 
-    _FORCE_INLINE_ arguments& operator=(arguments& arguments_ref_p) noexcept
+    _CONSTEXPR20_ _FORCE_INLINE_ arguments& operator=(arguments& arguments_ref_p) noexcept
     {
         base_type::operator=(arguments_ref_p);
         this->_seventh = arguments_ref_p._seventh;
         return *this;
     }
 
-    _FORCE_INLINE_ arguments& operator=(arguments&& arguments_p) noexcept
+    _CONSTEXPR20_ _FORCE_INLINE_ arguments& operator=(arguments&& arguments_p) noexcept
     {
         base_type::operator=(arguments_p);
         this->_seventh = std::move(arguments_p._seventh);
@@ -1049,20 +1052,20 @@ struct arguments<first, second, third, fourth, fifth, sixth, seventh, eighth, vo
     eighth_type _eighth;
     static constexpr inline ARGUMENTS_COUNT arguments_count = ARGUMENTS_COUNT::_8;
 
-    _FORCE_INLINE_ arguments() noexcept : base_type(), _eighth() {};
+    _CONSTEXPR20_ _FORCE_INLINE_ arguments() noexcept : base_type(), _eighth() {};
     _FORCE_INLINE_ ~arguments() noexcept = default;
 
-    _FORCE_INLINE_ arguments(arguments& arguments_ref_p) noexcept : base_type(arguments_ref_p), _eighth(arguments_ref_p._eighth) {};
-    _FORCE_INLINE_ arguments(arguments&& arguments_p) noexcept : base_type(std::move(arguments_p)), _eighth(std::move(arguments_p._eighth)) {};
+    _CONSTEXPR20_ _FORCE_INLINE_ arguments(arguments& arguments_ref_p) noexcept : base_type(arguments_ref_p), _eighth(arguments_ref_p._eighth) {};
+    _CONSTEXPR20_ _FORCE_INLINE_ arguments(arguments&& arguments_p) noexcept : base_type(std::move(arguments_p)), _eighth(std::move(arguments_p._eighth)) {};
 
-    _FORCE_INLINE_ arguments& operator=(arguments& arguments_ref_p) noexcept
+    _CONSTEXPR20_ _FORCE_INLINE_ arguments& operator=(arguments& arguments_ref_p) noexcept
     {
         base_type::operator=(arguments_ref_p);
         this->_eighth = arguments_ref_p._eighth;
         return *this;
     }
 
-    _FORCE_INLINE_ arguments& operator=(arguments&& arguments_p) noexcept
+    _CONSTEXPR20_ _FORCE_INLINE_ arguments& operator=(arguments&& arguments_p) noexcept
     {
         base_type::operator=(arguments_p);
         this->_eighth = std::move(arguments_p._eighth);
@@ -1087,20 +1090,20 @@ struct arguments<first, second, third, fourth, fifth, sixth, seventh, eighth, ni
     ninth_type _ninth;
     static constexpr inline ARGUMENTS_COUNT arguments_count = ARGUMENTS_COUNT::_9;
 
-    _FORCE_INLINE_ arguments() noexcept : base_type(), _ninth() {};
+    _CONSTEXPR20_ _FORCE_INLINE_ arguments() noexcept : base_type(), _ninth() {};
     _FORCE_INLINE_ ~arguments() noexcept = default;
 
-    _FORCE_INLINE_ arguments(arguments& arguments_ref_p) noexcept : base_type(arguments_ref_p), _ninth(arguments_ref_p._ninth) {};
-    _FORCE_INLINE_ arguments(arguments&& arguments_p) noexcept : base_type(std::move(arguments_p)), _ninth(std::move(arguments_p._ninth)) {};
+    _CONSTEXPR20_ _FORCE_INLINE_ arguments(arguments& arguments_ref_p) noexcept : base_type(arguments_ref_p), _ninth(arguments_ref_p._ninth) {};
+    _CONSTEXPR20_ _FORCE_INLINE_ arguments(arguments&& arguments_p) noexcept : base_type(std::move(arguments_p)), _ninth(std::move(arguments_p._ninth)) {};
 
-    _FORCE_INLINE_ arguments& operator=(arguments& arguments_ref_p) noexcept
+    _CONSTEXPR20_ _FORCE_INLINE_ arguments& operator=(arguments& arguments_ref_p) noexcept
     {
         base_type::operator=(arguments_ref_p);
         this->_ninth = arguments_ref_p._ninth;
         return *this;
     }
 
-    _FORCE_INLINE_ arguments& operator=(arguments&& arguments_p) noexcept
+    _CONSTEXPR20_ _FORCE_INLINE_ arguments& operator=(arguments&& arguments_p) noexcept
     {
         base_type::operator=(arguments_p);
         this->_ninth = std::move(arguments_p._ninth);
@@ -1127,20 +1130,20 @@ struct arguments : public arguments<first, second, third, fourth, fifth, sixth, 
     tenth_type _tenth;
     static constexpr inline ARGUMENTS_COUNT arguments_count = ARGUMENTS_COUNT::_10;
 
-    _FORCE_INLINE_ arguments() noexcept : base_type(), _tenth() {};
+    _CONSTEXPR20_ _FORCE_INLINE_ arguments() noexcept : base_type(), _tenth() {};
     _FORCE_INLINE_ ~arguments() noexcept = default;
 
-    _FORCE_INLINE_ arguments(arguments& arguments_ref_p) noexcept : base_type(arguments_ref_p), _tenth(arguments_ref_p._tenth) {};
-    _FORCE_INLINE_ arguments(arguments&& arguments_p) noexcept : base_type(std::move(arguments_p)), _tenth(std::move(arguments_p._tenth)) {};
+    _CONSTEXPR20_ _FORCE_INLINE_ arguments(arguments& arguments_ref_p) noexcept : base_type(arguments_ref_p), _tenth(arguments_ref_p._tenth) {};
+    _CONSTEXPR20_ _FORCE_INLINE_ arguments(arguments&& arguments_p) noexcept : base_type(std::move(arguments_p)), _tenth(std::move(arguments_p._tenth)) {};
 
-    _FORCE_INLINE_ arguments& operator=(arguments& arguments_ref_p) noexcept
+    _CONSTEXPR20_ _FORCE_INLINE_ arguments& operator=(arguments& arguments_ref_p) noexcept
     {
         base_type::operator=(arguments_ref_p);
         this->_tenth = arguments_ref_p._tenth;
         return *this;
     }
 
-    _FORCE_INLINE_ arguments& operator=(arguments&& arguments_p) noexcept
+    _CONSTEXPR20_ _FORCE_INLINE_ arguments& operator=(arguments&& arguments_p) noexcept
     {
         base_type::operator=(arguments_p);
         this->_tenth = std::move(arguments_p._tenth);
@@ -1169,29 +1172,32 @@ struct cpp_style_task<C, task_impl, FE::FORWARD_DATA::_AS_RVALUE_REF, arguments_
     using task_impl_type = task_impl;
     using task_type = FE::method<FE::FORWARD_DATA::_AS_RVALUE_REF, class_type, task_impl_type>;
     using arguments_buffer_type = FE::arguments<arguments_buffer_types...>;
+    using return_type = typename FE::remove_const_reference<typename FE::method<FE::FORWARD_DATA::_AS_RVALUE_REF, class_type, task_impl_type>::return_type>::type;
+    using task_result_buffer_type = typename FE::conditional_type<std::is_void<return_type>::value, void_t, return_type>::type;
 
+    task_result_buffer_type _task_result_buffer;
     arguments_buffer_type _arguments_buffer;
     task_type _method;
     class_type* _instance_ptr;
 
-    _FORCE_INLINE_ cpp_style_task() noexcept : _arguments_buffer(), _method(), _instance_ptr() {}
+    _CONSTEXPR20_ _FORCE_INLINE_ cpp_style_task() noexcept : _task_result_buffer(), _arguments_buffer(), _method(), _instance_ptr() {}
     _FORCE_INLINE_ ~cpp_style_task() noexcept = default;
 
-    _FORCE_INLINE_ cpp_style_task(task_type task_p) noexcept : _arguments_buffer(), _method(task_p), _instance_ptr() {}
-    _FORCE_INLINE_ cpp_style_task(cpp_style_task& other_cref_p) noexcept : _arguments_buffer(other_cref_p._arguments_buffer), _method(other_cref_p._method), _instance_ptr(other_cref_p._instance_ptr) {}
-    _FORCE_INLINE_ cpp_style_task(cpp_style_task&& rvalue_p) noexcept : _arguments_buffer(std::move(rvalue_p._arguments_buffer)), _method(rvalue_p._method), _instance_ptr(rvalue_p._instance_ptr) 
+    _CONSTEXPR20_ _FORCE_INLINE_ cpp_style_task(task_type task_p) noexcept : _arguments_buffer(), _method(task_p), _instance_ptr() {}
+    _CONSTEXPR20_ _FORCE_INLINE_ cpp_style_task(cpp_style_task& other_cref_p) noexcept : _arguments_buffer(other_cref_p._arguments_buffer), _method(other_cref_p._method), _instance_ptr(other_cref_p._instance_ptr) {}
+    _CONSTEXPR20_ _FORCE_INLINE_ cpp_style_task(cpp_style_task&& rvalue_p) noexcept : _arguments_buffer(std::move(rvalue_p._arguments_buffer)), _method(rvalue_p._method), _instance_ptr(rvalue_p._instance_ptr)
     {
-        rvalue_p._method = nullptr; 
+        rvalue_p._method = nullptr;
         rvalue_p._instance_ptr = nullptr;
     }
 
-    _FORCE_INLINE_ cpp_style_task& operator=(task_type task_p) noexcept
+    _CONSTEXPR20_ _FORCE_INLINE_ cpp_style_task& operator=(task_type task_p) noexcept
     {
         this->_method = task_p;
         return *this;
     }
 
-    _FORCE_INLINE_ cpp_style_task& operator=(cpp_style_task& other_cref_p) noexcept
+    _CONSTEXPR20_ _FORCE_INLINE_ cpp_style_task& operator=(cpp_style_task& other_cref_p) noexcept
     {
         this->_arguments_buffer = other_cref_p._arguments_buffer;
         this->_method = other_cref_p._method;
@@ -1199,7 +1205,7 @@ struct cpp_style_task<C, task_impl, FE::FORWARD_DATA::_AS_RVALUE_REF, arguments_
         return *this;
     }
 
-    _FORCE_INLINE_ cpp_style_task& operator=(cpp_style_task&& rvalue_p) noexcept
+    _CONSTEXPR20_ _FORCE_INLINE_ cpp_style_task& operator=(cpp_style_task&& rvalue_p) noexcept
     {
         this->_arguments_buffer = std::move(rvalue_p._arguments_buffer);
 
@@ -1347,29 +1353,32 @@ struct cpp_style_task<C, task_impl, FE::FORWARD_DATA::_AS_LVALUE_REF, arguments_
     using task_impl_type = task_impl;
     using task_type = FE::method<FE::FORWARD_DATA::_AS_LVALUE_REF, class_type, task_impl_type>;
     using arguments_buffer_type = FE::arguments<arguments_buffer_types...>;
+    using return_type = typename FE::remove_const_reference<typename FE::method<FE::FORWARD_DATA::_AS_LVALUE_REF, class_type, task_impl_type>::return_type>::type;
+    using task_result_buffer_type = typename FE::conditional_type<std::is_void<return_type>::value, void_t, return_type>::type;
 
+    task_result_buffer_type _task_result_buffer;
     arguments_buffer_type _arguments_buffer;
     task_type _method;
     class_type* _instance_ptr;
 
-    _FORCE_INLINE_ cpp_style_task() noexcept : _arguments_buffer(), _method(), _instance_ptr() {}
+    _CONSTEXPR20_ _FORCE_INLINE_ cpp_style_task() noexcept : _task_result_buffer(), _arguments_buffer(), _method(), _instance_ptr() {}
     _FORCE_INLINE_ ~cpp_style_task() noexcept = default;
 
-    _FORCE_INLINE_ cpp_style_task(task_type task_p) noexcept : _arguments_buffer(), _method(task_p), _instance_ptr() {}
-    _FORCE_INLINE_ cpp_style_task(cpp_style_task& other_cref_p) noexcept : _arguments_buffer(other_cref_p._arguments_buffer), _method(other_cref_p._method), _instance_ptr(other_cref_p._instance_ptr) {}
-    _FORCE_INLINE_ cpp_style_task(cpp_style_task&& rvalue_p) noexcept : _arguments_buffer(std::move(rvalue_p._arguments_buffer)), _method(rvalue_p._method), _instance_ptr(rvalue_p._instance_ptr)
+    _CONSTEXPR20_ _FORCE_INLINE_ cpp_style_task(task_type task_p) noexcept : _arguments_buffer(), _method(task_p), _instance_ptr() {}
+    _CONSTEXPR20_ _FORCE_INLINE_ cpp_style_task(cpp_style_task& other_cref_p) noexcept : _arguments_buffer(other_cref_p._arguments_buffer), _method(other_cref_p._method), _instance_ptr(other_cref_p._instance_ptr) {}
+    _CONSTEXPR20_ _FORCE_INLINE_ cpp_style_task(cpp_style_task&& rvalue_p) noexcept : _arguments_buffer(std::move(rvalue_p._arguments_buffer)), _method(rvalue_p._method), _instance_ptr(rvalue_p._instance_ptr)
     {
         rvalue_p._method = nullptr;
         rvalue_p._instance_ptr = nullptr;
     }
 
-    _FORCE_INLINE_ cpp_style_task& operator=(task_type task_p) noexcept
+    _CONSTEXPR20_ _FORCE_INLINE_ cpp_style_task& operator=(task_type task_p) noexcept
     {
         this->_method = task_p;
         return *this;
     }
 
-    _FORCE_INLINE_ cpp_style_task& operator=(cpp_style_task& other_cref_p) noexcept
+    _CONSTEXPR20_ _FORCE_INLINE_ cpp_style_task& operator=(cpp_style_task& other_cref_p) noexcept
     {
         this->_arguments_buffer = other_cref_p._arguments_buffer;
         this->_method = other_cref_p._method;
@@ -1377,7 +1386,7 @@ struct cpp_style_task<C, task_impl, FE::FORWARD_DATA::_AS_LVALUE_REF, arguments_
         return *this;
     }
 
-    _FORCE_INLINE_ cpp_style_task& operator=(cpp_style_task&& rvalue_p) noexcept
+    _CONSTEXPR20_ _FORCE_INLINE_ cpp_style_task& operator=(cpp_style_task&& rvalue_p) noexcept
     {
         this->_arguments_buffer = std::move(rvalue_p._arguments_buffer);
 
@@ -1528,31 +1537,34 @@ struct c_style_task<task_impl, FE::FORWARD_DATA::_AS_RVALUE_REF, arguments_buffe
     using task_impl_type = task_impl;
     using task_type = FE::function<FE::FORWARD_DATA::_AS_RVALUE_REF, task_impl_type>;
     using arguments_buffer_type = FE::arguments<arguments_buffer_types...>;
+    using return_type = typename FE::remove_const_reference<typename FE::function<FE::FORWARD_DATA::_AS_RVALUE_REF, task_impl_type>::return_type>::type;
+    using task_result_buffer_type = typename FE::conditional_type<std::is_void<return_type>::value, void_t, return_type>::type;
 
+    task_result_buffer_type _task_result_buffer;
     arguments_buffer_type _arguments_buffer;
     task_type _function;
     
-    _FORCE_INLINE_ c_style_task() noexcept : _arguments_buffer(), _function() {}
+    _CONSTEXPR20_ _FORCE_INLINE_ c_style_task() noexcept : _task_result_buffer(), _arguments_buffer(), _function() {}
     _FORCE_INLINE_ ~c_style_task() noexcept = default;
 
-    _FORCE_INLINE_ c_style_task(task_type task_p) noexcept : _function(task_p) {}
-    _FORCE_INLINE_ c_style_task(c_style_task& other_ref_p) noexcept : _arguments_buffer(other_ref_p._arguments_buffer), _function(other_ref_p._function) {}
-    _FORCE_INLINE_ c_style_task(c_style_task&& rvalue_p) noexcept : _arguments_buffer(std::move(rvalue_p._arguments_buffer)), _function(rvalue_p._function) { rvalue_p._function = nullptr; }
+    _CONSTEXPR20_ _FORCE_INLINE_ c_style_task(task_type task_p) noexcept : _function(task_p) {}
+    _CONSTEXPR20_ _FORCE_INLINE_ c_style_task(c_style_task& other_ref_p) noexcept : _arguments_buffer(other_ref_p._arguments_buffer), _function(other_ref_p._function) {}
+    _CONSTEXPR20_ _FORCE_INLINE_ c_style_task(c_style_task&& rvalue_p) noexcept : _arguments_buffer(std::move(rvalue_p._arguments_buffer)), _function(rvalue_p._function) { rvalue_p._function = nullptr; }
 
-    _FORCE_INLINE_ c_style_task& operator=(task_type task_p) noexcept
+    _CONSTEXPR20_ _FORCE_INLINE_ c_style_task& operator=(task_type task_p) noexcept
     {
         this->_function = task_p;
         return *this;
     }
 
-    _FORCE_INLINE_ c_style_task& operator=(c_style_task& other_ref_p) noexcept
+    _CONSTEXPR20_ _FORCE_INLINE_ c_style_task& operator=(c_style_task& other_ref_p) noexcept
     {
         this->_arguments_buffer = other_ref_p._arguments_buffer;
         this->_function = other_ref_p._function;
         return *this;
     }
 
-    _FORCE_INLINE_ c_style_task& operator=(c_style_task&& rvalue_p) noexcept
+    _CONSTEXPR20_ _FORCE_INLINE_ c_style_task& operator=(c_style_task&& rvalue_p) noexcept
     {
         this->_arguments_buffer = std::move(rvalue_p._arguments_buffer);
 
@@ -1692,31 +1704,34 @@ struct c_style_task<task_impl, FE::FORWARD_DATA::_AS_LVALUE_REF, arguments_buffe
     using task_impl_type = task_impl;
     using task_type = FE::function<FE::FORWARD_DATA::_AS_LVALUE_REF, task_impl_type>;
     using arguments_buffer_type = FE::arguments<arguments_buffer_types...>;
-
+    using return_type = typename FE::remove_const_reference<typename FE::function<FE::FORWARD_DATA::_AS_LVALUE_REF, task_impl_type>::return_type>::type;
+    using task_result_buffer_type = typename FE::conditional_type<std::is_void<return_type>::value, void_t, return_type>::type;
+    
+    task_result_buffer_type _task_result_buffer;
     arguments_buffer_type _arguments_buffer;
     task_type _function;
 
-    _FORCE_INLINE_ c_style_task() noexcept : _arguments_buffer(), _function() {}
+    _CONSTEXPR20_ _FORCE_INLINE_ c_style_task() noexcept : _task_result_buffer(), _arguments_buffer(), _function() {}
     _FORCE_INLINE_ ~c_style_task() noexcept = default;
 
-    _FORCE_INLINE_ c_style_task(task_type task_p) noexcept : _function(task_p) {}
-    _FORCE_INLINE_ c_style_task(c_style_task& other_ref_p) noexcept : _arguments_buffer(other_ref_p._arguments_buffer), _function(other_ref_p._function) {}
-    _FORCE_INLINE_ c_style_task(c_style_task&& rvalue_p) noexcept : _arguments_buffer(std::move(rvalue_p._arguments_buffer)), _function(rvalue_p._function) { rvalue_p._function = nullptr; }
+    _CONSTEXPR20_ _FORCE_INLINE_ c_style_task(task_type task_p) noexcept : _function(task_p) {}
+    _CONSTEXPR20_ _FORCE_INLINE_ c_style_task(c_style_task& other_ref_p) noexcept : _arguments_buffer(other_ref_p._arguments_buffer), _function(other_ref_p._function) {}
+    _CONSTEXPR20_ _FORCE_INLINE_ c_style_task(c_style_task&& rvalue_p) noexcept : _arguments_buffer(std::move(rvalue_p._arguments_buffer)), _function(rvalue_p._function) { rvalue_p._function = nullptr; }
 
-    _FORCE_INLINE_ c_style_task& operator=(task_type task_p) noexcept
+    _CONSTEXPR20_ _FORCE_INLINE_ c_style_task& operator=(task_type task_p) noexcept
     {
         this->_function = task_p;
         return *this;
     }
 
-    _FORCE_INLINE_ c_style_task& operator=(c_style_task& other_ref_p) noexcept
+    _CONSTEXPR20_ _FORCE_INLINE_ c_style_task& operator=(c_style_task& other_ref_p) noexcept
     {
         this->_arguments_buffer = other_ref_p._arguments_buffer;
         this->_function = other_ref_p._function;
         return *this;
     }
 
-    _FORCE_INLINE_ c_style_task& operator=(c_style_task&& rvalue_p) noexcept
+    _CONSTEXPR20_ _FORCE_INLINE_ c_style_task& operator=(c_style_task&& rvalue_p) noexcept
     {
         this->_arguments_buffer = std::move(rvalue_p._arguments_buffer);
 

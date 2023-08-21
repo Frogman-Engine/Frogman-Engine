@@ -18,14 +18,6 @@ TEST(count_integral_digit_length, _)
 	EXPECT_EQ(count_integral_digit_length<int>(0), 1);
 }
 
-TEST(count_integral_digit_length, constexpr)
-{
-	EXPECT_EQ(constexpr_count_integral_digit_length<int>(10000), 5);
-
-	EXPECT_EQ(constexpr_count_integral_digit_length<int>(0), 1);
-}
-
-
 
 TEST(int_to_string, _)
 {
@@ -55,7 +47,6 @@ TEST(convert_uint_to_string, _)
 	EXPECT_TRUE(string::string_comparison(l_buffer, "45465"));
 }
 
-
 TEST(float_to_string, _)
 {
 	char l_buffer[30] = "\0";
@@ -66,25 +57,10 @@ TEST(float_to_string, _)
 	EXPECT_TRUE(string::string_comparison(l_buffer, "3.14159"));
 }
 
-TEST(float_to_string, constexpr)
-{
-	char l_buffer[30] = "\0";
-	constexpr_float_to_string<var::character>(l_buffer, sizeof(l_buffer), 356.768f);
-	std::memset(l_buffer + 7, 0, 4 * 1);
-
-	EXPECT_TRUE(string::string_comparison(l_buffer, "356.768"));
-}
-
-
 TEST(boolean_to_string, _)
 {
 	var::boolean l_is_true = true;
 	EXPECT_TRUE(string::string_comparison(boolean_to_string<char>(l_is_true), "true"));
-}
-
-TEST(boolean_to_string, constexpr)
-{
-	EXPECT_TRUE(string::string_comparison(constexpr_boolean_to_string<char>(false), "false"));
 }
 
 
@@ -265,7 +241,7 @@ TEST(any_to_string, local_buffer)
 
 TEST(string_to_uint, all)
 {
-	integral_info l_result = constexpr_string_to_uint<var::uint32>("1024MB");
+	integral_info l_result = string_to_uint<var::uint32>("1024MB");
 	EXPECT_EQ(1024, l_result._value);
 	EXPECT_EQ(4, l_result._digit_length);
 
@@ -278,7 +254,7 @@ TEST(string_to_uint, all)
 
 TEST(string_to_int, all)
 {
-	integral_info l_result = constexpr_string_to_int<var::int32>("-999HP");
+	integral_info l_result = string_to_int<var::int32>("-999HP");
 	EXPECT_EQ(-999, l_result._value);
 	EXPECT_EQ(3, l_result._digit_length);
 
@@ -293,7 +269,7 @@ TEST(string_to_int, all)
 
 TEST(string_to_boolean, all)
 {
-	var::boolean l_result = constexpr_string_to_boolean("true");
+	var::boolean l_result = string_to_boolean("true");
 	EXPECT_EQ(true, l_result);
 
 	char l_string[10] = "false";

@@ -72,7 +72,11 @@
 #endif
 
 
-
+#ifdef _HAS_CXX17_
+#define _CONSTEXPR17_ constexpr
+#else
+#define _CONSTEXPR17_
+#endif
 
 #ifdef _HAS_CXX20_
 #define _CONSTEXPR20_ constexpr
@@ -85,6 +89,8 @@
 #else
 #define _CONSTEXPR23_
 #endif
+
+#define _CONSTEXPR_ constexpr
 
 
 
