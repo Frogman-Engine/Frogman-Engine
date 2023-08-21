@@ -24,7 +24,7 @@ public:
     using const_reverse_iterator = FE::const_reverse_iterator<FE::contiguous_iterator<const char_type>>;
 
 private:
-    ::std::optional<const char_type*> m_string;
+    std::optional<const char_type*> m_string;
 
 public:
     constexpr _FORCE_INLINE_ compile_time_constant_string() noexcept {}
