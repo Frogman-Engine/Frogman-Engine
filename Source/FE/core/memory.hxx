@@ -491,6 +491,17 @@ struct reserve final
 	var::uint64 _length = 0;
 };
 
+struct resize_to final
+{
+	var::uint64 _length = 0;
+};
+
+struct extend final
+{
+	var::uint64 _length = 0;
+};
+
+
 struct align_4bytes final
 {
 	_MAYBE_UNUSED_ static constexpr uint16 size = 4;

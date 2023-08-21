@@ -66,25 +66,34 @@ public:
 
 	_CONSTEXPR23_ _FORCE_INLINE_ ~exclusive_ptr() noexcept
 	{
-		if (this->m_smart_ptr == nullptr)
+		if (this->m_smart_ptr != nullptr)
 		{
-			return;
+			allocator::deallocate(this->m_smart_ptr, 1);
+			this->m_smart_ptr = nullptr;
 		}
 
-		ref_table_type::__unregister_ref(this->m_ref_table_key, this->m_smart_ptr);
-		allocator::deallocate(this->m_smart_ptr, 1);
-		this->m_smart_ptr = nullptr;
+		if (this->m_ref_table_key != invalid_key_value)
+		{
+			ref_table_type::__unregister_ref(this->m_ref_table_key, this);
+			this->m_ref_table_key = invalid_key_value;
+		}
 	}
 
 	_CONSTEXPR23_ _FORCE_INLINE_ exclusive_ptr(const exclusive_ptr& other_cref_p) noexcept = delete;
 
 	_CONSTEXPR23_ _FORCE_INLINE_ exclusive_ptr(exclusive_ptr&& rvalue_p) noexcept : m_smart_ptr(rvalue_p.m_smart_ptr), m_ref_table_key(rvalue_p.m_ref_table_key)
 	{
+		if ((rvalue_p.m_smart_ptr == nullptr) || (rvalue_p.m_ref_table_key == invalid_key_value))
+		{
+			return;
+		}
+
+		ref_table_type::__update_ref(rvalue_p.m_ref_table_key, this);
 		rvalue_p.m_smart_ptr = nullptr;
 		rvalue_p.m_ref_table_key = invalid_key_value;
 	}
 
-	_CONSTEXPR23_ _FORCE_INLINE_ exclusive_ptr(element_type value_p) noexcept : m_smart_ptr(allocator::allocate(1)), m_ref_table_key(ref_table_type::__register_ref(this->m_smart_ptr))
+	_CONSTEXPR23_ _FORCE_INLINE_ exclusive_ptr(element_type value_p) noexcept : m_smart_ptr(allocator::allocate(1)), m_ref_table_key(ref_table_type::__register_ref(this))
 	{
 		*this->m_smart_ptr = std::move(value_p);
 	}
@@ -93,7 +102,7 @@ public:
 
 	_CONSTEXPR23_ _FORCE_INLINE_ exclusive_ptr& operator=(exclusive_ptr&& rvalue_p) noexcept
 	{
-		if (rvalue_p.m_smart_ptr == nullptr)
+		if ((rvalue_p.m_smart_ptr == nullptr) || (rvalue_p.m_ref_table_key == invalid_key_value))
 		{
 			return *this;
 		}
@@ -102,6 +111,13 @@ public:
 		{
 			allocator::deallocate(this->m_smart_ptr, 1);
 		}
+
+		if (this->m_ref_table_key != invalid_key_value)
+		{
+			ref_table_type::__unregister_ref(this->m_ref_table_key, this);
+		}
+
+		ref_table_type::__update_ref(rvalue_p.m_ref_table_key, this);
 
 		this->m_smart_ptr = rvalue_p.m_smart_ptr;
 		rvalue_p.m_smart_ptr = nullptr;
@@ -116,10 +132,15 @@ public:
 		if (this->m_smart_ptr == nullptr)
 		{
 			this->m_smart_ptr = allocator::allocate(1);
+			
+		}
+
+		if (this->m_ref_table_key == invalid_key_value)
+		{
+			this->m_ref_table_key = ref_table_type::__register_ref(this);
 		}
 
 		*this->m_smart_ptr = std::move(value_p);
-		this->m_ref_table_key = ref_table_type::__register_ref(this->m_smart_ptr);
 		return *this;
 	}
 
@@ -127,7 +148,8 @@ public:
 	{
 		pointer l_result = this->m_smart_ptr;
 		this->m_smart_ptr = nullptr;
-		ref_table_type::__unregister_ref(this->m_ref_table_key, l_result);
+		ref_table_type::__unregister_ref(this->m_ref_table_key, this);
+		this->m_ref_table_key = invalid_key_value;
 		return l_result;
 	}
 
@@ -138,19 +160,14 @@ public:
 
 	_CONSTEXPR23_ _FORCE_INLINE_ void reset(element_type value_p) noexcept
 	{
-		this->~exclusive_ptr();
-		*this = std::move(value_p);
+		*this->operator=(std::move(value_p));
 	}
 
 	_FORCE_INLINE_ void swap(exclusive_ptr& other_ref_p) noexcept
 	{
-		pointer l_temporary_smart_ptr = other_ref_p.m_smart_ptr;
-		other_ref_p.m_smart_ptr = this->m_smart_ptr;
-		this->m_smart_ptr = l_temporary_smart_ptr;
-
-		ref_table_key_type l_temporary_key = other_ref_p.m_ref_table_key;
-		other_ref_p.m_ref_table_key = this->m_ref_table_key;
-		this->m_ref_table_key = l_temporary_key;
+		exclusive_ptr l_tmp = std::move(other_ref_p);
+		other_ref_p = std::move(*this);
+		*this = std::move(l_tmp);
 	}
 
 	_CONSTEXPR23_ _FORCE_INLINE_ pointer get() const noexcept
@@ -173,87 +190,87 @@ public:
 		return (this->m_smart_ptr == nullptr) ? true : false;
 	}
 
-	_CONSTEXPR23_ _FORCE_INLINE_ element_type& operator*() const noexcept
+	_CONSTEXPR23_ _FORCE_INLINE_ element_type& operator*() noexcept
 	{
 		FE_ASSERT(this->m_smart_ptr == nullptr, "${%s@0}: ${%s@1} is nullptr", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(this->m_smart_ptr));;
 		return *this->m_smart_ptr;
 	}
 
-	_CONSTEXPR23_ _FORCE_INLINE_ pointer operator->() const noexcept
+	_CONSTEXPR23_ _FORCE_INLINE_ pointer operator->() noexcept
 	{
 		FE_ASSERT(this->m_smart_ptr == nullptr, "${%s@0}: ${%s@1} is nullptr", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(this->m_smart_ptr));
 		return this->m_smart_ptr;
 	}
 
 
-	_CONSTEXPR23_ _FORCE_INLINE_ var::boolean operator==(std::nullptr_t nullptr_p) noexcept
+	_CONSTEXPR23_ _FORCE_INLINE_ boolean operator==(std::nullptr_t nullptr_p) noexcept
 	{
 		return this->m_smart_ptr == nullptr_p;
 	}
 
-	_CONSTEXPR23_ _FORCE_INLINE_ var::boolean operator!=(std::nullptr_t nullptr_p) noexcept
+	_CONSTEXPR23_ _FORCE_INLINE_ boolean operator!=(std::nullptr_t nullptr_p) noexcept
 	{
 		return this->m_smart_ptr != nullptr_p;
 	}
 
 
-	_CONSTEXPR23_ _FORCE_INLINE_ var::boolean operator==(const exclusive_ptr& other_cref_p) noexcept
+	_CONSTEXPR23_ _FORCE_INLINE_ boolean operator==(const exclusive_ptr& other_cref_p) noexcept
 	{
 		return this->m_smart_ptr == other_cref_p.m_smart_ptr;
 	}
 
-	_CONSTEXPR23_ _FORCE_INLINE_ var::boolean operator!=(const exclusive_ptr& other_cref_p) noexcept
+	_CONSTEXPR23_ _FORCE_INLINE_ boolean operator!=(const exclusive_ptr& other_cref_p) noexcept
 	{
 		return this->m_smart_ptr != other_cref_p.m_smart_ptr;
 	}
 
-	_CONSTEXPR23_ _FORCE_INLINE_ var::boolean operator>(const exclusive_ptr& other_cref_p) noexcept
+	_CONSTEXPR23_ _FORCE_INLINE_ boolean operator>(const exclusive_ptr& other_cref_p) noexcept
 	{
 		return this->m_smart_ptr > other_cref_p.m_smart_ptr;
 	}
 
-	_CONSTEXPR23_ _FORCE_INLINE_ var::boolean operator>=(const exclusive_ptr& other_cref_p) noexcept
+	_CONSTEXPR23_ _FORCE_INLINE_ boolean operator>=(const exclusive_ptr& other_cref_p) noexcept
 	{
 		return this->m_smart_ptr >= other_cref_p.m_smart_ptr;
 	}
 	
-	_CONSTEXPR23_ _FORCE_INLINE_ var::boolean operator<(const exclusive_ptr& other_cref_p) noexcept
+	_CONSTEXPR23_ _FORCE_INLINE_ boolean operator<(const exclusive_ptr& other_cref_p) noexcept
 	{
 		return this->m_smart_ptr < other_cref_p.m_smart_ptr;
 	}
 
-	_CONSTEXPR23_ _FORCE_INLINE_ var::boolean operator<=(const exclusive_ptr& other_cref_p) noexcept
+	_CONSTEXPR23_ _FORCE_INLINE_ boolean operator<=(const exclusive_ptr& other_cref_p) noexcept
 	{
 		return this->m_smart_ptr <= other_cref_p.m_smart_ptr;
 	}
 
 
-	_CONSTEXPR23_ _FORCE_INLINE_ var::boolean operator==(const proxy_ptr<T>& other_cref_p) noexcept
+	_CONSTEXPR23_ _FORCE_INLINE_ boolean operator==(const proxy_ptr<T, allocator>& other_cref_p) noexcept
 	{
 		return this->m_smart_ptr == other_cref_p.m_smart_ptr;
 	}
 
-	_CONSTEXPR23_ _FORCE_INLINE_ var::boolean operator!=(const proxy_ptr<T>& other_cref_p) noexcept
+	_CONSTEXPR23_ _FORCE_INLINE_ boolean operator!=(const proxy_ptr<T, allocator>& other_cref_p) noexcept
 	{
 		return this->m_smart_ptr != other_cref_p.m_smart_ptr;
 	}
 
-	_CONSTEXPR23_ _FORCE_INLINE_ var::boolean operator>(const proxy_ptr<T>& other_cref_p) noexcept
+	_CONSTEXPR23_ _FORCE_INLINE_ boolean operator>(const proxy_ptr<T, allocator>& other_cref_p) noexcept
 	{
 		return this->m_smart_ptr > other_cref_p.m_smart_ptr;
 	}
 
-	_CONSTEXPR23_ _FORCE_INLINE_ var::boolean operator>=(const proxy_ptr<T>& other_cref_p) noexcept
+	_CONSTEXPR23_ _FORCE_INLINE_ boolean operator>=(const proxy_ptr<T, allocator>& other_cref_p) noexcept
 	{
 		return this->m_smart_ptr >= other_cref_p.m_smart_ptr;
 	}
 
-	_CONSTEXPR23_ _FORCE_INLINE_ var::boolean operator<(const proxy_ptr<T>& other_cref_p) noexcept
+	_CONSTEXPR23_ _FORCE_INLINE_ boolean operator<(const proxy_ptr<T, allocator>& other_cref_p) noexcept
 	{
 		return this->m_smart_ptr < other_cref_p.m_smart_ptr;
 	}
 
-	_CONSTEXPR23_ _FORCE_INLINE_ var::boolean operator<=(const proxy_ptr<T>& other_cref_p) noexcept
+	_CONSTEXPR23_ _FORCE_INLINE_ boolean operator<=(const proxy_ptr<T, allocator>& other_cref_p) noexcept
 	{
 		return this->m_smart_ptr <= other_cref_p.m_smart_ptr;
 	}
@@ -281,7 +298,7 @@ class exclusive_ptr<T[], allocator> final
 {
 	static_assert(std::is_pointer<T>::value == false, "static assertion failed: The typename T cannot be a pointer type. Use a nested smart pointer instead. e.g. FE::exclusive_ptr<FE::exclusive_ptr<T>> l_exclusive_ptr;");
 
-	using ref_table_type = ref_table_for_exclusive_ptr<T, allocator>;
+	using ref_table_type = ref_table_for_exclusive_ptr<T[], allocator>;
 	using ref_table_key_type = typename ref_table_type::ref_table_key_type;
 
 public:
@@ -301,32 +318,45 @@ public:
 
 	_CONSTEXPR23_ _FORCE_INLINE_ ~exclusive_ptr() noexcept
 	{
-		if (this->m_smart_ptr == nullptr)
+		if (this->m_smart_ptr != nullptr)
 		{
-			return;
+			allocator::deallocate(this->m_smart_ptr, this->m_smart_ptr_end - this->m_smart_ptr);
+			this->m_smart_ptr = nullptr;
+			this->m_smart_ptr_end = nullptr;
 		}
 
-		ref_table_type::__unregister_ref(this->m_ref_table_key, this->m_smart_ptr);
-		allocator::deallocate(this->m_smart_ptr, this->m_smart_ptr_end - this->m_smart_ptr);
-		this->m_smart_ptr = nullptr;
-		this->m_smart_ptr_end = nullptr;
+		if (this->m_ref_table_key != invalid_key_value)
+		{
+			ref_table_type::__unregister_ref(this->m_ref_table_key, this);
+			this->m_ref_table_key = invalid_key_value;
+		}
 	}
 
 	_CONSTEXPR23_ _FORCE_INLINE_ exclusive_ptr(const exclusive_ptr& other_cref_p) noexcept = delete;
 
 	_CONSTEXPR23_ _FORCE_INLINE_ exclusive_ptr(exclusive_ptr&& rvalue_p) noexcept : m_smart_ptr(rvalue_p.m_smart_ptr), m_smart_ptr_end(rvalue_p.m_smart_ptr_end), m_ref_table_key(rvalue_p.m_ref_table_key)
 	{
+		if ((rvalue_p.m_smart_ptr == nullptr) || (rvalue_p.m_ref_table_key == invalid_key_value))
+		{
+			return;
+		}
+		ref_table_type::__update_ref(rvalue_p.m_ref_table_key, this);
 		rvalue_p.m_smart_ptr = nullptr;
 		rvalue_p.m_smart_ptr_end = nullptr;
 		rvalue_p.m_ref_table_key = invalid_key_value;
 	}
 
-	_CONSTEXPR23_ _FORCE_INLINE_ exclusive_ptr(FE::reserve&& array_size_p) noexcept : m_smart_ptr(allocator::allocate(array_size_p._length)), m_smart_ptr_end(m_smart_ptr + array_size_p._length), m_ref_table_key(ref_table_type::__register_ref(this->m_smart_ptr))
+	_CONSTEXPR23_ _FORCE_INLINE_ exclusive_ptr(FE::reserve&& array_size_p) noexcept : m_smart_ptr(allocator::allocate(array_size_p._length)), m_smart_ptr_end(m_smart_ptr + array_size_p._length), m_ref_table_key(ref_table_type::__register_ref(this))
 	{
 	}
 
-	_CONSTEXPR23_ _FORCE_INLINE_ exclusive_ptr(std::initializer_list<element_type>&& values_p) noexcept : m_smart_ptr(allocator::allocate( values_p.size() )), m_smart_ptr_end(m_smart_ptr + values_p.size()), m_ref_table_key(ref_table_type::__register_ref(this->m_smart_ptr))
+	_CONSTEXPR23_ _FORCE_INLINE_ exclusive_ptr(std::initializer_list<element_type>&& values_p) noexcept : m_smart_ptr(allocator::allocate( values_p.size() )), m_smart_ptr_end(m_smart_ptr + values_p.size()), m_ref_table_key(ref_table_type::__register_ref(this))
 	{
+		if (values_p.size() == 0)
+		{
+			return;
+		}
+
 		this->__copy_from_initializer_list(std::move(values_p));
 	}
 
@@ -334,7 +364,7 @@ public:
 
 	_CONSTEXPR23_ _FORCE_INLINE_ exclusive_ptr& operator=(exclusive_ptr&& rvalue_p) noexcept
 	{
-		if (rvalue_p.m_smart_ptr == nullptr)
+		if ((rvalue_p.m_smart_ptr == nullptr) || (rvalue_p.m_ref_table_key == invalid_key_value))
 		{
 			return *this;
 		}
@@ -343,6 +373,13 @@ public:
 		{
 			allocator::deallocate(this->m_smart_ptr, this->m_smart_ptr_end - this->m_smart_ptr);
 		}
+
+		if (this->m_ref_table_key != invalid_key_value)
+		{
+			ref_table_type::__unregister_ref(this->m_ref_table_key, this);
+		}
+
+		ref_table_type::__update_ref(rvalue_p.m_ref_table_key, this);
 
 		this->m_smart_ptr = rvalue_p.m_smart_ptr;
 		rvalue_p.m_smart_ptr = nullptr;
@@ -357,9 +394,30 @@ public:
 
 	_CONSTEXPR23_ _FORCE_INLINE_ exclusive_ptr& operator=(std::initializer_list<element_type>&& values_p) noexcept
 	{
+		if (values_p.size() == 0)
+		{
+			return *this;
+		}
+
 		this->__reallocate(values_p.size());
 		this->__copy_from_initializer_list(std::move(values_p));
-		this->m_ref_table_key = ref_table_type::__register_ref(this->m_smart_ptr);
+
+		if (this->m_ref_table_key == invalid_key_value)
+		{
+			this->m_ref_table_key = ref_table_type::__register_ref(this);
+		}
+
+		return *this;
+	}
+
+	_CONSTEXPR23_ _FORCE_INLINE_ exclusive_ptr& operator=(FE::resize_to&& new_array_size_p) noexcept
+	{
+		this->__reallocate(new_array_size_p._length);
+
+		if (this->m_ref_table_key == invalid_key_value)
+		{
+			this->m_ref_table_key = ref_table_type::__register_ref(this);
+		}
 		return *this;
 	}
 
@@ -367,7 +425,10 @@ public:
 	{
 		pointer l_result = this->m_smart_ptr;
 		this->m_smart_ptr = nullptr;
-		ref_table_type::__unregister_ref(this->m_ref_table_key, l_result);
+
+		ref_table_type::__unregister_ref(this->m_ref_table_key, this);
+		this->m_ref_table_key = invalid_key_value;
+
 		return l_result;
 	}
 
@@ -378,23 +439,19 @@ public:
 
 	_CONSTEXPR23_ _FORCE_INLINE_ void reset(std::initializer_list<element_type>&& values_p) noexcept
 	{
-		this->__reallocate(values_p.size());
-		this->__copy_from_initializer_list(std::move(values_p));
+		this->operator=(std::move(values_p));
+	}
+
+	_CONSTEXPR23_ _FORCE_INLINE_ void reset(FE::resize_to new_array_size_p) noexcept
+	{
+		this->operator=(std::move(new_array_size_p));
 	}
 
 	_FORCE_INLINE_ void swap(exclusive_ptr& other_ref_p) noexcept
 	{
-		pointer l_temporary_smart_ptr = other_ref_p.m_smart_ptr;
-		other_ref_p.m_smart_ptr = this->m_smart_ptr;
-		this->m_smart_ptr = l_temporary_smart_ptr;
-
-		pointer l_temporary_smart_ptr_end = other_ref_p.m_smart_ptr_end;
-		other_ref_p.m_smart_ptr_end = this->m_smart_ptr_end;
-		this->m_smart_ptr_end = l_temporary_smart_ptr_end;
-
-		ref_table_key_type l_temporary_key = other_ref_p.m_ref_table_key;
-		other_ref_p.m_ref_table_key = this->m_ref_table_key;
-		this->m_ref_table_key = l_temporary_key;
+		exclusive_ptr l_tmp = std::move(other_ref_p);
+		other_ref_p = std::move(*this);
+		*this = std::move(l_tmp);
 	}
 
 	_CONSTEXPR23_ _FORCE_INLINE_ pointer get() const noexcept
@@ -407,7 +464,7 @@ public:
 		return this->m_ref_table_key;
 	}
 
-	_CONSTEXPR23_ _FORCE_INLINE_ var::size_t size() const noexcept
+	_CONSTEXPR23_ _FORCE_INLINE_ size_t size() const noexcept
 	{
 		return this->m_smart_ptr_end - this->m_smart_ptr;
 	}
@@ -422,19 +479,19 @@ public:
 		return (this->m_smart_ptr == nullptr) ? true : false;
 	}
 
-	_CONSTEXPR23_ _FORCE_INLINE_ element_type& operator*() const noexcept
+	_CONSTEXPR23_ _FORCE_INLINE_ element_type& operator*() noexcept
 	{
 		FE_ASSERT(this->m_smart_ptr == nullptr, "${%s@0}: ${%s@1} is nullptr", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(this->m_smart_ptr));;
 		return *this->m_smart_ptr;
 	}
 
-	_CONSTEXPR23_ _FORCE_INLINE_ pointer operator->() const noexcept
+	_CONSTEXPR23_ _FORCE_INLINE_ pointer operator->() noexcept
 	{
 		FE_ASSERT(this->m_smart_ptr == nullptr, "${%s@0}: ${%s@1} is nullptr", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(this->m_smart_ptr));
 		return this->m_smart_ptr;
 	}
 
-	_CONSTEXPR23_ _FORCE_INLINE_ element_type& operator[](index_t index_p) const noexcept
+	_CONSTEXPR23_ _FORCE_INLINE_ element_type& operator[](index_t index_p) noexcept
 	{
 		FE_ASSERT(this->m_smart_ptr == nullptr, "${%s@0}: ${%s@1} is nullptr", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(this->m_smart_ptr));
 		FE_ASSERT(static_cast<index_t>(this->m_smart_ptr_end - this->m_smart_ptr) <= index_p, "${%s@0}: ${%s@1} exceeds the index boundary. ${%s@1} was ${%lu@2}.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_RANGE), TO_STRING(index_p), &index_p);
@@ -443,74 +500,74 @@ public:
 	}
 
 
-	_CONSTEXPR23_ _FORCE_INLINE_ var::boolean operator==(std::nullptr_t nullptr_p) noexcept
+	_CONSTEXPR23_ _FORCE_INLINE_ boolean operator==(std::nullptr_t nullptr_p) noexcept
 	{
 		return this->m_smart_ptr == nullptr_p;
 	}
 
-	_CONSTEXPR23_ _FORCE_INLINE_ var::boolean operator!=(std::nullptr_t nullptr_p) noexcept
+	_CONSTEXPR23_ _FORCE_INLINE_ boolean operator!=(std::nullptr_t nullptr_p) noexcept
 	{
 		return this->m_smart_ptr != nullptr_p;
 	}
 
 
-	_CONSTEXPR23_ _FORCE_INLINE_ var::boolean operator==(const exclusive_ptr& other_cref_p) noexcept
+	_CONSTEXPR23_ _FORCE_INLINE_ boolean operator==(const exclusive_ptr& other_cref_p) noexcept
 	{
 		return this->m_smart_ptr == other_cref_p.m_smart_ptr;
 	}
 
-	_CONSTEXPR23_ _FORCE_INLINE_ var::boolean operator!=(const exclusive_ptr& other_cref_p) noexcept
+	_CONSTEXPR23_ _FORCE_INLINE_ boolean operator!=(const exclusive_ptr& other_cref_p) noexcept
 	{
 		return this->m_smart_ptr != other_cref_p.m_smart_ptr;
 	}
 
-	_CONSTEXPR23_ _FORCE_INLINE_ var::boolean operator>(const exclusive_ptr& other_cref_p) noexcept
+	_CONSTEXPR23_ _FORCE_INLINE_ boolean operator>(const exclusive_ptr& other_cref_p) noexcept
 	{
 		return this->m_smart_ptr > other_cref_p.m_smart_ptr;
 	}
 
-	_CONSTEXPR23_ _FORCE_INLINE_ var::boolean operator>=(const exclusive_ptr& other_cref_p) noexcept
+	_CONSTEXPR23_ _FORCE_INLINE_ boolean operator>=(const exclusive_ptr& other_cref_p) noexcept
 	{
 		return this->m_smart_ptr >= other_cref_p.m_smart_ptr;
 	}
 
-	_CONSTEXPR23_ _FORCE_INLINE_ var::boolean operator<(const exclusive_ptr& other_cref_p) noexcept
+	_CONSTEXPR23_ _FORCE_INLINE_ boolean operator<(const exclusive_ptr& other_cref_p) noexcept
 	{
 		return this->m_smart_ptr < other_cref_p.m_smart_ptr;
 	}
 
-	_CONSTEXPR23_ _FORCE_INLINE_ var::boolean operator<=(const exclusive_ptr& other_cref_p) noexcept
+	_CONSTEXPR23_ _FORCE_INLINE_ boolean operator<=(const exclusive_ptr& other_cref_p) noexcept
 	{
 		return this->m_smart_ptr <= other_cref_p.m_smart_ptr;
 	}
 
 
-	_CONSTEXPR23_ _FORCE_INLINE_ var::boolean operator==(const proxy_ptr<T>& other_cref_p) noexcept
+	_CONSTEXPR23_ _FORCE_INLINE_ boolean operator==(const proxy_ptr<T, allocator>& other_cref_p) noexcept
 	{
 		return this->m_smart_ptr == other_cref_p.m_smart_ptr;
 	}
 
-	_CONSTEXPR23_ _FORCE_INLINE_ var::boolean operator!=(const proxy_ptr<T>& other_cref_p) noexcept
+	_CONSTEXPR23_ _FORCE_INLINE_ boolean operator!=(const proxy_ptr<T, allocator>& other_cref_p) noexcept
 	{
 		return this->m_smart_ptr != other_cref_p.m_smart_ptr;
 	}
 
-	_CONSTEXPR23_ _FORCE_INLINE_ var::boolean operator>(const proxy_ptr<T>& other_cref_p) noexcept
+	_CONSTEXPR23_ _FORCE_INLINE_ boolean operator>(const proxy_ptr<T, allocator>& other_cref_p) noexcept
 	{
 		return this->m_smart_ptr > other_cref_p.m_smart_ptr;
 	}
 
-	_CONSTEXPR23_ _FORCE_INLINE_ var::boolean operator>=(const proxy_ptr<T>& other_cref_p) noexcept
+	_CONSTEXPR23_ _FORCE_INLINE_ boolean operator>=(const proxy_ptr<T, allocator>& other_cref_p) noexcept
 	{
 		return this->m_smart_ptr >= other_cref_p.m_smart_ptr;
 	}
 
-	_CONSTEXPR23_ _FORCE_INLINE_ var::boolean operator<(const proxy_ptr<T>& other_cref_p) noexcept
+	_CONSTEXPR23_ _FORCE_INLINE_ boolean operator<(const proxy_ptr<T, allocator>& other_cref_p) noexcept
 	{
 		return this->m_smart_ptr < other_cref_p.m_smart_ptr;
 	}
 
-	_CONSTEXPR23_ _FORCE_INLINE_ var::boolean operator<=(const proxy_ptr<T>& other_cref_p) noexcept
+	_CONSTEXPR23_ _FORCE_INLINE_ boolean operator<=(const proxy_ptr<T, allocator>& other_cref_p) noexcept
 	{
 		return this->m_smart_ptr <= other_cref_p.m_smart_ptr;
 	}

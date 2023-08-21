@@ -161,20 +161,20 @@ TEST(exclusive_ptr, construct_array_by_value_assignment)
 
 	{
 		{
-			FE::exclusive_ptr<var::int64[]> l_unique_ptr = { 0, 1, 2, 3 };
+			FE::exclusive_ptr<var::int64[]> l_exclusive_ptr = { 0, 1, 2, 3 };
 		}
 
-		FE::exclusive_ptr<var::int64[]> l_unique_ptr;
-		l_unique_ptr = { 0, 1, 2, 3 };
+		FE::exclusive_ptr<var::int64[]> l_exclusive_ptr;
+		l_exclusive_ptr = { 0, 1, 2, 3 };
 	}
 
 	{
 		{
-			FE::exclusive_ptr<std::string[]> l_unique_ptr = { "std::string" };
+			FE::exclusive_ptr<std::string[]> l_exclusive_ptr = { "std::string" };
 		}
 
-		FE::exclusive_ptr<std::string[]> l_unique_ptr;
-		l_unique_ptr = { "std::string" };
+		FE::exclusive_ptr<std::string[]> l_exclusive_ptr;
+		l_exclusive_ptr = { "std::string" };
 	}
 
 
