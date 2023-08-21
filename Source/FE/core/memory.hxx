@@ -58,7 +58,7 @@ enum struct OBJECT_STATUS : boolean
 _FORCE_INLINE_ void unaligned_memset_with_avx512(void* const dest_ptrc_p, int8 value_p, size_t total_bytes_p) noexcept
 {
 	FE_ASSERT(dest_ptrc_p == nullptr, "ERROR: dest_ptrc_p is nullptr.");
-	FE_ASSERT(total_bytes_p == 0, "ERROR: element_bytes_p is 0.");
+	FE_ASSERT(total_bytes_p == 0, "ERROR: total_bytes_p is 0.");
 
 	__m512i* l_m512i_dest_ptr = static_cast<__m512i*>(dest_ptrc_p);
 	const __m512i l_m512i_value_to_be_assigned = _mm512_set1_epi8(value_p);
@@ -89,8 +89,8 @@ _FORCE_INLINE_ void unaligned_memset_with_avx512(void* const dest_ptrc_p, int8 v
 _FORCE_INLINE_ void aligned_memset_with_avx512(void* const dest_ptrc_p, int8 value_p, size_t total_bytes_p) noexcept
 {
 	FE_ASSERT(dest_ptrc_p == nullptr, "ERROR: dest_ptrc_p is nullptr.");
-	FE_ASSERT(total_bytes_p == 0, "ERROR: element_bytes_p is 0.");
-	FE_ASSERT((reinterpret_cast<uintptr_t>(dest_ptrc_p) % 64) != 0, "ERROR: dest_ptrc_p is not aligned by 64.");
+	FE_ASSERT(total_bytes_p == 0, "ERROR: total_bytes_p is 0.");
+	FE_ASSERT(MODULO_BY_64(reinterpret_cast<uintptr_t>(dest_ptrc_p)) != 0, "${%s@0}: The address is not aligned by 64.", TO_STRING(MEMORY_ERROR_1XX::_ERROR_ILLEGAL_ADDRESS_ALIGNMENT));
 
 	__m512i* l_m512i_dest_ptr = static_cast<__m512i*>(dest_ptrc_p);
 	const __m512i l_m512i_value_to_be_assigned = _mm512_set1_epi8(value_p);
@@ -122,7 +122,7 @@ _FORCE_INLINE_ void aligned_memset_with_avx512(void* const dest_ptrc_p, int8 val
 _FORCE_INLINE_ void unaligned_memcpy_with_avx512(void* const dest_ptrc_p, const void* const source_ptrc_p, FE::size_t bytes_to_copy_p) noexcept
 {
 	FE_ASSERT(dest_ptrc_p == nullptr, "ERROR: dest_ptrc_p is nullptr.");
-	FE_ASSERT(bytes_to_copy_p == 0, "ERROR: element_bytes_p is 0.");
+	FE_ASSERT(bytes_to_copy_p == 0, "ERROR: bytes_to_copy_p is 0.");
 
 	__m512i* l_m512i_dest_ptr = static_cast<__m512i*>(dest_ptrc_p);
 	const __m512i* l_m512i_source_ptr = static_cast<const __m512i*>(source_ptrc_p);
@@ -156,9 +156,45 @@ _FORCE_INLINE_ void unaligned_memcpy_with_avx512(void* const dest_ptrc_p, const 
 _FORCE_INLINE_ void aligned_memcpy_with_avx512(void* const dest_ptrc_p, const void* const source_ptrc_p, FE::size_t bytes_to_copy_p) noexcept
 {
 	FE_ASSERT(dest_ptrc_p == nullptr, "ERROR: dest_ptrc_p is nullptr.");
-	FE_ASSERT(bytes_to_copy_p == 0, "ERROR: element_bytes_p is 0.");
-	FE_ASSERT((reinterpret_cast<uintptr_t>(dest_ptrc_p) % 64) != 0, "ERROR: dest_ptrc_p is not aligned by 64.");
-	//FE_ASSERT((reinterpret_cast<uintptr_t>(source_ptrc_p) % 64) != 0, "ERROR: source_ptrc_p is not aligned by 64.");
+	FE_ASSERT(bytes_to_copy_p == 0, "ERROR: bytes_to_copy_p is 0.");
+	FE_ASSERT(MODULO_BY_64(reinterpret_cast<uintptr_t>(dest_ptrc_p)) != 0, "${%s@}: dest_ptrc_p is not aligned by 64.", TO_STRING(MEMORY_ERROR_1XX::_ERROR_ILLEGAL_ADDRESS_ALIGNMENT));
+	FE_ASSERT(MODULO_BY_64(reinterpret_cast<uintptr_t>(source_ptrc_p)) != 0, "${%s@}: source_ptrc_p is not aligned by 64.", TO_STRING(MEMORY_ERROR_1XX::_ERROR_ILLEGAL_ADDRESS_ALIGNMENT));
+
+	__m512i* l_m512i_dest_ptr = static_cast<__m512i*>(dest_ptrc_p);
+	const __m512i* l_m512i_source_ptr = static_cast<const __m512i*>(source_ptrc_p);
+
+	var::size_t l_leftover_bytes = MODULO_BY_64(bytes_to_copy_p);
+	size_t l_avx512_operation_count = MODULO_BY_64(bytes_to_copy_p - l_leftover_bytes);
+
+	for (var::size_t executed_operation_count = 0; executed_operation_count != l_avx512_operation_count; ++executed_operation_count)
+	{
+		_mm512_store_si512(l_m512i_dest_ptr, _mm512_load_si512(l_m512i_source_ptr));
+		++l_m512i_dest_ptr;
+		++l_m512i_source_ptr;
+	}
+
+	if (l_leftover_bytes >= 16)
+	{
+		memcpy(l_m512i_dest_ptr, l_m512i_source_ptr, l_leftover_bytes);
+		return;
+	}
+
+	var::byte* l_dest_byte_ptr = reinterpret_cast<var::byte*>(l_m512i_dest_ptr);
+	byte* l_source_byte_ptr = reinterpret_cast<byte*>(l_m512i_source_ptr);
+	for (var::size_t i = 0; i != l_leftover_bytes; ++i)
+	{
+		*l_dest_byte_ptr = *l_source_byte_ptr;
+		++l_dest_byte_ptr;
+		++l_source_byte_ptr;
+	}
+}
+
+_FORCE_INLINE_ void dest_aligned_memcpy_with_avx512(void* const dest_ptrc_p, const void* const source_ptrc_p, FE::size_t bytes_to_copy_p) noexcept
+{
+	FE_ASSERT(dest_ptrc_p == nullptr, "ERROR: dest_ptrc_p is nullptr.");
+	FE_ASSERT(bytes_to_copy_p == 0, "ERROR: bytes_to_copy_p is 0.");
+	FE_ASSERT(MODULO_BY_64(reinterpret_cast<uintptr_t>(dest_ptrc_p)) != 0, "${%s@}: dest_ptrc_p is not aligned by 64.", TO_STRING(MEMORY_ERROR_1XX::_ERROR_ILLEGAL_ADDRESS_ALIGNMENT));
+	//FE_ASSERT((reinterpret_cast<uintptr_t>(source_ptrc_p) % 64) != 0, "${%s@}: source_ptrc_p is not aligned by 64.", TO_STRING(MEMORY_ERROR_1XX::_ERROR_ILLEGAL_ADDRESS_ALIGNMENT));
 
 	__m512i* l_m512i_dest_ptr = static_cast<__m512i*>(dest_ptrc_p);
 	const __m512i* l_m512i_source_ptr = static_cast<const __m512i*>(source_ptrc_p);
@@ -188,11 +224,47 @@ _FORCE_INLINE_ void aligned_memcpy_with_avx512(void* const dest_ptrc_p, const vo
 		++l_source_byte_ptr;
 	}
 }
+
+_FORCE_INLINE_ void source_aligned_memcpy_with_avx512(void* const dest_ptrc_p, const void* const source_ptrc_p, FE::size_t bytes_to_copy_p) noexcept
+{
+	FE_ASSERT(dest_ptrc_p == nullptr, "ERROR: dest_ptrc_p is nullptr.");
+	FE_ASSERT(bytes_to_copy_p == 0, "ERROR: bytes_to_copy_p is 0.");
+	//FE_ASSERT(MODULO_BY_64(reinterpret_cast<uintptr_t>(dest_ptrc_p)) != 0, "${%s@}: dest_ptrc_p is not aligned by 64.",  TO_STRING(MEMORY_ERROR_1XX::_ERROR_ILLEGAL_ADDRESS_ALIGNMENT));
+	FE_ASSERT(MODULO_BY_64(reinterpret_cast<uintptr_t>(source_ptrc_p)) != 0, "${%s@}: source_ptrc_p is not aligned by 64.", TO_STRING(MEMORY_ERROR_1XX::_ERROR_ILLEGAL_ADDRESS_ALIGNMENT));
+
+	__m512i* l_m512i_dest_ptr = static_cast<__m512i*>(dest_ptrc_p);
+	const __m512i* l_m512i_source_ptr = static_cast<const __m512i*>(source_ptrc_p);
+
+	var::size_t l_leftover_bytes = MODULO_BY_64(bytes_to_copy_p);
+	size_t l_avx512_operation_count = MODULO_BY_64(bytes_to_copy_p - l_leftover_bytes);
+
+	for (var::size_t executed_operation_count = 0; executed_operation_count != l_avx512_operation_count; ++executed_operation_count)
+	{
+		_mm512_storeu_si512(l_m512i_dest_ptr, _mm512_load_si512(l_m512i_source_ptr));
+		++l_m512i_dest_ptr;
+		++l_m512i_source_ptr;
+	}
+
+	if (l_leftover_bytes >= 16)
+	{
+		memcpy(l_m512i_dest_ptr, l_m512i_source_ptr, l_leftover_bytes);
+		return;
+	}
+
+	var::byte* l_dest_byte_ptr = reinterpret_cast<var::byte*>(l_m512i_dest_ptr);
+	byte* l_source_byte_ptr = reinterpret_cast<byte*>(l_m512i_source_ptr);
+	for (var::size_t i = 0; i != l_leftover_bytes; ++i)
+	{
+		*l_dest_byte_ptr = *l_source_byte_ptr;
+		++l_dest_byte_ptr;
+		++l_source_byte_ptr;
+	}
+}
 #elif defined(_AVX_)
 _FORCE_INLINE_ void unaligned_memset_with_avx(void* const dest_ptrc_p, int8 value_p, size_t total_bytes_p) noexcept
 {
-	FE_ASSERT(dest_ptrc_p == nullptr, "ERROR: dest_ptrc_p is nullptr.");
-	FE_ASSERT(total_bytes_p == 0, "ERROR: element_bytes_p is 0.");
+	FE_ASSERT(dest_ptrc_p == nullptr, "${%s@0}: ${%s@1} is nullptr.", TO_STRING(MEMORY_ERROR_1XX::_ERROR_INVALID_SIZE), TO_STRING(dest_ptrc_p));
+	FE_ASSERT(total_bytes_p == 0, "${%s@0}: ${%s@1} is 0.", TO_STRING(MEMORY_ERROR_1XX::_ERROR_INVALID_SIZE), TO_STRING(total_bytes_p));
 
 	__m256i* l_m256i_dest_ptr = static_cast<__m256i*>(dest_ptrc_p);
 	const __m256i l_m256i_value_to_be_assigned = _mm256_set1_epi8(value_p);
@@ -224,9 +296,9 @@ _FORCE_INLINE_ void unaligned_memset_with_avx(void* const dest_ptrc_p, int8 valu
 
 _FORCE_INLINE_ void aligned_memset_with_avx(void* const dest_ptrc_p, int8 value_p, size_t total_bytes_p) noexcept
 {
-	FE_ASSERT(dest_ptrc_p == nullptr, "ERROR: dest_ptrc_p is nullptr.");
-	FE_ASSERT(total_bytes_p == 0, "ERROR: element_bytes_p is 0.");
-	FE_ASSERT((reinterpret_cast<uintptr_t>(dest_ptrc_p) % 32) != 0, "ERROR: dest_ptrc_p is not aligned by 32.");
+	FE_ASSERT(dest_ptrc_p == nullptr, "${%s@0}: ${%s@1} is nullptr.", TO_STRING(MEMORY_ERROR_1XX::_ERROR_INVALID_SIZE), TO_STRING(dest_ptrc_p));
+	FE_ASSERT(total_bytes_p == 0, "${%s@0}: ${%s@1} is 0.", TO_STRING(MEMORY_ERROR_1XX::_ERROR_INVALID_SIZE), TO_STRING(total_bytes_p));
+	FE_ASSERT(MODULO_BY_32(reinterpret_cast<uintptr_t>(dest_ptrc_p)) != 0, "${%s@0}: The address is not aligned by 32.", TO_STRING(MEMORY_ERROR_1XX::_ERROR_ILLEGAL_ADDRESS_ALIGNMENT));
 
 	__m256i* l_m256i_dest_ptr = static_cast<__m256i*>(dest_ptrc_p);
 	const __m256i l_m256i_value_to_be_assigned = _mm256_set1_epi8(value_p);
@@ -259,8 +331,8 @@ _FORCE_INLINE_ void aligned_memset_with_avx(void* const dest_ptrc_p, int8 value_
 
 _FORCE_INLINE_ void unaligned_memcpy_with_avx(void* const dest_ptrc_p, const void* const source_ptrc_p, FE::size_t bytes_to_copy_p) noexcept
 {
-	FE_ASSERT(dest_ptrc_p == nullptr, "ERROR: dest_ptrc_p is nullptr.");
-	FE_ASSERT(bytes_to_copy_p == 0, "ERROR: element_bytes_p is 0.");
+	FE_ASSERT(dest_ptrc_p == nullptr, "${%s@0}: ${%s@1} is nullptr.", TO_STRING(MEMORY_ERROR_1XX::_ERROR_INVALID_SIZE), TO_STRING(dest_ptrc_p));
+	FE_ASSERT(bytes_to_copy_p == 0, "${%s@0}: ${%s@1} is 0.", TO_STRING(MEMORY_ERROR_1XX::_ERROR_INVALID_SIZE), TO_STRING(bytes_to_copy_p));
 
 	__m256i* l_m256i_dest_ptr = static_cast<__m256i*>(dest_ptrc_p);
 	const __m256i* l_m256i_source_ptr = static_cast<const __m256i*>(source_ptrc_p);
@@ -297,10 +369,50 @@ _FORCE_INLINE_ void unaligned_memcpy_with_avx(void* const dest_ptrc_p, const voi
 
 _FORCE_INLINE_ void aligned_memcpy_with_avx(void* const dest_ptrc_p, const void* const source_ptrc_p, FE::size_t bytes_to_copy_p) noexcept
 {
-	FE_ASSERT(dest_ptrc_p == nullptr, "ERROR: dest_ptrc_p is nullptr.");
-	FE_ASSERT(bytes_to_copy_p == 0, "ERROR: element_bytes_p is 0.");
-	FE_ASSERT((reinterpret_cast<uintptr_t>(dest_ptrc_p) % 32) != 0, "ERROR: dest_ptrc_p is not aligned by 32.");
-	//FE_ASSERT((reinterpret_cast<uintptr_t>(source_ptrc_p) % 32) != 0, "ERROR: source_ptrc_p is not aligned by 32.");
+	FE_ASSERT(dest_ptrc_p == nullptr, "${%s@0}: dest_ptrc_p is nullptr.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR));
+	FE_ASSERT(bytes_to_copy_p == 0, "${%s@0}: element_bytes_p is 0.", TO_STRING(MEMORY_ERROR_1XX::_ERROR_INVALID_SIZE));
+	FE_ASSERT(MODULO_BY_32(reinterpret_cast<uintptr_t>(dest_ptrc_p)) != 0, "${%s@0}: dest_ptrc_p is not aligned by 32.", TO_STRING(MEMORY_ERROR_1XX::_ERROR_ILLEGAL_ADDRESS_ALIGNMENT));
+	FE_ASSERT(MODULO_BY_32(reinterpret_cast<uintptr_t>(source_ptrc_p)) != 0, "${%s@0}: source_ptrc_p is not aligned by 32.", TO_STRING(MEMORY_ERROR_1XX::_ERROR_ILLEGAL_ADDRESS_ALIGNMENT));
+	
+	__m256i* l_m256i_dest_ptr = static_cast<__m256i*>(dest_ptrc_p);
+	const __m256i* l_m256i_source_ptr = static_cast<const __m256i*>(source_ptrc_p);
+
+	var::size_t l_leftover_bytes = MODULO_BY_32(bytes_to_copy_p);
+	size_t l_avx_operation_count = DIVIDE_BY_32(bytes_to_copy_p - l_leftover_bytes);
+
+	for (var::size_t executed_operation_count = 0; executed_operation_count != l_avx_operation_count; ++executed_operation_count)
+	{
+		_mm256_store_si256(l_m256i_dest_ptr, _mm256_load_si256(l_m256i_source_ptr));
+		++l_m256i_dest_ptr;
+		++l_m256i_source_ptr;
+	}
+
+	__m128i* l_m128i_dest_ptr = reinterpret_cast<__m128i*>(l_m256i_dest_ptr);
+	const __m128i* l_m128i_source_ptr = reinterpret_cast<const __m128i*>(l_m256i_source_ptr);
+	if (l_leftover_bytes >= 16)
+	{
+		_mm_store_si128(l_m128i_dest_ptr, _mm_load_si128(l_m128i_source_ptr));
+		++l_m128i_dest_ptr;
+		++l_m128i_source_ptr;
+		l_leftover_bytes -= 16;
+	}
+
+	var::byte* l_dest_byte_ptr = reinterpret_cast<var::byte*>(l_m128i_dest_ptr);
+	byte* l_source_byte_ptr = reinterpret_cast<byte*>(l_m128i_source_ptr);
+	for (var::size_t i = 0; i != l_leftover_bytes; ++i)
+	{
+		*l_dest_byte_ptr = *l_source_byte_ptr;
+		++l_dest_byte_ptr;
+		++l_source_byte_ptr;
+	}
+}
+
+_FORCE_INLINE_ void dest_aligned_memcpy_with_avx(void* const dest_ptrc_p, const void* const source_ptrc_p, FE::size_t bytes_to_copy_p) noexcept
+{
+	FE_ASSERT(dest_ptrc_p == nullptr, "${%s@0}: dest_ptrc_p is nullptr.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR));
+	FE_ASSERT(bytes_to_copy_p == 0, "${%s@0}: element_bytes_p is 0.", TO_STRING(MEMORY_ERROR_1XX::_ERROR_INVALID_SIZE));
+	FE_ASSERT(MODULO_BY_32(reinterpret_cast<uintptr_t>(dest_ptrc_p)) != 0, "${%s@0}: dest_ptrc_p is not aligned by 32.", TO_STRING(MEMORY_ERROR_1XX::_ERROR_ILLEGAL_ADDRESS_ALIGNMENT));
+	//FE_ASSERT((reinterpret_cast<uintptr_t>(source_ptrc_p) % 32) != 0, "${%s@0}: source_ptrc_p is not aligned by 32.", TO_STRING(MEMORY_ERROR_1XX::_ERROR_ILLEGAL_ADDRESS_ALIGNMENT));
 
 	__m256i* l_m256i_dest_ptr = static_cast<__m256i*>(dest_ptrc_p);
 	const __m256i* l_m256i_source_ptr = static_cast<const __m256i*>(source_ptrc_p);
@@ -334,6 +446,46 @@ _FORCE_INLINE_ void aligned_memcpy_with_avx(void* const dest_ptrc_p, const void*
 		++l_source_byte_ptr;
 	}
 }
+
+_FORCE_INLINE_ void source_aligned_memcpy_with_avx(void* const dest_ptrc_p, const void* const source_ptrc_p, FE::size_t bytes_to_copy_p) noexcept
+{
+	FE_ASSERT(dest_ptrc_p == nullptr, "${%s@0}: dest_ptrc_p is nullptr.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR));
+	FE_ASSERT(bytes_to_copy_p == 0, "${%s@0}: element_bytes_p is 0.", TO_STRING(MEMORY_ERROR_1XX::_ERROR_INVALID_SIZE));
+	//FE_ASSERT((reinterpret_cast<uintptr_t>(dest_ptrc_p) % 32) != 0, "${%s@0}: dest_ptrc_p is not aligned by 32.", TO_STRING(MEMORY_ERROR_1XX::_ERROR_ILLEGAL_ADDRESS_ALIGNMENT));
+	FE_ASSERT(MODULO_BY_32(reinterpret_cast<uintptr_t>(source_ptrc_p)) != 0, "${%s@0}: source_ptrc_p is not aligned by 32.", TO_STRING(MEMORY_ERROR_1XX::_ERROR_ILLEGAL_ADDRESS_ALIGNMENT));
+
+	__m256i* l_m256i_dest_ptr = static_cast<__m256i*>(dest_ptrc_p);
+	const __m256i* l_m256i_source_ptr = static_cast<const __m256i*>(source_ptrc_p);
+
+	var::size_t l_leftover_bytes = MODULO_BY_32(bytes_to_copy_p);
+	size_t l_avx_operation_count = DIVIDE_BY_32(bytes_to_copy_p - l_leftover_bytes);
+
+	for (var::size_t executed_operation_count = 0; executed_operation_count != l_avx_operation_count; ++executed_operation_count)
+	{
+		_mm256_storeu_si256(l_m256i_dest_ptr, _mm256_load_si256(l_m256i_source_ptr));
+		++l_m256i_dest_ptr;
+		++l_m256i_source_ptr;
+	}
+
+	__m128i* l_m128i_dest_ptr = reinterpret_cast<__m128i*>(l_m256i_dest_ptr);
+	const __m128i* l_m128i_source_ptr = reinterpret_cast<const __m128i*>(l_m256i_source_ptr);
+	if (l_leftover_bytes >= 16)
+	{
+		_mm_storeu_si128(l_m128i_dest_ptr, _mm_load_si128(l_m128i_source_ptr));
+		++l_m128i_dest_ptr;
+		++l_m128i_source_ptr;
+		l_leftover_bytes -= 16;
+	}
+
+	var::byte* l_dest_byte_ptr = reinterpret_cast<var::byte*>(l_m128i_dest_ptr);
+	byte* l_source_byte_ptr = reinterpret_cast<byte*>(l_m128i_source_ptr);
+	for (var::size_t i = 0; i != l_leftover_bytes; ++i)
+	{
+		*l_dest_byte_ptr = *l_source_byte_ptr;
+		++l_dest_byte_ptr;
+		++l_source_byte_ptr;
+	}
+}
 #endif
 
 
@@ -342,29 +494,33 @@ _FORCE_INLINE_ void aligned_memcpy_with_avx(void* const dest_ptrc_p, const void*
 #define ALIGNED_MEMSET(dest_ptrc_p, value_p, total_bytes_p) ::FE::aligned_memset_with_avx512(dest_ptrc_p, value_p, total_bytes_p)
 #define UNALIGNED_MEMCPY(dest_ptrc_p, source_ptrc_p, bytes_to_copy_p) ::FE::unaligned_memcpy_with_avx512(dest_ptrc_p, source_ptrc_p, bytes_to_copy_p)
 #define ALIGNED_MEMCPY(dest_ptrc_p, source_ptrc_p, bytes_to_copy_p) ::FE::aligned_memcpy_with_avx512(dest_ptrc_p, source_ptrc_p, bytes_to_copy_p)
-
+#define DEST_ALIGNED_MEMCPY(dest_ptrc_p, source_ptrc_p, bytes_to_copy_p) ::FE::dest_aligned_memcpy_with_avx512(dest_ptrc_p, source_ptrc_p, bytes_to_copy_p)
+#define SOURCE_ALIGNED_MEMCPY(dest_ptrc_p, source_ptrc_p, bytes_to_copy_p) ::FE::source_aligned_memcpy_with_avx512(dest_ptrc_p, source_ptrc_p, bytes_to_copy_p)
 #elif defined(_AVX_)
 #define UNALIGNED_MEMSET(dest_ptrc_p, value_p, total_bytes_p) ::FE::unaligned_memset_with_avx(dest_ptrc_p, value_p, total_bytes_p)
 #define ALIGNED_MEMSET(dest_ptrc_p, value_p, total_bytes_p) ::FE::aligned_memset_with_avx(dest_ptrc_p, value_p, total_bytes_p)
 #define UNALIGNED_MEMCPY(dest_ptrc_p, source_ptrc_p, bytes_to_copy_p) ::FE::unaligned_memcpy_with_avx(dest_ptrc_p, source_ptrc_p, bytes_to_copy_p)
 #define ALIGNED_MEMCPY(dest_ptrc_p, source_ptrc_p, bytes_to_copy_p) ::FE::aligned_memcpy_with_avx(dest_ptrc_p, source_ptrc_p, bytes_to_copy_p)
-
+#define DEST_ALIGNED_MEMCPY(dest_ptrc_p, source_ptrc_p, bytes_to_copy_p) ::FE::dest_aligned_memcpy_with_avx(dest_ptrc_p, source_ptrc_p, bytes_to_copy_p)
+#define SOURCE_ALIGNED_MEMCPY(dest_ptrc_p, source_ptrc_p, bytes_to_copy_p) ::FE::source_aligned_memcpy_with_avx(dest_ptrc_p, source_ptrc_p, bytes_to_copy_p)
 #else
 #define UNALIGNED_MEMSET(dest_ptrc_p, value_p, total_bytes_p) ::std::memset(dest_ptrc_p, value_p, total_bytes_p)
 #define ALIGNED_MEMSET(dest_ptrc_p, value_p, total_bytes_p) ::std::memset(dest_ptrc_p, value_p, total_bytes_p)
 #define UNALIGNED_MEMCPY(dest_ptrc_p, source_ptrc_p, bytes_to_copy_p) ::std::memcpy(dest_ptrc_p, source_ptrc_p, bytes_to_copy_p)
 #define ALIGNED_MEMCPY(dest_ptrc_p, source_ptrc_p, bytes_to_copy_p) ::std::memcpy(dest_ptrc_p, source_ptrc_p, bytes_to_copy_p)
+#define DEST_ALIGNED_MEMCPY(dest_ptrc_p, source_ptrc_p, bytes_to_copy_p) ::FE::memcpy(dest_ptrc_p, source_ptrc_p, bytes_to_copy_p)
+#define SOURCE_ALIGNED_MEMCPY(dest_ptrc_p, source_ptrc_p, bytes_to_copy_p) ::FE::memcpy(dest_ptrc_p, source_ptrc_p, bytes_to_copy_p)
 #endif
 
 
 _FORCE_INLINE_ void unaligned_memcpy(void* const dest_memblock_ptrc_p, length_t dest_length_p, size_t dest_element_bytes_p, const void* const source_memblock_ptrc_p, length_t source_length_p, size_t source_element_bytes_p) noexcept
 {
-	ABORT_IF(dest_memblock_ptrc_p == nullptr, "ERROR: dest_memblock_ptrc_p is nullptr.");
-	ABORT_IF(source_memblock_ptrc_p == nullptr, "ERROR: source_memblock_ptrc_p is nullptr.");
+	FE_ASSERT(dest_memblock_ptrc_p == nullptr, "ERROR: dest_memblock_ptrc_p is nullptr.");
+	FE_ASSERT(source_memblock_ptrc_p == nullptr, "ERROR: source_memblock_ptrc_p is nullptr.");
 
-	ABORT_IF(dest_length_p == 0, "ERROR: dest_length_p is 0.");
-	ABORT_IF(dest_element_bytes_p == 0, "ERROR: dest_bytes_p is 0.");
-	ABORT_IF(source_element_bytes_p == 0, "ERROR: source_bytes_p is 0.");
+	FE_ASSERT(dest_length_p == 0, "ERROR: dest_length_p is 0.");
+	FE_ASSERT(dest_element_bytes_p == 0, "ERROR: dest_bytes_p is 0.");
+	FE_ASSERT(source_element_bytes_p == 0, "ERROR: source_bytes_p is 0.");
 
 	size_t l_source_size = source_element_bytes_p * source_length_p;
 	size_t l_dest_size = dest_element_bytes_p * dest_length_p;
@@ -379,14 +535,15 @@ _FORCE_INLINE_ void unaligned_memcpy(void* const dest_memblock_ptrc_p, length_t 
 	}
 }
 
+
 _FORCE_INLINE_ void aligned_memcpy(void* const dest_memblock_ptrc_p, length_t dest_length_p, size_t dest_element_bytes_p, const void* const source_memblock_ptrc_p, length_t source_length_p, size_t source_element_bytes_p) noexcept
 {
-	ABORT_IF(dest_memblock_ptrc_p == nullptr, "ERROR: dest_memblock_ptrc_p is nullptr.");
-	ABORT_IF(source_memblock_ptrc_p == nullptr, "ERROR: source_memblock_ptrc_p is nullptr.");
+	FE_ASSERT(dest_memblock_ptrc_p == nullptr, "ERROR: dest_memblock_ptrc_p is nullptr.");
+	FE_ASSERT(source_memblock_ptrc_p == nullptr, "ERROR: source_memblock_ptrc_p is nullptr.");
 
-	ABORT_IF(dest_length_p == 0, "ERROR: dest_length_p is 0.");
-	ABORT_IF(dest_element_bytes_p == 0, "ERROR: dest_bytes_p is 0.");
-	ABORT_IF(source_element_bytes_p == 0, "ERROR: source_bytes_p is 0.");
+	FE_ASSERT(dest_length_p == 0, "ERROR: dest_length_p is 0.");
+	FE_ASSERT(dest_element_bytes_p == 0, "ERROR: dest_bytes_p is 0.");
+	FE_ASSERT(source_element_bytes_p == 0, "ERROR: source_bytes_p is 0.");
 
 	size_t l_source_size = source_element_bytes_p * source_length_p;
 	size_t l_dest_size = dest_element_bytes_p * dest_length_p;
@@ -401,13 +558,59 @@ _FORCE_INLINE_ void aligned_memcpy(void* const dest_memblock_ptrc_p, length_t de
 	}
 }
 
+
+_FORCE_INLINE_ void dest_aligned_memcpy(void* const dest_memblock_ptrc_p, length_t dest_length_p, size_t dest_element_bytes_p, const void* const source_memblock_ptrc_p, length_t source_length_p, size_t source_element_bytes_p) noexcept
+{
+	FE_ASSERT(dest_memblock_ptrc_p == nullptr, "ERROR: dest_memblock_ptrc_p is nullptr.");
+	FE_ASSERT(source_memblock_ptrc_p == nullptr, "ERROR: source_memblock_ptrc_p is nullptr.");
+
+	FE_ASSERT(dest_length_p == 0, "ERROR: dest_length_p is 0.");
+	FE_ASSERT(dest_element_bytes_p == 0, "ERROR: dest_bytes_p is 0.");
+	FE_ASSERT(source_element_bytes_p == 0, "ERROR: source_bytes_p is 0.");
+
+	size_t l_source_size = source_element_bytes_p * source_length_p;
+	size_t l_dest_size = dest_element_bytes_p * dest_length_p;
+
+	if (l_source_size >= l_dest_size)
+	{
+		DEST_ALIGNED_MEMCPY(dest_memblock_ptrc_p, source_memblock_ptrc_p, l_dest_size);
+	}
+	else
+	{
+		DEST_ALIGNED_MEMCPY(dest_memblock_ptrc_p, source_memblock_ptrc_p, l_source_size);
+	}
+}
+
+_FORCE_INLINE_ void source_aligned_memcpy(void* const dest_memblock_ptrc_p, length_t dest_length_p, size_t dest_element_bytes_p, const void* const source_memblock_ptrc_p, length_t source_length_p, size_t source_element_bytes_p) noexcept
+{
+	FE_ASSERT(dest_memblock_ptrc_p == nullptr, "ERROR: dest_memblock_ptrc_p is nullptr.");
+	FE_ASSERT(source_memblock_ptrc_p == nullptr, "ERROR: source_memblock_ptrc_p is nullptr.");
+
+	FE_ASSERT(dest_length_p == 0, "ERROR: dest_length_p is 0.");
+	FE_ASSERT(dest_element_bytes_p == 0, "ERROR: dest_bytes_p is 0.");
+	FE_ASSERT(source_element_bytes_p == 0, "ERROR: source_bytes_p is 0.");
+
+	size_t l_source_size = source_element_bytes_p * source_length_p;
+	size_t l_dest_size = dest_element_bytes_p * dest_length_p;
+
+	if (l_source_size >= l_dest_size)
+	{
+		SOURCE_ALIGNED_MEMCPY(dest_memblock_ptrc_p, source_memblock_ptrc_p, l_dest_size);
+	}
+	else
+	{
+		SOURCE_ALIGNED_MEMCPY(dest_memblock_ptrc_p, source_memblock_ptrc_p, l_source_size);
+	}
+}
+
+
 _FORCE_INLINE_ void unaligned_memcpy(void* const dest_memblock_ptrc_p, size_t dest_bytes_p, const void* const source_memblock_ptrc_p, size_t source_bytes_p) noexcept
 {
-	ABORT_IF(dest_memblock_ptrc_p == nullptr, "ERROR: dest_memblock_ptrc_p is nullptr.");
-	ABORT_IF(source_memblock_ptrc_p == nullptr, "ERROR: source_memblock_ptrc_p is nullptr.");
+	FE_ASSERT(dest_memblock_ptrc_p == nullptr, "ERROR: dest_memblock_ptrc_p is nullptr.");
+	FE_ASSERT(source_memblock_ptrc_p == nullptr, "ERROR: source_memblock_ptrc_p is nullptr.");
 
-	ABORT_IF(dest_bytes_p == 0, "ERROR: dest_bytes_p is 0.");
-	ABORT_IF(source_bytes_p == 0, "ERROR: source_bytes_p is 0.");
+	FE_ASSERT(dest_bytes_p == 0, "ERROR: dest_bytes_p is 0.");
+	FE_ASSERT(source_bytes_p == 0, "ERROR: source_bytes_p is 0.");
 
 	if (source_bytes_p >= dest_bytes_p)
 	{
@@ -419,13 +622,14 @@ _FORCE_INLINE_ void unaligned_memcpy(void* const dest_memblock_ptrc_p, size_t de
 	}
 }
 
+
 _FORCE_INLINE_ void aligned_memcpy(void* const dest_memblock_ptrc_p, size_t dest_bytes_p, const void* const source_memblock_ptrc_p, size_t source_bytes_p) noexcept
 {
-	ABORT_IF(dest_memblock_ptrc_p == nullptr, "ERROR: dest_memblock_ptrc_p is nullptr.");
-	ABORT_IF(source_memblock_ptrc_p == nullptr, "ERROR: source_memblock_ptrc_p is nullptr.");
+	FE_ASSERT(dest_memblock_ptrc_p == nullptr, "ERROR: dest_memblock_ptrc_p is nullptr.");
+	FE_ASSERT(source_memblock_ptrc_p == nullptr, "ERROR: source_memblock_ptrc_p is nullptr.");
 
-	ABORT_IF(dest_bytes_p == 0, "ERROR: dest_bytes_p is 0.");
-	ABORT_IF(source_bytes_p == 0, "ERROR: source_bytes_p is 0.");
+	FE_ASSERT(dest_bytes_p == 0, "ERROR: dest_bytes_p is 0.");
+	FE_ASSERT(source_bytes_p == 0, "ERROR: source_bytes_p is 0.");
 
 	if (source_bytes_p >= dest_bytes_p)
 	{
@@ -434,6 +638,43 @@ _FORCE_INLINE_ void aligned_memcpy(void* const dest_memblock_ptrc_p, size_t dest
 	else
 	{
 		ALIGNED_MEMCPY(dest_memblock_ptrc_p, source_memblock_ptrc_p, source_bytes_p);
+	}
+}
+
+
+_FORCE_INLINE_ void dest_aligned_memcpy(void* const dest_memblock_ptrc_p, size_t dest_bytes_p, const void* const source_memblock_ptrc_p, size_t source_bytes_p) noexcept
+{
+	FE_ASSERT(dest_memblock_ptrc_p == nullptr, "ERROR: dest_memblock_ptrc_p is nullptr.");
+	FE_ASSERT(source_memblock_ptrc_p == nullptr, "ERROR: source_memblock_ptrc_p is nullptr.");
+
+	FE_ASSERT(dest_bytes_p == 0, "ERROR: dest_bytes_p is 0.");
+	FE_ASSERT(source_bytes_p == 0, "ERROR: source_bytes_p is 0.");
+
+	if (source_bytes_p >= dest_bytes_p)
+	{
+		DEST_ALIGNED_MEMCPY(dest_memblock_ptrc_p, source_memblock_ptrc_p, dest_bytes_p);
+	}
+	else
+	{
+		DEST_ALIGNED_MEMCPY(dest_memblock_ptrc_p, source_memblock_ptrc_p, source_bytes_p);
+	}
+}
+
+_FORCE_INLINE_ void source_aligned_memcpy(void* const dest_memblock_ptrc_p, size_t dest_bytes_p, const void* const source_memblock_ptrc_p, size_t source_bytes_p) noexcept
+{
+	FE_ASSERT(dest_memblock_ptrc_p == nullptr, "ERROR: dest_memblock_ptrc_p is nullptr.");
+	FE_ASSERT(source_memblock_ptrc_p == nullptr, "ERROR: source_memblock_ptrc_p is nullptr.");
+
+	FE_ASSERT(dest_bytes_p == 0, "ERROR: dest_bytes_p is 0.");
+	FE_ASSERT(source_bytes_p == 0, "ERROR: source_bytes_p is 0.");
+
+	if (source_bytes_p >= dest_bytes_p)
+	{
+		SOURCE_ALIGNED_MEMCPY(dest_memblock_ptrc_p, source_memblock_ptrc_p, dest_bytes_p);
+	}
+	else
+	{
+		SOURCE_ALIGNED_MEMCPY(dest_memblock_ptrc_p, source_memblock_ptrc_p, source_bytes_p);
 	}
 }
 

@@ -147,7 +147,7 @@ public:
         return *this;
     }
 
-    _CONSTEXPR20_ _FORCE_INLINE_ fixed_sized_string& assign(FE::iterator<FE::contiguous_iterator<char_type>> input_begin_p, FE::iterator<FE::contiguous_iterator<char_type>> input_end_p) noexcept
+    _CONSTEXPR20_ _FORCE_INLINE_ fixed_sized_string& assign(const_iterator input_begin_p, const_iterator input_end_p) noexcept
     {
         FE_ASSERT(input_begin_p == nullptr, "${%s@0}: ${%s@1} is nullptr.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(input_begin_p));
         FE_ASSERT(input_end_p == nullptr, "${%s@0}: ${%s@1} is nullptr.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(input_end_p));
@@ -312,6 +312,7 @@ public:
         FE_ASSERT(count_p == 0, "${%s@0}: fixed sized string capacity overflowed.", TO_STRING(MEMORY_ERROR_1XX::_ERROR_INVALID_SIZE));
        
         std::memmove(this->m_fstring + index_p, this->m_fstring + (index_p + count_p), (this->m_string_length - index_p) * sizeof(value_type));
+        this->m_string_length -= count_p;
         return *this;
     }
 
@@ -320,7 +321,7 @@ public:
     {
         FE_ASSERT(this->m_string_length >= string_max_capacity, "${%s0}: out of capacity", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_RANGE));
         this->m_fstring[this->m_string_length] = char_type_element_p;
-        ++(this->m_string_length);
+        ++this->m_string_length;
     }
 
     _CONSTEXPR20_ _FORCE_INLINE_ char_type pop_back() noexcept
@@ -336,7 +337,7 @@ public:
     _CONSTEXPR20_ _FORCE_INLINE_ fixed_sized_string& append(size_type count_p, char_type char_p) noexcept
     {
         FE_ASSERT(count_p == 0, "${%s0}: ${%s1} is zero", TO_STRING(MEMORY_ERROR_1XX::_ERROR_INVALID_SIZE), TO_STRING(count_p));
-        FE_ASSERT(this->max_length < (this->m_string_length + count_p), "${%s0}: cannot append ${%ld@1} character(s) to the fstring.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_RANGE), &count_p);
+        FE_ASSERT(this->max_length() < (this->m_string_length + count_p), "${%s0}: cannot append ${%ld@1} character(s) to the fstring.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_RANGE), &count_p);
 
         value_type* l_begin_ptr = this->m_fstring + this->m_string_length;
         value_type* const l_end_ptrc = l_begin_ptr + count_p;
@@ -346,7 +347,7 @@ public:
             *l_begin_ptr = char_p;
             ++l_begin_ptr;
         }
-
+        this->m_string_length += count_p;
         return *this;
     }
 
@@ -363,7 +364,7 @@ public:
         }
 
         FE_ASSERT(count_p == 0, "${%s0}: ${%s1} is zero", TO_STRING(MEMORY_ERROR_1XX::_ERROR_INVALID_SIZE), TO_STRING(count_p));
-        FE_ASSERT(this->max_length < (this->m_string_length + count_p), "${%s0}: cannot append another fstring that exceeds the capacity of a caller fstring.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_RANGE));
+        FE_ASSERT(this->max_length() < (this->m_string_length + count_p), "${%s0}: cannot append another fstring that exceeds the capacity of a caller fstring.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_RANGE));
         FE_ASSERT(other_cref_p.length() < (count_p + position_p), "${%s0}: out of input fstring index boundary.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_RANGE));
 
         value_type* l_begin_ptr = this->m_fstring + this->m_string_length;
@@ -376,6 +377,7 @@ public:
             ++l_begin_ptr;
             ++l_other_begin_ptr;
         }
+        this->m_string_length += count_p;
         return *this;
     }
 
@@ -383,7 +385,7 @@ public:
     {
         FE_ASSERT(cstr_ptr_p == nullptr, "${%s@0}: ${%s@1} is nullptr.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(cstr_ptr_p));
         FE_ASSERT(count_p == 0, "${%s0}: ${%s1} is zero", TO_STRING(MEMORY_ERROR_1XX::_ERROR_INVALID_SIZE), TO_STRING(count_p));
-        FE_ASSERT(this->max_length < (this->m_string_length + count_p), "${%s0}: cannot append another fstring that exceeds the capacity of a caller fstring.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_RANGE));
+        FE_ASSERT(this->max_length() < (this->m_string_length + count_p), "${%s0}: cannot append another fstring that exceeds the capacity of a caller fstring.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_RANGE));
  
         value_type* l_begin_ptr = this->m_fstring + this->m_string_length;
         value_type* const l_end_ptrc = l_begin_ptr + count_p;
@@ -392,7 +394,9 @@ public:
         {
             *l_begin_ptr = *cstr_ptr_p;
             ++l_begin_ptr;
+            ++cstr_ptr_p;
         }
+        this->m_string_length += count_p;
         return *this;
     }
 
@@ -401,15 +405,16 @@ public:
         return this->operator+=(cstr_ptrc_p);
     }
 
-    _CONSTEXPR20_ _FORCE_INLINE_ fixed_sized_string& append(FE::iterator<FE::contiguous_iterator<char_type>> input_begin_p, FE::iterator<FE::contiguous_iterator<char_type>> input_end_p) noexcept
+    _CONSTEXPR20_ _FORCE_INLINE_ fixed_sized_string& append(const_iterator input_begin_p, const_iterator input_end_p) noexcept
     {
         FE_ASSERT(input_begin_p == nullptr, "${%s@0}: ${%s@1} is nullptr.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(input_begin_p));
         FE_ASSERT(input_end_p == nullptr, "${%s@0}: ${%s@1} is nullptr.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(input_end_p));
         FE_ASSERT(input_begin_p >= input_end_p, "${%s@0}: input_begin_p address value must be smaller than input_end_p address value.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_RANGE));
         FE_ASSERT((input_end_p - input_begin_p) + this->m_string_length >= string_max_capacity, "${%s@0}: input string range length exceeds fixed sized string capacity.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_RANGE));
         
+        size_type l_input_size = input_end_p - input_begin_p;
         value_type* l_begin_ptr = this->m_fstring + this->m_string_length;
-        value_type* const l_end_ptrc = l_begin_ptr + (input_end_p - input_begin_p);
+        value_type* const l_end_ptrc = l_begin_ptr + l_input_size;
 
         while (l_begin_ptr != l_end_ptrc)
         {
@@ -417,14 +422,16 @@ public:
             ++l_begin_ptr;
             ++input_begin_p;
         }
+        this->m_string_length += l_input_size;
         return *this;
     }
 
-    _CONSTEXPR20_ _FORCE_INLINE_ fixed_sized_string& append(std::initializer_list<char_type>&& initializer_list_p) noexcept
+    _CONSTEXPR20_ _FORCE_INLINE_ fixed_sized_string& append(std::initializer_list<const char_type>&& initializer_list_p) noexcept
     {
         FE_ASSERT(initializer_list_p.size() == 0, "${%s@0}: initializer_list_p is empty.", TO_STRING(MEMORY_ERROR_1XX::_ERROR_INVALID_SIZE));
         FE_ASSERT(this->max_length() < initializer_list_p.size() + this->m_string_length, "${%s@0}: initializer_list_p is too large to take the contents.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_CAPACITY));
         algorithm::string::concatenate_characters(this->data() + this->m_string_length, this->max_length(), std::move(initializer_list_p));
+        this->m_string_length += initializer_list_p.size();
         return *this;
     }
 

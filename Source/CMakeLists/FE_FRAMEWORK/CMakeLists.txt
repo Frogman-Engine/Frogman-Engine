@@ -97,6 +97,33 @@ elseif(CMAKE_SYSTEM_NAME STREQUAL "Windows")
 	)
 
 
-
-
 endif()
+
+
+
+
+#// To enable or disable a certain feature, modify the macro definition to true or false.
+#// 
+#// Modifying the macro will not immediately affect your project.
+#// The binary files e.g. (.lib, .a, .dll, or .so) need to be rebuilt to apply changes that have been made.
+
+#// Frogman Engine Memory Tracker generates a memory utilization report over frames at the end of an app process.
+#// The output file can be visualized as a graph image via Frogman Engine Memory Utilization Analyzer.
+#// Memory tracking routines involve atomic integral sum and add operations, and its tracking frequency can be dynamically adjusted without recompiling the Engine binary.
+#// Excluding this feature can improve an app performance.
+
+#// FE::exception is designed to replace conventional C++ exception models. 
+#// It logs recoverable errors and warnings with timestamps to keep track of suspicious app process flows, and it can return early if it is nested inside an if-statement.
+#// Frogman Engine Exception system can be turned off by assigning "false" to this macro.
+
+#// FE_ASSERT can be disabled by removing the corresponding macro to eliminate error-checking overhead.
+#// Please NOTE that FE_ASSERT aborts when circumstances are unrecoverable and critical. Therefore, precise debugging should be placed first.
+
+ADD_COMPILE_DEFINITIONS(_USE_CMAKE_MACRO_=true)
+
+TARGET_COMPILE_DEFINITIONS(${FE_FRAMEWORK} PRIVATE
+	$<$<CONFIG:DEBUG>:			_HAS_EXCEPTIONS=0 _DEBUG_					_ENABLE_EXCEPTION_LOG_ _ENABLE_ASSERT_ _ENABLE_ABORT_IF_ _ENABLE_LOG_ _ENABLE_CONDITIONAL_LOG_ _ENABLE_FE_CHECK_ONCE_> #_ENABLE_MEMORY_TRACKER_
+	$<$<CONFIG:RELWITHDEBINFO>:	_HAS_EXCEPTIONS=0 _RELWITHDEBINFO_			_ENABLE_EXCEPTION_LOG_ _ENABLE_ASSERT_ _ENABLE_ABORT_IF_ _ENABLE_LOG_ _ENABLE_CONDITIONAL_LOG_ _ENABLE_FE_CHECK_ONCE_>
+	$<$<CONFIG:RELEASE>:		_HAS_EXCEPTIONS=0 _RELEASE_				>
+	$<$<CONFIG:MINSIZEREL>:		_HAS_EXCEPTIONS=0 _RELEASE_ _MINSIZEREL_>
+)

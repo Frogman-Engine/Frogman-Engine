@@ -48,14 +48,27 @@ namespace std_style
 
 		_NODISCARD_ _FORCE_INLINE_ pointer reallocate(pointer const pointer_p, size_type prev_count_p, size_type new_count_p) noexcept
 		{
-			FE_ASSERT(pointer_p == nullptr, "${%s@0}: ${%s@1} is nullptr.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(pointer_p));
-
 			pointer l_result = allocator::reallocate(pointer_p, prev_count_p, new_count_p);
 
 			if constexpr (is_trivially_constructible_and_destructible == FE::TYPE_TRIVIALITY::_NOT_TRIVIAL)
 			{
-				new(l_result + prev_count_p) value_type[new_count_p - prev_count_p]{};
+				size_type l_size_difference;
+				if (new_count_p > prev_count_p)
+				{
+					l_size_difference = new_count_p - prev_count_p;
+					new(l_result + prev_count_p) value_type[l_size_difference]{};
+				}
+				else
+				{
+					l_size_difference = prev_count_p - new_count_p;
+					pointer l_end = pointer_p + prev_count_p;
+					for (pointer begin = pointer_p + new_count_p; begin != l_end; ++begin)
+					{
+						begin->~value_type();
+					}
+				}
 			}
+
 			return l_result;
 		}
 
