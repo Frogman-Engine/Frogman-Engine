@@ -21,4 +21,6 @@ All project settings can be adjusted by modifying CMakeLists.txt
 | Platform     | Architecture  | Platform Support | 
 |--------------|---------------|------------------|
 | Windows      | X86-64        | In Development   |
-| Linux        | X86-64        | Canceled         | (to focus on Windows Development)
+| Linux        | X86-64        | Canceled         | 
+
+(to focus on Windows Development)
