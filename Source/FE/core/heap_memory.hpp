@@ -70,7 +70,7 @@ public:
 
 	_FORCE_INLINE_ static total_memory_utilization_data query_all_data() noexcept
 	{
-#ifdef _ENABLE_MEMORY_TRACKER_
+#if defined(_ENABLE_MEMORY_TRACKER_)
 		total_memory_utilization_data l_data
 		{
 			heap_memory_tracker_base::s_global_total_bytes.load(std::memory_order_relaxed), heap_memory_tracker_base::tl_s_thread_local_total_bytes,
@@ -85,7 +85,7 @@ public:
 	
 	_FORCE_INLINE_ static global_memory_utilization query_global_data() noexcept
 	{
-#ifdef _ENABLE_MEMORY_TRACKER_
+#if defined(_ENABLE_MEMORY_TRACKER_)
 		global_memory_utilization l_data
 		{
 			heap_memory_tracker_base::s_global_total_bytes.load(std::memory_order_relaxed), heap_memory_tracker_base::tl_s_thread_local_total_bytes
@@ -99,7 +99,7 @@ public:
 
 	_FORCE_INLINE_ static type_memory_utilization query_type_data() noexcept
 	{
-#ifdef _ENABLE_MEMORY_TRACKER_
+#if defined(_ENABLE_MEMORY_TRACKER_)
 		type_memory_utilization l_data
 		{
 			heap_memory_tracker::s_global_total_bytes_by_type.load(std::memory_order_relaxed), heap_memory_tracker::tl_s_thread_local_total_bytes_by_type
@@ -112,44 +112,44 @@ public:
 	}
 
 
-#ifdef _ENABLE_MEMORY_TRACKER_
-	_FORCE_INLINE_ static void __log_heap_memory_allocation(uint64 size_in_bytes_to_allocate_p, const char* const allocator_name_ptrc_p, U* const allocated_address_ptrc_p, const char* const allocated_type_name_ptrc_p) noexcept
-	{
-		uint64 l_this_thread_id = FE::thread::this_thread_id();
-
-		global_memory_utilization l_prev_heap_mem_usage_in_bytes = heap_memory_tracker::query_global_data();
-		heap_memory_tracker::add(size_in_bytes_to_allocate_p);
-		FE_LOG("\n\n The previous total heap memory used by this application was ${%lu@0} bytes. \n The previous total heap memory used by this thread[id:${%lu@1}] was ${%lu@2} bytes.\n Allocated ${%lu@3} bytes of heap memory from ${%s@4}. \n The memory address is aligned by ${%d@5} bytes. \n The allocated memory data type is ${%s@6}.\n The allocated memory address is 0x${%p@7} \n", &(l_prev_heap_mem_usage_in_bytes._global_total_bytes), &l_this_thread_id, &(l_prev_heap_mem_usage_in_bytes._thread_local_total_bytes), &size_in_bytes_to_allocate_p, allocator_name_ptrc_p, &address_alignment::size, allocated_type_name_ptrc_p, allocated_address_ptrc_p);
-
-		global_memory_utilization l_new_heap_mem_usage_in_bytes = heap_memory_tracker::query_global_data();
-		FE_LOG("\n\n New total heap memory used by this application is now ${%lu@0} bytes. \n New total heap memory used by this thread[id:${%lu@1}] is now ${%lu@2} bytes.\n", &(l_new_heap_mem_usage_in_bytes._global_total_bytes), &l_this_thread_id, &(l_new_heap_mem_usage_in_bytes._thread_local_total_bytes));
-	}
-
-	_FORCE_INLINE_ static void __log_heap_memory_reallocation(uint64 prev_size_in_bytes_p, uint64 new_size_in_bytes_to_allocate_p, const char* const allocator_name_ptrc_p, U* const allocated_address_ptrc_p, const char* const allocated_type_name_ptrc_p) noexcept
-	{
-		uint64 l_this_thread_id = FE::thread::this_thread_id();
-
-		global_memory_utilization l_prev_heap_mem_usage_in_bytes = heap_memory_tracker::query_global_data();
-		heap_memory_tracker::sub(prev_size_in_bytes_p);
-		heap_memory_tracker::add(new_size_in_bytes_to_allocate_p);
-		FE_LOG("\n\n The previous total heap memory used by this application was ${%lu@0} bytes. \n The previous total heap memory used by this thread[id:${%lu@1}] was ${%lu@2} bytes.\n Re-allocated ${%lu@3} bytes of heap memory from ${%s@4}. \n The memory address is aligned by ${%d@5} bytes. \n The allocated memory data type is ${%s@6}.\n The allocated memory address is 0x${%p@7} \n", &(l_prev_heap_mem_usage_in_bytes._global_total_bytes), &l_this_thread_id, &(l_prev_heap_mem_usage_in_bytes._thread_local_total_bytes), &new_size_in_bytes_to_allocate_p, allocator_name_ptrc_p, &address_alignment::size, allocated_type_name_ptrc_p, allocated_address_ptrc_p);
-
-		global_memory_utilization l_new_heap_mem_usage_in_bytes = heap_memory_tracker::query_global_data();
-		FE_LOG("\n\n New total heap memory used by this application is now ${%lu@0} bytes. \n New total heap memory used by this thread[id:${%lu@1}] is now ${%lu@2} bytes.\n", &(l_new_heap_mem_usage_in_bytes._global_total_bytes), &l_this_thread_id, &(l_new_heap_mem_usage_in_bytes._thread_local_total_bytes));
-	}
-
-	_FORCE_INLINE_ static void __log_heap_memory_deallocation(uint64 size_in_bytes_to_deallocate_p, const char* const allocator_name_ptrc_p, U* const allocated_address_ptrc_p, const char* const allocated_type_name_ptrc_p) noexcept
-	{
-		uint64 l_this_thread_id = FE::thread::this_thread_id();
-
-		global_memory_utilization l_prev_heap_mem_usage_in_bytes = heap_memory_tracker::query_global_data();
-		heap_memory_tracker::sub(size_in_bytes_to_deallocate_p);
-		FE_LOG("\n\n The previous total heap memory used by this application was ${%lu@0} bytes. \n The previous total heap memory used by this thread[id:${%lu@1}] was ${%lu@2} bytes.\n De-allocated ${%lu@3} bytes of heap memory via ${%s@4}. \n The memory address is aligned by ${%d@5} bytes. \n The de-allocated memory data type is ${%s@6}.\n The de-allocated memory address is 0x${%p@7} \n", &(l_prev_heap_mem_usage_in_bytes._global_total_bytes), &l_this_thread_id, &(l_prev_heap_mem_usage_in_bytes._thread_local_total_bytes), &size_in_bytes_to_deallocate_p, allocator_name_ptrc_p, &address_alignment::size, allocated_type_name_ptrc_p, allocated_address_ptrc_p);
-
-		global_memory_utilization l_new_heap_mem_usage_in_bytes = heap_memory_tracker::query_global_data();
-		FE_LOG("\n\n New total heap memory used by this application is now ${%lu@0} bytes. \n New total heap memory used by this thread[id:${%lu@1}] is now ${%lu@2} bytes.\n", &(l_new_heap_mem_usage_in_bytes._global_total_bytes), &l_this_thread_id, &(l_new_heap_mem_usage_in_bytes._thread_local_total_bytes));
-	}
-#endif
+//#if defined(_ENABLE_MEMORY_TRACKER_)
+//	_FORCE_INLINE_ static void __log_heap_memory_allocation(uint64 size_in_bytes_to_allocate_p, const char* const allocator_name_ptrc_p, U* const allocated_address_ptrc_p, const char* const allocated_type_name_ptrc_p) noexcept
+//	{
+//		uint64 l_this_thread_id = FE::thread::this_thread_id();
+//
+//		global_memory_utilization l_prev_heap_mem_usage_in_bytes = heap_memory_tracker::query_global_data();
+//		heap_memory_tracker::add(size_in_bytes_to_allocate_p);
+//		FE_LOG("\n\n The previous total heap memory used by this application was ${%lu@0} bytes. \n The previous total heap memory used by this thread[id:${%lu@1}] was ${%lu@2} bytes.\n Allocated ${%lu@3} bytes of heap memory from ${%s@4}. \n The memory address is aligned by ${%d@5} bytes. \n The allocated memory data type is ${%s@6}.\n The allocated memory address is 0x${%p@7} \n", &(l_prev_heap_mem_usage_in_bytes._global_total_bytes), &l_this_thread_id, &(l_prev_heap_mem_usage_in_bytes._thread_local_total_bytes), &size_in_bytes_to_allocate_p, allocator_name_ptrc_p, &address_alignment::size, allocated_type_name_ptrc_p, allocated_address_ptrc_p);
+//
+//		global_memory_utilization l_new_heap_mem_usage_in_bytes = heap_memory_tracker::query_global_data();
+//		FE_LOG("\n\n New total heap memory used by this application is now ${%lu@0} bytes. \n New total heap memory used by this thread[id:${%lu@1}] is now ${%lu@2} bytes.\n", &(l_new_heap_mem_usage_in_bytes._global_total_bytes), &l_this_thread_id, &(l_new_heap_mem_usage_in_bytes._thread_local_total_bytes));
+//	}
+//
+//	_FORCE_INLINE_ static void __log_heap_memory_reallocation(uint64 prev_size_in_bytes_p, uint64 new_size_in_bytes_to_allocate_p, const char* const allocator_name_ptrc_p, U* const allocated_address_ptrc_p, const char* const allocated_type_name_ptrc_p) noexcept
+//	{
+//		uint64 l_this_thread_id = FE::thread::this_thread_id();
+//
+//		global_memory_utilization l_prev_heap_mem_usage_in_bytes = heap_memory_tracker::query_global_data();
+//		heap_memory_tracker::sub(prev_size_in_bytes_p);
+//		heap_memory_tracker::add(new_size_in_bytes_to_allocate_p);
+//		FE_LOG("\n\n The previous total heap memory used by this application was ${%lu@0} bytes. \n The previous total heap memory used by this thread[id:${%lu@1}] was ${%lu@2} bytes.\n Re-allocated ${%lu@3} bytes of heap memory from ${%s@4}. \n The memory address is aligned by ${%d@5} bytes. \n The allocated memory data type is ${%s@6}.\n The allocated memory address is 0x${%p@7} \n", &(l_prev_heap_mem_usage_in_bytes._global_total_bytes), &l_this_thread_id, &(l_prev_heap_mem_usage_in_bytes._thread_local_total_bytes), &new_size_in_bytes_to_allocate_p, allocator_name_ptrc_p, &address_alignment::size, allocated_type_name_ptrc_p, allocated_address_ptrc_p);
+//
+//		global_memory_utilization l_new_heap_mem_usage_in_bytes = heap_memory_tracker::query_global_data();
+//		FE_LOG("\n\n New total heap memory used by this application is now ${%lu@0} bytes. \n New total heap memory used by this thread[id:${%lu@1}] is now ${%lu@2} bytes.\n", &(l_new_heap_mem_usage_in_bytes._global_total_bytes), &l_this_thread_id, &(l_new_heap_mem_usage_in_bytes._thread_local_total_bytes));
+//	}
+//
+//	_FORCE_INLINE_ static void __log_heap_memory_deallocation(uint64 size_in_bytes_to_deallocate_p, const char* const allocator_name_ptrc_p, U* const allocated_address_ptrc_p, const char* const allocated_type_name_ptrc_p) noexcept
+//	{
+//		uint64 l_this_thread_id = FE::thread::this_thread_id();
+//
+//		global_memory_utilization l_prev_heap_mem_usage_in_bytes = heap_memory_tracker::query_global_data();
+//		heap_memory_tracker::sub(size_in_bytes_to_deallocate_p);
+//		FE_LOG("\n\n The previous total heap memory used by this application was ${%lu@0} bytes. \n The previous total heap memory used by this thread[id:${%lu@1}] was ${%lu@2} bytes.\n De-allocated ${%lu@3} bytes of heap memory via ${%s@4}. \n The memory address is aligned by ${%d@5} bytes. \n The de-allocated memory data type is ${%s@6}.\n The de-allocated memory address is 0x${%p@7} \n", &(l_prev_heap_mem_usage_in_bytes._global_total_bytes), &l_this_thread_id, &(l_prev_heap_mem_usage_in_bytes._thread_local_total_bytes), &size_in_bytes_to_deallocate_p, allocator_name_ptrc_p, &address_alignment::size, allocated_type_name_ptrc_p, allocated_address_ptrc_p);
+//
+//		global_memory_utilization l_new_heap_mem_usage_in_bytes = heap_memory_tracker::query_global_data();
+//		FE_LOG("\n\n New total heap memory used by this application is now ${%lu@0} bytes. \n New total heap memory used by this thread[id:${%lu@1}] is now ${%lu@2} bytes.\n", &(l_new_heap_mem_usage_in_bytes._global_total_bytes), &l_this_thread_id, &(l_new_heap_mem_usage_in_bytes._thread_local_total_bytes));
+//	}
+//#endif
 
 
 	template<typename T, class alignment>
@@ -183,7 +183,7 @@ _NODISCARD_ _FORCE_INLINE_ T* trackable_calloc(length_t count_p, size_t bytes_p)
 	FE_ASSERT(l_result_ptrc == nullptr, "${%s@0}: Failed to allocate memory from scalable_aligned_malloc()", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR));
 	FE_ASSERT((reinterpret_cast<uintptr_t>(l_result_ptrc) % alignment::size) != 0, "${%s@0}: The allocated heap memory address not aligned by ${%lu@1}.", TO_STRING(MEMORY_ERROR_1XX::_ERROR_ILLEGAL_ADDRESS_ALIGNMENT), &alignment::size);
 	
-#ifdef _ENABLE_MEMORY_TRACKER_
+#if defined(_ENABLE_MEMORY_TRACKER_)
 	::FE::heap_memory_tracker<T, alignment>::__log_heap_memory_allocation(count_p * bytes_p, TO_STRING(trackable_calloc), l_result_ptrc, typeid(T).name());
 #endif
 
@@ -200,7 +200,7 @@ _FORCE_INLINE_ void trackable_free(T* const memblock_ptrc_p, _MAYBE_UNUSED_ leng
 {
 	::scalable_aligned_free(memblock_ptrc_p);
 
-#ifdef _ENABLE_MEMORY_TRACKER_
+#if defined(_ENABLE_MEMORY_TRACKER_)
 	::FE::heap_memory_tracker<T, alignment>::__log_heap_memory_deallocation(count_p * bytes_p, TO_STRING(trackable_free), memblock_ptrc_p, typeid(T).name());
 #endif 
 }
@@ -232,7 +232,7 @@ _NODISCARD_ _FORCE_INLINE_ T* trackable_realloc(T* const memblock_ptrc_p, length
 
 	FE_ASSERT((reinterpret_cast<uintptr_t>(l_realloc_result_ptr) % alignment::size) != 0, "${%s@0}: The allocated heap memory address not aligned by ${%lu@1}.", TO_STRING(MEMORY_ERROR_1XX::_ERROR_ILLEGAL_ADDRESS_ALIGNMENT), &alignment::size);
 	
-#ifdef _ENABLE_MEMORY_TRACKER_
+#if defined(_ENABLE_MEMORY_TRACKER_)
 	::FE::heap_memory_tracker<T, alignment>::__log_heap_memory_reallocation(prev_length_p * prev_bytes_p, new_length_p * new_bytes_p, TO_STRING(trackable_realloc), l_realloc_result_ptr, typeid(T).name());
 #endif
 	

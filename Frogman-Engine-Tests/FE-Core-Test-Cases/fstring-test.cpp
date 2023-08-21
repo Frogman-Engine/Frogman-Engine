@@ -20,6 +20,7 @@ TEST(fstring, constructor)
 	EXPECT_TRUE(l_fstring == "FE::fstring<_UNIT_TEST_FSTRING_LENGTH_> is a fixed sized string class template.");
 }
 
+
 TEST(fstring, constructor_assignment)
 {
 	FE::fstring<_TEST_FSTRING_LENGTH_>::value_type l_buffer[] = "FE::fstring<_UNIT_TEST_FSTRING_LENGTH_> is a fixed sized string class template.";
@@ -27,6 +28,7 @@ TEST(fstring, constructor_assignment)
 
 	EXPECT_TRUE(l_fstring == l_buffer);
 }
+
 
 TEST(fstring, copy_constructor)
 {
@@ -36,6 +38,7 @@ TEST(fstring, copy_constructor)
 	EXPECT_TRUE(l_subject == l_fstring);
 }
 
+
 TEST(fstring, move_constructor)
 {
 	FE::fstring<_TEST_FSTRING_LENGTH_> l_fstring = "FE::fstring<_UNIT_TEST_FSTRING_LENGTH_> is a fixed sized string class template.";
@@ -43,6 +46,7 @@ TEST(fstring, move_constructor)
 
 	EXPECT_FALSE(l_subject == l_fstring);
 }
+
 
 TEST(fstring, copy_assignment_operator)
 {
@@ -54,6 +58,7 @@ TEST(fstring, copy_assignment_operator)
 	EXPECT_TRUE(l_fstring == l_buffer);
 }
 
+
 TEST(fstring, assignment_operator)
 {
 	FE::fstring<_TEST_FSTRING_LENGTH_> l_fstring;
@@ -62,11 +67,13 @@ TEST(fstring, assignment_operator)
 	EXPECT_TRUE("FE::fstring<_UNIT_TEST_FSTRING_LENGTH_> is a fixed sized string class template." == l_fstring);
 }
 
+
 TEST(fstring, index_operator)
 {
 	FE::fstring<_TEST_FSTRING_LENGTH_> l_fstring = "FE::fstring<_UNIT_TEST_FSTRING_LENGTH_> is a fixed sized string class template.";
 	EXPECT_EQ(l_fstring[4], 'f');
 }
+
 
 TEST(fstring, assign)
 {
@@ -91,13 +98,14 @@ TEST(fstring, assign)
 	EXPECT_TRUE("A bottle" == l_fstring);
 
 	l_fstring.clear();
-	l_fstring.assign(l_other.begin() + 23, l_other.end());
+	l_fstring.assign(l_other.cbegin() + 23, l_other.cend());
 	EXPECT_TRUE("the United Kingdom" == l_fstring);
 
 	l_fstring.clear();
 	l_fstring.assign({'C', '/', 'C', '+', '+'});
 	EXPECT_TRUE("C/C++" == l_fstring);
 }
+
 
 TEST(fstring, insert)
 {
@@ -124,6 +132,7 @@ TEST(fstring, insert)
 	EXPECT_TRUE("Unit testing frameworkUnit testing is not TDD" == l_fstring);
 }
 
+
 TEST(fstring, front_back)
 {
 	FE::fstring<_TEST_FSTRING_LENGTH_> l_fstring = "FE::fstring<_UNIT_TEST_FSTRING_LENGTH_> is a fixed sized string class template.";
@@ -133,6 +142,7 @@ TEST(fstring, front_back)
 
 	EXPECT_TRUE(string::string_comparison(l_buffer, "F."));
 }
+
 
 TEST(fstring, c_str)
 {
@@ -144,6 +154,7 @@ TEST(fstring, c_str)
 
 	EXPECT_TRUE(::FE::algorithm::string::string_comparison("FE::fstring<_UNIT_TEST_FSTRING_LENGTH_> is a fixed sized string class template.", l_fstring.c_str()));
 }
+
 
 TEST(fstring, begin_end)
 {
@@ -161,6 +172,7 @@ TEST(fstring, begin_end)
 	EXPECT_TRUE(l_fstring == l_buffer);
 }
 
+
 TEST(fstring, capacity_clear_and_is_empty)
 {
 	FE::fstring<_TEST_FSTRING_LENGTH_> l_fstring = "FE::fstring<_UNIT_TEST_FSTRING_LENGTH_> is a fixed sized string class template.";
@@ -172,6 +184,7 @@ TEST(fstring, capacity_clear_and_is_empty)
 	EXPECT_EQ(l_fstring.is_empty(), true);
 }
 
+
 TEST(fstring, push_pop_back)
 {
 	FE::fstring<_TEST_FSTRING_LENGTH_> l_fstring = "FE::fstring<_UNIT_TEST_FSTRING_LENGTH_> is a fixed sized string class template";
@@ -182,6 +195,7 @@ TEST(fstring, push_pop_back)
 	EXPECT_EQ(l_fstring.pop_back(), '.');
 }
 
+
 TEST(fstring, concatenation)
 {
 	FE::fstring<_TEST_FSTRING_LENGTH_> l_fstring = "FE::fstring<_UNIT_TEST_FSTRING_LENGTH_> is a";
@@ -189,6 +203,7 @@ TEST(fstring, concatenation)
 
 	EXPECT_TRUE(string::string_comparison("FE::fstring<_UNIT_TEST_FSTRING_LENGTH_> is a fixed sized string class template.", l_fstring.data()));
 }
+
 
 TEST(fstring, starts_with)
 {
@@ -204,6 +219,7 @@ TEST(fstring, starts_with)
 	EXPECT_FALSE(l_fstring.starts_with('E'));
 }
 
+
 TEST(fstring, ends_with)
 {
 	FE::fstring<_TEST_FSTRING_LENGTH_> l_fstring = "FE::fstring is a string class template.";
@@ -217,6 +233,7 @@ TEST(fstring, ends_with)
 
 	EXPECT_FALSE(l_fstring.ends_with("%d"));
 }
+
 
 TEST(fstring, contains)
 {
@@ -232,6 +249,7 @@ TEST(fstring, contains)
 	EXPECT_FALSE(l_fstring.contains('?'));
 }
 
+
 TEST(fstring, copy)
 {
 	FE::fstring<_TEST_FSTRING_LENGTH_> l_fstring = "FE::fstring is a string class template.";
@@ -239,6 +257,7 @@ TEST(fstring, copy)
 	l_fstring.copy(l_buffer, 20, 24, 29);
 	EXPECT_TRUE(string::string_comparison(l_buffer, "class"));
 }
+
 
 TEST(fstring, find)
 {
@@ -275,6 +294,7 @@ TEST(fstring, rfind)
 	EXPECT_EQ(l_result2._target_data_location, 18);
 }
 
+
 TEST(fstring, count_chars)
 {
 	FE::fstring<_TEST_FSTRING_LENGTH_> l_fstring = "FE::fstring is a string class template.";
@@ -284,6 +304,7 @@ TEST(fstring, count_chars)
 	index_t l_from = 20;
 	EXPECT_EQ((l_fstring.count_chars('s', l_from))._match_count, 2);
 }
+
 
 TEST(fstring, swap)
 {
@@ -295,6 +316,7 @@ TEST(fstring, swap)
 	EXPECT_TRUE(l_first_fstring == "CBA");
 }
 
+
 TEST(fstring, erase)
 {
 	FE::fstring<_TEST_FSTRING_LENGTH_> l_first_fstring = "FE::fstring is a fixed-sized string class template.";
@@ -303,37 +325,42 @@ TEST(fstring, erase)
 	EXPECT_TRUE(l_first_fstring == "FE::fstring is a string class template.");
 }
 
-TEST(fstring, append1)
+
+TEST(fstring, append)
 {
+	FE::fstring<_TEST_FSTRING_LENGTH_> l_fstring = "COD Modern Warfare is my favorite ";
+	l_fstring.append(3, 'A');
+	EXPECT_TRUE(l_fstring == "COD Modern Warfare is my favorite AAA");
 
-}
 
-TEST(fstring, append2)
-{
+	FE::fstring<_TEST_FSTRING_LENGTH_> l_second_fstring = " shooter game.";
+	l_fstring.append(l_second_fstring);
+	EXPECT_TRUE(l_fstring == "COD Modern Warfare is my favorite AAA shooter game.");
 
-}
 
-TEST(fstring, append3)
-{
 
-}
 
-TEST(fstring, append4)
-{
+	l_second_fstring = "Another my favorite ";
+	l_second_fstring.append(l_fstring, 34, 3);
+	EXPECT_TRUE(l_second_fstring == "Another my favorite AAA");
 
-}
 
-TEST(fstring, append5)
-{
+	l_second_fstring.append(" title is ", 6);
+	EXPECT_TRUE(l_second_fstring == "Another my favorite AAA title");
 
-}
 
-TEST(fstring, append6)
-{
+	l_second_fstring.append(" is Tom Clancy's");
+	EXPECT_TRUE(l_second_fstring == "Another my favorite AAA title is Tom Clancy's");
 
-}
 
-TEST(fstring, append7)
-{
+	char l_string[] = " Ghost Recon: ";
+	l_second_fstring.append(FE::const_iterator<FE::contiguous_iterator<char>>{l_string}, FE::const_iterator<FE::contiguous_iterator<char>>{l_string + 14});
+	EXPECT_TRUE(l_second_fstring == "Another my favorite AAA title is Tom Clancy's Ghost Recon: ");
+
+
+	l_second_fstring.append({'F', 'u', 't', 'u', 'r', 'e', ' ', 'S', 'o', 'l', 'd', 'i', 'e', 'r', '.'});
+	EXPECT_TRUE(l_second_fstring == "Another my favorite AAA title is Tom Clancy's Ghost Recon: Future Soldier.");
+
+
 
 }

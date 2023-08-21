@@ -12,6 +12,8 @@
 BEGIN_NAMESPACE(FE)
 
 
+
+
 template <class implementation>
 class new_delete_proxy_allocator final
 {
@@ -41,19 +43,34 @@ public:
 	}
 
 
-	_NODISCARD_ _FORCE_INLINE_ static pointer reallocate(pointer const pointer_p, size_type prev_count_p, size_type new_count_p) noexcept
+	_NODISCARD_ _FORCE_INLINE_ static pointer reallocate(pointer pointer_p, size_type prev_count_p, size_type new_count_p) noexcept
 	{
 		pointer l_result = allocator::reallocate(pointer_p, prev_count_p, new_count_p);
 
 		if constexpr (is_trivially_constructible_and_destructible == FE::TYPE_TRIVIALITY::_NOT_TRIVIAL)
 		{
-			new(l_result + prev_count_p) value_type[new_count_p - prev_count_p]{};
+			size_type l_size_difference;
+			if (new_count_p > prev_count_p)
+			{
+				l_size_difference = new_count_p - prev_count_p;
+				new(l_result + prev_count_p) value_type[l_size_difference]{};
+			}
+			else
+			{
+				l_size_difference = prev_count_p - new_count_p;
+				pointer l_end = pointer_p + prev_count_p;
+				for (pointer begin = pointer_p + new_count_p; begin != l_end; ++begin)
+				{
+					begin->~value_type();
+				}
+			}
 		}
+
 		return l_result;
 	}
 
 
-	_FORCE_INLINE_ static void deallocate(pointer const pointer_p, size_type count_p) noexcept
+	_FORCE_INLINE_ static void deallocate(pointer pointer_p, size_type count_p) noexcept
 	{
 		FE_ASSERT(count_p == 0, "${%s@0}: queried allocation size is ${%lu@1}.", TO_STRING(MEMORY_ERROR_1XX::_ERROR_INVALID_SIZE), &count_p);
 		FE_ASSERT(pointer_p == nullptr, "${%s@0}: attempted to delete ${%p@1}.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), pointer_p);
@@ -69,6 +86,8 @@ public:
 		allocator::deallocate(pointer_p, count_p);
 	}
 };
+
+
 
 
 #ifdef _AVX512_
@@ -98,7 +117,7 @@ public:
 	}
 
 
-	_NODISCARD_ _FORCE_INLINE_ static pointer reallocate(pointer const pointer_p, size_type prev_count_p, size_type new_count_p) noexcept
+	_NODISCARD_ _FORCE_INLINE_ static pointer reallocate(pointer pointer_p, size_type prev_count_p, size_type new_count_p) noexcept
 	{
 		if (new_count_p == 0) _UNLIKELY_
 		{
@@ -110,7 +129,7 @@ public:
 	}
 
 
-	_FORCE_INLINE_ static void deallocate(pointer const pointer_p, size_type count_p) noexcept
+	_FORCE_INLINE_ static void deallocate(pointer pointer_p, size_type count_p) noexcept
 	{
 		FE_ASSERT(count_p == 0, "${%s@0}: queried allocation size is ${%lu@1}.", TO_STRING(MEMORY_ERROR_1XX::_ERROR_INVALID_SIZE), &count_p);
 		FE_ASSERT(pointer_p == nullptr, "${%s@0}: attempted to delete ${%p@1}.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), pointer_p);
@@ -118,6 +137,8 @@ public:
 		::FE::trackable_free<value_type, alignment>(pointer_p, count_p, sizeof(value_type));
 	}
 };
+
+
 
 
 template <typename T>
@@ -144,14 +165,14 @@ public:
 
 		FE_ASSERT((reinterpret_cast<uintptr_t>(l_result_ptrc) % 2) != 0 , "ERROR: The allocated heap memory address not aligned by two. The address value was ${%p@0}", l_result_ptrc);
 		
-#ifdef _ENABLE_MEMORY_TRACKER_
+#if defined(_ENABLE_MEMORY_TRACKER_)
 		::FE::heap_memory_tracker<T, align_64bytes>::__log_heap_memory_allocation(count_p * sizeof(value_type), TO_STRING(cache_aligned_allocate), l_result_ptrc, typeid(T).name());
 #endif
 		return l_result_ptrc;
 	}
 	
 
-	_NODISCARD_ _FORCE_INLINE_ static pointer reallocate(pointer const pointer_p, size_type prev_count_p, size_type new_count_p) noexcept
+	_NODISCARD_ _FORCE_INLINE_ static pointer reallocate(pointer pointer_p, size_type prev_count_p, size_type new_count_p) noexcept
 	{
 		FE_ASSERT(pointer_p == nullptr, "${%s@0}: ${%s@1} is nullptr.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(pointer_p));
 
@@ -173,12 +194,12 @@ public:
 	}
 
 
-	_FORCE_INLINE_ static void deallocate(pointer const pointer_p, _MAYBE_UNUSED_ size_type count_p) noexcept
+	_FORCE_INLINE_ static void deallocate(pointer pointer_p, _MAYBE_UNUSED_ size_type count_p) noexcept
 	{
 		FE_ASSERT(count_p == 0, "${%s@0}: queried allocation size is ${%lu@1}.", TO_STRING(MEMORY_ERROR_1XX::_ERROR_INVALID_SIZE), &count_p);
 		FE_ASSERT(pointer_p == nullptr, "${%s@0}: attempted to delete ${%p@1}.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), pointer_p);
 
-#ifdef _ENABLE_MEMORY_TRACKER_
+#if defined(_ENABLE_MEMORY_TRACKER_)
 		::FE::heap_memory_tracker<T, align_64bytes>::__log_heap_memory_deallocation(count_p * sizeof(value_type), TO_STRING(cache_aligned_deallocate), pointer_p, typeid(T).name());
 #endif 
 		tbb::detail::r1::cache_aligned_deallocate(pointer_p);
