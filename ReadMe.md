@@ -1,4 +1,5 @@
 [![License](https://img.shields.io/badge/License-boost-blue.svg)](LICENSE)
+[![Platform](https://img.shields.io/badge/Platform-x86_64-white.svg)](PLATFORM)
 
 # Frogman-Engine
 Copyright © 2023 by UNKNOWN STRYKER. All rights reserved. 
