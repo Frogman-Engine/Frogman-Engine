@@ -221,7 +221,7 @@ public:
     {
         return algorithm::string::string_comparison(this->m_smart_string.get(), string_p);
     }
-    _FORCE_INLINE_ friend boolean operator==(const CharT* const string_p, const basic_string& other_p) const noexcept
+    _FORCE_INLINE_ friend boolean operator==(const CharT* const string_p, const basic_string& other_p) noexcept
     {
         return algorithm::string::string_comparison(string_p, other_p.m_smart_string.get());
     }
@@ -239,7 +239,7 @@ public:
     {
         return !algorithm::string::string_comparison(this->m_smart_string.get(), string_p);
     }
-    _FORCE_INLINE_ friend boolean operator!=(const CharT* const string_p, const basic_string& other_p) const noexcept
+    _FORCE_INLINE_ friend boolean operator!=(const CharT* const string_p, const basic_string& other_p) noexcept
     {
         return !algorithm::string::string_comparison(string_p, other_p.m_smart_string.get());
     }
