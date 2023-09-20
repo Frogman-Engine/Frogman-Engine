@@ -209,12 +209,12 @@ public:
     _CONSTEXPR20_ _FORCE_INLINE_ const CharT* c_str() const noexcept { return this->m_fstring; }
     _CONSTEXPR20_ _FORCE_INLINE_ std::basic_string<CharT> std_str() noexcept { return this->m_fstring; }
 
-    _CONSTEXPR20_ _FORCE_INLINE_ iterator begin() const noexcept { return this->m_fstring; }
-    _CONSTEXPR20_ _FORCE_INLINE_ iterator end() const noexcept { return this->m_fstring + this->m_string_length; }
+    _CONSTEXPR20_ _FORCE_INLINE_ iterator begin() noexcept { return this->m_fstring; }
+    _CONSTEXPR20_ _FORCE_INLINE_ iterator end() noexcept { return this->m_fstring + this->m_string_length; }
     _CONSTEXPR20_ _FORCE_INLINE_ reverse_iterator rbegin() const noexcept { return this->m_fstring + (this->m_string_length - 1); }
     _CONSTEXPR20_ _FORCE_INLINE_ reverse_iterator rend() const noexcept { return this->m_fstring - 1; }
-    _CONSTEXPR20_ _FORCE_INLINE_ const_iterator cbegin() const noexcept { return this->m_fstring; }
-    _CONSTEXPR20_ _FORCE_INLINE_ const_iterator cend() const noexcept { return this->m_fstring + this->m_string_length; }
+    _CONSTEXPR20_ _FORCE_INLINE_ const_iterator cbegin() noexcept { return this->m_fstring; }
+    _CONSTEXPR20_ _FORCE_INLINE_ const_iterator cend() noexcept { return this->m_fstring + this->m_string_length; }
     _CONSTEXPR20_ _FORCE_INLINE_ const_reverse_iterator crbegin() const noexcept { return this->m_fstring + (this->m_string_length - 1); }
     _CONSTEXPR20_ _FORCE_INLINE_ const_reverse_iterator crend() const noexcept { return this->m_fstring - 1; }
 
