@@ -98,13 +98,11 @@ namespace FE::internal::log
     }
 #endif
 
-#if defined(_ENABLE_ASSERT_) || defined(_ENABLE_EXIT_)
     _FORCE_INLINE_ void __FE_ABORT_IMPLEMENTATION(const char* const message_p, const char* const file_name_p, const char* const function_name_p, FE::uint32 line_p) noexcept
     {
         thread_local static ::FE::log::fatal_error_log tl_s_init;
         tl_s_init.do_log(message_p, file_name_p, function_name_p, line_p);
     }
-#endif
 }
 
 
