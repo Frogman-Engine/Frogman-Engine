@@ -26,16 +26,18 @@
 
 
 #ifdef _ENABLE_LOG_
-// ${%d at n} - int32
-// ${%u at n} - uint32
-// ${%ld at n} - int64
-// ${%lu at n} - uint64
-// ${%lf at n} - float64
-// ${%f at n} - float32
-// ${%b at n} - bool
-// ${%c at n} - char
-// ${%s at n} - string
-// ${%p at n} - hexadecimal 64bit pointer
+/*
+${% d at n} - int32
+${%u at n} - uint32
+${%ld at n} - int64
+${%lu at n} - uint64
+${%lf at n} - float64
+${%f at n} - float32
+${%b at n} - bool
+${%c at n} - char
+${%s at n} - string
+${%p at n} - hexadecimal 64bit pointer | * A file and console logger with a string formatter.
+*/
 #define FE_LOG(...) ::FE::internal::log::__FE_LOG_IMPLEMENTATION(::FE::log::buffered_string_formatter({ __VA_ARGS__ }), __FILE__, __func__, __LINE__)
 #else
 #define FE_LOG(...)
@@ -52,7 +54,7 @@
 // ${%b at n} - bool
 // ${%c at n} - char
 // ${%s at n} - string
-// ${%p at n} - hexadecimal 64bit pointer  |  FE_ASSERT() invokes abort() if the expression is true.
+// ${%p at n} - hexadecimal 64bit pointer | *Dynamically asserts the condition, that must not be true at runtime. 
 #define FE_ASSERT(expression, ...) \
 if(expression) _UNLIKELY_ \
 { \
@@ -65,16 +67,14 @@ if(expression) _UNLIKELY_ \
 
 
 #ifdef _ENABLE_EXIT_
-// ${%d at n} - int32
-// ${%u at n} - uint32
-// ${%ld at n} - int64
-// ${%lu at n} - uint64
-// ${%lf at n} - float64
-// ${%f at n} - float32
-// ${%b at n} - bool
-// ${%c at n} - char
-// ${%s at n} - string
-// ${%p at n} - hexadecimal 64bit pointer  |  FE_EXIT() invokes exit() if the expression is true.
+/*
+${% d at n} - int32   | ${% u at n} - uint32  
+${% ld at n} - int64  | ${%lu at n} - uint64
+${%lf at n} - float64 | ${%f at n} - float32
+${%b at n}  - bool    | ${%c at n}  - char    
+${%s at n}  - string  | ${%p at n}  - hexadecimal 64bit pointer
+*Dynamically asserts the condition, that must not be true at runtime, and exits the program with the given error code.
+*/
 #define FE_EXIT(expression, error_code, ...) \
 if(expression) _UNLIKELY_ \
 { \
@@ -86,6 +86,14 @@ if(expression) _UNLIKELY_ \
 #endif
 
 
+/*
+${% d at n} - int32   | ${% u at n} - uint32
+${% ld at n} - int64  | ${%lu at n} - uint64
+${%lf at n} - float64 | ${%f at n} - float32
+${%b at n}  - bool    | ${%c at n}  - char
+${%s at n}  - string  | ${%p at n}  - hexadecimal 64bit pointer
+*If the given function call does not return the expected value, the program will exit with an error code, retrieved from the method. 
+*/
 #define FE_EXPECT(fn_call, expected_value, ...)\
 { \
 	auto __FE_EXPECT_RESULT__ = fn_call; \

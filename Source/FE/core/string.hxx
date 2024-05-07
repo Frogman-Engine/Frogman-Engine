@@ -902,6 +902,7 @@ public:
 
         Traits::replace(string_info<CharT>{this->m_smart_string.get(), this->m_length, this->capacity()}, position_p, count_to_replace_p, other_p.m_smart_string.get(), other_p.m_length);
         this->m_length = (this->m_length + other_p.m_length) - count_to_replace_p;
+        FE_ASSERT(this->m_length > algorithm::string::length(this->m_smart_string.get()), "length integrity is broken: The replace() opertation failed due to undesired use.");
         return *this;
     }
 
@@ -921,7 +922,8 @@ public:
         FE_ASSERT(other_count_p == 0, "${%s@0}: ${%s@1} is zero.", TO_STRING(FE::MEMORY_ERROR_1XX::_FATAL_ERROR_INVALID_SIZE), TO_STRING(other_count_p));
 
         Traits::replace(string_info<CharT>{this->m_smart_string.get(), this->m_length, this->capacity()}, position_p, count_to_replace_p, other_p.m_smart_string.get() + other_position_p, other_count_p);
-        this->m_length = (this->m_length + other_p.m_length) - count_to_replace_p;
+        this->m_length = (this->m_length + other_count_p) - count_to_replace_p;
+        FE_ASSERT(this->m_length > algorithm::string::length(this->m_smart_string.get()), "length integrity is broken: The replace() opertation failed due to undesired use.");
         return *this;
     }
 
@@ -935,6 +937,7 @@ public:
 
         Traits::replace(string_info<CharT>{this->m_smart_string.get(), this->m_length, this->capacity()}, position_p, count_to_replace_p, string_p, input_count_p);
         this->m_length = (this->m_length + input_count_p) - count_to_replace_p;
+        FE_ASSERT(this->m_length > algorithm::string::length(this->m_smart_string.get()), "length integrity is broken: The replace() opertation failed due to undesired use.");
         return *this;
     }
 
@@ -949,6 +952,7 @@ public:
 
         Traits::replace(string_info<CharT>{this->m_smart_string.get(), this->m_length, this->capacity()}, position_p, count_to_replace_p, string_p, l_input_length);
         this->m_length = (this->m_length + l_input_length) - count_to_replace_p;
+        FE_ASSERT(this->m_length > algorithm::string::length(this->m_smart_string.get()), "length integrity is broken: The replace() opertation failed due to undesired use.");
         return *this;
     }
 
@@ -961,6 +965,7 @@ public:
 
         Traits::replace(string_info<CharT>{this->m_smart_string.get(), this->m_length, this->capacity()}, position_p, count_to_replace_p, value_p, input_count_p);
         this->m_length = (this->m_length + input_count_p) - count_to_replace_p;
+        FE_ASSERT(this->m_length > algorithm::string::length(this->m_smart_string.get()), "length integrity is broken: The replace() opertation failed due to undesired use.");
         return *this;
     }
 
@@ -975,6 +980,7 @@ public:
 
         Traits::replace(string_info<CharT>{this->m_smart_string.get(), this->m_length, this->capacity()}, position_p, count_to_replace_p, std::move(initializer_list_p));
         this->m_length = (this->m_length + l_input_size) - count_to_replace_p;
+        FE_ASSERT(this->m_length > algorithm::string::length(this->m_smart_string.get()), "length integrity is broken: The replace() opertation failed due to undesired use.");
         return *this;
     }
 
@@ -990,6 +996,7 @@ public:
 
         Traits::replace(string_info<CharT>{this->m_smart_string.get(), this->m_length, this->capacity()}, first_index_p, last_index_p, input_first_p, input_last_p);
         this->m_length = (this->m_length + l_input_size) - l_this_count_to_replace;
+        FE_ASSERT(this->m_length > algorithm::string::length(this->m_smart_string.get()), "length integrity is broken: The replace() opertation failed due to undesired use.");
         return *this;
     }
 

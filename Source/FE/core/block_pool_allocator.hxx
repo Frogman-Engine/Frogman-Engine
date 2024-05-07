@@ -86,6 +86,17 @@ public:
 
 		base_type::s_pool.deallocate(pointer_p);
 	}
+
+	_CONSTEXPR20_ var::boolean operator==(const new_delete_block_pool_allocator& other_p) noexcept
+	{
+		return true;
+	}
+#ifndef _HAS_CXX23_
+	_CONSTEXPR20_ var::boolean operator!=(const new_delete_block_pool_allocator& other_p) noexcept
+	{
+		return false;
+	}
+#endif
 };
 
 
@@ -146,6 +157,17 @@ public:
 
 		base_type::s_pool.deallocate(reinterpret_cast<FE::internal::pool::uninitialized_bytes<sizeof(T)>* const>(pointer_p));
 	}
+
+	_CONSTEXPR20_ var::boolean operator==(const block_pool_allocator& other_p) noexcept
+	{
+		return true;
+	}
+#ifndef _HAS_CXX23_
+	_CONSTEXPR20_ var::boolean operator!=(const block_pool_allocator& other_p) noexcept
+	{
+		return false;
+	}
+#endif
 };
 
 
@@ -215,6 +237,17 @@ public:
 
 		base_type::s_pool.deallocate(this->m_namespace.data(), pointer_p);
 	}
+
+	_CONSTEXPR20_ var::boolean operator==(const new_delete_namespace_block_pool_allocator& other_p) noexcept
+	{
+		return this->m_namespace == other_p.m_namespace;
+	}
+#ifndef _HAS_CXX23_
+	_CONSTEXPR20_ var::boolean operator!=(const new_delete_namespace_block_pool_allocator& other_p) noexcept
+	{
+		return this->m_namespace != other_p.m_namespace;
+	}
+#endif
 };
 
 
@@ -282,6 +315,17 @@ public:
 
 		base_type::s_pool.deallocate(this->m_namespace.data(), reinterpret_cast<FE::internal::pool::uninitialized_bytes<sizeof(T)>* const>(pointer_p));
 	}
+
+	_CONSTEXPR20_ var::boolean operator==(const namespace_block_pool_allocator& other_p) noexcept
+	{
+		return this->m_namespace == other_p.m_namespace;
+	}
+#ifndef _HAS_CXX23_
+	_CONSTEXPR20_ var::boolean operator!=(const namespace_block_pool_allocator& other_p) noexcept
+	{
+		return this->m_namespace != other_p.m_namespace;
+	}
+#endif
 };
 
 

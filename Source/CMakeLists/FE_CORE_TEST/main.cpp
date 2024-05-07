@@ -4,21 +4,61 @@
 
 #include <FE/core/prerequisites.h>
 #include <FE/framework/framework.hpp>
-#include <FE/framework/reflection/function_table.hpp>
 #include <FE/core/block_pool.hxx>
 #include <FE/miscellaneous/private/macro_restrictions.h>
 
 
 
 
-//https://learn.microsoft.com/en-us/cpp/build/profile-guided-optimizations?view=msvc-170
-// Profile Guided Optimization
+/*
+Profile Guided Optimization: https://learn.microsoft.com/en-us/cpp/build/profile-guided-optimizations?view=msvc-170
+
+TO DO: 
+1. variable table
+                                 
+																														  |--- int32 variable hash map
+																														  |--- float64 variable hash map
+																														  |--- FE::string variable hash map
+std::unordered_map<Key: type name string, Value: std::unordered_map<Key: varaible name string, Value: varaible address>> -|--- FE::array variable hash map
+																														  |--- std::list variable hash map
+																														  |--- std::deque variable hash map
+2. memory layout reflection for serialization  																		      |--- etc...
+                                                                                      *
+	                                                                                  |
+	Shallower <----- Memory Hierarchy Depth ----> Deeper                      Lower Memory Address
+                                                      |----------------|              |
+	                                                  | - FE::string - |              |
+	|----------------------------------|    ----------|FE::smart_ptr   |              |
+	|  Target Entry Non-Trivial Object |    |         |length, capacity|              |
+	|- member variables -              |    |         |----------------|              |
+	|  FE::string m_name --------------|----|                                         |
+	|  FE::vector<float64, 3> m_vector |-------|                                      |
+	|----------------------------------|       |       |----------------|             |
+	                                           |       | - FE::vector - |             |
+											   |-------| x              |             |
+													   | y              |             |
+													   | z              |             |
+													   |----------------|     Higher Memory Address
+													                                  |
+																					  *
+																					  
+Memory Layer Traversal Order: Entry.FE::string m_name -> FE::string.FE::smart_ptr -> FE::smart_ptr.m_smart_ptr data 
+																									|
+												    |-----------------------------------------------|
+												    |
+												    |--> FE::string.length -> FE::string.capacity
+																					   |
+																					   |
+									           |---------------------------------------|
+											   |
+											   |--> FE::vector.x -> FE::vector.y -> FE::vector.z
+*/ 
 class test final : public FE::framework::application
 {
 public:
 	test(FE::size_t function_table_size_p)
 	{
-		FE::framework::function_table::reserve(function_table_size_p);
+		s_function_table->reserve(function_table_size_p);
 	}
 
 private:

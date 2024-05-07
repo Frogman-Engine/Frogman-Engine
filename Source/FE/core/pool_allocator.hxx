@@ -79,6 +79,17 @@ public:
 
 		base_type::s_pool->deallocate<var::byte>(reinterpret_cast<var::byte* const>(pointer_p), FE::calculate_aligned_memory_size_in_bytes<T, Alignment>(count_p));
 	}
+
+	_CONSTEXPR20_ var::boolean operator==(const pool_allocator& other_p) noexcept
+	{
+		return true;
+	}
+#ifndef _HAS_CXX23_
+	_CONSTEXPR20_ var::boolean operator!=(const pool_allocator& other_p) noexcept
+	{
+		return false;
+	}
+#endif
 };
 
 
@@ -158,6 +169,17 @@ public:
 
 		base_type::s_pool->deallocate<var::byte>(this->m_namespace.data(), reinterpret_cast<var::byte* const>(pointer_p), FE::calculate_aligned_memory_size_in_bytes<T, Alignment>(count_p));
 	}
+
+	_CONSTEXPR20_ var::boolean operator==(const namespace_pool_allocator& other_p) noexcept
+	{
+		return this->m_namespace == other_p.m_namespace;
+	}
+#ifndef _HAS_CXX23_
+	_CONSTEXPR20_ var::boolean operator!=(const namespace_pool_allocator& other_p) noexcept
+	{
+		return this->m_namespace != other_p.m_namespace;
+	}
+#endif
 };
 
 

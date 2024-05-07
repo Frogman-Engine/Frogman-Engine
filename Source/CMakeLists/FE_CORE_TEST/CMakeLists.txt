@@ -30,7 +30,7 @@ SET(_TEST_CODE_
 	${CMAKE_CURRENT_SOURCE_DIR}/../../../Frogman-Engine-Tests/FE-Core-Test-Cases/allocator-test.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/../../../Frogman-Engine-Tests/FE-Core-Test-Cases/array-test.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/../../../Frogman-Engine-Tests/FE-Core-Test-Cases/fstring-test.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/../../../Frogman-Engine-Tests/FE-Core-Test-Cases/function_table-test.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/../../../Frogman-Engine-Tests/FE-Core-Test-Cases/reflection-test.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/../../../Frogman-Engine-Tests/FE-Core-Test-Cases/function-thread-test.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/../../../Frogman-Engine-Tests/FE-Core-Test-Cases/hash-test.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/../../../Frogman-Engine-Tests/FE-Core-Test-Cases/heap-test.cpp
@@ -123,7 +123,7 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
 		${BOOST_STACKTRACE_LINUX}
 		${UNIT_TEST_LINUX}
 #		${BENCHMARK_TEST_LINUX}
-		${FE_CORE_FRAMEWORK_LINUX}
+		${FE_FRAMEWORK_LINUX}
 	)
 
 
@@ -139,7 +139,7 @@ elseif(CMAKE_SYSTEM_NAME STREQUAL "Windows")
         $<$<CONFIG:MINSIZEREL>:		${MINSIZEREL_COMPILE_OPTIONS} 		/arch:AVX>
     )
 
-
+	
 	SET_TARGET_PROPERTIES(${FE_CORE_TEST} PROPERTIES
 		ARCHIVE_OUTPUT_DIRECTORY_DEBUG 			${CMAKE_CURRENT_SOURCE_DIR}/Windows/debug
         ARCHIVE_OUTPUT_DIRECTORY_RELWITHDEBINFO ${CMAKE_CURRENT_SOURCE_DIR}/Windows/release_with_debug_info
@@ -165,7 +165,7 @@ elseif(CMAKE_SYSTEM_NAME STREQUAL "Windows")
 
 	TARGET_LINK_LIBRARIES(${FE_CORE_TEST} 
 		${BOOST_STACKTRACE_WINDOWS}
-		${FE_CORE_FRAMEWORK_WINDOWS}
+		${FE_FRAMEWORK_WINDOWS}
 		${UNIT_TEST_WINDOWS}
 		${BENCHMARK_TEST_WINDOWS}
 		shlwapi.lib

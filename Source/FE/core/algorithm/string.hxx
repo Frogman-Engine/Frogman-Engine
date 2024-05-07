@@ -639,7 +639,7 @@ _NODISCARD_ _CONSTEXPR20_ std::optional<range> find_the_last_within_range(const 
 {
     FE_STATIC_ASSERT(FE::is_char<CharT>::value == false, "CharT is not a valid character type");
     FE_ASSERT(string_range_p._begin > string_range_p._end, "${%s@0}: ${%s@1} cannot be greater than ${%s@2}.", TO_STRING(string_range_p._begin), TO_STRING(string_range_p._end));
-    FE_ASSERT(length(string_p) < string_range_p._end, "${%s@0}: ${%s@1} cannot be greater than the length of ${%s@2}.", TO_STRING(length(string_p)), TO_STRING(string_range_p._end));
+    FE_ASSERT(length(string_p) < string_range_p._end, "${%s@0}: The input string range._end is pointing to the outside of the actual input string.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_ACCESS_VIOLATION));
 
     FE_ASSERT(string_p == nullptr, "${%s@0}: ${%s@1} is nullptr.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(string_p));
     FE_ASSERT(target_substring_p == nullptr, "${%s@0}: ${%s@1} is nullptr.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(target_substring_p));

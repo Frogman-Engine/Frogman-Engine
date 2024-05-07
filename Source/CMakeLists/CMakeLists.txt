@@ -223,11 +223,11 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
 		$<$<CONFIG:MINSIZEREL>:		${CMAKE_CURRENT_SOURCE_DIR}/../../Third-Party-Libraries/boost-1.85.0/lib/Linux/gcc-11.4/release/libboost_stacktrace_basic.a>
 	)
 
-	SET(FE_CORE_FRAMEWORK_LINUX 
-		$<$<CONFIG:DEBUG>:			${CMAKE_CURRENT_SOURCE_DIR}/FE_CORE_FRAMEWORK/Linux/debug/lib/libFE_CORE_FRAMEWORK.a>
-		$<$<CONFIG:RELWITHDEBINFO>: ${CMAKE_CURRENT_SOURCE_DIR}/FE_CORE_FRAMEWORK/Linux/release_with_debug_info/lib/libFE_CORE_FRAMEWORK.a>
-		$<$<CONFIG:RELEASE>:		${CMAKE_CURRENT_SOURCE_DIR}/FE_CORE_FRAMEWORK/Linux/release/lib/libFE_CORE_FRAMEWORK.a>
-		$<$<CONFIG:MINSIZEREL>:		${CMAKE_CURRENT_SOURCE_DIR}/FE_CORE_FRAMEWORK/Linux/minimally_sized_release/lib/libFE_CORE_FRAMEWORK.a>
+	SET(FE_FRAMEWORK_LINUX 
+		$<$<CONFIG:DEBUG>:			${CMAKE_CURRENT_SOURCE_DIR}/FE_FRAMEWORK/Linux/debug/lib/libFE_FRAMEWORK.a>
+		$<$<CONFIG:RELWITHDEBINFO>: ${CMAKE_CURRENT_SOURCE_DIR}/FE_FRAMEWORK/Linux/release_with_debug_info/lib/libFE_FRAMEWORK.a>
+		$<$<CONFIG:RELEASE>:		${CMAKE_CURRENT_SOURCE_DIR}/FE_FRAMEWORK/Linux/release/lib/libFE_FRAMEWORK.a>
+		$<$<CONFIG:MINSIZEREL>:		${CMAKE_CURRENT_SOURCE_DIR}/FE_FRAMEWORK/Linux/minimally_sized_release/lib/libFE_FRAMEWORK.a>
 	)
 
 
@@ -237,11 +237,30 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
 elseif(CMAKE_SYSTEM_NAME STREQUAL "Windows")
 	MESSAGE("Configurating The Build Environment for Windows X86-64")
 
-	SET(DEBUG_COMPILE_OPTIONS			/Zc:__cplusplus /WX /W4 /MP /Od /Ob0 /Oi /Ot /Oy- /GT /MTd /Gy /GF )
-	SET(RELWITHDEBINFO_COMPILE_OPTIONS	/Zc:__cplusplus /WX /W4 /MP /Ox /Ob2 /Oi /Ot /Oy- /GT /MT /Gy /GL /GF )
-	SET(RELEASE_COMPILE_OPTIONS			/Zc:__cplusplus /WX /W4 /MP /Ox /Ob2 /Oi /Ot /Oy /GT /MT /Gy /GL /GF )
-	SET(MINSIZEREL_COMPILE_OPTIONS		/Zc:__cplusplus /WX /W4 /MP /Ox /Ob2 /Oi /Os /Oy /GT /MT /Gy /GL /GF )
-
+	# /Zc:__cplusplus: C++ version macro option
+	# /WX: Treat warnings as errors 
+	# /W4: Warning level 4
+	# /MP: Multi-processor compilation4
+	# /GF: Eliminate duplicate strings
+	# /GT: Enable fiber-safe Thread Local Storage 
+	# /MTd: Multi-threaded Debug Static std C++ library
+	# /Gy: Enable function-level linking 
+	# /GL: Whole program optimization
+	# /Od: Disable optimization 
+	# /Ot: Favor fast code 
+	# /Os: Favor small code
+	# /Ob0: Disable inline function expansion 
+	# /Oi: Generate intrinsic functions
+	# /Oy-: Disable frame pointer omission  
+	# /Gr: Enable calling convention fastcall
+	# /GR: Enable RTTI
+	SET(DEBUG_COMPILE_OPTIONS			/Od /Ob0 /Ot /Oy- /MTd	/guard:cf /fp:except /sdl /JMC)
+	SET(RELWITHDEBINFO_COMPILE_OPTIONS	/Ox /Ob2 /Ot /Oy- /MT	/guard:cf /fp:except /sdl /JMC)
+	SET(RELEASE_COMPILE_OPTIONS			/Ox /Ob2 /Ot /Oy /MT	)
+	SET(MINSIZEREL_COMPILE_OPTIONS		/Ox /Ob2 /Os /Oy /MT	)
+	
+	ADD_COMPILE_OPTIONS(/std:c17 /Zc:__cplusplus /WX /W4 /MP /GF /GT /Gy /GL /Oi /Gr /GR)
+	ADD_LINK_OPTIONS(/MACHINE:X64 /INCREMENTAL:NO /LTCG /PROFILE )
 	
 	SET(BOOST_STACKTRACE_WINDOWS 
 		$<$<CONFIG:DEBUG>:			${CMAKE_CURRENT_SOURCE_DIR}/../../Third-Party-Libraries/boost-1.85.0/lib/Windows/VS2022-v143/debug/libboost_stacktrace_windbg_cached-vc143-mt-gd-x64-1_85.lib>
@@ -250,11 +269,11 @@ elseif(CMAKE_SYSTEM_NAME STREQUAL "Windows")
 		$<$<CONFIG:MINSIZEREL>:		${CMAKE_CURRENT_SOURCE_DIR}/../../Third-Party-Libraries/boost-1.85.0/lib/Windows/VS2022-v143/release/libboost_stacktrace_noop-vc143-mt-x64-1_85.lib>
 	)
 
-	SET(FE_CORE_FRAMEWORK_WINDOWS
-		$<$<CONFIG:DEBUG>:			${CMAKE_CURRENT_SOURCE_DIR}/FE_CORE_FRAMEWORK/Windows/debug/lib/FE_CORE_FRAMEWORK.lib>
-		$<$<CONFIG:RELWITHDEBINFO>: ${CMAKE_CURRENT_SOURCE_DIR}/FE_CORE_FRAMEWORK/Windows/release_with_debug_info/lib/FE_CORE_FRAMEWORK.lib>
-		$<$<CONFIG:RELEASE>:		${CMAKE_CURRENT_SOURCE_DIR}/FE_CORE_FRAMEWORK/Windows/release/lib/FE_CORE_FRAMEWORK.lib>
-		$<$<CONFIG:MINSIZEREL>:		${CMAKE_CURRENT_SOURCE_DIR}/FE_CORE_FRAMEWORK/Windows/minimally_sized_release/lib/FE_CORE_FRAMEWORK.lib>
+	SET(FE_FRAMEWORK_WINDOWS
+		$<$<CONFIG:DEBUG>:			${CMAKE_CURRENT_SOURCE_DIR}/FE_FRAMEWORK/Windows/debug/lib/FE_FRAMEWORK.lib>
+		$<$<CONFIG:RELWITHDEBINFO>: ${CMAKE_CURRENT_SOURCE_DIR}/FE_FRAMEWORK/Windows/release_with_debug_info/lib/FE_FRAMEWORK.lib>
+		$<$<CONFIG:RELEASE>:		${CMAKE_CURRENT_SOURCE_DIR}/FE_FRAMEWORK/Windows/release/lib/FE_FRAMEWORK.lib>
+		$<$<CONFIG:MINSIZEREL>:		${CMAKE_CURRENT_SOURCE_DIR}/FE_FRAMEWORK/Windows/minimally_sized_release/lib/FE_FRAMEWORK.lib>
 	)
 	
 
@@ -266,8 +285,8 @@ endif()
 
 
 ADD_SUBDIRECTORY(FE_CORE_AVX)
-ADD_SUBDIRECTORY(FE_CORE_FRAMEWORK)
+ADD_SUBDIRECTORY(FE_FRAMEWORK)
 
 ADD_SUBDIRECTORY(FE_CORE_TEST)
-ADD_DEPENDENCIES("FE_CORE_TEST" "FE_CORE_FRAMEWORK")
+ADD_DEPENDENCIES("FE_CORE_TEST" "FE_FRAMEWORK")
 SET_PROPERTY(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT "FE_CORE_TEST")

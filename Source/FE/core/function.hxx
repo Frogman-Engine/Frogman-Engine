@@ -800,12 +800,12 @@ public:
 
 
 
-enum struct ARGUMENTS_COUNT
+enum struct ARGUMENTS_COUNT : uint8
 {
     _0 = 0,
     _1 = 1,
     _2 = 2,
-    _3 =3,
+    _3 = 3,
     _4 = 4,
     _5 = 5,
     _6 = 6,
@@ -815,13 +815,13 @@ enum struct ARGUMENTS_COUNT
     _10 = 10
 };
 
-template<typename First, typename Second, typename Third, typename Fourth, typename Fifth, typename Sixth, typename Seventh, typename Eighth, typename Ninth, typename Tenth>
+template<typename First = void, typename Second = void, typename Third = void, typename Fourth = void, typename Fifth = void, typename Sixth = void, typename Seventh = void, typename Eighth = void, typename Ninth = void, typename Tenth = void>
 struct arguments;
 
 template<>
 struct arguments<void, void, void, void, void, void, void, void, void, void> 
 {
-    static constexpr inline ARGUMENTS_COUNT arguments_count = ARGUMENTS_COUNT::_0;
+    static constexpr inline ARGUMENTS_COUNT count = ARGUMENTS_COUNT::_0;
 };
 
 template<typename First>
@@ -830,7 +830,7 @@ struct arguments<First, void, void, void, void, void, void, void, void, void>
     using first_type = First;
 
     First _first;
-    static constexpr inline ARGUMENTS_COUNT arguments_count = ARGUMENTS_COUNT::_1;
+    static constexpr inline ARGUMENTS_COUNT count = ARGUMENTS_COUNT::_1;
     
     _CONSTEXPR20_ _FORCE_INLINE_ arguments() noexcept = default;
     _CONSTEXPR23_ _FORCE_INLINE_ ~arguments() noexcept = default;
@@ -859,7 +859,7 @@ struct arguments<First, Second, void, void, void, void, void, void, void, void> 
     using second_type = Second;
 
     second_type _second;
-    static constexpr inline ARGUMENTS_COUNT arguments_count = ARGUMENTS_COUNT::_2;
+    static constexpr inline ARGUMENTS_COUNT count = ARGUMENTS_COUNT::_2;
 
     _CONSTEXPR20_ _FORCE_INLINE_ arguments() noexcept : base_type(), _second() {};
     _CONSTEXPR23_ _FORCE_INLINE_ ~arguments() noexcept = default;
@@ -891,7 +891,7 @@ struct arguments<First, Second, Third, void, void, void, void, void, void, void>
     using third_type = Third;
 
     third_type _third;
-    static constexpr inline ARGUMENTS_COUNT arguments_count = ARGUMENTS_COUNT::_3;
+    static constexpr inline ARGUMENTS_COUNT count = ARGUMENTS_COUNT::_3;
 
     _CONSTEXPR20_ _FORCE_INLINE_ arguments() noexcept : base_type(), _third() {};
     _CONSTEXPR23_ _FORCE_INLINE_ ~arguments() noexcept = default;
@@ -924,7 +924,7 @@ struct arguments<First, Second, Third, Fourth, void, void, void, void, void, voi
     using fourth_type = Fourth;
 
     fourth_type _fourth;
-    static constexpr inline ARGUMENTS_COUNT arguments_count = ARGUMENTS_COUNT::_4;
+    static constexpr inline ARGUMENTS_COUNT count = ARGUMENTS_COUNT::_4;
 
     _CONSTEXPR20_ _FORCE_INLINE_ arguments() noexcept : base_type(), _fourth() {};
     _CONSTEXPR23_ _FORCE_INLINE_ ~arguments() noexcept = default;
@@ -958,7 +958,7 @@ struct arguments<First, Second, Third, Fourth, Fifth, void, void, void, void, vo
     using fifth_type = Fifth;
 
     fifth_type _fifth;
-    static constexpr inline ARGUMENTS_COUNT arguments_count = ARGUMENTS_COUNT::_5;
+    static constexpr inline ARGUMENTS_COUNT count = ARGUMENTS_COUNT::_5;
 
     _CONSTEXPR20_ _FORCE_INLINE_ arguments() noexcept : base_type(), _fifth() {};
     _CONSTEXPR23_ _FORCE_INLINE_ ~arguments() noexcept = default;
@@ -993,7 +993,7 @@ struct arguments<First, Second, Third, Fourth, Fifth, Sixth, void, void, void, v
     using sixth_type = Sixth;
 
     sixth_type _sixth;
-    static constexpr inline ARGUMENTS_COUNT arguments_count = ARGUMENTS_COUNT::_6;
+    static constexpr inline ARGUMENTS_COUNT count = ARGUMENTS_COUNT::_6;
 
     _CONSTEXPR20_ _FORCE_INLINE_ arguments() noexcept : base_type(), _sixth() {};
     _CONSTEXPR23_ _FORCE_INLINE_ ~arguments() noexcept = default;
@@ -1029,7 +1029,7 @@ struct arguments<First, Second, Third, Fourth, Fifth, Sixth, Seventh, void, void
     using seventh_type = Seventh;
 
     seventh_type _seventh;
-    static constexpr inline ARGUMENTS_COUNT arguments_count = ARGUMENTS_COUNT::_7;
+    static constexpr inline ARGUMENTS_COUNT count = ARGUMENTS_COUNT::_7;
 
     _CONSTEXPR20_ _FORCE_INLINE_ arguments() noexcept : base_type(), _seventh() {};
     _CONSTEXPR23_ _FORCE_INLINE_ ~arguments() noexcept = default;
@@ -1066,7 +1066,7 @@ struct arguments<First, Second, Third, Fourth, Fifth, Sixth, Seventh, Eighth, vo
     using eighth_type = Eighth;
 
     eighth_type _eighth;
-    static constexpr inline ARGUMENTS_COUNT arguments_count = ARGUMENTS_COUNT::_8;
+    static constexpr inline ARGUMENTS_COUNT count = ARGUMENTS_COUNT::_8;
 
     _CONSTEXPR20_ _FORCE_INLINE_ arguments() noexcept : base_type(), _eighth() {};
     _FORCE_INLINE_ ~arguments() noexcept = default;
@@ -1104,7 +1104,7 @@ struct arguments<First, Second, Third, Fourth, Fifth, Sixth, Seventh, Eighth, Ni
     using ninth_type = Ninth;
 
     ninth_type _ninth;
-    static constexpr inline ARGUMENTS_COUNT arguments_count = ARGUMENTS_COUNT::_9;
+    static constexpr inline ARGUMENTS_COUNT count = ARGUMENTS_COUNT::_9;
 
     _CONSTEXPR20_ _FORCE_INLINE_ arguments() noexcept : base_type(), _ninth() {};
     _FORCE_INLINE_ ~arguments() noexcept = default;
@@ -1128,7 +1128,7 @@ struct arguments<First, Second, Third, Fourth, Fifth, Sixth, Seventh, Eighth, Ni
 };
 
 
-template<typename First = void, typename Second = void, typename Third = void, typename Fourth = void, typename Fifth = void, typename Sixth = void, typename Seventh = void, typename Eighth = void, typename Ninth = void, typename Tenth = void>
+template<typename First, typename Second, typename Third, typename Fourth, typename Fifth, typename Sixth, typename Seventh, typename Eighth, typename Ninth, typename Tenth>
 struct arguments : public arguments<First, Second, Third, Fourth, Fifth, Sixth, Seventh, Eighth, Ninth, void>
 {
     using base_type = arguments<First, Second, Third, Fourth, Fifth, Sixth, Seventh, Eighth, Ninth, void>;
@@ -1144,7 +1144,7 @@ struct arguments : public arguments<First, Second, Third, Fourth, Fifth, Sixth, 
     using tenth_type = Tenth;
 
     tenth_type _tenth;
-    static constexpr inline ARGUMENTS_COUNT arguments_count = ARGUMENTS_COUNT::_10;
+    static constexpr inline ARGUMENTS_COUNT count = ARGUMENTS_COUNT::_10;
 
     _CONSTEXPR20_ _FORCE_INLINE_ arguments() noexcept : base_type(), _tenth() {};
     _FORCE_INLINE_ ~arguments() noexcept = default;
@@ -1173,7 +1173,17 @@ struct arguments : public arguments<First, Second, Third, Fourth, Fifth, Sixth, 
 struct task_base
 {
     virtual void operator()(void) noexcept = 0;
+
+    // Caller must ensure the class type correctness. It has no effect for c_style_tasks.
+	virtual void set_instance(void* const target_instance_p) noexcept = 0;
+
+	// Caller must ensure that the types and size of the arguments are correct.
+    virtual void set_arguments(void* arguments_p, _MAYBE_UNUSED_ size_t size_in_bytes_p) noexcept = 0;
+
+	// Checks if the function pointer is nullptr.
     virtual boolean is_null(void) const noexcept = 0;
+
+	// Returns the result of the task.
     virtual std::any get_result() const noexcept = 0;
 };
 
@@ -1195,17 +1205,20 @@ struct cpp_style_task<C, TaskImpl, FE::FORWARD_DATA::_AS_RVALUE_REF, ArgumentsBu
     task_result_buffer_type _task_result;
     arguments_buffer_type _arguments_buffer;
     typename task_type::method_type _method;
-    class_type* _instance_ptr;
 
-    _CONSTEXPR20_ _FORCE_INLINE_ cpp_style_task() noexcept : _task_result(), _arguments_buffer(), _method(), _instance_ptr() {}
+private:
+    class_type* m_instance;
+
+public:
+    _CONSTEXPR20_ _FORCE_INLINE_ cpp_style_task() noexcept : _task_result(), _arguments_buffer(), _method(), m_instance() {}
     _FORCE_INLINE_ ~cpp_style_task() noexcept = default;
 
-    _CONSTEXPR20_ _FORCE_INLINE_ cpp_style_task(typename task_type::method_type task_p) noexcept : _arguments_buffer(), _method(task_p), _instance_ptr(), _task_result() {}
-    _CONSTEXPR20_ _FORCE_INLINE_ cpp_style_task(cpp_style_task& other_p) noexcept : _arguments_buffer(other_p._arguments_buffer), _method(other_p._method), _instance_ptr(other_p._instance_ptr), _task_result(other_p._task_result) {}
-    _CONSTEXPR20_ _FORCE_INLINE_ cpp_style_task(cpp_style_task&& rvalue_p) noexcept : _arguments_buffer(std::move(rvalue_p._arguments_buffer)), _method(rvalue_p._method), _instance_ptr(rvalue_p._instance_ptr), _task_result(rvalue_p._task_result)
+    _CONSTEXPR20_ _FORCE_INLINE_ cpp_style_task(typename task_type::method_type task_p) noexcept : _arguments_buffer(), _method(task_p), m_instance(), _task_result() {}
+    _CONSTEXPR20_ _FORCE_INLINE_ cpp_style_task(cpp_style_task& other_p) noexcept : _arguments_buffer(other_p._arguments_buffer), _method(other_p._method), m_instance(other_p.m_instance), _task_result(other_p._task_result) {}
+    _CONSTEXPR20_ _FORCE_INLINE_ cpp_style_task(cpp_style_task&& rvalue_p) noexcept : _arguments_buffer(std::move(rvalue_p._arguments_buffer)), _method(rvalue_p._method), m_instance(rvalue_p.m_instance), _task_result(rvalue_p._task_result)
     {
         rvalue_p._method = nullptr;
-        rvalue_p._instance_ptr = nullptr;
+        rvalue_p.m_instance = nullptr;
     }
 
     _CONSTEXPR20_ _FORCE_INLINE_ cpp_style_task& operator=(typename task_type::method_type task_p) noexcept
@@ -1218,7 +1231,7 @@ struct cpp_style_task<C, TaskImpl, FE::FORWARD_DATA::_AS_RVALUE_REF, ArgumentsBu
     {
         this->_arguments_buffer = other_p._arguments_buffer;
         this->_method = other_p._method;
-        this->_instance_ptr = other_p._instance_ptr;
+        this->m_instance = other_p.m_instance;
         return *this;
     }
 
@@ -1229,132 +1242,344 @@ struct cpp_style_task<C, TaskImpl, FE::FORWARD_DATA::_AS_RVALUE_REF, ArgumentsBu
         this->_method = rvalue_p._method;
         rvalue_p._method = nullptr;
 
-        this->_instance_ptr = rvalue_p._instance_ptr;
-        rvalue_p._instance_ptr = nullptr;
+        this->m_instance = rvalue_p.m_instance;
+        rvalue_p.m_instance = nullptr;
         return *this;
     }
 
     virtual void operator()(void) noexcept override
     {
-        FE_ASSERT(this->_instance_ptr == nullptr, "${%s@0}: ${%s@1} is nullptr", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(this->_instance_ptr));
+        FE_ASSERT(this->m_instance == nullptr, "${%s@0}: ${%s@1} is nullptr", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(this->m_instance));
 
         if constexpr (task_type::has_void_return_type == true)
         {
-            if constexpr (this->_arguments_buffer.arguments_count == ARGUMENTS_COUNT::_0)
+            if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_0)
             {   
-                (_instance_ptr->*_method)();
+                (m_instance->*_method)();
                 return;
             }
-            else if constexpr (this->_arguments_buffer.arguments_count == ARGUMENTS_COUNT::_1)
+            else if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_1)
             {
-                (_instance_ptr->*_method)(std::forward<typename arguments_buffer_type::first_type>(this->_arguments_buffer._first));
+                (m_instance->*_method)(std::forward<typename arguments_buffer_type::first_type>(this->_arguments_buffer._first));
                 return;
             }
-            else if constexpr (this->_arguments_buffer.arguments_count == ARGUMENTS_COUNT::_2)
+            else if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_2)
             {
-                (_instance_ptr->*_method)(std::forward<typename arguments_buffer_type::first_type>(this->_arguments_buffer._first), std::forward<typename arguments_buffer_type::second_type>(this->_arguments_buffer._second));
+                (m_instance->*_method)(std::forward<typename arguments_buffer_type::first_type>(this->_arguments_buffer._first), std::forward<typename arguments_buffer_type::second_type>(this->_arguments_buffer._second));
                 return;
             }
-            else if constexpr (this->_arguments_buffer.arguments_count == ARGUMENTS_COUNT::_3)
+            else if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_3)
             {
-                (_instance_ptr->*_method)(std::forward<typename arguments_buffer_type::first_type>(this->_arguments_buffer._first), std::forward<typename arguments_buffer_type::second_type>(this->_arguments_buffer._second), std::forward<typename arguments_buffer_type::third_type>(this->_arguments_buffer._third));
+                (m_instance->*_method)(std::forward<typename arguments_buffer_type::first_type>(this->_arguments_buffer._first), std::forward<typename arguments_buffer_type::second_type>(this->_arguments_buffer._second), std::forward<typename arguments_buffer_type::third_type>(this->_arguments_buffer._third));
                 return;
             }
-            else if constexpr (this->_arguments_buffer.arguments_count == ARGUMENTS_COUNT::_4)
+            else if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_4)
             {
-                (_instance_ptr->*_method)(std::forward<typename arguments_buffer_type::first_type>(this->_arguments_buffer._first), std::forward<typename arguments_buffer_type::second_type>(this->_arguments_buffer._second), std::forward<typename arguments_buffer_type::third_type>(this->_arguments_buffer._third), std::forward<typename arguments_buffer_type::fourth_type>(this->_arguments_buffer._fourth));
+                (m_instance->*_method)(std::forward<typename arguments_buffer_type::first_type>(this->_arguments_buffer._first), std::forward<typename arguments_buffer_type::second_type>(this->_arguments_buffer._second), std::forward<typename arguments_buffer_type::third_type>(this->_arguments_buffer._third), std::forward<typename arguments_buffer_type::fourth_type>(this->_arguments_buffer._fourth));
                 return;
             }
-            else if constexpr (this->_arguments_buffer.arguments_count == ARGUMENTS_COUNT::_5)
+            else if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_5)
             {
-                (_instance_ptr->*_method)(std::forward<typename arguments_buffer_type::first_type>(this->_arguments_buffer._first), std::forward<typename arguments_buffer_type::second_type>(this->_arguments_buffer._second), std::forward<typename arguments_buffer_type::third_type>(this->_arguments_buffer._third), std::forward<typename arguments_buffer_type::fourth_type>(this->_arguments_buffer._fourth), std::forward<typename arguments_buffer_type::fifth_type>(this->_arguments_buffer._fifth));
+                (m_instance->*_method)(std::forward<typename arguments_buffer_type::first_type>(this->_arguments_buffer._first), std::forward<typename arguments_buffer_type::second_type>(this->_arguments_buffer._second), std::forward<typename arguments_buffer_type::third_type>(this->_arguments_buffer._third), std::forward<typename arguments_buffer_type::fourth_type>(this->_arguments_buffer._fourth), std::forward<typename arguments_buffer_type::fifth_type>(this->_arguments_buffer._fifth));
                 return;
             }
-            else if constexpr (this->_arguments_buffer.arguments_count == ARGUMENTS_COUNT::_6)
+            else if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_6)
             {
-                (_instance_ptr->*_method)(std::forward<typename arguments_buffer_type::first_type>(this->_arguments_buffer._first), std::forward<typename arguments_buffer_type::second_type>(this->_arguments_buffer._second), std::forward<typename arguments_buffer_type::third_type>(this->_arguments_buffer._third), std::forward<typename arguments_buffer_type::fourth_type>(this->_arguments_buffer._fourth), std::forward<typename arguments_buffer_type::fifth_type>(this->_arguments_buffer._fifth), std::forward<typename arguments_buffer_type::sixth_type>(this->_arguments_buffer._sixth));
+                (m_instance->*_method)(std::forward<typename arguments_buffer_type::first_type>(this->_arguments_buffer._first), std::forward<typename arguments_buffer_type::second_type>(this->_arguments_buffer._second), std::forward<typename arguments_buffer_type::third_type>(this->_arguments_buffer._third), std::forward<typename arguments_buffer_type::fourth_type>(this->_arguments_buffer._fourth), std::forward<typename arguments_buffer_type::fifth_type>(this->_arguments_buffer._fifth), std::forward<typename arguments_buffer_type::sixth_type>(this->_arguments_buffer._sixth));
                 return;
             }
-            else if constexpr (this->_arguments_buffer.arguments_count == ARGUMENTS_COUNT::_7)
+            else if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_7)
             {
-                (_instance_ptr->*_method)(std::forward<typename arguments_buffer_type::first_type>(this->_arguments_buffer._first), std::forward<typename arguments_buffer_type::second_type>(this->_arguments_buffer._second), std::forward<typename arguments_buffer_type::third_type>(this->_arguments_buffer._third), std::forward<typename arguments_buffer_type::fourth_type>(this->_arguments_buffer._fourth), std::forward<typename arguments_buffer_type::fifth_type>(this->_arguments_buffer._fifth), std::forward<typename arguments_buffer_type::sixth_type>(this->_arguments_buffer._sixth), std::forward<typename arguments_buffer_type::seventh_type>(this->_arguments_buffer._seventh));
+                (m_instance->*_method)(std::forward<typename arguments_buffer_type::first_type>(this->_arguments_buffer._first), std::forward<typename arguments_buffer_type::second_type>(this->_arguments_buffer._second), std::forward<typename arguments_buffer_type::third_type>(this->_arguments_buffer._third), std::forward<typename arguments_buffer_type::fourth_type>(this->_arguments_buffer._fourth), std::forward<typename arguments_buffer_type::fifth_type>(this->_arguments_buffer._fifth), std::forward<typename arguments_buffer_type::sixth_type>(this->_arguments_buffer._sixth), std::forward<typename arguments_buffer_type::seventh_type>(this->_arguments_buffer._seventh));
                 return;
             }
-            else if constexpr (this->_arguments_buffer.arguments_count == ARGUMENTS_COUNT::_8)
+            else if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_8)
             {
-                (_instance_ptr->*_method)(std::forward<typename arguments_buffer_type::first_type>(this->_arguments_buffer._first), std::forward<typename arguments_buffer_type::second_type>(this->_arguments_buffer._second), std::forward<typename arguments_buffer_type::third_type>(this->_arguments_buffer._third), std::forward<typename arguments_buffer_type::fourth_type>(this->_arguments_buffer._fourth), std::forward<typename arguments_buffer_type::fifth_type>(this->_arguments_buffer._fifth), std::forward<typename arguments_buffer_type::sixth_type>(this->_arguments_buffer._sixth), std::forward<typename arguments_buffer_type::seventh_type>(this->_arguments_buffer._seventh), std::forward<typename arguments_buffer_type::Eighth>(this->_arguments_buffer._eighth));
+                (m_instance->*_method)(std::forward<typename arguments_buffer_type::first_type>(this->_arguments_buffer._first), std::forward<typename arguments_buffer_type::second_type>(this->_arguments_buffer._second), std::forward<typename arguments_buffer_type::third_type>(this->_arguments_buffer._third), std::forward<typename arguments_buffer_type::fourth_type>(this->_arguments_buffer._fourth), std::forward<typename arguments_buffer_type::fifth_type>(this->_arguments_buffer._fifth), std::forward<typename arguments_buffer_type::sixth_type>(this->_arguments_buffer._sixth), std::forward<typename arguments_buffer_type::seventh_type>(this->_arguments_buffer._seventh), std::forward<typename arguments_buffer_type::Eighth>(this->_arguments_buffer._eighth));
                 return;
             }
-            else if constexpr (this->_arguments_buffer.arguments_count == ARGUMENTS_COUNT::_9)
+            else if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_9)
             {
-                (_instance_ptr->*_method)(std::forward<typename arguments_buffer_type::first_type>(this->_arguments_buffer._first), std::forward<typename arguments_buffer_type::second_type>(this->_arguments_buffer._second), std::forward<typename arguments_buffer_type::third_type>(this->_arguments_buffer._third), std::forward<typename arguments_buffer_type::fourth_type>(this->_arguments_buffer._fourth), std::forward<typename arguments_buffer_type::fifth_type>(this->_arguments_buffer._fifth), std::forward<typename arguments_buffer_type::sixth_type>(this->_arguments_buffer._sixth), std::forward<typename arguments_buffer_type::seventh_type>(this->_arguments_buffer._seventh), std::forward<typename arguments_buffer_type::Eighth>(this->_arguments_buffer._eighth), std::forward<typename arguments_buffer_type::_ninth>(this->_arguments_buffer._ninth));
+                (m_instance->*_method)(std::forward<typename arguments_buffer_type::first_type>(this->_arguments_buffer._first), std::forward<typename arguments_buffer_type::second_type>(this->_arguments_buffer._second), std::forward<typename arguments_buffer_type::third_type>(this->_arguments_buffer._third), std::forward<typename arguments_buffer_type::fourth_type>(this->_arguments_buffer._fourth), std::forward<typename arguments_buffer_type::fifth_type>(this->_arguments_buffer._fifth), std::forward<typename arguments_buffer_type::sixth_type>(this->_arguments_buffer._sixth), std::forward<typename arguments_buffer_type::seventh_type>(this->_arguments_buffer._seventh), std::forward<typename arguments_buffer_type::Eighth>(this->_arguments_buffer._eighth), std::forward<typename arguments_buffer_type::_ninth>(this->_arguments_buffer._ninth));
                 return;
             }
-            else if constexpr (this->_arguments_buffer.arguments_count == ARGUMENTS_COUNT::_10)
+            else if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_10)
             {
-                (_instance_ptr->*_method)(std::forward<typename arguments_buffer_type::first_type>(this->_arguments_buffer._first), std::forward<typename arguments_buffer_type::second_type>(this->_arguments_buffer._second), std::forward<typename arguments_buffer_type::third_type>(this->_arguments_buffer._third), std::forward<typename arguments_buffer_type::fourth_type>(this->_arguments_buffer._fourth), std::forward<typename arguments_buffer_type::fifth_type>(this->_arguments_buffer._fifth), std::forward<typename arguments_buffer_type::sixth_type>(this->_arguments_buffer._sixth), std::forward<typename arguments_buffer_type::seventh_type>(this->_arguments_buffer._seventh), std::forward<typename arguments_buffer_type::Eighth>(this->_arguments_buffer._eighth), std::forward<typename arguments_buffer_type::_ninth>(this->_arguments_buffer._ninth), std::forward<typename arguments_buffer_type::_tenth>(this->_arguments_buffer._tenth));
+                (m_instance->*_method)(std::forward<typename arguments_buffer_type::first_type>(this->_arguments_buffer._first), std::forward<typename arguments_buffer_type::second_type>(this->_arguments_buffer._second), std::forward<typename arguments_buffer_type::third_type>(this->_arguments_buffer._third), std::forward<typename arguments_buffer_type::fourth_type>(this->_arguments_buffer._fourth), std::forward<typename arguments_buffer_type::fifth_type>(this->_arguments_buffer._fifth), std::forward<typename arguments_buffer_type::sixth_type>(this->_arguments_buffer._sixth), std::forward<typename arguments_buffer_type::seventh_type>(this->_arguments_buffer._seventh), std::forward<typename arguments_buffer_type::Eighth>(this->_arguments_buffer._eighth), std::forward<typename arguments_buffer_type::_ninth>(this->_arguments_buffer._ninth), std::forward<typename arguments_buffer_type::_tenth>(this->_arguments_buffer._tenth));
                 return;
             }
         }
         else if constexpr (task_type::has_void_return_type == false)
         {
-            if constexpr (this->_arguments_buffer.arguments_count == ARGUMENTS_COUNT::_0)
+            if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_0)
             {
-                this->_task_result = std::move((_instance_ptr->*_method)());
+                this->_task_result = std::move((m_instance->*_method)());
                 return;
             }
-            else if constexpr (this->_arguments_buffer.arguments_count == ARGUMENTS_COUNT::_1)
+            else if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_1)
             {
-                this->_task_result = std::move((_instance_ptr->*_method)(std::forward<typename arguments_buffer_type::first_type>(this->_arguments_buffer._first)));
+                this->_task_result = std::move((m_instance->*_method)(std::forward<typename arguments_buffer_type::first_type>(this->_arguments_buffer._first)));
                 return;
             }
-            else if constexpr (this->_arguments_buffer.arguments_count == ARGUMENTS_COUNT::_2)
+            else if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_2)
             {
-                this->_task_result = std::move((_instance_ptr->*_method)(std::forward<typename arguments_buffer_type::first_type>(this->_arguments_buffer._first), std::forward<typename arguments_buffer_type::second_type>(this->_arguments_buffer._second)));
+                this->_task_result = std::move((m_instance->*_method)(std::forward<typename arguments_buffer_type::first_type>(this->_arguments_buffer._first), std::forward<typename arguments_buffer_type::second_type>(this->_arguments_buffer._second)));
                 return;
             }
-            else if constexpr (this->_arguments_buffer.arguments_count == ARGUMENTS_COUNT::_3)
+            else if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_3)
             {
-                this->_task_result = std::move((_instance_ptr->*_method)(std::forward<typename arguments_buffer_type::first_type>(this->_arguments_buffer._first), std::forward<typename arguments_buffer_type::second_type>(this->_arguments_buffer._second), std::forward<typename arguments_buffer_type::third_type>(this->_arguments_buffer._third)));
+                this->_task_result = std::move((m_instance->*_method)(std::forward<typename arguments_buffer_type::first_type>(this->_arguments_buffer._first), std::forward<typename arguments_buffer_type::second_type>(this->_arguments_buffer._second), std::forward<typename arguments_buffer_type::third_type>(this->_arguments_buffer._third)));
                 return;
             }
-            else if constexpr (this->_arguments_buffer.arguments_count == ARGUMENTS_COUNT::_4)
+            else if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_4)
             {
-                this->_task_result = std::move((_instance_ptr->*_method)(std::forward<typename arguments_buffer_type::first_type>(this->_arguments_buffer._first), std::forward<typename arguments_buffer_type::second_type>(this->_arguments_buffer._second), std::forward<typename arguments_buffer_type::third_type>(this->_arguments_buffer._third), std::forward<typename arguments_buffer_type::fourth_type>(this->_arguments_buffer._fourth)));
+                this->_task_result = std::move((m_instance->*_method)(std::forward<typename arguments_buffer_type::first_type>(this->_arguments_buffer._first), std::forward<typename arguments_buffer_type::second_type>(this->_arguments_buffer._second), std::forward<typename arguments_buffer_type::third_type>(this->_arguments_buffer._third), std::forward<typename arguments_buffer_type::fourth_type>(this->_arguments_buffer._fourth)));
                 return;
             }
-            else if constexpr (this->_arguments_buffer.arguments_count == ARGUMENTS_COUNT::_5)
+            else if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_5)
             {
-                this->_task_result = std::move((_instance_ptr->*_method)(std::forward<typename arguments_buffer_type::first_type>(this->_arguments_buffer._first), std::forward<typename arguments_buffer_type::second_type>(this->_arguments_buffer._second), std::forward<typename arguments_buffer_type::third_type>(this->_arguments_buffer._third), std::forward<typename arguments_buffer_type::fourth_type>(this->_arguments_buffer._fourth), std::forward<typename arguments_buffer_type::fifth_type>(this->_arguments_buffer._fifth)));
+                this->_task_result = std::move((m_instance->*_method)(std::forward<typename arguments_buffer_type::first_type>(this->_arguments_buffer._first), std::forward<typename arguments_buffer_type::second_type>(this->_arguments_buffer._second), std::forward<typename arguments_buffer_type::third_type>(this->_arguments_buffer._third), std::forward<typename arguments_buffer_type::fourth_type>(this->_arguments_buffer._fourth), std::forward<typename arguments_buffer_type::fifth_type>(this->_arguments_buffer._fifth)));
                 return;
             }
-            else if constexpr (this->_arguments_buffer.arguments_count == ARGUMENTS_COUNT::_6)
+            else if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_6)
             {
-                this->_task_result = std::move((_instance_ptr->*_method)(std::forward<typename arguments_buffer_type::first_type>(this->_arguments_buffer._first), std::forward<typename arguments_buffer_type::second_type>(this->_arguments_buffer._second), std::forward<typename arguments_buffer_type::third_type>(this->_arguments_buffer._third), std::forward<typename arguments_buffer_type::fourth_type>(this->_arguments_buffer._fourth), std::forward<typename arguments_buffer_type::fifth_type>(this->_arguments_buffer._fifth), std::forward<typename arguments_buffer_type::sixth_type>(this->_arguments_buffer._sixth)));
+                this->_task_result = std::move((m_instance->*_method)(std::forward<typename arguments_buffer_type::first_type>(this->_arguments_buffer._first), std::forward<typename arguments_buffer_type::second_type>(this->_arguments_buffer._second), std::forward<typename arguments_buffer_type::third_type>(this->_arguments_buffer._third), std::forward<typename arguments_buffer_type::fourth_type>(this->_arguments_buffer._fourth), std::forward<typename arguments_buffer_type::fifth_type>(this->_arguments_buffer._fifth), std::forward<typename arguments_buffer_type::sixth_type>(this->_arguments_buffer._sixth)));
                 return;
             }
-            else if constexpr (this->_arguments_buffer.arguments_count == ARGUMENTS_COUNT::_7)
+            else if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_7)
             {
-                this->_task_result = std::move((_instance_ptr->*_method)(std::forward<typename arguments_buffer_type::first_type>(this->_arguments_buffer._first), std::forward<typename arguments_buffer_type::second_type>(this->_arguments_buffer._second), std::forward<typename arguments_buffer_type::third_type>(this->_arguments_buffer._third), std::forward<typename arguments_buffer_type::fourth_type>(this->_arguments_buffer._fourth), std::forward<typename arguments_buffer_type::fifth_type>(this->_arguments_buffer._fifth), std::forward<typename arguments_buffer_type::sixth_type>(this->_arguments_buffer._sixth), std::forward<typename arguments_buffer_type::seventh_type>(this->_arguments_buffer._seventh)));
+                this->_task_result = std::move((m_instance->*_method)(std::forward<typename arguments_buffer_type::first_type>(this->_arguments_buffer._first), std::forward<typename arguments_buffer_type::second_type>(this->_arguments_buffer._second), std::forward<typename arguments_buffer_type::third_type>(this->_arguments_buffer._third), std::forward<typename arguments_buffer_type::fourth_type>(this->_arguments_buffer._fourth), std::forward<typename arguments_buffer_type::fifth_type>(this->_arguments_buffer._fifth), std::forward<typename arguments_buffer_type::sixth_type>(this->_arguments_buffer._sixth), std::forward<typename arguments_buffer_type::seventh_type>(this->_arguments_buffer._seventh)));
                 return;
             }
-            else if constexpr (this->_arguments_buffer.arguments_count == ARGUMENTS_COUNT::_8)
+            else if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_8)
             {
-                this->_task_result = std::move((_instance_ptr->*_method)(std::forward<typename arguments_buffer_type::first_type>(this->_arguments_buffer._first), std::forward<typename arguments_buffer_type::second_type>(this->_arguments_buffer._second), std::forward<typename arguments_buffer_type::third_type>(this->_arguments_buffer._third), std::forward<typename arguments_buffer_type::fourth_type>(this->_arguments_buffer._fourth), std::forward<typename arguments_buffer_type::fifth_type>(this->_arguments_buffer._fifth), std::forward<typename arguments_buffer_type::sixth_type>(this->_arguments_buffer._sixth), std::forward<typename arguments_buffer_type::seventh_type>(this->_arguments_buffer._seventh), std::forward<typename arguments_buffer_type::Eighth>(this->_arguments_buffer._eighth)));
+                this->_task_result = std::move((m_instance->*_method)(std::forward<typename arguments_buffer_type::first_type>(this->_arguments_buffer._first), std::forward<typename arguments_buffer_type::second_type>(this->_arguments_buffer._second), std::forward<typename arguments_buffer_type::third_type>(this->_arguments_buffer._third), std::forward<typename arguments_buffer_type::fourth_type>(this->_arguments_buffer._fourth), std::forward<typename arguments_buffer_type::fifth_type>(this->_arguments_buffer._fifth), std::forward<typename arguments_buffer_type::sixth_type>(this->_arguments_buffer._sixth), std::forward<typename arguments_buffer_type::seventh_type>(this->_arguments_buffer._seventh), std::forward<typename arguments_buffer_type::Eighth>(this->_arguments_buffer._eighth)));
                 return;
             }
-            else if constexpr (this->_arguments_buffer.arguments_count == ARGUMENTS_COUNT::_9)
+            else if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_9)
             {
-                this->_task_result = std::move((_instance_ptr->*_method)(std::forward<typename arguments_buffer_type::first_type>(this->_arguments_buffer._first), std::forward<typename arguments_buffer_type::second_type>(this->_arguments_buffer._second), std::forward<typename arguments_buffer_type::third_type>(this->_arguments_buffer._third), std::forward<typename arguments_buffer_type::fourth_type>(this->_arguments_buffer._fourth), std::forward<typename arguments_buffer_type::fifth_type>(this->_arguments_buffer._fifth), std::forward<typename arguments_buffer_type::sixth_type>(this->_arguments_buffer._sixth), std::forward<typename arguments_buffer_type::seventh_type>(this->_arguments_buffer._seventh), std::forward<typename arguments_buffer_type::Eighth>(this->_arguments_buffer._eighth), std::forward<typename arguments_buffer_type::_ninth>(this->_arguments_buffer._ninth)));
+                this->_task_result = std::move((m_instance->*_method)(std::forward<typename arguments_buffer_type::first_type>(this->_arguments_buffer._first), std::forward<typename arguments_buffer_type::second_type>(this->_arguments_buffer._second), std::forward<typename arguments_buffer_type::third_type>(this->_arguments_buffer._third), std::forward<typename arguments_buffer_type::fourth_type>(this->_arguments_buffer._fourth), std::forward<typename arguments_buffer_type::fifth_type>(this->_arguments_buffer._fifth), std::forward<typename arguments_buffer_type::sixth_type>(this->_arguments_buffer._sixth), std::forward<typename arguments_buffer_type::seventh_type>(this->_arguments_buffer._seventh), std::forward<typename arguments_buffer_type::Eighth>(this->_arguments_buffer._eighth), std::forward<typename arguments_buffer_type::_ninth>(this->_arguments_buffer._ninth)));
                 return;
             }
-            else if constexpr (this->_arguments_buffer.arguments_count == ARGUMENTS_COUNT::_10)
+            else if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_10)
             {
-                this->_task_result = std::move((_instance_ptr->*_method)(std::forward<typename arguments_buffer_type::first_type>(this->_arguments_buffer._first), std::forward<typename arguments_buffer_type::second_type>(this->_arguments_buffer._second), std::forward<typename arguments_buffer_type::third_type>(this->_arguments_buffer._third), std::forward<typename arguments_buffer_type::fourth_type>(this->_arguments_buffer._fourth), std::forward<typename arguments_buffer_type::fifth_type>(this->_arguments_buffer._fifth), std::forward<typename arguments_buffer_type::sixth_type>(this->_arguments_buffer._sixth), std::forward<typename arguments_buffer_type::seventh_type>(this->_arguments_buffer._seventh), std::forward<typename arguments_buffer_type::Eighth>(this->_arguments_buffer._eighth), std::forward<typename arguments_buffer_type::_ninth>(this->_arguments_buffer._ninth), std::forward<typename arguments_buffer_type::_tenth>(this->_arguments_buffer._tenth)));
+                this->_task_result = std::move((m_instance->*_method)(std::forward<typename arguments_buffer_type::first_type>(this->_arguments_buffer._first), std::forward<typename arguments_buffer_type::second_type>(this->_arguments_buffer._second), std::forward<typename arguments_buffer_type::third_type>(this->_arguments_buffer._third), std::forward<typename arguments_buffer_type::fourth_type>(this->_arguments_buffer._fourth), std::forward<typename arguments_buffer_type::fifth_type>(this->_arguments_buffer._fifth), std::forward<typename arguments_buffer_type::sixth_type>(this->_arguments_buffer._sixth), std::forward<typename arguments_buffer_type::seventh_type>(this->_arguments_buffer._seventh), std::forward<typename arguments_buffer_type::Eighth>(this->_arguments_buffer._eighth), std::forward<typename arguments_buffer_type::_ninth>(this->_arguments_buffer._ninth), std::forward<typename arguments_buffer_type::_tenth>(this->_arguments_buffer._tenth)));
                 return;
             }
         }
     }
+
+
+    virtual void set_instance(void* const instance_p) noexcept override
+    {
+        FE_ASSERT(instance_p == nullptr, "The target instance is null!");
+		this->m_instance = static_cast<class_type*>(instance_p);
+    }
+
+
+    virtual void set_arguments(void* arguments_p, _MAYBE_UNUSED_ size_t size_in_bytes_p) noexcept
+    {
+		FE_ASSERT(arguments_p == nullptr, "The arguments are null!");
+		FE_ASSERT(size_in_bytes_p == 0, "The size of the arguments is 0!");
+
+        if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_1)
+		{
+            FE_ASSERT(sizeof(typename arguments_buffer_type::first_type) != size_in_bytes_p, "Input arguments buffer corruption detected: different size of types have been passed to the arguments buffer!");
+			
+            this->_arguments_buffer._first = std::move(*static_cast<typename arguments_buffer_type::first_type*>(arguments_p));
+		}
+		else if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_2)
+		{
+			FE_ASSERT(sizeof(typename arguments_buffer_type::first_type) + sizeof(typename arguments_buffer_type::second_type) != size_in_bytes_p, "Input arguments buffer corruption detected: different size of types have been passed to the arguments buffer!");
+			
+            this->_arguments_buffer._first = std::move(*static_cast<typename arguments_buffer_type::first_type*>(arguments_p));
+			arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::first_type);
+
+			this->_arguments_buffer._second = std::move(*static_cast<typename arguments_buffer_type::second_type*>(arguments_p));
+		}
+
+        else if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_3)
+        {
+            FE_ASSERT(sizeof(typename arguments_buffer_type::first_type) + sizeof(typename arguments_buffer_type::second_type) + sizeof(typename arguments_buffer_type::third_type) != size_in_bytes_p, "Input arguments buffer corruption detected: different size of types have been passed to the arguments buffer!");
+            
+            this->_arguments_buffer._first = std::move(*static_cast<typename arguments_buffer_type::first_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::first_type);
+
+            this->_arguments_buffer._second = std::move(*static_cast<typename arguments_buffer_type::second_type*>(arguments_p));
+			arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::second_type);
+
+			this->_arguments_buffer._third = std::move(*static_cast<typename arguments_buffer_type::third_type*>(arguments_p));
+		}
+		else if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_4)
+		{
+			FE_ASSERT(sizeof(typename arguments_buffer_type::first_type) + sizeof(typename arguments_buffer_type::second_type) + sizeof(typename arguments_buffer_type::third_type) + sizeof(typename arguments_buffer_type::fourth_type) != size_in_bytes_p, "Input arguments buffer corruption detected: different size of types have been passed to the arguments buffer!");
+			
+            this->_arguments_buffer._first = std::move(*static_cast<typename arguments_buffer_type::first_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::first_type);
+
+            this->_arguments_buffer._second = std::move(*static_cast<typename arguments_buffer_type::second_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::second_type);
+
+            this->_arguments_buffer._third = std::move(*static_cast<typename arguments_buffer_type::third_type*>(arguments_p));
+			arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::third_type);
+
+			this->_arguments_buffer._fourth = std::move(*static_cast<typename arguments_buffer_type::fourth_type*>(arguments_p));
+        }
+        else if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_5)
+        {
+            FE_ASSERT((sizeof(typename arguments_buffer_type::first_type) + sizeof(typename arguments_buffer_type::second_type) + sizeof(typename arguments_buffer_type::third_type) + sizeof(typename arguments_buffer_type::fifth_type)) != size_in_bytes_p, "Input arguments buffer corruption detected: different size of types have been passed to the arguments buffer!");
+
+            this->_arguments_buffer._first = std::move(*static_cast<typename arguments_buffer_type::first_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::first_type);
+
+            this->_arguments_buffer._second = std::move(*static_cast<typename arguments_buffer_type::second_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::second_type);
+
+            this->_arguments_buffer._third = std::move(*static_cast<typename arguments_buffer_type::third_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::third_type);
+
+            this->_arguments_buffer._fourth = std::move(*static_cast<typename arguments_buffer_type::fourth_type*>(arguments_p));
+			arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::fourth_type);
+
+			this->_arguments_buffer._fifth = std::move(*static_cast<typename arguments_buffer_type::fifth_type*>(arguments_p));
+		}
+		else if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_6)
+		{
+			FE_ASSERT(sizeof(typename arguments_buffer_type::first_type) + sizeof(typename arguments_buffer_type::second_type) + sizeof(typename arguments_buffer_type::third_type) + sizeof(typename arguments_buffer_type::fifth_type) + sizeof(typename arguments_buffer_type::sixth_type) != size_in_bytes_p, "Input arguments buffer corruption detected: different size of types have been passed to the arguments buffer!");
+
+			this->_arguments_buffer._first = std::move(*static_cast<typename arguments_buffer_type::first_type*>(arguments_p));
+			arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::first_type);
+
+			this->_arguments_buffer._second = std::move(*static_cast<typename arguments_buffer_type::second_type*>(arguments_p));
+			arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::second_type);
+
+			this->_arguments_buffer._third = std::move(*static_cast<typename arguments_buffer_type::third_type*>(arguments_p));
+			arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::third_type);
+
+			this->_arguments_buffer._fourth = std::move(*static_cast<typename arguments_buffer_type::fourth_type*>(arguments_p));
+			arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::fourth_type);
+
+			this->_arguments_buffer._fifth = std::move(*static_cast<typename arguments_buffer_type::fifth_type*>(arguments_p));
+			arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::fifth_type);
+
+			this->_arguments_buffer._sixth = std::move(*static_cast<typename arguments_buffer_type::sixth_type*>(arguments_p));
+		}
+		else if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_7)
+		{
+			FE_ASSERT(sizeof(typename arguments_buffer_type::first_type) + sizeof(typename arguments_buffer_type::second_type) + sizeof(typename arguments_buffer_type::third_type) + sizeof(typename arguments_buffer_type::fifth_type) + sizeof(typename arguments_buffer_type::sixth_type) + sizeof(typename arguments_buffer_type::seventh_type) != size_in_bytes_p, "Input arguments buffer corruption detected: different size of types have been passed to the arguments buffer!");
+
+			this->_arguments_buffer._first = std::move(*static_cast<typename arguments_buffer_type::first_type*>(arguments_p));
+			arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::first_type);
+
+			this->_arguments_buffer._second = std::move(*static_cast<typename arguments_buffer_type::second_type*>(arguments_p));
+			arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::second_type);
+
+			this->_arguments_buffer._third = std::move(*static_cast<typename arguments_buffer_type::third_type*>(arguments_p));
+			arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::third_type);
+
+			this->_arguments_buffer._fourth = std::move(*static_cast<typename arguments_buffer_type::fourth_type*>(arguments_p));
+			arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::fourth_type);
+
+			this->_arguments_buffer._fifth = std::move(*static_cast<typename arguments_buffer_type::fifth_type*>(arguments_p));
+			arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::fifth_type);
+
+			this->_arguments_buffer._sixth = std::move(*static_cast<typename arguments_buffer_type::sixth_type*>(arguments_p));
+			arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::sixth_type);
+
+			this->_arguments_buffer._seventh = std::move(*static_cast<typename arguments_buffer_type::seventh_type*>(arguments_p));
+        }
+        else if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_8)
+        {
+            FE_ASSERT(sizeof(typename arguments_buffer_type::first_type) + sizeof(typename arguments_buffer_type::second_type) + sizeof(typename arguments_buffer_type::third_type) + sizeof(typename arguments_buffer_type::fifth_type) + sizeof(typename arguments_buffer_type::sixth_type) + sizeof(typename arguments_buffer_type::seventh_type) + sizeof(typename arguments_buffer_type::eighth_type) != size_in_bytes_p, "Input arguments buffer corruption detected: different size of types have been passed to the arguments buffer!");
+
+			this->_arguments_buffer._first = std::move(*static_cast<typename arguments_buffer_type::first_type*>(arguments_p));
+			arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::first_type);
+
+			this->_arguments_buffer._second = std::move(*static_cast<typename arguments_buffer_type::second_type*>(arguments_p));
+			arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::second_type);
+
+			this->_arguments_buffer._third = std::move(*static_cast<typename arguments_buffer_type::third_type*>(arguments_p));
+			arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::third_type);
+
+			this->_arguments_buffer._fourth = std::move(*static_cast<typename arguments_buffer_type::fourth_type*>(arguments_p));
+			arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::fourth_type);
+
+			this->_arguments_buffer._fifth = std::move(*static_cast<typename arguments_buffer_type::fifth_type*>(arguments_p));
+			arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::fifth_type);
+
+			this->_arguments_buffer._sixth = std::move(*static_cast<typename arguments_buffer_type::sixth_type*>(arguments_p));
+			arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::sixth_type);
+
+			this->_arguments_buffer._seventh = std::move(*static_cast<typename arguments_buffer_type::seventh_type*>(arguments_p));
+			arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::seventh_type);
+
+			this->_arguments_buffer._eighth = std::move(*static_cast<typename arguments_buffer_type::eighth_type*>(arguments_p));
+		}
+		else if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_9)
+		{
+			FE_ASSERT(sizeof(typename arguments_buffer_type::first_type) + sizeof(typename arguments_buffer_type::second_type) + sizeof(typename arguments_buffer_type::third_type) + sizeof(typename arguments_buffer_type::fifth_type) + sizeof(typename arguments_buffer_type::sixth_type) + sizeof(typename arguments_buffer_type::seventh_type) + sizeof(typename arguments_buffer_type::eighth_type) + sizeof(typename arguments_buffer_type::ninth_type) != size_in_bytes_p, "Input arguments buffer corruption detected: different size of types have been passed to the arguments buffer!");
+
+			this->_arguments_buffer._first = std::move(*static_cast<typename arguments_buffer_type::first_type*>(arguments_p));
+			arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::first_type);
+
+			this->_arguments_buffer._second = std::move(*static_cast<typename arguments_buffer_type::second_type*>(arguments_p));
+			arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::second_type);
+
+			this->_arguments_buffer._third = std::move(*static_cast<typename arguments_buffer_type::third_type*>(arguments_p));
+			arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::third_type);
+
+			this->_arguments_buffer._fourth = std::move(*static_cast<typename arguments_buffer_type::fourth_type*>(arguments_p));
+			arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::fourth_type);
+
+			this->_arguments_buffer._fifth = std::move(*static_cast<typename arguments_buffer_type::fifth_type*>(arguments_p));
+			arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::fifth_type);
+
+			this->_arguments_buffer._sixth = std::move(*static_cast<typename arguments_buffer_type::sixth_type*>(arguments_p));
+			arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::sixth_type);
+
+			this->_arguments_buffer._seventh = std::move(*static_cast<typename arguments_buffer_type::seventh_type*>(arguments_p));
+			arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::seventh_type);
+
+			this->_arguments_buffer._eighth = std::move(*static_cast<typename arguments_buffer_type::eighth_type*>(arguments_p));
+			arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::eighth_type);
+
+			this->_arguments_buffer._ninth = std::move(*static_cast<typename arguments_buffer_type::ninth_type*>(arguments_p));
+        }
+		else if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_10)
+		{
+			FE_ASSERT(sizeof(typename arguments_buffer_type::first_type) + sizeof(typename arguments_buffer_type::second_type) + sizeof(typename arguments_buffer_type::third_type) + sizeof(typename arguments_buffer_type::fifth_type) + sizeof(typename arguments_buffer_type::sixth_type) + sizeof(typename arguments_buffer_type::seventh_type) + sizeof(typename arguments_buffer_type::eighth_type) + sizeof(typename arguments_buffer_type::ninth_type) + sizeof(typename arguments_buffer_type::tenth_type) != size_in_bytes_p, "Input arguments buffer corruption detected: different size of types have been passed to the arguments buffer!");
+
+			this->_arguments_buffer._first = std::move(*static_cast<typename arguments_buffer_type::first_type*>(arguments_p));
+			arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::first_type);
+
+			this->_arguments_buffer._second = std::move(*static_cast<typename arguments_buffer_type::second_type*>(arguments_p));
+			arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::second_type);
+
+			this->_arguments_buffer._third = std::move(*static_cast<typename arguments_buffer_type::third_type*>(arguments_p));
+			arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::third_type);
+
+			this->_arguments_buffer._fourth = std::move(*static_cast<typename arguments_buffer_type::fourth_type*>(arguments_p));
+			arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::fourth_type);
+
+			this->_arguments_buffer._fifth = std::move(*static_cast<typename arguments_buffer_type::fifth_type*>(arguments_p));
+			arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::fifth_type);
+
+			this->_arguments_buffer._sixth = std::move(*static_cast<typename arguments_buffer_type::sixth_type*>(arguments_p));
+			arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::sixth_type);
+
+			this->_arguments_buffer._seventh = std::move(*static_cast<typename arguments_buffer_type::seventh_type*>(arguments_p));
+			arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::seventh_type);
+
+			this->_arguments_buffer._eighth = std::move(*static_cast<typename arguments_buffer_type::eighth_type*>(arguments_p));
+			arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::eighth_type);
+
+			this->_arguments_buffer._ninth = std::move(*static_cast<typename arguments_buffer_type::ninth_type*>(arguments_p));
+			arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::ninth_type);
+
+			this->_arguments_buffer._tenth = std::move(*static_cast<typename arguments_buffer_type::tenth_type*>(arguments_p));
+		}
+    }
+
 
     virtual boolean is_null(void) const noexcept override
     {
@@ -1363,7 +1588,7 @@ struct cpp_style_task<C, TaskImpl, FE::FORWARD_DATA::_AS_RVALUE_REF, ArgumentsBu
             return true;
         }
 
-        if (this->_instance_ptr == nullptr)
+        if (this->m_instance == nullptr)
         {
             return true;
         }
@@ -1373,7 +1598,7 @@ struct cpp_style_task<C, TaskImpl, FE::FORWARD_DATA::_AS_RVALUE_REF, ArgumentsBu
 
     virtual std::any get_result() const noexcept override
     {
-		return this->_task_result;
+        return this->_task_result;
     }
 };
 
@@ -1392,17 +1617,20 @@ struct cpp_style_task<C, TaskImpl, FE::FORWARD_DATA::_AS_LVALUE_REF, ArgumentsBu
     task_result_buffer_type _task_result;
     arguments_buffer_type _arguments_buffer;
     typename task_type::method_type _method;
-    class_type* _instance_ptr;
 
-    _CONSTEXPR20_ _FORCE_INLINE_ cpp_style_task() noexcept : _task_result(), _arguments_buffer(), _method(), _instance_ptr() {}
+private:
+    class_type* m_instance;
+
+public:
+    _CONSTEXPR20_ _FORCE_INLINE_ cpp_style_task() noexcept : _task_result(), _arguments_buffer(), _method(), m_instance() {}
     _FORCE_INLINE_ ~cpp_style_task() noexcept = default;
 
-    _CONSTEXPR20_ _FORCE_INLINE_ cpp_style_task(typename task_type::method_type task_p) noexcept : _arguments_buffer(), _method(task_p), _instance_ptr(), _task_result(){}
-    _CONSTEXPR20_ _FORCE_INLINE_ cpp_style_task(cpp_style_task& other_p) noexcept : _arguments_buffer(other_p._arguments_buffer), _method(other_p._method), _instance_ptr(other_p._instance_ptr), _task_result(other_p._task_result) {}
-    _CONSTEXPR20_ _FORCE_INLINE_ cpp_style_task(cpp_style_task&& rvalue_p) noexcept : _arguments_buffer(std::move(rvalue_p._arguments_buffer)), _method(rvalue_p._method), _instance_ptr(rvalue_p._instance_ptr), _task_result(rvalue_p._task_result)
+    _CONSTEXPR20_ _FORCE_INLINE_ cpp_style_task(typename task_type::method_type task_p) noexcept : _arguments_buffer(), _method(task_p), m_instance(), _task_result(){}
+    _CONSTEXPR20_ _FORCE_INLINE_ cpp_style_task(cpp_style_task& other_p) noexcept : _arguments_buffer(other_p._arguments_buffer), _method(other_p._method), m_instance(other_p.m_instance), _task_result(other_p._task_result) {}
+    _CONSTEXPR20_ _FORCE_INLINE_ cpp_style_task(cpp_style_task&& rvalue_p) noexcept : _arguments_buffer(std::move(rvalue_p._arguments_buffer)), _method(rvalue_p._method), m_instance(rvalue_p.m_instance), _task_result(rvalue_p._task_result)
     {
         rvalue_p._method = nullptr;
-        rvalue_p._instance_ptr = nullptr;
+        rvalue_p.m_instance = nullptr;
     }
 
     _CONSTEXPR20_ _FORCE_INLINE_ cpp_style_task& operator=(typename task_type::method_type task_p) noexcept
@@ -1415,7 +1643,7 @@ struct cpp_style_task<C, TaskImpl, FE::FORWARD_DATA::_AS_LVALUE_REF, ArgumentsBu
     {
         this->_arguments_buffer = other_p._arguments_buffer;
         this->_method = other_p._method;
-        this->_instance_ptr = other_p._instance_ptr;
+        this->m_instance = other_p.m_instance;
         return *this;
     }
 
@@ -1426,132 +1654,344 @@ struct cpp_style_task<C, TaskImpl, FE::FORWARD_DATA::_AS_LVALUE_REF, ArgumentsBu
         this->_method = rvalue_p._method;
         rvalue_p._method = nullptr;
 
-        this->_instance_ptr = rvalue_p._instance_ptr;
-        rvalue_p._instance_ptr = nullptr;
+        this->m_instance = rvalue_p.m_instance;
+        rvalue_p.m_instance = nullptr;
         return *this;
     }
 
     virtual void operator()(void) noexcept override
     {
-        FE_ASSERT(this->_instance_ptr == nullptr, "${%s@0}: ${%s@1} is nullptr", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(this->_instance_ptr));
+        FE_ASSERT(this->m_instance == nullptr, "${%s@0}: ${%s@1} is nullptr", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(this->m_instance));
 
         if constexpr (task_type::has_void_return_type == true)
         {
-            if constexpr (this->_arguments_buffer.arguments_count == ARGUMENTS_COUNT::_0)
+            if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_0)
             {
-                (_instance_ptr->*_method)();
+                (m_instance->*_method)();
                 return;
             }
-            else if constexpr (this->_arguments_buffer.arguments_count == ARGUMENTS_COUNT::_1)
+            else if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_1)
             {
-                (_instance_ptr->*_method)(this->_arguments_buffer._first);
+                (m_instance->*_method)(this->_arguments_buffer._first);
                 return;
             }
-            else if constexpr (this->_arguments_buffer.arguments_count == ARGUMENTS_COUNT::_2)
+            else if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_2)
             {
-                (_instance_ptr->*_method)(this->_arguments_buffer._first, this->_arguments_buffer._second);
+                (m_instance->*_method)(this->_arguments_buffer._first, this->_arguments_buffer._second);
                 return;
             }
-            else if constexpr (this->_arguments_buffer.arguments_count == ARGUMENTS_COUNT::_3)
+            else if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_3)
             {
-                (_instance_ptr->*_method)(this->_arguments_buffer._first, this->_arguments_buffer._second, this->_arguments_buffer._third);
+                (m_instance->*_method)(this->_arguments_buffer._first, this->_arguments_buffer._second, this->_arguments_buffer._third);
                 return;
             }
-            else if constexpr (this->_arguments_buffer.arguments_count == ARGUMENTS_COUNT::_4)
+            else if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_4)
             {
-                (_instance_ptr->*_method)(this->_arguments_buffer._first, this->_arguments_buffer._second, this->_arguments_buffer._third, this->_arguments_buffer._fourth);
+                (m_instance->*_method)(this->_arguments_buffer._first, this->_arguments_buffer._second, this->_arguments_buffer._third, this->_arguments_buffer._fourth);
                 return;
             }
-            else if constexpr (this->_arguments_buffer.arguments_count == ARGUMENTS_COUNT::_5)
+            else if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_5)
             {
-                (_instance_ptr->*_method)(this->_arguments_buffer._first, this->_arguments_buffer._second, this->_arguments_buffer._third, this->_arguments_buffer._fourth, this->_arguments_buffer._fifth);
+                (m_instance->*_method)(this->_arguments_buffer._first, this->_arguments_buffer._second, this->_arguments_buffer._third, this->_arguments_buffer._fourth, this->_arguments_buffer._fifth);
                 return;
             }
-            else if constexpr (this->_arguments_buffer.arguments_count == ARGUMENTS_COUNT::_6)
+            else if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_6)
             {
-                (_instance_ptr->*_method)(this->_arguments_buffer._first, this->_arguments_buffer._second, this->_arguments_buffer._third, this->_arguments_buffer._fourth, this->_arguments_buffer._fifth, this->_arguments_buffer._sixth);
+                (m_instance->*_method)(this->_arguments_buffer._first, this->_arguments_buffer._second, this->_arguments_buffer._third, this->_arguments_buffer._fourth, this->_arguments_buffer._fifth, this->_arguments_buffer._sixth);
                 return;
             }
-            else if constexpr (this->_arguments_buffer.arguments_count == ARGUMENTS_COUNT::_7)
+            else if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_7)
             {
-                (_instance_ptr->*_method)(this->_arguments_buffer._first, this->_arguments_buffer._second, this->_arguments_buffer._third, this->_arguments_buffer._fourth, this->_arguments_buffer._fifth, this->_arguments_buffer._sixth, this->_arguments_buffer._seventh);
+                (m_instance->*_method)(this->_arguments_buffer._first, this->_arguments_buffer._second, this->_arguments_buffer._third, this->_arguments_buffer._fourth, this->_arguments_buffer._fifth, this->_arguments_buffer._sixth, this->_arguments_buffer._seventh);
                 return;
             }
-            else if constexpr (this->_arguments_buffer.arguments_count == ARGUMENTS_COUNT::_8)
+            else if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_8)
             {
-                (_instance_ptr->*_method)(this->_arguments_buffer._first, this->_arguments_buffer._second, this->_arguments_buffer._third, this->_arguments_buffer._fourth, this->_arguments_buffer._fifth, this->_arguments_buffer._sixth, this->_arguments_buffer._seventh, this->_arguments_buffer._eighth);
+                (m_instance->*_method)(this->_arguments_buffer._first, this->_arguments_buffer._second, this->_arguments_buffer._third, this->_arguments_buffer._fourth, this->_arguments_buffer._fifth, this->_arguments_buffer._sixth, this->_arguments_buffer._seventh, this->_arguments_buffer._eighth);
                 return;
             }
-            else if constexpr (this->_arguments_buffer.arguments_count == ARGUMENTS_COUNT::_9)
+            else if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_9)
             {
-                (_instance_ptr->*_method)(this->_arguments_buffer._first, this->_arguments_buffer._second, this->_arguments_buffer._third, this->_arguments_buffer._fourth, this->_arguments_buffer._fifth, this->_arguments_buffer._sixth, this->_arguments_buffer._seventh, this->_arguments_buffer._eighth, this->_arguments_buffer._ninth);
+                (m_instance->*_method)(this->_arguments_buffer._first, this->_arguments_buffer._second, this->_arguments_buffer._third, this->_arguments_buffer._fourth, this->_arguments_buffer._fifth, this->_arguments_buffer._sixth, this->_arguments_buffer._seventh, this->_arguments_buffer._eighth, this->_arguments_buffer._ninth);
                 return;
             }
-            else if constexpr (this->_arguments_buffer.arguments_count == ARGUMENTS_COUNT::_10)
+            else if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_10)
             {
-                (_instance_ptr->*_method)(this->_arguments_buffer._first, this->_arguments_buffer._second, this->_arguments_buffer._third, this->_arguments_buffer._fourth, this->_arguments_buffer._fifth, this->_arguments_buffer._sixth, this->_arguments_buffer._seventh, this->_arguments_buffer._eighth, this->_arguments_buffer._ninth, this->_arguments_buffer._tenth);
+                (m_instance->*_method)(this->_arguments_buffer._first, this->_arguments_buffer._second, this->_arguments_buffer._third, this->_arguments_buffer._fourth, this->_arguments_buffer._fifth, this->_arguments_buffer._sixth, this->_arguments_buffer._seventh, this->_arguments_buffer._eighth, this->_arguments_buffer._ninth, this->_arguments_buffer._tenth);
                 return;
             }
         }
         else if constexpr (task_type::has_void_return_type == false)
         {
-            if constexpr (this->_arguments_buffer.arguments_count == ARGUMENTS_COUNT::_0)
+            if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_0)
             {
-                this->_task_result = std::move((_instance_ptr->*_method)());
+                this->_task_result = std::move((m_instance->*_method)());
                 return;
             }
-            else if constexpr (this->_arguments_buffer.arguments_count == ARGUMENTS_COUNT::_1)
+            else if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_1)
             {
-                this->_task_result = std::move((_instance_ptr->*_method)(this->_arguments_buffer._first));
+                this->_task_result = std::move((m_instance->*_method)(this->_arguments_buffer._first));
                 return;
             }
-            else if constexpr (this->_arguments_buffer.arguments_count == ARGUMENTS_COUNT::_2)
+            else if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_2)
             {
-                this->_task_result = std::move((_instance_ptr->*_method)(this->_arguments_buffer._first, this->_arguments_buffer._second));
+                this->_task_result = std::move((m_instance->*_method)(this->_arguments_buffer._first, this->_arguments_buffer._second));
                 return;
             }
-            else if constexpr (this->_arguments_buffer.arguments_count == ARGUMENTS_COUNT::_3)
+            else if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_3)
             {
-                this->_task_result = std::move((_instance_ptr->*_method)(this->_arguments_buffer._first, this->_arguments_buffer._second, this->_arguments_buffer._third));
+                this->_task_result = std::move((m_instance->*_method)(this->_arguments_buffer._first, this->_arguments_buffer._second, this->_arguments_buffer._third));
                 return;
             }
-            else if constexpr (this->_arguments_buffer.arguments_count == ARGUMENTS_COUNT::_4)
+            else if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_4)
             {
-                this->_task_result = std::move((_instance_ptr->*_method)(this->_arguments_buffer._first, this->_arguments_buffer._second, this->_arguments_buffer._third, this->_arguments_buffer._fourth));
+                this->_task_result = std::move((m_instance->*_method)(this->_arguments_buffer._first, this->_arguments_buffer._second, this->_arguments_buffer._third, this->_arguments_buffer._fourth));
                 return;
             }
-            else if constexpr (this->_arguments_buffer.arguments_count == ARGUMENTS_COUNT::_5)
+            else if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_5)
             {
-                this->_task_result = std::move((_instance_ptr->*_method)(this->_arguments_buffer._first, this->_arguments_buffer._second, this->_arguments_buffer._third, this->_arguments_buffer._fourth, this->_arguments_buffer._fifth));
+                this->_task_result = std::move((m_instance->*_method)(this->_arguments_buffer._first, this->_arguments_buffer._second, this->_arguments_buffer._third, this->_arguments_buffer._fourth, this->_arguments_buffer._fifth));
                 return;
             }
-            else if constexpr (this->_arguments_buffer.arguments_count == ARGUMENTS_COUNT::_6)
+            else if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_6)
             {
-                this->_task_result = std::move((_instance_ptr->*_method)(this->_arguments_buffer._first, this->_arguments_buffer._second, this->_arguments_buffer._third, this->_arguments_buffer._fourth, this->_arguments_buffer._fifth, this->_arguments_buffer._sixth));
+                this->_task_result = std::move((m_instance->*_method)(this->_arguments_buffer._first, this->_arguments_buffer._second, this->_arguments_buffer._third, this->_arguments_buffer._fourth, this->_arguments_buffer._fifth, this->_arguments_buffer._sixth));
                 return;
             }
-            else if constexpr (this->_arguments_buffer.arguments_count == ARGUMENTS_COUNT::_7)
+            else if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_7)
             {
-                this->_task_result = std::move((_instance_ptr->*_method)(this->_arguments_buffer._first, this->_arguments_buffer._second, this->_arguments_buffer._third, this->_arguments_buffer._fourth, this->_arguments_buffer._fifth, this->_arguments_buffer._sixth, this->_arguments_buffer._seventh));
+                this->_task_result = std::move((m_instance->*_method)(this->_arguments_buffer._first, this->_arguments_buffer._second, this->_arguments_buffer._third, this->_arguments_buffer._fourth, this->_arguments_buffer._fifth, this->_arguments_buffer._sixth, this->_arguments_buffer._seventh));
                 return;
             }
-            else if constexpr (this->_arguments_buffer.arguments_count == ARGUMENTS_COUNT::_8)
+            else if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_8)
             {
-                this->_task_result = std::move((_instance_ptr->*_method)(this->_arguments_buffer._first, this->_arguments_buffer._second, this->_arguments_buffer._third, this->_arguments_buffer._fourth, this->_arguments_buffer._fifth, this->_arguments_buffer._sixth, this->_arguments_buffer._seventh, this->_arguments_buffer._eighth));
+                this->_task_result = std::move((m_instance->*_method)(this->_arguments_buffer._first, this->_arguments_buffer._second, this->_arguments_buffer._third, this->_arguments_buffer._fourth, this->_arguments_buffer._fifth, this->_arguments_buffer._sixth, this->_arguments_buffer._seventh, this->_arguments_buffer._eighth));
                 return;
             }
-            else if constexpr (this->_arguments_buffer.arguments_count == ARGUMENTS_COUNT::_9)
+            else if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_9)
             {
-                *this->_task_result = std::move((_instance_ptr->*_method)(this->_arguments_buffer._first, this->_arguments_buffer._second, this->_arguments_buffer._third, this->_arguments_buffer._fourth, this->_arguments_buffer._fifth, this->_arguments_buffer._sixth, this->_arguments_buffer._seventh, this->_arguments_buffer._eighth, this->_arguments_buffer._ninth));
+                *this->_task_result = std::move((m_instance->*_method)(this->_arguments_buffer._first, this->_arguments_buffer._second, this->_arguments_buffer._third, this->_arguments_buffer._fourth, this->_arguments_buffer._fifth, this->_arguments_buffer._sixth, this->_arguments_buffer._seventh, this->_arguments_buffer._eighth, this->_arguments_buffer._ninth));
                 return;
             }
-            else if constexpr (this->_arguments_buffer.arguments_count == ARGUMENTS_COUNT::_10)
+            else if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_10)
             {
-                this->_task_result = std::move((_instance_ptr->*_method)(this->_arguments_buffer._first, this->_arguments_buffer._second, this->_arguments_buffer._third, this->_arguments_buffer._fourth, this->_arguments_buffer._fifth, this->_arguments_buffer._sixth, this->_arguments_buffer._seventh, this->_arguments_buffer._eighth, this->_arguments_buffer._ninth, this->_arguments_buffer._tenth));
+                this->_task_result = std::move((m_instance->*_method)(this->_arguments_buffer._first, this->_arguments_buffer._second, this->_arguments_buffer._third, this->_arguments_buffer._fourth, this->_arguments_buffer._fifth, this->_arguments_buffer._sixth, this->_arguments_buffer._seventh, this->_arguments_buffer._eighth, this->_arguments_buffer._ninth, this->_arguments_buffer._tenth));
                 return;
             }
         }
     }
+
+
+    virtual void set_instance(void* const instance_p) noexcept override
+    {
+        FE_ASSERT(instance_p == nullptr, "The target instance is null!");
+        this->m_instance = static_cast<class_type*>(instance_p);
+    }
+
+
+    virtual void set_arguments(void* arguments_p, _MAYBE_UNUSED_ size_t size_in_bytes_p) noexcept
+    {
+        FE_ASSERT(arguments_p == nullptr, "The arguments are null!");
+        FE_ASSERT(size_in_bytes_p == 0, "The size of the arguments is 0!");
+
+        if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_1)
+        {
+            FE_ASSERT(sizeof(typename arguments_buffer_type::first_type) != size_in_bytes_p, "Input arguments buffer corruption detected: different size of types have been passed to the arguments buffer!");
+
+            this->_arguments_buffer._first = std::move(*static_cast<typename arguments_buffer_type::first_type*>(arguments_p));
+        }
+        else if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_2)
+        {
+            FE_ASSERT(sizeof(typename arguments_buffer_type::first_type) + sizeof(typename arguments_buffer_type::second_type) != size_in_bytes_p, "Input arguments buffer corruption detected: different size of types have been passed to the arguments buffer!");
+
+            this->_arguments_buffer._first = std::move(*static_cast<typename arguments_buffer_type::first_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::first_type);
+
+            this->_arguments_buffer._second = std::move(*static_cast<typename arguments_buffer_type::second_type*>(arguments_p));
+        }
+
+        else if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_3)
+        {
+            FE_ASSERT(sizeof(typename arguments_buffer_type::first_type) + sizeof(typename arguments_buffer_type::second_type) + sizeof(typename arguments_buffer_type::third_type) != size_in_bytes_p, "Input arguments buffer corruption detected: different size of types have been passed to the arguments buffer!");
+
+            this->_arguments_buffer._first = std::move(*static_cast<typename arguments_buffer_type::first_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::first_type);
+
+            this->_arguments_buffer._second = std::move(*static_cast<typename arguments_buffer_type::second_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::second_type);
+
+            this->_arguments_buffer._third = std::move(*static_cast<typename arguments_buffer_type::third_type*>(arguments_p));
+        }
+        else if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_4)
+        {
+            FE_ASSERT(sizeof(typename arguments_buffer_type::first_type) + sizeof(typename arguments_buffer_type::second_type) + sizeof(typename arguments_buffer_type::third_type) + sizeof(typename arguments_buffer_type::fourth_type) != size_in_bytes_p, "Input arguments buffer corruption detected: different size of types have been passed to the arguments buffer!");
+
+            this->_arguments_buffer._first = std::move(*static_cast<typename arguments_buffer_type::first_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::first_type);
+
+            this->_arguments_buffer._second = std::move(*static_cast<typename arguments_buffer_type::second_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::second_type);
+
+            this->_arguments_buffer._third = std::move(*static_cast<typename arguments_buffer_type::third_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::third_type);
+
+            this->_arguments_buffer._fourth = std::move(*static_cast<typename arguments_buffer_type::fourth_type*>(arguments_p));
+        }
+        else if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_5)
+        {
+            FE_ASSERT((sizeof(typename arguments_buffer_type::first_type) + sizeof(typename arguments_buffer_type::second_type) + sizeof(typename arguments_buffer_type::third_type) + sizeof(typename arguments_buffer_type::fifth_type)) != size_in_bytes_p, "Input arguments buffer corruption detected: different size of types have been passed to the arguments buffer!");
+
+            this->_arguments_buffer._first = std::move(*static_cast<typename arguments_buffer_type::first_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::first_type);
+
+            this->_arguments_buffer._second = std::move(*static_cast<typename arguments_buffer_type::second_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::second_type);
+
+            this->_arguments_buffer._third = std::move(*static_cast<typename arguments_buffer_type::third_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::third_type);
+
+            this->_arguments_buffer._fourth = std::move(*static_cast<typename arguments_buffer_type::fourth_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::fourth_type);
+
+            this->_arguments_buffer._fifth = std::move(*static_cast<typename arguments_buffer_type::fifth_type*>(arguments_p));
+        }
+        else if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_6)
+        {
+            FE_ASSERT(sizeof(typename arguments_buffer_type::first_type) + sizeof(typename arguments_buffer_type::second_type) + sizeof(typename arguments_buffer_type::third_type) + sizeof(typename arguments_buffer_type::fifth_type) + sizeof(typename arguments_buffer_type::sixth_type) != size_in_bytes_p, "Input arguments buffer corruption detected: different size of types have been passed to the arguments buffer!");
+
+            this->_arguments_buffer._first = std::move(*static_cast<typename arguments_buffer_type::first_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::first_type);
+
+            this->_arguments_buffer._second = std::move(*static_cast<typename arguments_buffer_type::second_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::second_type);
+
+            this->_arguments_buffer._third = std::move(*static_cast<typename arguments_buffer_type::third_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::third_type);
+
+            this->_arguments_buffer._fourth = std::move(*static_cast<typename arguments_buffer_type::fourth_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::fourth_type);
+
+            this->_arguments_buffer._fifth = std::move(*static_cast<typename arguments_buffer_type::fifth_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::fifth_type);
+
+            this->_arguments_buffer._sixth = std::move(*static_cast<typename arguments_buffer_type::sixth_type*>(arguments_p));
+        }
+        else if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_7)
+        {
+            FE_ASSERT(sizeof(typename arguments_buffer_type::first_type) + sizeof(typename arguments_buffer_type::second_type) + sizeof(typename arguments_buffer_type::third_type) + sizeof(typename arguments_buffer_type::fifth_type) + sizeof(typename arguments_buffer_type::sixth_type) + sizeof(typename arguments_buffer_type::seventh_type) != size_in_bytes_p, "Input arguments buffer corruption detected: different size of types have been passed to the arguments buffer!");
+
+            this->_arguments_buffer._first = std::move(*static_cast<typename arguments_buffer_type::first_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::first_type);
+
+            this->_arguments_buffer._second = std::move(*static_cast<typename arguments_buffer_type::second_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::second_type);
+
+            this->_arguments_buffer._third = std::move(*static_cast<typename arguments_buffer_type::third_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::third_type);
+
+            this->_arguments_buffer._fourth = std::move(*static_cast<typename arguments_buffer_type::fourth_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::fourth_type);
+
+            this->_arguments_buffer._fifth = std::move(*static_cast<typename arguments_buffer_type::fifth_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::fifth_type);
+
+            this->_arguments_buffer._sixth = std::move(*static_cast<typename arguments_buffer_type::sixth_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::sixth_type);
+
+            this->_arguments_buffer._seventh = std::move(*static_cast<typename arguments_buffer_type::seventh_type*>(arguments_p));
+        }
+        else if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_8)
+        {
+            FE_ASSERT(sizeof(typename arguments_buffer_type::first_type) + sizeof(typename arguments_buffer_type::second_type) + sizeof(typename arguments_buffer_type::third_type) + sizeof(typename arguments_buffer_type::fifth_type) + sizeof(typename arguments_buffer_type::sixth_type) + sizeof(typename arguments_buffer_type::seventh_type) + sizeof(typename arguments_buffer_type::eighth_type) != size_in_bytes_p, "Input arguments buffer corruption detected: different size of types have been passed to the arguments buffer!");
+
+            this->_arguments_buffer._first = std::move(*static_cast<typename arguments_buffer_type::first_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::first_type);
+
+            this->_arguments_buffer._second = std::move(*static_cast<typename arguments_buffer_type::second_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::second_type);
+
+            this->_arguments_buffer._third = std::move(*static_cast<typename arguments_buffer_type::third_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::third_type);
+
+            this->_arguments_buffer._fourth = std::move(*static_cast<typename arguments_buffer_type::fourth_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::fourth_type);
+
+            this->_arguments_buffer._fifth = std::move(*static_cast<typename arguments_buffer_type::fifth_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::fifth_type);
+
+            this->_arguments_buffer._sixth = std::move(*static_cast<typename arguments_buffer_type::sixth_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::sixth_type);
+
+            this->_arguments_buffer._seventh = std::move(*static_cast<typename arguments_buffer_type::seventh_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::seventh_type);
+
+            this->_arguments_buffer._eighth = std::move(*static_cast<typename arguments_buffer_type::eighth_type*>(arguments_p));
+        }
+        else if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_9)
+        {
+            FE_ASSERT(sizeof(typename arguments_buffer_type::first_type) + sizeof(typename arguments_buffer_type::second_type) + sizeof(typename arguments_buffer_type::third_type) + sizeof(typename arguments_buffer_type::fifth_type) + sizeof(typename arguments_buffer_type::sixth_type) + sizeof(typename arguments_buffer_type::seventh_type) + sizeof(typename arguments_buffer_type::eighth_type) + sizeof(typename arguments_buffer_type::ninth_type) != size_in_bytes_p, "Input arguments buffer corruption detected: different size of types have been passed to the arguments buffer!");
+
+            this->_arguments_buffer._first = std::move(*static_cast<typename arguments_buffer_type::first_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::first_type);
+
+            this->_arguments_buffer._second = std::move(*static_cast<typename arguments_buffer_type::second_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::second_type);
+
+            this->_arguments_buffer._third = std::move(*static_cast<typename arguments_buffer_type::third_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::third_type);
+
+            this->_arguments_buffer._fourth = std::move(*static_cast<typename arguments_buffer_type::fourth_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::fourth_type);
+
+            this->_arguments_buffer._fifth = std::move(*static_cast<typename arguments_buffer_type::fifth_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::fifth_type);
+
+            this->_arguments_buffer._sixth = std::move(*static_cast<typename arguments_buffer_type::sixth_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::sixth_type);
+
+            this->_arguments_buffer._seventh = std::move(*static_cast<typename arguments_buffer_type::seventh_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::seventh_type);
+
+            this->_arguments_buffer._eighth = std::move(*static_cast<typename arguments_buffer_type::eighth_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::eighth_type);
+
+            this->_arguments_buffer._ninth = std::move(*static_cast<typename arguments_buffer_type::ninth_type*>(arguments_p));
+        }
+        else if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_10)
+        {
+            FE_ASSERT(sizeof(typename arguments_buffer_type::first_type) + sizeof(typename arguments_buffer_type::second_type) + sizeof(typename arguments_buffer_type::third_type) + sizeof(typename arguments_buffer_type::fifth_type) + sizeof(typename arguments_buffer_type::sixth_type) + sizeof(typename arguments_buffer_type::seventh_type) + sizeof(typename arguments_buffer_type::eighth_type) + sizeof(typename arguments_buffer_type::ninth_type) + sizeof(typename arguments_buffer_type::tenth_type) != size_in_bytes_p, "Input arguments buffer corruption detected: different size of types have been passed to the arguments buffer!");
+
+            this->_arguments_buffer._first = std::move(*static_cast<typename arguments_buffer_type::first_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::first_type);
+
+            this->_arguments_buffer._second = std::move(*static_cast<typename arguments_buffer_type::second_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::second_type);
+
+            this->_arguments_buffer._third = std::move(*static_cast<typename arguments_buffer_type::third_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::third_type);
+
+            this->_arguments_buffer._fourth = std::move(*static_cast<typename arguments_buffer_type::fourth_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::fourth_type);
+
+            this->_arguments_buffer._fifth = std::move(*static_cast<typename arguments_buffer_type::fifth_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::fifth_type);
+
+            this->_arguments_buffer._sixth = std::move(*static_cast<typename arguments_buffer_type::sixth_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::sixth_type);
+
+            this->_arguments_buffer._seventh = std::move(*static_cast<typename arguments_buffer_type::seventh_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::seventh_type);
+
+            this->_arguments_buffer._eighth = std::move(*static_cast<typename arguments_buffer_type::eighth_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::eighth_type);
+
+            this->_arguments_buffer._ninth = std::move(*static_cast<typename arguments_buffer_type::ninth_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::ninth_type);
+
+            this->_arguments_buffer._tenth = std::move(*static_cast<typename arguments_buffer_type::tenth_type*>(arguments_p));
+        }
+    }
+
 
     virtual boolean is_null(void) const noexcept override
     {
@@ -1560,7 +2000,7 @@ struct cpp_style_task<C, TaskImpl, FE::FORWARD_DATA::_AS_LVALUE_REF, ArgumentsBu
             return true;
         }
 
-        if (this->_instance_ptr == nullptr)
+        if (this->m_instance == nullptr)
         {
             return true;
         }
@@ -1627,57 +2067,57 @@ struct c_style_task<TaskImpl, FE::FORWARD_DATA::_AS_RVALUE_REF, ArgumentsBufferT
     {
         if constexpr (task_type::has_void_return_type == true)
         {
-            if constexpr (this->_arguments_buffer.arguments_count == ARGUMENTS_COUNT::_0)
+            if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_0)
             {
                 this->_function();
                 return;
             }
-            else if constexpr (this->_arguments_buffer.arguments_count == ARGUMENTS_COUNT::_1)
+            else if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_1)
             {
                 this->_function(std::forward<typename arguments_buffer_type::first_type>(this->_arguments_buffer._first));
                 return;
             }
-            else if constexpr (this->_arguments_buffer.arguments_count == ARGUMENTS_COUNT::_2)
+            else if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_2)
             {
                 this->_function(std::forward<typename arguments_buffer_type::first_type>(this->_arguments_buffer._first), std::forward<typename arguments_buffer_type::second_type>(this->_arguments_buffer._second));
                 return;
             }
-            else if constexpr (this->_arguments_buffer.arguments_count == ARGUMENTS_COUNT::_3)
+            else if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_3)
             {
                 this->_function(std::forward<typename arguments_buffer_type::first_type>(this->_arguments_buffer._first), std::forward<typename arguments_buffer_type::second_type>(this->_arguments_buffer._second), std::forward<typename arguments_buffer_type::third_type>(this->_arguments_buffer._third));
                 return;
             }
-            else if constexpr (this->_arguments_buffer.arguments_count == ARGUMENTS_COUNT::_4)
+            else if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_4)
             {
                 this->_function(std::forward<typename arguments_buffer_type::first_type>(this->_arguments_buffer._first), std::forward<typename arguments_buffer_type::second_type>(this->_arguments_buffer._second), std::forward<typename arguments_buffer_type::third_type>(this->_arguments_buffer._third), std::forward<typename arguments_buffer_type::fourth_type>(this->_arguments_buffer._fourth));
                 return;
             }
-            else if constexpr (this->_arguments_buffer.arguments_count == ARGUMENTS_COUNT::_5)
+            else if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_5)
             {
                 this->_function(std::forward<typename arguments_buffer_type::first_type>(this->_arguments_buffer._first), std::forward<typename arguments_buffer_type::second_type>(this->_arguments_buffer._second), std::forward<typename arguments_buffer_type::third_type>(this->_arguments_buffer._third), std::forward<typename arguments_buffer_type::fourth_type>(this->_arguments_buffer._fourth), std::forward<typename arguments_buffer_type::fifth_type>(this->_arguments_buffer._fifth));
                 return;
             }
-            else if constexpr (this->_arguments_buffer.arguments_count == ARGUMENTS_COUNT::_6)
+            else if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_6)
             {
                 this->_function(std::forward<typename arguments_buffer_type::first_type>(this->_arguments_buffer._first), std::forward<typename arguments_buffer_type::second_type>(this->_arguments_buffer._second), std::forward<typename arguments_buffer_type::third_type>(this->_arguments_buffer._third), std::forward<typename arguments_buffer_type::fourth_type>(this->_arguments_buffer._fourth), std::forward<typename arguments_buffer_type::fifth_type>(this->_arguments_buffer._fifth), std::forward<typename arguments_buffer_type::sixth_type>(this->_arguments_buffer._sixth));
                 return;
             }
-            else if constexpr (this->_arguments_buffer.arguments_count == ARGUMENTS_COUNT::_7)
+            else if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_7)
             {
                 this->_function(std::forward<typename arguments_buffer_type::first_type>(this->_arguments_buffer._first), std::forward<typename arguments_buffer_type::second_type>(this->_arguments_buffer._second), std::forward<typename arguments_buffer_type::third_type>(this->_arguments_buffer._third), std::forward<typename arguments_buffer_type::fourth_type>(this->_arguments_buffer._fourth), std::forward<typename arguments_buffer_type::fifth_type>(this->_arguments_buffer._fifth), std::forward<typename arguments_buffer_type::sixth_type>(this->_arguments_buffer._sixth), std::forward<typename arguments_buffer_type::seventh_type>(this->_arguments_buffer._seventh));
                 return;
             }
-            else if constexpr (this->_arguments_buffer.arguments_count == ARGUMENTS_COUNT::_8)
+            else if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_8)
             {
                 this->_function(std::forward<typename arguments_buffer_type::first_type>(this->_arguments_buffer._first), std::forward<typename arguments_buffer_type::second_type>(this->_arguments_buffer._second), std::forward<typename arguments_buffer_type::third_type>(this->_arguments_buffer._third), std::forward<typename arguments_buffer_type::fourth_type>(this->_arguments_buffer._fourth), std::forward<typename arguments_buffer_type::fifth_type>(this->_arguments_buffer._fifth), std::forward<typename arguments_buffer_type::sixth_type>(this->_arguments_buffer._sixth), std::forward<typename arguments_buffer_type::seventh_type>(this->_arguments_buffer._seventh), std::forward<typename arguments_buffer_type::Eighth>(this->_arguments_buffer._eighth));
                 return;
             }
-            else if constexpr (this->_arguments_buffer.arguments_count == ARGUMENTS_COUNT::_9)
+            else if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_9)
             {
                 this->_function(std::forward<typename arguments_buffer_type::first_type>(this->_arguments_buffer._first), std::forward<typename arguments_buffer_type::second_type>(this->_arguments_buffer._second), std::forward<typename arguments_buffer_type::third_type>(this->_arguments_buffer._third), std::forward<typename arguments_buffer_type::fourth_type>(this->_arguments_buffer._fourth), std::forward<typename arguments_buffer_type::fifth_type>(this->_arguments_buffer._fifth), std::forward<typename arguments_buffer_type::sixth_type>(this->_arguments_buffer._sixth), std::forward<typename arguments_buffer_type::seventh_type>(this->_arguments_buffer._seventh), std::forward<typename arguments_buffer_type::Eighth>(this->_arguments_buffer._eighth), std::forward<typename arguments_buffer_type::_ninth>(this->_arguments_buffer._ninth));
                 return;
             }
-            else if constexpr (this->_arguments_buffer.arguments_count == ARGUMENTS_COUNT::_10)
+            else if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_10)
             {
                 this->_function(std::forward<typename arguments_buffer_type::first_type>(this->_arguments_buffer._first), std::forward<typename arguments_buffer_type::second_type>(this->_arguments_buffer._second), std::forward<typename arguments_buffer_type::third_type>(this->_arguments_buffer._third), std::forward<typename arguments_buffer_type::fourth_type>(this->_arguments_buffer._fourth), std::forward<typename arguments_buffer_type::fifth_type>(this->_arguments_buffer._fifth), std::forward<typename arguments_buffer_type::sixth_type>(this->_arguments_buffer._sixth), std::forward<typename arguments_buffer_type::seventh_type>(this->_arguments_buffer._seventh), std::forward<typename arguments_buffer_type::Eighth>(this->_arguments_buffer._eighth), std::forward<typename arguments_buffer_type::_ninth>(this->_arguments_buffer._ninth), std::forward<typename arguments_buffer_type::_tenth>(this->_arguments_buffer._tenth));
                 return;
@@ -1685,63 +2125,268 @@ struct c_style_task<TaskImpl, FE::FORWARD_DATA::_AS_RVALUE_REF, ArgumentsBufferT
         }
         else if constexpr (task_type::has_void_return_type == false)
         {
-            if constexpr (this->_arguments_buffer.arguments_count == ARGUMENTS_COUNT::_0)
+            if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_0)
             {
                 this->_task_result = std::move(this->_function());
                 return;
             }
-            else if constexpr (this->_arguments_buffer.arguments_count == ARGUMENTS_COUNT::_1)
+            else if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_1)
             {
                 this->_task_result = std::move(this->_function(std::forward<typename arguments_buffer_type::first_type>(this->_arguments_buffer._first)));
                 return;
             }
-            else if constexpr (this->_arguments_buffer.arguments_count == ARGUMENTS_COUNT::_2)
+            else if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_2)
             {
                 this->_task_result = std::move(this->_function(std::forward<typename arguments_buffer_type::first_type>(this->_arguments_buffer._first), std::forward<typename arguments_buffer_type::second_type>(this->_arguments_buffer._second)));
                 return;
             }
-            else if constexpr (this->_arguments_buffer.arguments_count == ARGUMENTS_COUNT::_3)
+            else if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_3)
             {
                 this->_task_result = std::move(this->_function(std::forward<typename arguments_buffer_type::first_type>(this->_arguments_buffer._first), std::forward<typename arguments_buffer_type::second_type>(this->_arguments_buffer._second), std::forward<typename arguments_buffer_type::third_type>(this->_arguments_buffer._third)));
                 return;
             }
-            else if constexpr (this->_arguments_buffer.arguments_count == ARGUMENTS_COUNT::_4)
+            else if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_4)
             {
                 this->_task_result = std::move(this->_function(std::forward<typename arguments_buffer_type::first_type>(this->_arguments_buffer._first), std::forward<typename arguments_buffer_type::second_type>(this->_arguments_buffer._second), std::forward<typename arguments_buffer_type::third_type>(this->_arguments_buffer._third), std::forward<typename arguments_buffer_type::fourth_type>(this->_arguments_buffer._fourth)));
                 return;
             }
-            else if constexpr (this->_arguments_buffer.arguments_count == ARGUMENTS_COUNT::_5)
+            else if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_5)
             {
                 this->_task_result = std::move(this->_function(std::forward<typename arguments_buffer_type::first_type>(this->_arguments_buffer._first), std::forward<typename arguments_buffer_type::second_type>(this->_arguments_buffer._second), std::forward<typename arguments_buffer_type::third_type>(this->_arguments_buffer._third), std::forward<typename arguments_buffer_type::fourth_type>(this->_arguments_buffer._fourth), std::forward<typename arguments_buffer_type::fifth_type>(this->_arguments_buffer._fifth)));
                 return;
             }
-            else if constexpr (this->_arguments_buffer.arguments_count == ARGUMENTS_COUNT::_6)
+            else if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_6)
             {
                 this->_task_result = std::move(this->_function(std::forward<typename arguments_buffer_type::first_type>(this->_arguments_buffer._first), std::forward<typename arguments_buffer_type::second_type>(this->_arguments_buffer._second), std::forward<typename arguments_buffer_type::third_type>(this->_arguments_buffer._third), std::forward<typename arguments_buffer_type::fourth_type>(this->_arguments_buffer._fourth), std::forward<typename arguments_buffer_type::fifth_type>(this->_arguments_buffer._fifth), std::forward<typename arguments_buffer_type::sixth_type>(this->_arguments_buffer._sixth)));
                 return;
             }
-            else if constexpr (this->_arguments_buffer.arguments_count == ARGUMENTS_COUNT::_7)
+            else if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_7)
             {
                 this->_task_result = std::move(this->_function(std::forward<typename arguments_buffer_type::first_type>(this->_arguments_buffer._first), std::forward<typename arguments_buffer_type::second_type>(this->_arguments_buffer._second), std::forward<typename arguments_buffer_type::third_type>(this->_arguments_buffer._third), std::forward<typename arguments_buffer_type::fourth_type>(this->_arguments_buffer._fourth), std::forward<typename arguments_buffer_type::fifth_type>(this->_arguments_buffer._fifth), std::forward<typename arguments_buffer_type::sixth_type>(this->_arguments_buffer._sixth), std::forward<typename arguments_buffer_type::seventh_type>(this->_arguments_buffer._seventh)));
                 return;
             }
-            else if constexpr (this->_arguments_buffer.arguments_count == ARGUMENTS_COUNT::_8)
+            else if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_8)
             {
                 this->_task_result = std::move(this->_function(std::forward<typename arguments_buffer_type::first_type>(this->_arguments_buffer._first), std::forward<typename arguments_buffer_type::second_type>(this->_arguments_buffer._second), std::forward<typename arguments_buffer_type::third_type>(this->_arguments_buffer._third), std::forward<typename arguments_buffer_type::fourth_type>(this->_arguments_buffer._fourth), std::forward<typename arguments_buffer_type::fifth_type>(this->_arguments_buffer._fifth), std::forward<typename arguments_buffer_type::sixth_type>(this->_arguments_buffer._sixth), std::forward<typename arguments_buffer_type::seventh_type>(this->_arguments_buffer._seventh), std::forward<typename arguments_buffer_type::Eighth>(this->_arguments_buffer._eighth)));
                 return;
             }
-            else if constexpr (this->_arguments_buffer.arguments_count == ARGUMENTS_COUNT::_9)
+            else if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_9)
             {
                 *this->_task_result = std::move(this->_function(std::forward<typename arguments_buffer_type::first_type>(this->_arguments_buffer._first), std::forward<typename arguments_buffer_type::second_type>(this->_arguments_buffer._second), std::forward<typename arguments_buffer_type::third_type>(this->_arguments_buffer._third), std::forward<typename arguments_buffer_type::fourth_type>(this->_arguments_buffer._fourth), std::forward<typename arguments_buffer_type::fifth_type>(this->_arguments_buffer._fifth), std::forward<typename arguments_buffer_type::sixth_type>(this->_arguments_buffer._sixth), std::forward<typename arguments_buffer_type::seventh_type>(this->_arguments_buffer._seventh), std::forward<typename arguments_buffer_type::Eighth>(this->_arguments_buffer._eighth), std::forward<typename arguments_buffer_type::_ninth>(this->_arguments_buffer._ninth)));
                 return;
             }
-            else if constexpr (this->_arguments_buffer.arguments_count == ARGUMENTS_COUNT::_10)
+            else if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_10)
             {
                 this->_task_result = std::move(this->_function(std::forward<typename arguments_buffer_type::first_type>(this->_arguments_buffer._first), std::forward<typename arguments_buffer_type::second_type>(this->_arguments_buffer._second), std::forward<typename arguments_buffer_type::third_type>(this->_arguments_buffer._third), std::forward<typename arguments_buffer_type::fourth_type>(this->_arguments_buffer._fourth), std::forward<typename arguments_buffer_type::fifth_type>(this->_arguments_buffer._fifth), std::forward<typename arguments_buffer_type::sixth_type>(this->_arguments_buffer._sixth), std::forward<typename arguments_buffer_type::seventh_type>(this->_arguments_buffer._seventh), std::forward<typename arguments_buffer_type::Eighth>(this->_arguments_buffer._eighth), std::forward<typename arguments_buffer_type::_ninth>(this->_arguments_buffer._ninth), std::forward<typename arguments_buffer_type::_tenth>(this->_arguments_buffer._tenth)));
                 return;
             }
         }
     }
+
+
+    virtual void set_arguments(void* arguments_p, _MAYBE_UNUSED_ size_t size_in_bytes_p) noexcept
+    {
+        FE_ASSERT(arguments_p == nullptr, "The arguments are null!");
+        FE_ASSERT(size_in_bytes_p == 0, "The size of the arguments is 0!");
+
+        if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_1)
+        {
+            FE_ASSERT(sizeof(typename arguments_buffer_type::first_type) != size_in_bytes_p, "Input arguments buffer corruption detected: different size of types have been passed to the arguments buffer!");
+
+            this->_arguments_buffer._first = std::move(*static_cast<typename arguments_buffer_type::first_type*>(arguments_p));
+        }
+        else if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_2)
+        {
+            FE_ASSERT(sizeof(typename arguments_buffer_type::first_type) + sizeof(typename arguments_buffer_type::second_type) != size_in_bytes_p, "Input arguments buffer corruption detected: different size of types have been passed to the arguments buffer!");
+
+            this->_arguments_buffer._first = std::move(*static_cast<typename arguments_buffer_type::first_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::first_type);
+
+            this->_arguments_buffer._second = std::move(*static_cast<typename arguments_buffer_type::second_type*>(arguments_p));
+        }
+
+        else if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_3)
+        {
+            FE_ASSERT(sizeof(typename arguments_buffer_type::first_type) + sizeof(typename arguments_buffer_type::second_type) + sizeof(typename arguments_buffer_type::third_type) != size_in_bytes_p, "Input arguments buffer corruption detected: different size of types have been passed to the arguments buffer!");
+
+            this->_arguments_buffer._first = std::move(*static_cast<typename arguments_buffer_type::first_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::first_type);
+
+            this->_arguments_buffer._second = std::move(*static_cast<typename arguments_buffer_type::second_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::second_type);
+
+            this->_arguments_buffer._third = std::move(*static_cast<typename arguments_buffer_type::third_type*>(arguments_p));
+        }
+        else if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_4)
+        {
+            FE_ASSERT(sizeof(typename arguments_buffer_type::first_type) + sizeof(typename arguments_buffer_type::second_type) + sizeof(typename arguments_buffer_type::third_type) + sizeof(typename arguments_buffer_type::fourth_type) != size_in_bytes_p, "Input arguments buffer corruption detected: different size of types have been passed to the arguments buffer!");
+
+            this->_arguments_buffer._first = std::move(*static_cast<typename arguments_buffer_type::first_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::first_type);
+
+            this->_arguments_buffer._second = std::move(*static_cast<typename arguments_buffer_type::second_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::second_type);
+
+            this->_arguments_buffer._third = std::move(*static_cast<typename arguments_buffer_type::third_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::third_type);
+
+            this->_arguments_buffer._fourth = std::move(*static_cast<typename arguments_buffer_type::fourth_type*>(arguments_p));
+        }
+        else if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_5)
+        {
+            FE_ASSERT((sizeof(typename arguments_buffer_type::first_type) + sizeof(typename arguments_buffer_type::second_type) + sizeof(typename arguments_buffer_type::third_type) + sizeof(typename arguments_buffer_type::fifth_type)) != size_in_bytes_p, "Input arguments buffer corruption detected: different size of types have been passed to the arguments buffer!");
+
+            this->_arguments_buffer._first = std::move(*static_cast<typename arguments_buffer_type::first_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::first_type);
+
+            this->_arguments_buffer._second = std::move(*static_cast<typename arguments_buffer_type::second_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::second_type);
+
+            this->_arguments_buffer._third = std::move(*static_cast<typename arguments_buffer_type::third_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::third_type);
+
+            this->_arguments_buffer._fourth = std::move(*static_cast<typename arguments_buffer_type::fourth_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::fourth_type);
+
+            this->_arguments_buffer._fifth = std::move(*static_cast<typename arguments_buffer_type::fifth_type*>(arguments_p));
+        }
+        else if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_6)
+        {
+            FE_ASSERT(sizeof(typename arguments_buffer_type::first_type) + sizeof(typename arguments_buffer_type::second_type) + sizeof(typename arguments_buffer_type::third_type) + sizeof(typename arguments_buffer_type::fifth_type) + sizeof(typename arguments_buffer_type::sixth_type) != size_in_bytes_p, "Input arguments buffer corruption detected: different size of types have been passed to the arguments buffer!");
+
+            this->_arguments_buffer._first = std::move(*static_cast<typename arguments_buffer_type::first_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::first_type);
+
+            this->_arguments_buffer._second = std::move(*static_cast<typename arguments_buffer_type::second_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::second_type);
+
+            this->_arguments_buffer._third = std::move(*static_cast<typename arguments_buffer_type::third_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::third_type);
+
+            this->_arguments_buffer._fourth = std::move(*static_cast<typename arguments_buffer_type::fourth_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::fourth_type);
+
+            this->_arguments_buffer._fifth = std::move(*static_cast<typename arguments_buffer_type::fifth_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::fifth_type);
+
+            this->_arguments_buffer._sixth = std::move(*static_cast<typename arguments_buffer_type::sixth_type*>(arguments_p));
+        }
+        else if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_7)
+        {
+            FE_ASSERT(sizeof(typename arguments_buffer_type::first_type) + sizeof(typename arguments_buffer_type::second_type) + sizeof(typename arguments_buffer_type::third_type) + sizeof(typename arguments_buffer_type::fifth_type) + sizeof(typename arguments_buffer_type::sixth_type) + sizeof(typename arguments_buffer_type::seventh_type) != size_in_bytes_p, "Input arguments buffer corruption detected: different size of types have been passed to the arguments buffer!");
+
+            this->_arguments_buffer._first = std::move(*static_cast<typename arguments_buffer_type::first_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::first_type);
+
+            this->_arguments_buffer._second = std::move(*static_cast<typename arguments_buffer_type::second_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::second_type);
+
+            this->_arguments_buffer._third = std::move(*static_cast<typename arguments_buffer_type::third_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::third_type);
+
+            this->_arguments_buffer._fourth = std::move(*static_cast<typename arguments_buffer_type::fourth_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::fourth_type);
+
+            this->_arguments_buffer._fifth = std::move(*static_cast<typename arguments_buffer_type::fifth_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::fifth_type);
+
+            this->_arguments_buffer._sixth = std::move(*static_cast<typename arguments_buffer_type::sixth_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::sixth_type);
+
+            this->_arguments_buffer._seventh = std::move(*static_cast<typename arguments_buffer_type::seventh_type*>(arguments_p));
+        }
+        else if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_8)
+        {
+            FE_ASSERT(sizeof(typename arguments_buffer_type::first_type) + sizeof(typename arguments_buffer_type::second_type) + sizeof(typename arguments_buffer_type::third_type) + sizeof(typename arguments_buffer_type::fifth_type) + sizeof(typename arguments_buffer_type::sixth_type) + sizeof(typename arguments_buffer_type::seventh_type) + sizeof(typename arguments_buffer_type::eighth_type) != size_in_bytes_p, "Input arguments buffer corruption detected: different size of types have been passed to the arguments buffer!");
+
+            this->_arguments_buffer._first = std::move(*static_cast<typename arguments_buffer_type::first_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::first_type);
+
+            this->_arguments_buffer._second = std::move(*static_cast<typename arguments_buffer_type::second_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::second_type);
+
+            this->_arguments_buffer._third = std::move(*static_cast<typename arguments_buffer_type::third_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::third_type);
+
+            this->_arguments_buffer._fourth = std::move(*static_cast<typename arguments_buffer_type::fourth_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::fourth_type);
+
+            this->_arguments_buffer._fifth = std::move(*static_cast<typename arguments_buffer_type::fifth_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::fifth_type);
+
+            this->_arguments_buffer._sixth = std::move(*static_cast<typename arguments_buffer_type::sixth_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::sixth_type);
+
+            this->_arguments_buffer._seventh = std::move(*static_cast<typename arguments_buffer_type::seventh_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::seventh_type);
+
+            this->_arguments_buffer._eighth = std::move(*static_cast<typename arguments_buffer_type::eighth_type*>(arguments_p));
+        }
+        else if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_9)
+        {
+            FE_ASSERT(sizeof(typename arguments_buffer_type::first_type) + sizeof(typename arguments_buffer_type::second_type) + sizeof(typename arguments_buffer_type::third_type) + sizeof(typename arguments_buffer_type::fifth_type) + sizeof(typename arguments_buffer_type::sixth_type) + sizeof(typename arguments_buffer_type::seventh_type) + sizeof(typename arguments_buffer_type::eighth_type) + sizeof(typename arguments_buffer_type::ninth_type) != size_in_bytes_p, "Input arguments buffer corruption detected: different size of types have been passed to the arguments buffer!");
+
+            this->_arguments_buffer._first = std::move(*static_cast<typename arguments_buffer_type::first_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::first_type);
+
+            this->_arguments_buffer._second = std::move(*static_cast<typename arguments_buffer_type::second_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::second_type);
+
+            this->_arguments_buffer._third = std::move(*static_cast<typename arguments_buffer_type::third_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::third_type);
+
+            this->_arguments_buffer._fourth = std::move(*static_cast<typename arguments_buffer_type::fourth_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::fourth_type);
+
+            this->_arguments_buffer._fifth = std::move(*static_cast<typename arguments_buffer_type::fifth_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::fifth_type);
+
+            this->_arguments_buffer._sixth = std::move(*static_cast<typename arguments_buffer_type::sixth_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::sixth_type);
+
+            this->_arguments_buffer._seventh = std::move(*static_cast<typename arguments_buffer_type::seventh_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::seventh_type);
+
+            this->_arguments_buffer._eighth = std::move(*static_cast<typename arguments_buffer_type::eighth_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::eighth_type);
+
+            this->_arguments_buffer._ninth = std::move(*static_cast<typename arguments_buffer_type::ninth_type*>(arguments_p));
+        }
+        else if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_10)
+        {
+            FE_ASSERT(sizeof(typename arguments_buffer_type::first_type) + sizeof(typename arguments_buffer_type::second_type) + sizeof(typename arguments_buffer_type::third_type) + sizeof(typename arguments_buffer_type::fifth_type) + sizeof(typename arguments_buffer_type::sixth_type) + sizeof(typename arguments_buffer_type::seventh_type) + sizeof(typename arguments_buffer_type::eighth_type) + sizeof(typename arguments_buffer_type::ninth_type) + sizeof(typename arguments_buffer_type::tenth_type) != size_in_bytes_p, "Input arguments buffer corruption detected: different size of types have been passed to the arguments buffer!");
+
+            this->_arguments_buffer._first = std::move(*static_cast<typename arguments_buffer_type::first_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::first_type);
+
+            this->_arguments_buffer._second = std::move(*static_cast<typename arguments_buffer_type::second_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::second_type);
+
+            this->_arguments_buffer._third = std::move(*static_cast<typename arguments_buffer_type::third_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::third_type);
+
+            this->_arguments_buffer._fourth = std::move(*static_cast<typename arguments_buffer_type::fourth_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::fourth_type);
+
+            this->_arguments_buffer._fifth = std::move(*static_cast<typename arguments_buffer_type::fifth_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::fifth_type);
+
+            this->_arguments_buffer._sixth = std::move(*static_cast<typename arguments_buffer_type::sixth_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::sixth_type);
+
+            this->_arguments_buffer._seventh = std::move(*static_cast<typename arguments_buffer_type::seventh_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::seventh_type);
+
+            this->_arguments_buffer._eighth = std::move(*static_cast<typename arguments_buffer_type::eighth_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::eighth_type);
+
+            this->_arguments_buffer._ninth = std::move(*static_cast<typename arguments_buffer_type::ninth_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::ninth_type);
+
+            this->_arguments_buffer._tenth = std::move(*static_cast<typename arguments_buffer_type::tenth_type*>(arguments_p));
+        }
+    }
+
 
     virtual boolean is_null(void) const noexcept override
     {
@@ -1757,6 +2402,8 @@ struct c_style_task<TaskImpl, FE::FORWARD_DATA::_AS_RVALUE_REF, ArgumentsBufferT
     {
         return this->_task_result;
     }
+
+    virtual void set_instance(void* const) noexcept override {};
 };
 
 template<typename TaskImpl, typename ...ArgumentsBufferTypes>
@@ -1805,57 +2452,57 @@ struct c_style_task<TaskImpl, FE::FORWARD_DATA::_AS_LVALUE_REF, ArgumentsBufferT
     {
         if constexpr (task_type::has_void_return_type == true)
         {
-            if constexpr (this->_arguments_buffer.arguments_count == ARGUMENTS_COUNT::_0)
+            if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_0)
             {
                 this->_function();
                 return;
             }
-            else if constexpr (this->_arguments_buffer.arguments_count == ARGUMENTS_COUNT::_1)
+            else if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_1)
             {
                 this->_function(this->_arguments_buffer._first);
                 return;
             }
-            else if constexpr (this->_arguments_buffer.arguments_count == ARGUMENTS_COUNT::_2)
+            else if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_2)
             {
                 this->_function(this->_arguments_buffer._first, this->_arguments_buffer._second);
                 return;
             }
-            else if constexpr (this->_arguments_buffer.arguments_count == ARGUMENTS_COUNT::_3)
+            else if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_3)
             {
                 this->_function(this->_arguments_buffer._first, this->_arguments_buffer._second, this->_arguments_buffer._third);
                 return;
             }
-            else if constexpr (this->_arguments_buffer.arguments_count == ARGUMENTS_COUNT::_4)
+            else if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_4)
             {
                 this->_function(this->_arguments_buffer._first, this->_arguments_buffer._second, this->_arguments_buffer._third, this->_arguments_buffer._fourth);
                 return;
             }
-            else if constexpr (this->_arguments_buffer.arguments_count == ARGUMENTS_COUNT::_5)
+            else if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_5)
             {
                 this->_function(this->_arguments_buffer._first, this->_arguments_buffer._second, this->_arguments_buffer._third, this->_arguments_buffer._fourth, this->_arguments_buffer._fifth);
                 return;
             }
-            else if constexpr (this->_arguments_buffer.arguments_count == ARGUMENTS_COUNT::_6)
+            else if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_6)
             {
                 this->_function(this->_arguments_buffer._first, this->_arguments_buffer._second, this->_arguments_buffer._third, this->_arguments_buffer._fourth, this->_arguments_buffer._fifth, this->_arguments_buffer._sixth);
                 return;
             }
-            else if constexpr (this->_arguments_buffer.arguments_count == ARGUMENTS_COUNT::_7)
+            else if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_7)
             {
                 this->_function(this->_arguments_buffer._first, this->_arguments_buffer._second, this->_arguments_buffer._third, this->_arguments_buffer._fourth, this->_arguments_buffer._fifth, this->_arguments_buffer._sixth, this->_arguments_buffer._seventh);
                 return;
             }
-            else if constexpr (this->_arguments_buffer.arguments_count == ARGUMENTS_COUNT::_8)
+            else if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_8)
             {
                 this->_function(this->_arguments_buffer._first, this->_arguments_buffer._second, this->_arguments_buffer._third, this->_arguments_buffer._fourth, this->_arguments_buffer._fifth, this->_arguments_buffer._sixth, this->_arguments_buffer._seventh, this->_arguments_buffer._eighth);
                 return;
             }
-            else if constexpr (this->_arguments_buffer.arguments_count == ARGUMENTS_COUNT::_9)
+            else if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_9)
             {
                 this->_function(this->_arguments_buffer._first, this->_arguments_buffer._second, this->_arguments_buffer._third, this->_arguments_buffer._fourth, this->_arguments_buffer._fifth, this->_arguments_buffer._sixth, this->_arguments_buffer._seventh, this->_arguments_buffer._eighth, this->_arguments_buffer._ninth);
                 return;
             }
-            else if constexpr (this->_arguments_buffer.arguments_count == ARGUMENTS_COUNT::_10)
+            else if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_10)
             {
                 this->_function(this->_arguments_buffer._first, this->_arguments_buffer._second, this->_arguments_buffer._third, this->_arguments_buffer._fourth, this->_arguments_buffer._fifth, this->_arguments_buffer._sixth, this->_arguments_buffer._seventh, this->_arguments_buffer._eighth, this->_arguments_buffer._ninth, this->_arguments_buffer._tenth);
                 return;
@@ -1863,63 +2510,268 @@ struct c_style_task<TaskImpl, FE::FORWARD_DATA::_AS_LVALUE_REF, ArgumentsBufferT
         }
         else if constexpr (task_type::has_void_return_type == false)
         {
-            if constexpr (this->_arguments_buffer.arguments_count == ARGUMENTS_COUNT::_0)
+            if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_0)
             {
                 this->_task_result = std::move(this->_function());
                 return;
             }
-            else if constexpr (this->_arguments_buffer.arguments_count == ARGUMENTS_COUNT::_1)
+            else if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_1)
             {
                 this->_task_result = std::move(this->_function(this->_arguments_buffer._first));
                 return;
             }
-            else if constexpr (this->_arguments_buffer.arguments_count == ARGUMENTS_COUNT::_2)
+            else if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_2)
             {
                 this->_task_result = std::move(this->_function(this->_arguments_buffer._first, this->_arguments_buffer._second));
                 return;
             }
-            else if constexpr (this->_arguments_buffer.arguments_count == ARGUMENTS_COUNT::_3)
+            else if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_3)
             {
                 this->_task_result = std::move(this->_function(this->_arguments_buffer._first, this->_arguments_buffer._second, this->_arguments_buffer._third));
                 return;
             }
-            else if constexpr (this->_arguments_buffer.arguments_count == ARGUMENTS_COUNT::_4)
+            else if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_4)
             {
                 this->_task_result = std::move(this->_function(this->_arguments_buffer._first, this->_arguments_buffer._second, this->_arguments_buffer._third, this->_arguments_buffer._fourth));
                 return;
             }
-            else if constexpr (this->_arguments_buffer.arguments_count == ARGUMENTS_COUNT::_5)
+            else if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_5)
             {
                 this->_task_result = std::move(this->_function(this->_arguments_buffer._first, this->_arguments_buffer._second, this->_arguments_buffer._third, this->_arguments_buffer._fourth, this->_arguments_buffer._fifth));
                 return;
             }
-            else if constexpr (this->_arguments_buffer.arguments_count == ARGUMENTS_COUNT::_6)
+            else if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_6)
             {
                 this->_task_result = std::move(this->_function(this->_arguments_buffer._first, this->_arguments_buffer._second, this->_arguments_buffer._third, this->_arguments_buffer._fourth, this->_arguments_buffer._fifth, this->_arguments_buffer._sixth));
                 return;
             }
-            else if constexpr (this->_arguments_buffer.arguments_count == ARGUMENTS_COUNT::_7)
+            else if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_7)
             {
                 this->_task_result = std::move(this->_function(this->_arguments_buffer._first, this->_arguments_buffer._second, this->_arguments_buffer._third, this->_arguments_buffer._fourth, this->_arguments_buffer._fifth, this->_arguments_buffer._sixth, this->_arguments_buffer._seventh));
                 return;
             }
-            else if constexpr (this->_arguments_buffer.arguments_count == ARGUMENTS_COUNT::_8)
+            else if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_8)
             {
                 this->_task_result = std::move(this->_function(this->_arguments_buffer._first, this->_arguments_buffer._second, this->_arguments_buffer._third, this->_arguments_buffer._fourth, this->_arguments_buffer._fifth, this->_arguments_buffer._sixth, this->_arguments_buffer._seventh, this->_arguments_buffer._eighth));
                 return;
             }
-            else if constexpr (this->_arguments_buffer.arguments_count == ARGUMENTS_COUNT::_9)
+            else if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_9)
             {
                 *this->_task_result = std::move(this->_function(this->_arguments_buffer._first, this->_arguments_buffer._second, this->_arguments_buffer._third, this->_arguments_buffer._fourth, this->_arguments_buffer._fifth, this->_arguments_buffer._sixth, this->_arguments_buffer._seventh, this->_arguments_buffer._eighth, this->_arguments_buffer._ninth));
                 return;
             }
-            else if constexpr (this->_arguments_buffer.arguments_count == ARGUMENTS_COUNT::_10)
+            else if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_10)
             {
                 this->_task_result = std::move(this->_function(this->_arguments_buffer._first, this->_arguments_buffer._second, this->_arguments_buffer._third, this->_arguments_buffer._fourth, this->_arguments_buffer._fifth, this->_arguments_buffer._sixth, this->_arguments_buffer._seventh, this->_arguments_buffer._eighth, this->_arguments_buffer._ninth, this->_arguments_buffer._tenth));
                 return;
             }
         }
     }
+
+
+    virtual void set_arguments(void* arguments_p, _MAYBE_UNUSED_ size_t size_in_bytes_p) noexcept
+    {
+        FE_ASSERT(arguments_p == nullptr, "The arguments are null!");
+        FE_ASSERT(size_in_bytes_p == 0, "The size of the arguments is 0!");
+
+        if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_1)
+        {
+            FE_ASSERT(sizeof(typename arguments_buffer_type::first_type) != size_in_bytes_p, "Input arguments buffer corruption detected: different size of types have been passed to the arguments buffer!");
+
+            this->_arguments_buffer._first = std::move(*static_cast<typename arguments_buffer_type::first_type*>(arguments_p));
+        }
+        else if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_2)
+        {
+            FE_ASSERT(sizeof(typename arguments_buffer_type::first_type) + sizeof(typename arguments_buffer_type::second_type) != size_in_bytes_p, "Input arguments buffer corruption detected: different size of types have been passed to the arguments buffer!");
+
+            this->_arguments_buffer._first = std::move(*static_cast<typename arguments_buffer_type::first_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::first_type);
+
+            this->_arguments_buffer._second = std::move(*static_cast<typename arguments_buffer_type::second_type*>(arguments_p));
+        }
+
+        else if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_3)
+        {
+            FE_ASSERT(sizeof(typename arguments_buffer_type::first_type) + sizeof(typename arguments_buffer_type::second_type) + sizeof(typename arguments_buffer_type::third_type) != size_in_bytes_p, "Input arguments buffer corruption detected: different size of types have been passed to the arguments buffer!");
+
+            this->_arguments_buffer._first = std::move(*static_cast<typename arguments_buffer_type::first_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::first_type);
+
+            this->_arguments_buffer._second = std::move(*static_cast<typename arguments_buffer_type::second_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::second_type);
+
+            this->_arguments_buffer._third = std::move(*static_cast<typename arguments_buffer_type::third_type*>(arguments_p));
+        }
+        else if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_4)
+        {
+            FE_ASSERT(sizeof(typename arguments_buffer_type::first_type) + sizeof(typename arguments_buffer_type::second_type) + sizeof(typename arguments_buffer_type::third_type) + sizeof(typename arguments_buffer_type::fourth_type) != size_in_bytes_p, "Input arguments buffer corruption detected: different size of types have been passed to the arguments buffer!");
+
+            this->_arguments_buffer._first = std::move(*static_cast<typename arguments_buffer_type::first_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::first_type);
+
+            this->_arguments_buffer._second = std::move(*static_cast<typename arguments_buffer_type::second_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::second_type);
+
+            this->_arguments_buffer._third = std::move(*static_cast<typename arguments_buffer_type::third_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::third_type);
+
+            this->_arguments_buffer._fourth = std::move(*static_cast<typename arguments_buffer_type::fourth_type*>(arguments_p));
+        }
+        else if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_5)
+        {
+            FE_ASSERT((sizeof(typename arguments_buffer_type::first_type) + sizeof(typename arguments_buffer_type::second_type) + sizeof(typename arguments_buffer_type::third_type) + sizeof(typename arguments_buffer_type::fifth_type)) != size_in_bytes_p, "Input arguments buffer corruption detected: different size of types have been passed to the arguments buffer!");
+
+            this->_arguments_buffer._first = std::move(*static_cast<typename arguments_buffer_type::first_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::first_type);
+
+            this->_arguments_buffer._second = std::move(*static_cast<typename arguments_buffer_type::second_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::second_type);
+
+            this->_arguments_buffer._third = std::move(*static_cast<typename arguments_buffer_type::third_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::third_type);
+
+            this->_arguments_buffer._fourth = std::move(*static_cast<typename arguments_buffer_type::fourth_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::fourth_type);
+
+            this->_arguments_buffer._fifth = std::move(*static_cast<typename arguments_buffer_type::fifth_type*>(arguments_p));
+        }
+        else if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_6)
+        {
+            FE_ASSERT(sizeof(typename arguments_buffer_type::first_type) + sizeof(typename arguments_buffer_type::second_type) + sizeof(typename arguments_buffer_type::third_type) + sizeof(typename arguments_buffer_type::fifth_type) + sizeof(typename arguments_buffer_type::sixth_type) != size_in_bytes_p, "Input arguments buffer corruption detected: different size of types have been passed to the arguments buffer!");
+
+            this->_arguments_buffer._first = std::move(*static_cast<typename arguments_buffer_type::first_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::first_type);
+
+            this->_arguments_buffer._second = std::move(*static_cast<typename arguments_buffer_type::second_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::second_type);
+
+            this->_arguments_buffer._third = std::move(*static_cast<typename arguments_buffer_type::third_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::third_type);
+
+            this->_arguments_buffer._fourth = std::move(*static_cast<typename arguments_buffer_type::fourth_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::fourth_type);
+
+            this->_arguments_buffer._fifth = std::move(*static_cast<typename arguments_buffer_type::fifth_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::fifth_type);
+
+            this->_arguments_buffer._sixth = std::move(*static_cast<typename arguments_buffer_type::sixth_type*>(arguments_p));
+        }
+        else if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_7)
+        {
+            FE_ASSERT(sizeof(typename arguments_buffer_type::first_type) + sizeof(typename arguments_buffer_type::second_type) + sizeof(typename arguments_buffer_type::third_type) + sizeof(typename arguments_buffer_type::fifth_type) + sizeof(typename arguments_buffer_type::sixth_type) + sizeof(typename arguments_buffer_type::seventh_type) != size_in_bytes_p, "Input arguments buffer corruption detected: different size of types have been passed to the arguments buffer!");
+
+            this->_arguments_buffer._first = std::move(*static_cast<typename arguments_buffer_type::first_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::first_type);
+
+            this->_arguments_buffer._second = std::move(*static_cast<typename arguments_buffer_type::second_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::second_type);
+
+            this->_arguments_buffer._third = std::move(*static_cast<typename arguments_buffer_type::third_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::third_type);
+
+            this->_arguments_buffer._fourth = std::move(*static_cast<typename arguments_buffer_type::fourth_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::fourth_type);
+
+            this->_arguments_buffer._fifth = std::move(*static_cast<typename arguments_buffer_type::fifth_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::fifth_type);
+
+            this->_arguments_buffer._sixth = std::move(*static_cast<typename arguments_buffer_type::sixth_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::sixth_type);
+
+            this->_arguments_buffer._seventh = std::move(*static_cast<typename arguments_buffer_type::seventh_type*>(arguments_p));
+        }
+        else if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_8)
+        {
+            FE_ASSERT(sizeof(typename arguments_buffer_type::first_type) + sizeof(typename arguments_buffer_type::second_type) + sizeof(typename arguments_buffer_type::third_type) + sizeof(typename arguments_buffer_type::fifth_type) + sizeof(typename arguments_buffer_type::sixth_type) + sizeof(typename arguments_buffer_type::seventh_type) + sizeof(typename arguments_buffer_type::eighth_type) != size_in_bytes_p, "Input arguments buffer corruption detected: different size of types have been passed to the arguments buffer!");
+
+            this->_arguments_buffer._first = std::move(*static_cast<typename arguments_buffer_type::first_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::first_type);
+
+            this->_arguments_buffer._second = std::move(*static_cast<typename arguments_buffer_type::second_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::second_type);
+
+            this->_arguments_buffer._third = std::move(*static_cast<typename arguments_buffer_type::third_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::third_type);
+
+            this->_arguments_buffer._fourth = std::move(*static_cast<typename arguments_buffer_type::fourth_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::fourth_type);
+
+            this->_arguments_buffer._fifth = std::move(*static_cast<typename arguments_buffer_type::fifth_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::fifth_type);
+
+            this->_arguments_buffer._sixth = std::move(*static_cast<typename arguments_buffer_type::sixth_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::sixth_type);
+
+            this->_arguments_buffer._seventh = std::move(*static_cast<typename arguments_buffer_type::seventh_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::seventh_type);
+
+            this->_arguments_buffer._eighth = std::move(*static_cast<typename arguments_buffer_type::eighth_type*>(arguments_p));
+        }
+        else if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_9)
+        {
+            FE_ASSERT(sizeof(typename arguments_buffer_type::first_type) + sizeof(typename arguments_buffer_type::second_type) + sizeof(typename arguments_buffer_type::third_type) + sizeof(typename arguments_buffer_type::fifth_type) + sizeof(typename arguments_buffer_type::sixth_type) + sizeof(typename arguments_buffer_type::seventh_type) + sizeof(typename arguments_buffer_type::eighth_type) + sizeof(typename arguments_buffer_type::ninth_type) != size_in_bytes_p, "Input arguments buffer corruption detected: different size of types have been passed to the arguments buffer!");
+
+            this->_arguments_buffer._first = std::move(*static_cast<typename arguments_buffer_type::first_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::first_type);
+
+            this->_arguments_buffer._second = std::move(*static_cast<typename arguments_buffer_type::second_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::second_type);
+
+            this->_arguments_buffer._third = std::move(*static_cast<typename arguments_buffer_type::third_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::third_type);
+
+            this->_arguments_buffer._fourth = std::move(*static_cast<typename arguments_buffer_type::fourth_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::fourth_type);
+
+            this->_arguments_buffer._fifth = std::move(*static_cast<typename arguments_buffer_type::fifth_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::fifth_type);
+
+            this->_arguments_buffer._sixth = std::move(*static_cast<typename arguments_buffer_type::sixth_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::sixth_type);
+
+            this->_arguments_buffer._seventh = std::move(*static_cast<typename arguments_buffer_type::seventh_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::seventh_type);
+
+            this->_arguments_buffer._eighth = std::move(*static_cast<typename arguments_buffer_type::eighth_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::eighth_type);
+
+            this->_arguments_buffer._ninth = std::move(*static_cast<typename arguments_buffer_type::ninth_type*>(arguments_p));
+        }
+        else if constexpr (this->_arguments_buffer.count == ARGUMENTS_COUNT::_10)
+        {
+            FE_ASSERT(sizeof(typename arguments_buffer_type::first_type) + sizeof(typename arguments_buffer_type::second_type) + sizeof(typename arguments_buffer_type::third_type) + sizeof(typename arguments_buffer_type::fifth_type) + sizeof(typename arguments_buffer_type::sixth_type) + sizeof(typename arguments_buffer_type::seventh_type) + sizeof(typename arguments_buffer_type::eighth_type) + sizeof(typename arguments_buffer_type::ninth_type) + sizeof(typename arguments_buffer_type::tenth_type) != size_in_bytes_p, "Input arguments buffer corruption detected: different size of types have been passed to the arguments buffer!");
+
+            this->_arguments_buffer._first = std::move(*static_cast<typename arguments_buffer_type::first_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::first_type);
+
+            this->_arguments_buffer._second = std::move(*static_cast<typename arguments_buffer_type::second_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::second_type);
+
+            this->_arguments_buffer._third = std::move(*static_cast<typename arguments_buffer_type::third_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::third_type);
+
+            this->_arguments_buffer._fourth = std::move(*static_cast<typename arguments_buffer_type::fourth_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::fourth_type);
+
+            this->_arguments_buffer._fifth = std::move(*static_cast<typename arguments_buffer_type::fifth_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::fifth_type);
+
+            this->_arguments_buffer._sixth = std::move(*static_cast<typename arguments_buffer_type::sixth_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::sixth_type);
+
+            this->_arguments_buffer._seventh = std::move(*static_cast<typename arguments_buffer_type::seventh_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::seventh_type);
+
+            this->_arguments_buffer._eighth = std::move(*static_cast<typename arguments_buffer_type::eighth_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::eighth_type);
+
+            this->_arguments_buffer._ninth = std::move(*static_cast<typename arguments_buffer_type::ninth_type*>(arguments_p));
+            arguments_p = static_cast<var::byte*>(arguments_p) + sizeof(typename arguments_buffer_type::ninth_type);
+
+            this->_arguments_buffer._tenth = std::move(*static_cast<typename arguments_buffer_type::tenth_type*>(arguments_p));
+        }
+    }
+
 
     virtual boolean is_null(void) const noexcept override
     {
@@ -1935,7 +2787,17 @@ struct c_style_task<TaskImpl, FE::FORWARD_DATA::_AS_LVALUE_REF, ArgumentsBufferT
     {
         return this->_task_result;
     }
+
+    virtual void set_instance(void* const) noexcept override {};
 };
+
+
+template <class FunctionSignature>
+_FORCE_INLINE_ FE::function<FunctionSignature>::function_type function_cast(typename FE::function<FunctionSignature>::function_type lamda_p) noexcept
+{
+    return lamda_p;
+}
+
 
 END_NAMESPACE
 #endif

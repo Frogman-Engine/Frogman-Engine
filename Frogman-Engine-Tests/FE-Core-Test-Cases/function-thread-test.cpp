@@ -178,7 +178,7 @@ TEST(cpp_style_task, call_by_value)
 	FE::cpp_style_task<std::string, std::string&(const char*), FE::FORWARD_DATA::_AS_RVALUE_REF, const char*> l_reserve;
 	l_reserve._arguments_buffer._first = "std::string";
 	l_reserve._method = &std::string::assign;
-	l_reserve._instance_ptr = &l_some_str;
+	l_reserve.set_instance(&l_some_str);
 
 	l_reserve();
 	EXPECT_TRUE(l_reserve._task_result == "std::string");
@@ -191,7 +191,7 @@ TEST(cpp_style_task, call_by_lvalue_reference)
 	FE::cpp_style_task<std::string, std::string&(const std::string&), FE::FORWARD_DATA::_AS_LVALUE_REF, std::string> l_copy_assignment;
 	l_copy_assignment._arguments_buffer._first = "C++ is not Java.";
 	l_copy_assignment._method = &std::string::operator=;
-	l_copy_assignment._instance_ptr = &l_some_str;
+	l_copy_assignment.set_instance(&l_some_str);
 
 	l_copy_assignment();
 
@@ -205,7 +205,7 @@ TEST(cpp_style_task, call_by_address)
 
 	int32 l_input = 10;
 	l_fn._arguments_buffer._first = &l_input;
-	l_fn._instance_ptr = &l_test_sample_instance;
+	l_fn.set_instance(&l_test_sample_instance);
 	l_fn._method = &test_sample::s::fn;
 
 	l_fn();

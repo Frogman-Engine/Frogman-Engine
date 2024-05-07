@@ -373,8 +373,7 @@ namespace internal
 {
 	struct do_once
 	{
-		template<typename ExecutableCode>
-		_FORCE_INLINE_ do_once(ExecutableCode code_p) noexcept
+		_FORCE_INLINE_ do_once(void(*code_p)(void)) noexcept
 		{
 			code_p();
 		}
@@ -397,7 +396,10 @@ namespace internal
 #ifdef FE_DO_ONCE
 #error FE_DO_ONCE is a reserved Frogman Engine macro keyword.
 #endif
-#define FE_DO_ONCE(frequency, code) { frequency ::FE::internal::do_once __FE_DO_ONCE_INSTANCE__(code); }
+#define FE_DO_ONCE(frequency, ...)\
+{ \
+	frequency ::FE::internal::do_once __FE_DO_ONCE_INSTANCE__([]() { __VA_ARGS__; }); \
+}
 
 
 END_NAMESPACE

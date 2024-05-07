@@ -2,6 +2,7 @@
 #define _FE_FRAMEWORK_HPP_
 // Copyright © from 2023 to current, UNKNOWN STRYKER. All Rights Reserved.
 #include <FE/core/prerequisites.h>
+#include <FE/framework/reflection/function_table.hxx>
 #include <functional>
 #define _CREATE_AN_APP_ new
 
@@ -28,6 +29,8 @@ class application
 	static application* s_app;
 
 protected:
+	static std::unique_ptr<function_table> s_function_table;
+
 	virtual bool set_up(int argc_p, char** argv_p) = 0;
 	virtual int run(int argc_p, char** argv_p) = 0;
 	virtual void clean_up() = 0;
@@ -41,6 +44,7 @@ public:
 	virtual ~application() {};
 
 	static initializer_t create_application(initializer_t script_p = []() { return nullptr; }) noexcept;
+	_FORCE_INLINE_ static function_table& get_function_table() noexcept { return *s_function_table; }
 
 private:
 	static void __set_up_main() noexcept;

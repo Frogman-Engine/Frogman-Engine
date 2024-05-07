@@ -255,6 +255,11 @@ struct is_numeric
 	_MAYBE_UNUSED_ static constexpr inline bool value = (((std::is_integral<T>::value == true) && (FE::is_boolean<T>::value == false)) || (std::is_floating_point<T>::value == true));
 };
 
+template<typename T>
+struct is_function
+{
+	_MAYBE_UNUSED_ static constexpr inline bool value = (std::is_function<T>::value == true) || (std::is_member_function_pointer<T>::value == true);
+};
 
 enum struct TYPE_TRAIT : int8
 {
@@ -307,7 +312,7 @@ constexpr inline TYPE_TRAIT check_type() noexcept
 	{
 		return TYPE_TRAIT::_NULLPTR;
 	}
-	else if constexpr (std::is_function<T>::value)
+	else if constexpr (FE::is_function<T>::value)
 	{
 		return TYPE_TRAIT::_FUNCTION;
 	}

@@ -1,6 +1,5 @@
 ﻿// Copyright © from 2023 to current, UNKNOWN STRYKER. All Rights Reserved.
 #include <FE/framework/framework.hpp>
-#include <FE/framework/reflection/function_table.hpp>
 #include <FE/framework/private/internal_functions.h>
 #include <FE/core/fstream_guard.hxx>
 #include <FE/core/fstring.hxx>
@@ -21,6 +20,7 @@
 BEGIN_NAMESPACE(FE::framework)
 
 application* application::s_app = nullptr;
+std::unique_ptr<function_table> application::s_function_table;
 RESTART_OR_NOT application::s_restart_or_not = RESTART_OR_NOT::_NO_OPERATION;
 
 application::initializer_t application::create_application(initializer_t script_p) noexcept
@@ -28,7 +28,6 @@ application::initializer_t application::create_application(initializer_t script_
 	static application::initializer_t l_s_script = script_p;
 	return l_s_script;
 }
-
 
 void application::__set_up_main() noexcept
 {
@@ -38,20 +37,26 @@ void application::__set_up_main() noexcept
 	std::signal(SIGABRT, __abnormal_shutdown_with_exit_code);
 	std::signal(SIGFPE, __abnormal_shutdown_with_exit_code);
 	std::set_terminate([]() { __abnormal_shutdown_with_exit_code(SIGTERM); });
+
 	FE::pool_allocator_base<FE::SIMD_auto_alignment>::create_pool_allocator_resource(1);
-	FE::framework::function_table::create_function_table();
+	FE::pool_allocator_base<FE::align_CPU_L1_cache_line>::create_pool_allocator_resource(1);
+	FE::framework::application::s_function_table = std::make_unique<function_table>();
+	FE::framework::application::initializer_t l_get_app_address = FE::framework::application::create_application();
+	FE::framework::application::s_app = l_get_app_address();
+	FE_ASSERT(FE::framework::application::s_app == nullptr, "Assertion Failure: ${%s@0} is nullptr.", TO_STRING(FE::framework::application::s_options._application_pointer));
 }
 
 void application::__shutdown_main() noexcept
 {
+	FE::framework::application::s_function_table.reset();
 	delete FE::framework::application::s_app;
-	FE::framework::function_table::destroy_function_table();
+	FE::pool_allocator_base<FE::align_CPU_L1_cache_line>::destroy_pool_allocator_resource();
 	FE::pool_allocator_base<FE::SIMD_auto_alignment>::destroy_pool_allocator_resource();
 }
 
 _NORETURN_ void application::__abnormal_shutdown_with_exit_code(int32 signal_p)
 {
-#ifdef _RELEASE_
+#ifdef _RELWITHDEBINFO_
 	boost::stacktrace::stacktrace l_stack_trace_dumps;
 
 	std::ofstream l_release_build_crash_report;
@@ -71,7 +76,7 @@ _NORETURN_ void application::__abnormal_shutdown_with_exit_code(int32 signal_p)
 #endif
 
 	FE::framework::application::s_app->clean_up();
-	FE::framework::application::__shutdown_main();
+	FE::framework::application::s_app->__shutdown_main();
 
 	std::exit(signal_p);
 }
@@ -90,10 +95,6 @@ int main(int argc_p, char** argv_p)
 		FE::framework::application::s_restart_or_not = FE::framework::RESTART_OR_NOT::_NO_OPERATION;
 
 		FE::framework::application::__set_up_main();
-
-		FE::framework::application::initializer_t l_get_app_address = FE::framework::application::create_application();
-		FE::framework::application::s_app = l_get_app_address();
-		FE_ASSERT(FE::framework::application::s_app == nullptr, "Assertion Failure: ${%s@0} is nullptr.", TO_STRING(FE::framework::application::s_options._application_pointer));
 
 		FE_EXPECT(FE::framework::application::s_app->set_up(argc_p, argv_p), _FE_SUCCESS_, "Failed to set up an app.");
 		l_exit_code = FE::framework::application::s_app->run(argc_p, argv_p);
