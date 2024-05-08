@@ -76,7 +76,7 @@ private:
 		}
 		benchmark::Initialize(&argc_p, argv_p);
 		FE_EXPECT(benchmark::ReportUnrecognizedArguments(argc_p, argv_p), false, "Expectation Failed: Unrecognized Benchmark Arguments Detected.");
-		
+
 		return _FE_SUCCESS_;
 	}
 	

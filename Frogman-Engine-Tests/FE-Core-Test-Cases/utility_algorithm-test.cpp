@@ -69,65 +69,65 @@ TEST(boolean_to_string, _)
 TEST(any_primitive_to_string, thread_local_buffer)
 {
 	{
-		const char* l_result_ptr = any_primitive_to_string<char>(true);
+		const char* l_result_ptr = buffered_any_primitive_to_string<char>(true);
 		EXPECT_TRUE(string::compare(l_result_ptr, "true"));
 
-		l_result_ptr = any_primitive_to_string<char>(1024);
+		l_result_ptr = buffered_any_primitive_to_string<char>(1024);
 		EXPECT_TRUE(string::compare(l_result_ptr, "1024"));
 
-		l_result_ptr = any_primitive_to_string<char>(3.14f);
+		l_result_ptr = buffered_any_primitive_to_string<char>(3.14f);
 		EXPECT_TRUE(string::compare_ranged<char>(l_result_ptr, string::range{0, 4}, "3.14", string::range{0, 4}));
 
-		l_result_ptr = any_primitive_to_string<char>('t');
+		l_result_ptr = buffered_any_primitive_to_string<char>('t');
 		EXPECT_TRUE(string::compare(l_result_ptr, "t"));
 
-		l_result_ptr = any_primitive_to_string<char>("hi, world");
+		l_result_ptr = buffered_any_primitive_to_string<char>("hi, world");
 		EXPECT_TRUE(string::compare(l_result_ptr, "hi, world"));
 
 
 		std::unique_ptr<int> l_unique_pointer = std::make_unique<int>();
-		l_result_ptr = any_primitive_to_string<char>(l_unique_pointer.get());
+		l_result_ptr = buffered_any_primitive_to_string<char>(l_unique_pointer.get());
 
 		char l_buffer[100] = "\0";
 		std::snprintf(l_buffer, 100, "%p", l_unique_pointer.get());
 		EXPECT_TRUE(string::compare(l_result_ptr, l_buffer));
 
 
-		l_result_ptr = any_primitive_to_string<char>(nullptr);
+		l_result_ptr = buffered_any_primitive_to_string<char>(nullptr);
 		EXPECT_TRUE(string::compare(l_result_ptr, "nullptr"));
 	}
 
 	{
 		var::boolean l_bool = false;
-		const char* l_result_ptr = any_primitive_to_string<char>(l_bool);
+		const char* l_result_ptr = buffered_any_primitive_to_string<char>(l_bool);
 		EXPECT_TRUE(string::compare(l_result_ptr, "false"));
 
 		var::int32 l_int32 = 1024;
-		l_result_ptr = any_primitive_to_string<char>(l_int32);
+		l_result_ptr = buffered_any_primitive_to_string<char>(l_int32);
 		EXPECT_TRUE(string::compare(l_result_ptr, "1024"));
 
 		var::float32 l_float32 = 3.14f;
-		l_result_ptr = any_primitive_to_string<char>(l_float32);
+		l_result_ptr = buffered_any_primitive_to_string<char>(l_float32);
 		EXPECT_TRUE(string::compare_ranged<char>(l_result_ptr, string::range{0, 4}, "3.14", string::range{0, 4}));
 
 		var::character l_character = 't';
-		l_result_ptr = any_primitive_to_string<char>(l_character);
+		l_result_ptr = buffered_any_primitive_to_string<char>(l_character);
 		EXPECT_TRUE(string::compare(l_result_ptr, "t"));
 
 		std::string hi_world = "hi, world";
-		l_result_ptr = any_primitive_to_string<char>(hi_world.c_str());
+		l_result_ptr = buffered_any_primitive_to_string<char>(hi_world.c_str());
 		EXPECT_TRUE(string::compare(l_result_ptr, "hi, world"));
 
 
 		std::unique_ptr<int> l_unique_pointer = std::make_unique<int>();
-		l_result_ptr = any_primitive_to_string<char>(l_unique_pointer.get());
+		l_result_ptr = buffered_any_primitive_to_string<char>(l_unique_pointer.get());
 
 		char l_buffer[100] = "\0";
 		std::snprintf(l_buffer, 100, "%p", l_unique_pointer.get());
 		EXPECT_TRUE(string::compare(l_result_ptr, l_buffer));
 
 
-		l_result_ptr = any_primitive_to_string<char>(nullptr);
+		l_result_ptr = buffered_any_primitive_to_string<char>(nullptr);
 		EXPECT_TRUE(string::compare(l_result_ptr, "nullptr"));
 	}
 }
@@ -139,10 +139,10 @@ TEST(any_to_string, thread_local_buffer)
 {
 	std::vector<std::unordered_map<std::string, void*>> l_complex;
 	l_complex.emplace_back();
-	const char* l_result_ptr = any_to_string<char>(l_complex);
+	const char* l_result_ptr = buffered_any_to_string<char>(l_complex);
 
-	std::unique_ptr<var::character[]> l_unqiue_buffer(new var::character[_256_BYTES_BIT_COUNT_]{});
-	any_object_binary_representation(l_unqiue_buffer.get(), _256_BYTES_BIT_COUNT_, l_complex);
+	std::unique_ptr<var::character[]> l_unqiue_buffer(new var::character[_UTILITY_ALGORITHM_BUUFFER_SIZE_]{});
+	any_object_binary_representation(l_unqiue_buffer.get(), _UTILITY_ALGORITHM_BUUFFER_SIZE_, l_complex);
 
 	EXPECT_TRUE(string::compare(l_result_ptr, l_unqiue_buffer.get()));
 }
@@ -152,70 +152,70 @@ TEST(any_to_string, thread_local_buffer)
 
 TEST(any_primitive_to_string, local_buffer)
 {
-	std::unique_ptr<var::character[]> l_unqiue_buffer(new var::character[_256_BYTES_BIT_COUNT_]{});
+	std::unique_ptr<var::character[]> l_unqiue_buffer(new var::character[_UTILITY_ALGORITHM_BUUFFER_SIZE_]{});
 
 
 	{
-		any_primitive_to_string<char>(l_unqiue_buffer.get(), _256_BYTES_BIT_COUNT_, true);
+		any_primitive_to_string<char>(l_unqiue_buffer.get(), _UTILITY_ALGORITHM_BUUFFER_SIZE_, true);
 		EXPECT_TRUE(string::compare(l_unqiue_buffer.get(), "true"));
 
-		any_primitive_to_string<char>(l_unqiue_buffer.get(), _256_BYTES_BIT_COUNT_, 1024);
+		any_primitive_to_string<char>(l_unqiue_buffer.get(), _UTILITY_ALGORITHM_BUUFFER_SIZE_, 1024);
 		EXPECT_TRUE(string::compare(l_unqiue_buffer.get(), "1024"));
 
-		any_primitive_to_string<char>(l_unqiue_buffer.get(), _256_BYTES_BIT_COUNT_, 3.14f);
+		any_primitive_to_string<char>(l_unqiue_buffer.get(), _UTILITY_ALGORITHM_BUUFFER_SIZE_, 3.14f);
 		EXPECT_TRUE(string::compare_ranged<char>(l_unqiue_buffer.get(), string::range{0, 4}, "3.14", string::range{0, 4}));
 
-		any_primitive_to_string<char>(l_unqiue_buffer.get(), _256_BYTES_BIT_COUNT_, 't');
+		any_primitive_to_string<char>(l_unqiue_buffer.get(), _UTILITY_ALGORITHM_BUUFFER_SIZE_, 't');
 		EXPECT_TRUE(string::compare(l_unqiue_buffer.get(), "t"));
 
-		any_primitive_to_string<char>(l_unqiue_buffer.get(), _256_BYTES_BIT_COUNT_, "hi, world");
+		any_primitive_to_string<char>(l_unqiue_buffer.get(), _UTILITY_ALGORITHM_BUUFFER_SIZE_, "hi, world");
 		EXPECT_TRUE(string::compare(l_unqiue_buffer.get(), "hi, world"));
 
 
 		std::unique_ptr<int> l_unique_pointer = std::make_unique<int>();
-		any_primitive_to_string<char>(l_unqiue_buffer.get(), _256_BYTES_BIT_COUNT_, l_unique_pointer.get());
+		any_primitive_to_string<char>(l_unqiue_buffer.get(), _UTILITY_ALGORITHM_BUUFFER_SIZE_, l_unique_pointer.get());
 
 		char l_buffer[100] = "\0";
 		std::snprintf(l_buffer, 100, "%p", l_unique_pointer.get());
 		EXPECT_TRUE(string::compare(l_unqiue_buffer.get(), l_buffer));
 
 
-		any_primitive_to_string<char>(l_unqiue_buffer.get(), _256_BYTES_BIT_COUNT_, nullptr);
+		any_primitive_to_string<char>(l_unqiue_buffer.get(), _UTILITY_ALGORITHM_BUUFFER_SIZE_, nullptr);
 		EXPECT_TRUE(string::compare(l_unqiue_buffer.get(), "nullptr"));
 	}
 
 
 	{
 		var::boolean l_bool = false;
-		any_primitive_to_string<char>(l_unqiue_buffer.get(), _256_BYTES_BIT_COUNT_, l_bool);
+		any_primitive_to_string<char>(l_unqiue_buffer.get(), _UTILITY_ALGORITHM_BUUFFER_SIZE_, l_bool);
 		EXPECT_TRUE(string::compare(l_unqiue_buffer.get(), "false"));
 
 		var::int32 l_int32 = 1024;
-		any_primitive_to_string<char>(l_unqiue_buffer.get(), _256_BYTES_BIT_COUNT_, l_int32);
+		any_primitive_to_string<char>(l_unqiue_buffer.get(), _UTILITY_ALGORITHM_BUUFFER_SIZE_, l_int32);
 		EXPECT_TRUE(string::compare(l_unqiue_buffer.get(), "1024"));
 
 		var::float32 l_float32 = 3.14f;
-		any_primitive_to_string<char>(l_unqiue_buffer.get(), _256_BYTES_BIT_COUNT_, l_float32);
+		any_primitive_to_string<char>(l_unqiue_buffer.get(), _UTILITY_ALGORITHM_BUUFFER_SIZE_, l_float32);
 		EXPECT_TRUE(string::compare_ranged<char>(l_unqiue_buffer.get(), string::range{0, 4}, "3.14", string::range{0, 4}));
 
 		var::character l_character = 't';
-		any_primitive_to_string<char>(l_unqiue_buffer.get(), _256_BYTES_BIT_COUNT_, l_character);
+		any_primitive_to_string<char>(l_unqiue_buffer.get(), _UTILITY_ALGORITHM_BUUFFER_SIZE_, l_character);
 		EXPECT_TRUE(string::compare(l_unqiue_buffer.get(), "t"));
 
 		std::string hi_world = "hi, world";
-		any_primitive_to_string<char>(l_unqiue_buffer.get(), _256_BYTES_BIT_COUNT_, hi_world.c_str());
+		any_primitive_to_string<char>(l_unqiue_buffer.get(), _UTILITY_ALGORITHM_BUUFFER_SIZE_, hi_world.c_str());
 		EXPECT_TRUE(string::compare(l_unqiue_buffer.get(), "hi, world"));
 
 
 		std::unique_ptr<int> l_integral_address = std::make_unique<int>();
-		any_primitive_to_string<char>(l_unqiue_buffer.get(), _256_BYTES_BIT_COUNT_, l_integral_address.get());
+		any_primitive_to_string<char>(l_unqiue_buffer.get(), _UTILITY_ALGORITHM_BUUFFER_SIZE_, l_integral_address.get());
 
 		char l_answer[100] = "\0";
 		std::snprintf(l_answer, 100, "%p", l_integral_address.get());
 		EXPECT_TRUE(string::compare(l_unqiue_buffer.get(), l_answer));
 
 
-		any_primitive_to_string<char>(l_unqiue_buffer.get(), _256_BYTES_BIT_COUNT_, nullptr);
+		any_primitive_to_string<char>(l_unqiue_buffer.get(), _UTILITY_ALGORITHM_BUUFFER_SIZE_, nullptr);
 		EXPECT_TRUE(string::compare(l_unqiue_buffer.get(), "nullptr"));
 	}
 }
@@ -225,13 +225,13 @@ TEST(any_primitive_to_string, local_buffer)
 
 TEST(any_to_string, local_buffer)
 {
-	std::unique_ptr<var::character[]> l_result_buffer(new var::character[_256_BYTES_BIT_COUNT_]{});
+	std::unique_ptr<var::character[]> l_result_buffer(new var::character[_UTILITY_ALGORITHM_BUUFFER_SIZE_]{});
 	std::vector<std::unordered_map<std::string, void*>> l_complex;
 	l_complex.emplace_back();
-	any_to_string<char>(l_result_buffer.get(), _256_BYTES_BIT_COUNT_, l_complex);
+	any_to_string<char>(l_result_buffer.get(), _UTILITY_ALGORITHM_BUUFFER_SIZE_, l_complex);
 
-	std::unique_ptr<var::character[]> l_answer(new var::character[_256_BYTES_BIT_COUNT_]{});
-	any_object_binary_representation(l_answer.get(), _256_BYTES_BIT_COUNT_, l_complex);
+	std::unique_ptr<var::character[]> l_answer(new var::character[_UTILITY_ALGORITHM_BUUFFER_SIZE_]{});
+	any_object_binary_representation(l_answer.get(), _UTILITY_ALGORITHM_BUUFFER_SIZE_, l_complex);
 
 	EXPECT_TRUE(string::compare(l_result_buffer.get(), l_answer.get()));
 }

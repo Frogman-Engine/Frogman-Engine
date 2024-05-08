@@ -33,11 +33,11 @@ _CONSTEXPR17_ uint64 to_higher_prime(uint64 number_p) noexcept
 		{
 			var::uint64 l_number = number_p;
 	
-			if (MODULO_BY_2(l_number) == 0)
+			if (FE_MODULO_BY_2(l_number) == 0)
 			{
 				l_number ^= l_magical_seven;
 	
-				if (MODULO_BY_2(l_number) == 0)
+				if (FE_MODULO_BY_2(l_number) == 0)
 				{
 					++l_number;
 				}
@@ -78,11 +78,11 @@ _CONSTEXPR17_ uint64 to_lower_prime(uint64 number_p) noexcept
 		{
 			var::uint64 l_number = number_p;
 
-			if (MODULO_BY_2(l_number) == 0)
+			if (FE_MODULO_BY_2(l_number) == 0)
 			{
 				l_number ^= l_magical_seven;
 
-				if (MODULO_BY_2(l_number) == 0)
+				if (FE_MODULO_BY_2(l_number) == 0)
 				{
 					++l_number;
 				}

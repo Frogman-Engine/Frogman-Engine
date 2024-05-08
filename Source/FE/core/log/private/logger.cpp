@@ -5,9 +5,13 @@
 #include <FE/miscellaneous/misc.h>
 #include <FE/core/algorithm/string.hxx>
 #include <FE/core/clock.hpp>
+#include <FE/core/log/format_string.h>
 #include <FE/core/thread.hpp>
-#include <FE/core/log/logger.hpp>
+
+// boost
 #include <boost/stacktrace.hpp>
+
+// std
 #include <csignal>
 #include <filesystem>
 
@@ -17,7 +21,7 @@
 BEGIN_NAMESPACE(FE::log)
 
 
-logger::logger() noexcept : m_file_logger(), m_file_guard(m_file_logger)
+logger_base::logger_base() noexcept : m_file_logger(), m_file_guard(m_file_logger)
 {
     this->m_log_buffer.reserve(default_buffer_size);
     std::memset(this->m_log_buffer.data(), _NULL_, this->m_log_buffer.capacity() * sizeof(typename buffer_type::value_type));
@@ -26,12 +30,12 @@ logger::logger() noexcept : m_file_logger(), m_file_guard(m_file_logger)
     std::memset(this->m_directory_buffer.data(), _NULL_, this->m_directory_buffer.capacity() * sizeof(typename directory_buffer_type::value_type));
 
     this->set_root_directory(
-        //(logger::s_root_directory_argument == nullptr) ?
-        //(std::filesystem::current_path() / "Logs").c_str() : logger::s_root_directory_argument
+        //(logger_base::s_root_directory_argument == nullptr) ?
+        //(std::filesystem::current_path() / "Logs").c_str() : logger_base::s_root_directory_argument
     );
 }
 
-void logger::set_root_directory(const directory_char_type* root_directory_name_p) noexcept
+void logger_base::set_root_directory(const directory_char_type* root_directory_name_p) noexcept
 {
     FE_ABORT_IF(root_directory_name_p == nullptr, "root_directory_name_p was nullptr.");
 
@@ -46,7 +50,7 @@ void logger::set_root_directory(const directory_char_type* root_directory_name_p
     this->m_directory_buffer = l_directory_name.c_str();
 }
 
-void logger::mkdir(const directory_char_type* folder_name_p) noexcept
+void logger_base::mkdir(const directory_char_type* folder_name_p) noexcept
 {
     FE_ABORT_IF(std::filesystem::exists(this->m_directory_buffer.c_str()) == false, "Current directory is invalid.");
     FE_ABORT_IF(folder_name_p == nullptr, "folder_name_p was nullptr.");
@@ -67,7 +71,7 @@ void logger::mkdir(const directory_char_type* folder_name_p) noexcept
     cd(STRING(..));
 }
 
-void logger::cd(const directory_char_type* folder_name_p) noexcept
+void logger_base::cd(const directory_char_type* folder_name_p) noexcept
 {
     FE_ABORT_IF(std::filesystem::exists(this->m_directory_buffer.c_str()) == false, "Current directory is invalid.");
     FE_ABORT_IF(folder_name_p == nullptr, "folder_name_p was nullptr.");
@@ -105,22 +109,12 @@ void logger::cd(const directory_char_type* folder_name_p) noexcept
     }
 }
 
-void logger::do_log(const char* content_p, const directory_char_type* filename_p) noexcept
+void logger_base::do_log(std::initializer_list<const void*> arguments_p) noexcept
 {
-    FE_ABORT_IF(std::filesystem::exists(this->m_directory_buffer.c_str()) == false, "Current directory is invalid.");
-    FE_ABORT_IF(content_p == nullptr, "content_p was nullptr.");
-    FE_ABORT_IF(filename_p == nullptr, "filename_p was nullptr.");
-
-    std::filesystem::path l_directory_name = this->m_directory_buffer.c_str();
-
-    l_directory_name /= filename_p;
-
-    this->m_file_logger.open(l_directory_name);
-    this->m_file_logger << content_p;
-    std::cerr << content_p;
+    std::cerr << ::FE::log::buffered_string_formatter(arguments_p);
 }
 
-void logger::__reserve() noexcept
+void logger_base::__reserve() noexcept
 {
     this->m_log_buffer.reserve(default_buffer_size);
     this->m_directory_buffer.reserve(default_buffer_size);
@@ -129,7 +123,7 @@ void logger::__reserve() noexcept
 
 
 
-fatal_error_log::fatal_error_log() noexcept : base_type()
+fatal_error_logger_base::fatal_error_logger_base() noexcept : base_type()
 {
 #ifdef _WINDOWS_X86_64_
     var::wchar l_current_local_time_buffer[FE::clock::current_local_time_buffer_size] = L"\0";
@@ -138,8 +132,8 @@ fatal_error_log::fatal_error_log() noexcept : base_type()
     var::wchar l_thread_id[FE::thread::max_thread_id_digit_length] = L"\0";
     std::swprintf(l_thread_id, FE::thread::max_thread_id_digit_length, L"%llu", FE::thread::this_thread_id()); // hashed thread-ids from std::hash are too long and hard to read 
 
-    FE::log::logger::mkdir(STRING(Crash Report));
-    FE::log::logger::cd(STRING(Crash Report));
+    FE::log::logger_base::mkdir(STRING(Crash Report));
+    FE::log::logger_base::cd(STRING(Crash Report));
     std::filesystem::path l_path_to_log_file = this->m_directory_buffer.c_str();
     var::wchar l_path_to_log_file_buffer[allowed_directory_string_length] = L"\0";
     FE::algorithm::string::concatenate<var::wchar>
@@ -183,7 +177,7 @@ fatal_error_log::fatal_error_log() noexcept : base_type()
 #endif
     this->m_file_logger.open(l_path_to_log_file_buffer);
 
-    FE::log::logger::cd(STRING(..));
+    FE::log::logger_base::cd(STRING(..));
 
     this->m_file_logger << "Compilation Date: " << " " << __DATE__ << " - " << __TIME__ << "\n\n";
     this->m_file_logger << "\n-------------------------------------------------- BEGIN LOG --------------------------------------------------\n\n";
@@ -192,12 +186,12 @@ fatal_error_log::fatal_error_log() noexcept : base_type()
     std::cerr << "\n-------------------------------------------------- BEGIN LOG --------------------------------------------------\n\n";
 }
 
-fatal_error_log::~fatal_error_log() noexcept
+fatal_error_logger_base::~fatal_error_logger_base() noexcept
 {
     this->m_file_guard.close();
 }
 
-void fatal_error_log::do_log(character* const message_p, character* const file_name_p, character* const function_name_p, uint32 line_p) noexcept
+void fatal_error_logger_base::do_log(character* const message_p, character* const file_name_p, character* const function_name_p, uint32 line_p) noexcept
 {
     if (this->m_log_buffer.capacity() <= default_buffer_size) _UNLIKELY_
     {
@@ -246,7 +240,7 @@ void fatal_error_log::do_log(character* const message_p, character* const file_n
 
 
 
-file_log::file_log() noexcept : base_type()
+message_logger_base::message_logger_base() noexcept : base_type()
 {
 #ifdef _WINDOWS_X86_64_
     var::wchar l_current_local_time_buffer[FE::clock::current_local_time_buffer_size] = L"\0";
@@ -255,8 +249,8 @@ file_log::file_log() noexcept : base_type()
     var::wchar l_thread_id[FE::thread::max_thread_id_digit_length] = L"\0";
     std::swprintf(l_thread_id, FE::thread::max_thread_id_digit_length, L"%llu", FE::thread::this_thread_id()); // hashed thread-ids from std::hash are too long and hard to read 
 
-    FE::log::logger::mkdir(l_current_local_time_buffer);
-    FE::log::logger::cd(l_current_local_time_buffer);
+    FE::log::logger_base::mkdir(l_current_local_time_buffer);
+    FE::log::logger_base::cd(l_current_local_time_buffer);
     std::filesystem::path l_path_to_log_file = this->m_directory_buffer.c_str();
     var::wchar l_path_to_log_file_buffer[allowed_directory_string_length] = L"\0";
     FE::algorithm::string::concatenate<var::wchar>
@@ -300,7 +294,7 @@ file_log::file_log() noexcept : base_type()
 #endif
     this->m_file_logger.open(l_path_to_log_file_buffer);
 
-    FE::log::logger::cd(STRING(..));
+    FE::log::logger_base::cd(STRING(..));
 
     this->m_file_logger << "Compilation Date: " << " " << __DATE__ << " - " << __TIME__ << "\n\n";
     this->m_file_logger << "\n-------------------------------------------------- BEGIN LOG --------------------------------------------------\n\n";
@@ -309,7 +303,7 @@ file_log::file_log() noexcept : base_type()
     std::cerr << "\n-------------------------------------------------- BEGIN LOG --------------------------------------------------\n\n";
 }
 
-file_log::~file_log() noexcept
+message_logger_base::~message_logger_base() noexcept
 {
     this->m_file_logger << "\n-------------------------------------------------- END OF LOG --------------------------------------------------\n\n";
 
@@ -318,7 +312,7 @@ file_log::~file_log() noexcept
     std::cerr << "\n-------------------------------------------------- END OF LOG --------------------------------------------------\n\n";
 }
 
-void file_log::do_log(character* const message_p, character* const file_name_p, character* const function_name_p, uint32 line_p) noexcept
+void message_logger_base::do_log(character* const message_p, character* const file_name_p, character* const function_name_p, uint32 line_p) noexcept
 {
     if (this->m_log_buffer.capacity() <= default_buffer_size) _UNLIKELY_
     {
@@ -349,3 +343,4 @@ void file_log::do_log(character* const message_p, character* const file_name_p, 
 }
 
 END_NAMESPACE
+

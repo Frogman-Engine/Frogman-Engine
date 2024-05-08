@@ -46,14 +46,14 @@ TEST(math, calculate_index)
 	};
 	/* Three by three matrix. The row and the column of the matrix above is three. */
 
-	constexpr index_t l_matrix_idx = math::calculate_index(3, 1, 1);
+	constexpr index_t l_matrix_idx = FE_CALCULATE_INDEX(3, 1, 1);
 	EXPECT_EQ(l_matrix[l_matrix_idx], 1.0f);
 }
 
 
 TEST(math, abs)
 {
-	EXPECT_EQ(math::abs(-5i64), 5);
+	EXPECT_EQ(FE_ABS(-5i64), 5);
 }
 
 
@@ -61,6 +61,7 @@ TEST(math, is_nearly_equal)
 {
 	float64 l_first = 3.1415'9265'3590;
 	float64 l_second = 3.1415'9265'3580;
-	EXPECT_TRUE(math::is_nearly_equal(l_first, l_second, 0.0000'0000'0020));
+
+	EXPECT_TRUE(FE_IS_NEARLY_EQUAL(l_first, l_second, 0.0000'0000'0020));
 
 }

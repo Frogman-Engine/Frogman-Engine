@@ -6,6 +6,7 @@
 #define _FORMAT_SPECIFIER_PERCENT_ 2
 #define _FORMAT_SPECIFIER_VALUE_PREFIX_ 3
 #define _FORMAT_SPECIFIER_VALUE_SUFFIX_ 4
+#define _16_BYTES_BIT_COUNT_ 128
 
 
 
@@ -175,30 +176,5 @@ void format_string(char* out_buffer_pointer_p, const char* string_format_p, _MAY
         }
     }
 }
-
-
-
-
-// ${%d at n} - int32
-// ${%u at n} - uint32
-// ${%ld at n} - int64
-// ${%lu at n} - uint64
-// ${%lf at n} - float64
-// ${%f at n} - float32
-// ${%b at n} - bool
-// ${%c at n} - char
-// ${%s at n} - string
-// ${%p at n} - hexadecimal 64bit pointer
-const char* buffered_string_formatter(std::initializer_list<const void*> arguments_p) noexcept
-{
-    constexpr static auto _SKIP_STRING_FORMAT_ = 1;
-
-    thread_local static char tl_s_buffer[4 KB] = { "\0" };
-    std::memset(tl_s_buffer, _NULL_, internal::strlen(tl_s_buffer));
-
-    format_string(tl_s_buffer, static_cast<const char*>(*arguments_p.begin()), 4 KB, const_cast<const void**>(arguments_p.begin()) + _SKIP_STRING_FORMAT_, arguments_p.size());
-    return tl_s_buffer;
-}
-
 
 END_NAMESPACE;

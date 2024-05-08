@@ -9,7 +9,11 @@
 #pragma warning(push)
 #pragma warning(disable: 4244)
 #pragma warning(disable: 26479)
-#define CHAR_TO_INT(c) (c - '0')
+
+#ifdef FE_CHAR_TO_INT
+#error FE_CHAR_TO_INT is a reserved Frogman Engine macro keyword.
+#endif
+#define FE_CHAR_TO_INT(c) (c - '0')
 
 
 
@@ -76,7 +80,7 @@ _CONSTEXPR20_ _FORCE_INLINE_ integral_info<UIntT> string_to_uint(const CharT* co
     while ((*l_integral_string_pointer >= FE::algorithm::utility::ASCII_code_zero) && (*l_integral_string_pointer <= FE::algorithm::utility::ASCII_code_nine))
     {
         l_result *= 10;
-        l_result += static_cast<UIntT>(CHAR_TO_INT(*l_integral_string_pointer));
+        l_result += static_cast<UIntT>(FE_CHAR_TO_INT(*l_integral_string_pointer));
         ++l_integral_string_pointer;
     }
 
@@ -101,7 +105,7 @@ _CONSTEXPR20_ _FORCE_INLINE_ integral_info<SIntT> string_to_int(const CharT* int
         while ((*l_integral_string_pointer >= FE::algorithm::utility::ASCII_code_zero) && (*l_integral_string_pointer <= FE::algorithm::utility::ASCII_code_nine))
         {
             l_result *= 10;
-            l_result += static_cast<SIntT>(CHAR_TO_INT(*l_integral_string_pointer));
+            l_result += static_cast<SIntT>(FE_CHAR_TO_INT(*l_integral_string_pointer));
             ++l_integral_string_pointer;
         }
 
@@ -112,7 +116,7 @@ _CONSTEXPR20_ _FORCE_INLINE_ integral_info<SIntT> string_to_int(const CharT* int
     while ((*l_integral_string_pointer >= FE::algorithm::utility::ASCII_code_zero) && (*l_integral_string_pointer <= FE::algorithm::utility::ASCII_code_nine))
     {
         l_result *= 10;
-        l_result += static_cast<SIntT>(CHAR_TO_INT(*l_integral_string_pointer));
+        l_result += static_cast<SIntT>(FE_CHAR_TO_INT(*l_integral_string_pointer));
         ++l_integral_string_pointer;
     }
 
@@ -220,11 +224,6 @@ _NODISCARD_ _CONSTEXPR20_ _FORCE_INLINE_ var::uint8 count_integral_digit_length(
 }
 
 
-
-
-#define _MAX_NUMERIC_STRING_LENGTH_ 512
-#define _256_BYTES_BIT_COUNT_ 2048
-#define _16_BYTES_BIT_COUNT_ 128
 
 
 template<typename CharT>
@@ -384,8 +383,13 @@ _CONSTEXPR20_ _FORCE_INLINE_ void any_object_binary_representation(CharT* const 
 }
 
 
+
+
+#define _MAX_NUMERIC_STRING_LENGTH_ 512
+
+
 template<typename CharT, typename T>
-_CONSTEXPR20_ _FORCE_INLINE_ const CharT* any_primitive_to_string(T value_p) noexcept
+_CONSTEXPR20_ _FORCE_INLINE_ const CharT* buffered_any_primitive_to_string(T value_p) noexcept
 {
     FE_STATIC_ASSERT(FE::is_char<CharT>::value == false, "an illegal type assigned to the template argument CharT");
     FE_STATIC_ASSERT(FE::is_primitive<T>::value == false, "static assertion failed: T must be a primitive type.");
@@ -493,21 +497,25 @@ _CONSTEXPR20_ _FORCE_INLINE_ void any_primitive_to_string(CharT* const dest_buff
 }
 
 
-template<typename CharT, typename U>
-_CONSTEXPR20_ _FORCE_INLINE_ const CharT* any_to_string(U& value_p) noexcept
-{
-    FE_STATIC_ASSERT(FE::is_char<CharT>::value == false, "an illegal type assigned to the template argument CharT");
+#define _UTILITY_ALGORITHM_BUUFFER_SIZE_ 2048
 
-    thread_local static CharT tl_s_buffer[_256_BYTES_BIT_COUNT_]{};
-    std::memset(tl_s_buffer, _NULL_, sizeof(CharT) * internal::strlen(tl_s_buffer));
+template<typename CharT, typename U>
+_CONSTEXPR20_ _FORCE_INLINE_ const CharT* buffered_any_to_string(U& value_p) noexcept
+{
+    FE_STATIC_ASSERT((FE::is_char<CharT>::value == false), "Static Assertion Failed: an illegal type assigned to the template argument CharT");
+
+    FE_STATIC_ASSERT((sizeof(U) > _UTILITY_ALGORITHM_BUUFFER_SIZE_), "Static Assertion Failed: Buffer Overflow Detected!");
+
+    thread_local static CharT tl_s_buffer[_UTILITY_ALGORITHM_BUUFFER_SIZE_]{};
+    std::memset(tl_s_buffer, _NULL_, sizeof(CharT) * _UTILITY_ALGORITHM_BUUFFER_SIZE_);
 
     if constexpr (std::is_class< typename std::remove_reference< decltype(value_p) >::type >::value == true)
     {
-        any_object_binary_representation(tl_s_buffer, _256_BYTES_BIT_COUNT_, value_p);
+        any_object_binary_representation(tl_s_buffer, _UTILITY_ALGORITHM_BUUFFER_SIZE_, value_p);
     }
     else if constexpr (FE::is_primitive< typename std::remove_reference< decltype(value_p) >::type >::value == true)
     {
-        any_primitive_to_string(tl_s_buffer, _256_BYTES_BIT_COUNT_, value_p);
+        any_primitive_to_string(tl_s_buffer, _UTILITY_ALGORITHM_BUUFFER_SIZE_, value_p);
     }
     return tl_s_buffer;
 }
