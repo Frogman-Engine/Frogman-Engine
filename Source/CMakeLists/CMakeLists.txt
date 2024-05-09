@@ -124,7 +124,7 @@ SET(_SMART_POINTERS_PRIVATE_
 
 
 SET(_SMART_REFERENCES_
-	${CMAKE_CURRENT_SOURCE_DIR}/../FE/core/smart_references/object.hxx 	
+	${CMAKE_CURRENT_SOURCE_DIR}/../FE/core/smart_references/trackable.hxx 	
 	${CMAKE_CURRENT_SOURCE_DIR}/../FE/core/smart_references/ref.hxx
 	)
 

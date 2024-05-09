@@ -14,7 +14,7 @@ BEGIN_NAMESPACE(FE::internal::smart_ref)
 class smart_ref_base
 {
 public:
-	using ref_table_type = std::deque<void*, FE::aligned_allocator<void*>>;
+	using ref_table_type = std::deque<void*, FE::aligned_allocator<void*>>; // replace deque with std::list<FE::farray<void*, 100>, FE::block_pool_allocator<FE::farray<void*, 100>>> for better performance
 	using ref_table_value_type = typename ref_table_type::value_type;
 
 	using ref_table_key_type = typename ref_table_type::pointer;
@@ -47,7 +47,7 @@ public:
 
 
 template<typename T>
-class object_base : public smart_ref_base
+class trackable_base : public smart_ref_base
 {
 public:
 	using base_type = smart_ref_base;
@@ -65,13 +65,13 @@ protected:
 	element_type m_object;
 	ref_table_key_type m_key;
 
-	_CONSTEXPR20_ object_base() noexcept : m_object(), m_key(base_type::invalid_key_value) {}
-	_CONSTEXPR20_ object_base(element_type value_p) noexcept : m_object(std::move(value_p)), m_key(base_type::invalid_key_value) {}
+	_CONSTEXPR20_ trackable_base() noexcept : m_object(), m_key(base_type::invalid_key_value) {}
+	_CONSTEXPR20_ trackable_base(element_type value_p) noexcept : m_object(std::move(value_p)), m_key(base_type::invalid_key_value) {}
 
 	template<typename... Args>
-	_CONSTEXPR20_ object_base(Args... values_p) noexcept : m_object(std::move(values_p)...), m_key(base_type::invalid_key_value) {}
+	_CONSTEXPR20_ trackable_base(Args... values_p) noexcept : m_object(std::move(values_p)...), m_key(base_type::invalid_key_value) {}
 
-	_CONSTEXPR20_ ~object_base() noexcept = default;
+	_CONSTEXPR20_ ~trackable_base() noexcept = default;
 
 public:
 	_FORCE_INLINE_ element_type& get() const noexcept

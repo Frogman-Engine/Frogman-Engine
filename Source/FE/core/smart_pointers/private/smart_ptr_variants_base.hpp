@@ -16,7 +16,7 @@ BEGIN_NAMESPACE(FE::internal::smart_ptr)
 class smart_ptr_variants_base 
 {
 public:
-	using ref_table_type = std::deque<void*, FE::aligned_allocator<void*>>;
+	using ref_table_type = std::deque<void*, FE::aligned_allocator<void*>>; // replace deque with std::list<FE::farray<void*, 100>, FE::block_pool_allocator<FE::farray<void*, 100>>> for better performance
 	using ref_table_value_type = typename ref_table_type::value_type;
 
 	using ref_table_key_type = typename ref_table_type::pointer;

@@ -14,6 +14,7 @@
 
 // Double Free Issue Found!
 // To Do: fix the bug
+// Note: consider using an adjacency list graph to keep track of the free blocks.
 BEGIN_NAMESPACE(FE)
 
 

@@ -12,7 +12,7 @@ BEGIN_NAMESPACE(FE)
 
 
 template<typename T>
-class object;
+class trackable;
 
 
 template<typename T>
@@ -49,7 +49,7 @@ public:
 		}
 	}
 
-	_CONSTEXPR20_ ref(const FE::object<T>& object_p) noexcept : m_smart_ref(reinterpret_cast<pointer>(base_type::__get_property_address(object_p.get_key()))), m_key(base_type::invalid_key_value)
+	_CONSTEXPR20_ ref(const FE::trackable<T>& object_p) noexcept : m_smart_ref(reinterpret_cast<pointer>(base_type::__get_property_address(object_p.get_key()))), m_key(base_type::invalid_key_value)
 	{
 		if (this->m_smart_ref != nullptr)
 		{
@@ -89,7 +89,7 @@ public:
 		return *this;
 	}
 
-	_CONSTEXPR20_ ref& operator=(const FE::object<T>& object_p) noexcept
+	_CONSTEXPR20_ ref& operator=(const FE::trackable<T>& object_p) noexcept
 	{
 		ref_table_key_type l_retrieved_ref_table_key = object_p.get_key();
 		this->m_smart_ref = reinterpret_cast<pointer>(base_type::__get_property_address(l_retrieved_ref_table_key));
@@ -203,42 +203,42 @@ public:
 		return this->m_smart_ref <= other_p.m_smart_ref;
 	}
 
-	_FORCE_INLINE_ boolean operator==(const FE::object<T>& other_p) const noexcept
+	_FORCE_INLINE_ boolean operator==(const FE::trackable<T>& other_p) const noexcept
 	{
 		this->m_smart_ref = reinterpret_cast<pointer>(base_type::__get_property_address(this->m_key));
 
 		return this->m_smart_ref == other_p.m_smart_ref;
 	}
 
-	_FORCE_INLINE_ boolean operator!=(const FE::object<T>& other_p) const noexcept
+	_FORCE_INLINE_ boolean operator!=(const FE::trackable<T>& other_p) const noexcept
 	{
 		this->m_smart_ref = reinterpret_cast<pointer>(base_type::__get_property_address(this->m_key));
 
 		return this->m_smart_ref != other_p.m_smart_ref;
 	}
 
-	_FORCE_INLINE_ boolean operator>(const FE::object<T>& other_p) const noexcept
+	_FORCE_INLINE_ boolean operator>(const FE::trackable<T>& other_p) const noexcept
 	{
 		this->m_smart_ref = reinterpret_cast<pointer>(base_type::__get_property_address(this->m_key));
 
 		return this->m_smart_ref > other_p.m_smart_ref;
 	}
 
-	_FORCE_INLINE_ boolean operator>=(const FE::object<T>& other_p) const noexcept
+	_FORCE_INLINE_ boolean operator>=(const FE::trackable<T>& other_p) const noexcept
 	{
 		this->m_smart_ref = reinterpret_cast<pointer>(base_type::__get_property_address(this->m_key));
 
 		return this->m_smart_ref >= other_p.m_smart_ref;
 	}
 
-	_FORCE_INLINE_ boolean operator<(const FE::object<T>& other_p) const noexcept
+	_FORCE_INLINE_ boolean operator<(const FE::trackable<T>& other_p) const noexcept
 	{
 		this->m_smart_ref = reinterpret_cast<pointer>(base_type::__get_property_address(this->m_key));
 
 		return this->m_smart_ref < other_p.m_smart_ref;
 	}
 
-	_FORCE_INLINE_ boolean operator<=(const FE::object<T>& other_p) const noexcept
+	_FORCE_INLINE_ boolean operator<=(const FE::trackable<T>& other_p) const noexcept
 	{
 		this->m_smart_ref = reinterpret_cast<pointer>(base_type::__get_property_address(this->m_key));
 

@@ -60,7 +60,7 @@ TEST(FE_smart_refs, never_dangling_reference)
 	FE::ref<std::string> l_smart_ref;
 	EXPECT_TRUE(l_smart_ref.is_expired()); // The reference is pointing to nothing.
 	{
-		FE::object<std::string> l_object = "Never dangle!";
+		FE::trackable<std::string> l_object = "Never dangle!";
 		
 		l_smart_ref = l_object;
 		if (l_smart_ref.is_expired() == false)
