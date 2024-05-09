@@ -1,14 +1,13 @@
 ﻿#ifndef _FE_CORE_FSTRING_HXX_
 #define _FE_CORE_FSTRING_HXX_
 // Copyright © from 2023 to current, UNKNOWN STRYKER. All Rights Reserved.
-#include <FE/core/char_traits.hxx>
 #include <FE/core/algorithm/utility.hxx>
+#include <FE/core/char_traits.hxx>
 #include <FE/core/iterator.hxx>
 #include <FE/core/memory.hxx>
+
 #pragma warning (push)
-#pragma warning (disable: 6386)
-#pragma warning (disable: 26800)
-#pragma warning (disable: 26495)
+
 
 
 
@@ -557,9 +556,9 @@ public:
     }
 
 
-    _CONSTEXPR20_ fixed_sized_string& replace(const size_type position_p, const size_type count_to_replace_p, const fixed_sized_string& other_p) noexcept
+    _CONSTEXPR20_ fixed_sized_string& replace(const size_type position_p, const size_type count_to_be_removed_p, const fixed_sized_string& other_p) noexcept
     {
-        FE_ASSERT(((this->m_length + other_p.m_length) - count_to_replace_p) > this->max_length(), "${%s@0}: failed to replace.", TO_STRING(FE::MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_CAPACITY));
+        FE_ASSERT(((this->m_length + other_p.m_length) - count_to_be_removed_p) > this->max_length(), "${%s@0}: failed to replace.", TO_STRING(FE::MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_CAPACITY));
         FE_ASSERT(position_p > this->m_length, "${%s@0}: ${%s@1} must not be greater than ${%s@2}.", TO_STRING(FE::MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_RANGE), TO_STRING(position_p), TO_STRING(this->m_length));
 
         if (other_p.m_length == 0)
@@ -567,83 +566,87 @@ public:
             return *this;
         }
 
-        FE_ASSERT(count_to_replace_p == 0, "${%s@0}: ${%s@1} is zero.", TO_STRING(FE::MEMORY_ERROR_1XX::_FATAL_ERROR_INVALID_SIZE), TO_STRING(count_to_replace_p));
+        FE_ASSERT(count_to_be_removed_p == 0, "${%s@0}: ${%s@1} is zero.", TO_STRING(FE::MEMORY_ERROR_1XX::_FATAL_ERROR_INVALID_SIZE), TO_STRING(count_to_be_removed_p));
         
-        Traits::replace(string_info<CharT>{this->m_fstring, this->m_length, Capacity}, position_p, count_to_replace_p, other_p.m_fstring, other_p.m_length);
-        this->m_length = (this->m_length + other_p.m_length) - count_to_replace_p;
+        Traits::replace(string_info<CharT>{this->m_fstring, this->m_length, Capacity}, position_p, count_to_be_removed_p, other_p.m_fstring, other_p.m_length);
+        this->m_length = (this->m_length + other_p.m_length) - count_to_be_removed_p;
+        this->m_fstring[this->m_length] = _NULL_;
         FE_ASSERT(this->m_length > algorithm::string::length(this->m_fstring), "length integrity is broken: replace() opertation failed due to undesired use.");
         return *this;
     }
 
-    _CONSTEXPR20_ fixed_sized_string& replace(const size_type position_p, const size_type count_to_replace_p, const fixed_sized_string& other_p, const size_type other_position_p, const size_type other_count_p) noexcept
+    _CONSTEXPR20_ fixed_sized_string& replace(const size_type position_p, const size_type count_to_be_removed_p, const fixed_sized_string& other_p, const size_type other_position_p, const size_type other_count_p) noexcept
     {
-        FE_ASSERT(((this->m_length + other_count_p) - count_to_replace_p) > this->max_length(), "${%s@0}: failed to replace.", TO_STRING(FE::MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_CAPACITY));
-        FE_ASSERT(position_p > this->m_length, "${%s@0}: ${%s@1} must not be greater than ${%s@2}.", TO_STRING(FE::MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_RANGE), TO_STRING(position_p), TO_STRING(this->m_length));
-        FE_ASSERT(other_position_p > other_p.m_length, "${%s@0}: ${%s@1} must not be greater than ${%s@2}.", TO_STRING(FE::MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_RANGE), TO_STRING(other_position_p), TO_STRING(other_p.m_length));
+        FE_ASSERT(position_p + count_to_be_removed_p > this->m_length, "${%s@0}: failed to replace().", TO_STRING(FE::MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_RANGE));
+        FE_ASSERT(other_position_p + other_count_p > other_p.m_length, "${%s@0}: failed to replace().", TO_STRING(FE::MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_RANGE));
+        FE_ASSERT(count_to_be_removed_p == 0, "${%s@0}: ${%s@1} is zero.", TO_STRING(FE::MEMORY_ERROR_1XX::_FATAL_ERROR_INVALID_SIZE), TO_STRING(count_to_be_removed_p));
+        FE_ASSERT(other_count_p == 0, "${%s@0}: ${%s@1} is zero.", TO_STRING(FE::MEMORY_ERROR_1XX::_FATAL_ERROR_INVALID_SIZE), TO_STRING(other_count_p));
 
         if (other_p.m_length == 0)
         {
             return *this;
         }
 
-        FE_ASSERT(count_to_replace_p == 0, "${%s@0}: ${%s@1} is zero.", TO_STRING(FE::MEMORY_ERROR_1XX::_FATAL_ERROR_INVALID_SIZE), TO_STRING(count_to_replace_p));
-        FE_ASSERT(other_count_p == 0, "${%s@0}: ${%s@1} is zero.", TO_STRING(FE::MEMORY_ERROR_1XX::_FATAL_ERROR_INVALID_SIZE), TO_STRING(other_count_p));
-
-        Traits::replace(string_info<CharT>{this->m_fstring, this->m_length, Capacity}, position_p, count_to_replace_p, other_p.m_fstring + other_position_p, other_count_p);
-        this->m_length = (this->m_length + other_count_p) - count_to_replace_p;
+        Traits::replace(string_info<CharT>{this->m_fstring, this->m_length, Capacity}, position_p, count_to_be_removed_p, other_p.m_fstring + other_position_p, other_count_p);
+        this->m_length = (this->m_length + other_count_p) - count_to_be_removed_p;
+        this->m_fstring[this->m_length] = _NULL_;
         FE_ASSERT(this->m_length > algorithm::string::length(this->m_fstring), "length integrity is broken: The replace() opertation failed due to undesired use.");
         return *this;
     }
 
-    _CONSTEXPR20_ fixed_sized_string& replace(const size_type position_p, const size_type count_to_replace_p, const value_type* const string_p, const size_type input_count_p) noexcept
+    _CONSTEXPR20_ fixed_sized_string& replace(const size_type position_p, const size_type count_to_be_removed_p, const value_type* const string_p, const size_type input_count_p) noexcept
     {
         FE_ASSERT(input_count_p == 0, "${%s@0}: ${%s@1} is zero.", TO_STRING(FE::MEMORY_ERROR_1XX::_FATAL_ERROR_INVALID_SIZE), TO_STRING(input_count_p));
-        FE_ASSERT(((this->m_length + input_count_p) - count_to_replace_p) > this->max_length(), "${%s@0}: failed to replace.", TO_STRING(FE::MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_CAPACITY));
-        FE_ASSERT(count_to_replace_p == 0, "${%s@0}: ${%s@1} is zero.", TO_STRING(FE::MEMORY_ERROR_1XX::_FATAL_ERROR_INVALID_SIZE), TO_STRING(count_to_replace_p));
+        FE_ASSERT(((this->m_length + input_count_p) - count_to_be_removed_p) > this->max_length(), "${%s@0}: failed to replace.", TO_STRING(FE::MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_CAPACITY));
+        FE_ASSERT(count_to_be_removed_p == 0, "${%s@0}: ${%s@1} is zero.", TO_STRING(FE::MEMORY_ERROR_1XX::_FATAL_ERROR_INVALID_SIZE), TO_STRING(count_to_be_removed_p));
         FE_ASSERT(string_p == nullptr, "${%s@0}: ${%s@1} is nullptr.", TO_STRING(FE::MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(string_p));
         
-        Traits::replace(string_info<CharT>{this->m_fstring, this->m_length, Capacity}, position_p, count_to_replace_p, string_p, input_count_p);
-        this->m_length = (this->m_length + input_count_p) - count_to_replace_p;
+        Traits::replace(string_info<CharT>{this->m_fstring, this->m_length, Capacity}, position_p, count_to_be_removed_p, string_p, input_count_p);
+        this->m_length = (this->m_length + input_count_p) - count_to_be_removed_p;
+        this->m_fstring[this->m_length] = _NULL_;
         FE_ASSERT(this->m_length > algorithm::string::length(this->m_fstring), "length integrity is broken: The replace() opertation failed due to undesired use.");
         return *this;
     }
 
-    _CONSTEXPR20_ fixed_sized_string& replace(const size_type position_p, const size_type count_to_replace_p, const value_type* const string_p) noexcept
+    _CONSTEXPR20_ fixed_sized_string& replace(const size_type position_p, const size_type count_to_be_removed_p, const value_type* const string_p) noexcept
     {
-        FE_ASSERT(count_to_replace_p == 0, "${%s@0}: ${%s@1} is zero.", TO_STRING(FE::MEMORY_ERROR_1XX::_FATAL_ERROR_INVALID_SIZE), TO_STRING(count_to_replace_p));
+        FE_ASSERT(count_to_be_removed_p == 0, "${%s@0}: ${%s@1} is zero.", TO_STRING(FE::MEMORY_ERROR_1XX::_FATAL_ERROR_INVALID_SIZE), TO_STRING(count_to_be_removed_p));
         FE_ASSERT(string_p == nullptr, "${%s@0}: ${%s@1} is nullptr.", TO_STRING(FE::MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(string_p));
         
         size_type l_input_length = algorithm::string::length(string_p);
-        FE_ASSERT(((this->m_length + l_input_length) - count_to_replace_p) > this->max_length(), "${%s@0}: failed to replace.", TO_STRING(FE::MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_CAPACITY));
+        FE_ASSERT(((this->m_length + l_input_length) - count_to_be_removed_p) > this->max_length(), "${%s@0}: failed to replace.", TO_STRING(FE::MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_CAPACITY));
 
-        Traits::replace(string_info<CharT>{this->m_fstring, this->m_length, Capacity}, position_p, count_to_replace_p, string_p, l_input_length);
-        this->m_length = (this->m_length + l_input_length) - count_to_replace_p;
+        Traits::replace(string_info<CharT>{this->m_fstring, this->m_length, Capacity}, position_p, count_to_be_removed_p, string_p, l_input_length);
+        this->m_length = (this->m_length + l_input_length) - count_to_be_removed_p;
+        this->m_fstring[this->m_length] = _NULL_;
         FE_ASSERT(this->m_length > algorithm::string::length(this->m_fstring), "length integrity is broken: The replace() opertation failed due to undesired use.");
         return *this;
     }
 
-    _CONSTEXPR20_ fixed_sized_string& replace(const size_type position_p, const size_type count_to_replace_p, const value_type value_p, const size_type input_count_p) noexcept
+    _CONSTEXPR20_ fixed_sized_string& replace(const size_type position_p, const size_type count_to_be_removed_p, const value_type value_p, const size_type input_count_p) noexcept
     {
         FE_ASSERT(input_count_p == 0, "${%s@0}: ${%s@1} is zero.", TO_STRING(FE::MEMORY_ERROR_1XX::_FATAL_ERROR_INVALID_SIZE), TO_STRING(input_count_p));
-        FE_ASSERT(((this->m_length + input_count_p) - count_to_replace_p) > this->max_length(), "${%s@0}: failed to replace.", TO_STRING(FE::MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_CAPACITY));
-        FE_ASSERT(count_to_replace_p == 0, "${%s@0}: ${%s@1} is zero.", TO_STRING(FE::MEMORY_ERROR_1XX::_FATAL_ERROR_INVALID_SIZE), TO_STRING(count_to_replace_p));
+        FE_ASSERT(((this->m_length + input_count_p) - count_to_be_removed_p) > this->max_length(), "${%s@0}: failed to replace.", TO_STRING(FE::MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_CAPACITY));
+        FE_ASSERT(count_to_be_removed_p == 0, "${%s@0}: ${%s@1} is zero.", TO_STRING(FE::MEMORY_ERROR_1XX::_FATAL_ERROR_INVALID_SIZE), TO_STRING(count_to_be_removed_p));
         
-        Traits::replace(string_info<CharT>{this->m_fstring, this->m_length, Capacity}, position_p, count_to_replace_p, value_p, input_count_p);
-        this->m_length = (this->m_length + input_count_p) - count_to_replace_p;
+        Traits::replace(string_info<CharT>{this->m_fstring, this->m_length, Capacity}, position_p, count_to_be_removed_p, value_p, input_count_p);
+        this->m_length = (this->m_length + input_count_p) - count_to_be_removed_p;
+        this->m_fstring[this->m_length] = _NULL_;
         FE_ASSERT(this->m_length > algorithm::string::length(this->m_fstring), "length integrity is broken: The replace() opertation failed due to undesired use.");
         return *this;
     }
 
-    _CONSTEXPR20_ fixed_sized_string& replace(const size_type position_p, const size_type count_to_replace_p, std::initializer_list<const CharT>&& initializer_list_p) noexcept
+    _CONSTEXPR20_ fixed_sized_string& replace(const size_type position_p, const size_type count_to_be_removed_p, std::initializer_list<const CharT>&& initializer_list_p) noexcept
     {
         size_type l_input_size = initializer_list_p.size();
 
-        FE_ASSERT(((this->m_length + l_input_size) - count_to_replace_p) > this->max_length(), "${%s@0}: failed to replace.", TO_STRING(FE::MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_CAPACITY));
-        FE_ASSERT(count_to_replace_p == 0, "${%s@0}: ${%s@1} is zero.", TO_STRING(FE::MEMORY_ERROR_1XX::_FATAL_ERROR_INVALID_SIZE), TO_STRING(count_to_replace_p));
+        FE_ASSERT(((this->m_length + l_input_size) - count_to_be_removed_p) > this->max_length(), "${%s@0}: failed to replace.", TO_STRING(FE::MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_CAPACITY));
+        FE_ASSERT(count_to_be_removed_p == 0, "${%s@0}: ${%s@1} is zero.", TO_STRING(FE::MEMORY_ERROR_1XX::_FATAL_ERROR_INVALID_SIZE), TO_STRING(count_to_be_removed_p));
         FE_ASSERT(l_input_size == 0, "${%s@0}: ${%s@1} is zero.", TO_STRING(FE::MEMORY_ERROR_1XX::_FATAL_ERROR_INVALID_SIZE), TO_STRING(initializer_list_p.size()));
 
-        Traits::replace(string_info<CharT>{this->m_fstring, this->m_length, Capacity}, position_p, count_to_replace_p, std::move(initializer_list_p));
-        this->m_length = (this->m_length + l_input_size) - count_to_replace_p;
+        Traits::replace(string_info<CharT>{this->m_fstring, this->m_length, Capacity}, position_p, count_to_be_removed_p, std::move(initializer_list_p));
+        this->m_length = (this->m_length + l_input_size) - count_to_be_removed_p;
+        this->m_fstring[this->m_length] = _NULL_;
         FE_ASSERT(this->m_length > algorithm::string::length(this->m_fstring), "length integrity is broken: The replace() opertation failed due to undesired use.");
         return *this;
     }
@@ -659,21 +662,22 @@ public:
 
         Traits::replace(string_info<CharT>{this->m_fstring, this->m_length, Capacity}, first_index_p, last_index_p, input_first_p, input_last_p);
         this->m_length = (this->m_length + l_input_size) - l_this_count_to_replace;
+        this->m_fstring[this->m_length] = _NULL_;
         FE_ASSERT(this->m_length > algorithm::string::length(this->m_fstring), "length integrity is broken: The replace() opertation failed due to undesired use.");
         return *this;
     }
 
 
-    _CONSTEXPR20_ fixed_sized_string& replace_with_range(const size_type position_p, const size_type count_to_replace_p, const_iterator input_iterator_begin_p, algorithm::string::range input_string_range_p) noexcept
+    _CONSTEXPR20_ fixed_sized_string& replace_with_range(const size_type position_p, const size_type count_to_be_removed_p, const_iterator input_iterator_begin_p, algorithm::string::range input_string_range_p) noexcept
     {
         FE_ASSERT(input_iterator_begin_p == nullptr, "${%s@0}: ${%s@1} is nullptr.", TO_STRING(FE::MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(cstr_ptrc_p));
         FE_ASSERT(input_string_range_p._begin >= input_string_range_p._end, "${%s@0}: ${%s@1} must not be greater than ${%s@2}.", TO_STRING(FE::MEMORY_ERROR_1XX::_FATAL_ERROR_INVALID_SIZE), TO_STRING(input_string_range_p._begin), TO_STRING(input_string_range_p._end));
         FE_ASSERT(position_p > this->max_length(), "${%s@0}: ${%s@1} must not be greater than ${%s@2}.", TO_STRING(FE::MEMORY_ERROR_1XX::_FATAL_ERROR_INVALID_SIZE), TO_STRING(position_p), TO_STRING(this->max_length()));
 
-        return this->replace(position_p, count_to_replace_p, input_iterator_begin_p + input_string_range_p._begin, input_iterator_begin_p + input_string_range_p._end);
+        return this->replace(position_p, count_to_be_removed_p, input_iterator_begin_p + input_string_range_p._begin, input_iterator_begin_p + input_string_range_p._end);
     }
 
-    _CONSTEXPR20_ fixed_sized_string& replace_with_range(const size_type position_p, const size_type count_to_replace_p, const fixed_sized_string& other_p, const algorithm::string::range input_string_range_p) noexcept
+    _CONSTEXPR20_ fixed_sized_string& replace_with_range(const size_type position_p, const size_type count_to_be_removed_p, const fixed_sized_string& other_p, const algorithm::string::range input_string_range_p) noexcept
     {
         if (other_p.m_length == 0)
         {
@@ -683,16 +687,16 @@ public:
         FE_ASSERT(input_string_range_p._begin >= input_string_range_p._end, "${%s@0}: ${%s@1} must not be greater than ${%s@2}.", TO_STRING(FE::MEMORY_ERROR_1XX::_FATAL_ERROR_INVALID_SIZE), TO_STRING(input_string_range_p._begin), TO_STRING(input_string_range_p._end));
         FE_ASSERT(position_p > this->max_length(), "${%s@0}: ${%s@1} must not be greater than ${%s@2}.", TO_STRING(FE::MEMORY_ERROR_1XX::_FATAL_ERROR_INVALID_SIZE), TO_STRING(position_p), TO_STRING(this->max_length()));
 
-        return this->replace(position_p, count_to_replace_p, other_p, input_string_range_p._begin, input_string_range_p._end - input_string_range_p._begin);
+        return this->replace(position_p, count_to_be_removed_p, other_p, input_string_range_p._begin, input_string_range_p._end - input_string_range_p._begin);
     }
 
-    _CONSTEXPR20_ _FORCE_INLINE_ fixed_sized_string& replace_with_range(const size_type position_p, const size_type count_to_replace_p, const value_type* const string_p, const algorithm::string::range input_string_range_p) noexcept
+    _CONSTEXPR20_ _FORCE_INLINE_ fixed_sized_string& replace_with_range(const size_type position_p, const size_type count_to_be_removed_p, const value_type* const string_p, const algorithm::string::range input_string_range_p) noexcept
     {
         FE_ASSERT(string_p == nullptr, "${%s@0}: ${%s@1} is nullptr.", TO_STRING(FE::MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(string_p));
         FE_ASSERT(input_string_range_p._begin >= input_string_range_p._end, "${%s@0}: ${%s@1} must not be greater than ${%s@2}.", TO_STRING(FE::MEMORY_ERROR_1XX::_FATAL_ERROR_INVALID_SIZE), TO_STRING(input_string_range_p._begin), TO_STRING(input_string_range_p._end));
         FE_ASSERT(position_p > this->max_length(), "${%s@0}: ${%s@1} must not be greater than ${%s@2}.", TO_STRING(FE::MEMORY_ERROR_1XX::_FATAL_ERROR_INVALID_SIZE), TO_STRING(position_p), TO_STRING(this->max_length()));
 
-        return this->replace(position_p, count_to_replace_p, string_p + input_string_range_p._begin, input_string_range_p._end - input_string_range_p._begin);
+        return this->replace(position_p, count_to_be_removed_p, string_p + input_string_range_p._begin, input_string_range_p._end - input_string_range_p._begin);
     }
 
 
@@ -851,6 +855,52 @@ using fstring16 = FE::fixed_sized_string<var::UTF16, Capacity>;
 template<uint64 Capacity>
 using fstring32 = FE::fixed_sized_string<var::UTF32, Capacity>;
 
+
+
+
+template<uint64 Capacity>
+struct is_string_class<FE::fstring<Capacity>>
+{
+    _MAYBE_UNUSED_ static constexpr inline bool value = true;
+};
+
+template<uint64 Capacity>
+struct is_string_class<FE::ufstring<Capacity>>
+{
+    _MAYBE_UNUSED_ static constexpr inline bool value = true;
+};
+
+template<uint64 Capacity>
+struct is_string_class<FE::sfstring<Capacity>>
+{
+    _MAYBE_UNUSED_ static constexpr inline bool value = true;
+};
+
+template<uint64 Capacity>
+struct is_string_class<FE::fwstring<Capacity>>
+{
+    _MAYBE_UNUSED_ static constexpr inline bool value = true;
+};
+
+#ifdef _HAS_CXX20_
+template<uint64 Capacity>
+struct is_string_class<FE::fstring8<Capacity>>
+{
+    _MAYBE_UNUSED_ static constexpr inline bool value = true;
+};
+#endif
+
+template<uint64 Capacity>
+struct is_string_class<FE::fstring16<Capacity>>
+{
+    _MAYBE_UNUSED_ static constexpr inline bool value = true;
+};
+
+template<uint64 Capacity>
+struct is_string_class<FE::fstring32<Capacity>>
+{
+    _MAYBE_UNUSED_ static constexpr inline bool value = true;
+};
 
 END_NAMESPACE;
 #pragma warning (pop)

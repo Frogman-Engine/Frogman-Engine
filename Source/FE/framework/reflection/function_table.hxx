@@ -2,11 +2,12 @@
 #define _FE_FRAMEWORK_FUNCTION_TABLE_HXX_
 // Copyright © from 2023 to current, UNKNOWN STRYKER. All Rights Reserved.
 #include <FE/core/prerequisites.h>
+#include <FE/core/string.hxx>
 #include <FE/core/function.hxx>
-#include <FE/core/fstring.hxx>
 #include <FE/core/hash.hpp>
 #include <FE/core/pool_allocator.hxx>
-#include <memory>
+
+// std
 #include <mutex>
 #include <unordered_map>
 
@@ -18,7 +19,7 @@
 
 BEGIN_NAMESPACE(FE::framework)
 
-using method_signature_t = FE::fstring<128>;
+using method_signature_t = FE::string;
 
 
 // function_table is currently under development. It might not be suitable to use
@@ -29,20 +30,19 @@ public:
 
 	template<typename T>
 	using smart_function_ptr = FE::generic_pool_ptr<T, function_pool_size, FE::align_CPU_L1_cache_line>;
-
+	
 	using underlying_container = std::unordered_map<method_signature_t,
 													FE::task_base*, 
 													FE::hash<method_signature_t>,
-													std::equal_to<method_signature_t>,
-													FE::namespace_pool_allocator<std::pair<const method_signature_t, FE::task_base*>, FE::align_CPU_L1_cache_line>
-													>;
+													std::equal_to<method_signature_t>,	
+													FE::namespace_pool_allocator<std::pair<const method_signature_t, FE::task_base*>>>;
 private:
 	FE::generic_pool<function_pool_size, FE::align_CPU_L1_cache_line> m_function_pool;
 	underlying_container m_task_map;
 	std::mutex m_mutex;
 	
 public:
-	function_table() noexcept : m_function_pool(), m_task_map(typename underlying_container::allocator_type{ _FUNCTION_TABLE_MEMORY_NAMESPACE_ }), m_mutex() {}
+	function_table() noexcept : m_function_pool(), m_task_map(/*typename underlying_container::allocator_type{ _FUNCTION_TABLE_MEMORY_NAMESPACE_ }*/), m_mutex() {}
 	~function_table() noexcept = default;
 
 	function_table(const function_table& other_cref_p) noexcept = delete;

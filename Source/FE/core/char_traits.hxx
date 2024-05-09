@@ -3,7 +3,6 @@
 // Copyright © from 2023 to current, UNKNOWN STRYKER. All Rights Reserved.
 #include <FE/core/prerequisites.h>
 #include <FE/core/algorithm/string.hxx>
-#include <FE/core/memory.hxx>
 
 
 
@@ -219,7 +218,7 @@ public:
         
         FE_ASSERT(input_begin_p == nullptr, "${%s@0}: ${%s@1} is nullptr.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(input_begin_p));
         FE_ASSERT(input_end_p == nullptr, "${%s@0}: ${%s@1} is nullptr.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(input_end_p));
-        FE_ASSERT(input_begin_p >= input_end_p, "${%s@0}: ${%s@0} must not be greater than input_count_p.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_RANGE), TO_STRING(input_begin_p));
+        FE_ASSERT(input_begin_p >= input_end_p, "${%s@0}: ${%s@0} must not be greater than l_input_count.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_RANGE), TO_STRING(input_begin_p));
  
         size_t l_input_size = input_end_p - input_begin_p;
         FE_ASSERT(l_input_size + in_out_string_p._length >= in_out_string_p._capacity, "${%s@0}: input string range length exceeds fixed sized string capacity.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_RANGE));
@@ -245,83 +244,170 @@ public:
     }
 
 
-    _FORCE_INLINE_ static void replace(string_info<CharT> in_out_string_p, size_t this_position_p, size_t this_count_to_replace_p, const CharT* const string_p, size_t input_count_p) noexcept
+    static void replace(string_info<CharT> in_out_string_p, size_t target_position_p, size_t count_to_be_removed_p, const CharT* const string_p, size_t input_count_p) noexcept
     {
-        FE_ASSERT(((in_out_string_p._length + input_count_p) - this_count_to_replace_p) > in_out_string_p._capacity, "${%s@0}: failed to replace.", TO_STRING(FE::MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_CAPACITY));
-        FE_ASSERT(this_position_p > in_out_string_p._length, "${%s@0}: ${%s@1} must not be greater than ${%s@2}.", TO_STRING(FE::MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_RANGE), TO_STRING(this_position_p), TO_STRING(in_out_string_p._length));
-        FE_ASSERT(this_count_to_replace_p == 0, "${%s@0}: ${%s@1} is zero.", TO_STRING(FE::MEMORY_ERROR_1XX::_FATAL_ERROR_INVALID_SIZE), TO_STRING(this_count_to_replace_p));
+        FE_ASSERT(((in_out_string_p._length + input_count_p) - count_to_be_removed_p) > in_out_string_p._capacity, "${%s@0}: failed to replace.", TO_STRING(FE::MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_CAPACITY));
+        FE_ASSERT(target_position_p > in_out_string_p._length, "${%s@0}: ${%s@1} must not be greater than ${%s@2}.", TO_STRING(FE::MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_RANGE), TO_STRING(target_position_p), TO_STRING(in_out_string_p._length));
+        FE_ASSERT(count_to_be_removed_p == 0, "${%s@0}: ${%s@1} is zero.", TO_STRING(FE::MEMORY_ERROR_1XX::_FATAL_ERROR_INVALID_SIZE), TO_STRING(count_to_be_removed_p));
+        FE_ASSERT(in_out_string_p._capacity <= (target_position_p + count_to_be_removed_p), "${%s@0}: ${%s@1} was nullptr.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(this->m_smart_string.get()));
 
-        in_out_string_p._string_pointer += this_position_p;
-        std::memmove(in_out_string_p._string_pointer + input_count_p, in_out_string_p._string_pointer + this_count_to_replace_p, (in_out_string_p._length - this_count_to_replace_p) * sizeof(CharT));
-        std::memcpy(in_out_string_p._string_pointer, string_p, input_count_p * sizeof(CharT));
-        in_out_string_p._string_pointer -= this_position_p;
-        in_out_string_p._string_pointer[(in_out_string_p._length + input_count_p) - this_count_to_replace_p] = _NULL_;
-    }
+        // move the string pointer to the target position
+        in_out_string_p._string_pointer += target_position_p;
 
-    _FORCE_INLINE_ static void replace(string_info<CharT> in_out_string_p, size_t this_position_p, size_t this_count_to_replace_p, const CharT value_p, size_t input_count_p) noexcept
-    {
-        FE_ASSERT(input_count_p == 0, "${%s@0}: ${%s@1} is zero.", TO_STRING(FE::MEMORY_ERROR_1XX::_FATAL_ERROR_INVALID_SIZE), TO_STRING(input_count_p));
-        FE_ASSERT(((in_out_string_p._length + input_count_p) - this_count_to_replace_p) > in_out_string_p._capacity, "${%s@0}: failed to replace.", TO_STRING(FE::MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_CAPACITY));
-        FE_ASSERT(this_count_to_replace_p == 0, "${%s@0}: ${%s@1} is zero.", TO_STRING(FE::MEMORY_ERROR_1XX::_FATAL_ERROR_INVALID_SIZE), TO_STRING(this_count_to_replace_p));
+        size_t l_bytes_to_move = in_out_string_p._length - (count_to_be_removed_p + target_position_p);
+        CharT* l_move_to = nullptr;
+        CharT* l_move_from = nullptr;
 
-        in_out_string_p._string_pointer += this_position_p;
-        std::memmove(in_out_string_p._string_pointer + input_count_p, in_out_string_p._string_pointer + this_count_to_replace_p, (in_out_string_p._length - this_count_to_replace_p) * sizeof(CharT));
-
-        const CharT* const l_end_ptrc = in_out_string_p._string_pointer + input_count_p;
-
-        while (in_out_string_p._string_pointer != l_end_ptrc)
+        if (count_to_be_removed_p > input_count_p)
         {
-            *in_out_string_p._string_pointer = value_p;
-            ++in_out_string_p._string_pointer;
+            std::memcpy(in_out_string_p._string_pointer, string_p, input_count_p * sizeof(CharT));
+
+            l_move_from = in_out_string_p._string_pointer + count_to_be_removed_p;
+            l_move_to = in_out_string_p._string_pointer + input_count_p;
+            std::memmove(l_move_to, l_move_from, l_bytes_to_move * sizeof(CharT));
+            return;
+        }
+        else if (count_to_be_removed_p < input_count_p)
+        {
+            l_move_from = in_out_string_p._string_pointer + count_to_be_removed_p;
+            l_move_to = in_out_string_p._string_pointer + input_count_p;
+            std::memmove(l_move_to, l_move_from, l_bytes_to_move * sizeof(CharT));
+            std::memcpy(in_out_string_p._string_pointer, string_p, input_count_p * sizeof(CharT));
+            return;
         }
 
-        in_out_string_p._string_pointer -= this_position_p;
-        in_out_string_p._string_pointer[(in_out_string_p._length + input_count_p) - this_count_to_replace_p] = _NULL_;
+        std::memcpy(in_out_string_p._string_pointer, string_p, input_count_p * sizeof(CharT));
     }
 
-    _FORCE_INLINE_ static void replace(string_info<CharT> in_out_string_p, size_t this_position_p, size_t this_count_to_replace_p, std::initializer_list<const CharT>&& initializer_list_p) noexcept
+    static void replace(string_info<CharT> in_out_string_p, size_t target_position_p, size_t count_to_be_removed_p, const CharT value_p, size_t input_count_p) noexcept
     {
-        size_t l_input_size = initializer_list_p.size();
+        FE_ASSERT(input_count_p == 0, "${%s@0}: ${%s@1} is zero.", TO_STRING(FE::MEMORY_ERROR_1XX::_FATAL_ERROR_INVALID_SIZE), TO_STRING(input_count_p));
+        FE_ASSERT(((in_out_string_p._length + input_count_p) - count_to_be_removed_p) > in_out_string_p._capacity, "${%s@0}: failed to replace.", TO_STRING(FE::MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_CAPACITY));
+        FE_ASSERT(count_to_be_removed_p == 0, "${%s@0}: ${%s@1} is zero.", TO_STRING(FE::MEMORY_ERROR_1XX::_FATAL_ERROR_INVALID_SIZE), TO_STRING(count_to_be_removed_p));
 
-        FE_ASSERT(((in_out_string_p._length + l_input_size) - this_count_to_replace_p) > in_out_string_p._capacity, "${%s@0}: failed to replace.", TO_STRING(FE::MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_CAPACITY));
-        FE_ASSERT(this_count_to_replace_p == 0, "${%s@0}: ${%s@1} is zero.", TO_STRING(FE::MEMORY_ERROR_1XX::_FATAL_ERROR_INVALID_SIZE), TO_STRING(this_count_to_replace_p));
-        FE_ASSERT(l_input_size == 0, "${%s@0}: ${%s@1} is zero.", TO_STRING(FE::MEMORY_ERROR_1XX::_FATAL_ERROR_INVALID_SIZE), TO_STRING(initializer_list_p.size()));
+        // move the string pointer to the target position
+        in_out_string_p._string_pointer += target_position_p;
 
-        std::memmove(in_out_string_p._string_pointer + this_position_p + l_input_size, in_out_string_p._string_pointer + this_position_p + this_count_to_replace_p, (in_out_string_p._length - (this_position_p + this_count_to_replace_p)) * sizeof(CharT));
-        std::memcpy(in_out_string_p._string_pointer + this_position_p, initializer_list_p.begin(), l_input_size * sizeof(CharT));
-        in_out_string_p._string_pointer[(in_out_string_p._length + l_input_size) - this_count_to_replace_p] = _NULL_;
+        size_t l_bytes_to_move = in_out_string_p._length - (count_to_be_removed_p + target_position_p);
+        CharT* l_move_to = nullptr;
+        CharT* l_move_from = nullptr;
+
+        if (count_to_be_removed_p > input_count_p)
+        {
+            for (CharT* end = in_out_string_p._string_pointer + input_count_p; in_out_string_p._string_pointer != end; ++in_out_string_p._string_pointer)
+            {
+                *in_out_string_p._string_pointer = value_p;
+            }
+
+            l_move_from = in_out_string_p._string_pointer + count_to_be_removed_p;
+            l_move_to = in_out_string_p._string_pointer + input_count_p;
+            std::memmove(l_move_to, l_move_from, l_bytes_to_move * sizeof(CharT));
+            return;
+        }
+        else if (count_to_be_removed_p < input_count_p)
+        {
+            l_move_from = in_out_string_p._string_pointer + count_to_be_removed_p;
+            l_move_to = in_out_string_p._string_pointer + input_count_p;
+            std::memmove(l_move_to, l_move_from, l_bytes_to_move * sizeof(CharT));
+
+            for (CharT* end = in_out_string_p._string_pointer + input_count_p; in_out_string_p._string_pointer != end; ++in_out_string_p._string_pointer)
+            {
+                *in_out_string_p._string_pointer = value_p;
+            }
+            return;
+        }
+
+        for (CharT* end = in_out_string_p._string_pointer + input_count_p; in_out_string_p._string_pointer != end; ++in_out_string_p._string_pointer)
+        {
+            *in_out_string_p._string_pointer = value_p;
+        }
+    }
+
+    static void replace(string_info<CharT> in_out_string_p, size_t target_position_p, size_t count_to_be_removed_p, std::initializer_list<const CharT>&& initializer_list_p) noexcept
+    {
+        size_t l_input_count = initializer_list_p.size();
+
+        FE_ASSERT(((in_out_string_p._length + l_input_count) - count_to_be_removed_p) > in_out_string_p._capacity, "${%s@0}: failed to replace.", TO_STRING(FE::MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_CAPACITY));
+        FE_ASSERT(count_to_be_removed_p == 0, "${%s@0}: ${%s@1} is zero.", TO_STRING(FE::MEMORY_ERROR_1XX::_FATAL_ERROR_INVALID_SIZE), TO_STRING(count_to_be_removed_p));
+        FE_ASSERT(l_input_count == 0, "${%s@0}: ${%s@1} is zero.", TO_STRING(FE::MEMORY_ERROR_1XX::_FATAL_ERROR_INVALID_SIZE), TO_STRING(initializer_list_p.size()));
+
+        // move the string pointer to the target position
+        in_out_string_p._string_pointer += target_position_p;
+
+        size_t l_bytes_to_move = in_out_string_p._length - (count_to_be_removed_p + target_position_p);
+        CharT* l_move_to = nullptr;
+        CharT* l_move_from = nullptr;
+
+        if (count_to_be_removed_p > l_input_count)
+        {
+            std::memcpy(in_out_string_p._string_pointer, initializer_list_p.begin(), l_input_count * sizeof(CharT));
+
+            l_move_from = in_out_string_p._string_pointer + count_to_be_removed_p;
+            l_move_to = in_out_string_p._string_pointer + l_input_count;
+            std::memmove(l_move_to, l_move_from, l_bytes_to_move * sizeof(CharT));
+            return;
+        }
+        else if (count_to_be_removed_p < l_input_count)
+        {
+            l_move_from = in_out_string_p._string_pointer + count_to_be_removed_p;
+            l_move_to = in_out_string_p._string_pointer + l_input_count;
+            std::memmove(l_move_to, l_move_from, l_bytes_to_move * sizeof(CharT));
+            std::memcpy(in_out_string_p._string_pointer, initializer_list_p.begin(), l_input_count * sizeof(CharT));
+            return;
+        }
+
+        std::memcpy(in_out_string_p._string_pointer, initializer_list_p.begin(), l_input_count * sizeof(CharT));
     }
 
     template<class ConstIterator>
-    _FORCE_INLINE_ static void replace(string_info<CharT> in_out_string_p, size_t first_index_p, size_t last_index_p, ConstIterator input_first_p, ConstIterator input_last_p) noexcept
+    static void replace(string_info<CharT> in_out_string_p, size_t first_index_p, size_t last_index_p, ConstIterator input_first_p, ConstIterator input_last_p) noexcept
     {
         FE_ASSERT(input_first_p == nullptr, "${%s@0}: ${%s@1} is nullptr.", TO_STRING(FE::MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(input_first_p));
         FE_ASSERT(input_last_p == nullptr, "${%s@0}: ${%s@1} is nullptr.", TO_STRING(FE::MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(input_last_p));
         FE_ASSERT(input_first_p > input_last_p, "${%s@0}: ${%s@1} must not be greater than ${%s@2}.", TO_STRING(FE::MEMORY_ERROR_1XX::_FATAL_ERROR_INVALID_SIZE), TO_STRING(input_first_p), TO_STRING(input_last_p));
         FE_ASSERT(first_index_p > last_index_p, "${%s@0}: ${%s@1} must not be greater than ${%s@2}.", TO_STRING(FE::MEMORY_ERROR_1XX::_FATAL_ERROR_INVALID_SIZE), TO_STRING(first_index_p), TO_STRING(last_index_p));
-     
-        size_t l_input_size = input_last_p - input_first_p;
-        size_t l_this_count_to_replace = last_index_p - first_index_p;
+  
+        // move the string pointer to the target position
+        in_out_string_p._string_pointer += first_index_p;
 
-        std::memmove(in_out_string_p._string_pointer + first_index_p + l_input_size, in_out_string_p._string_pointer + first_index_p + l_this_count_to_replace, (in_out_string_p._length - (first_index_p + l_this_count_to_replace)) * sizeof(CharT));
-        
-        if constexpr (std::is_same<ConstIterator::iterator_category, FE::contiguous_iterator<CharT>::category>::value == true)
-        {
-            std::memcpy(in_out_string_p._string_pointer + first_index_p, input_first_p.operator->(), l_input_size * sizeof(CharT));
-            in_out_string_p._string_pointer[(in_out_string_p._length + l_input_size) - l_this_count_to_replace] = _NULL_;
-        }
-        else if constexpr (std::is_same<ConstIterator::iterator_category, FE::contiguous_iterator<CharT>::category>::value == false)
-        {
-            const CharT* const l_end_ptrc = in_out_string_p._string_pointer + l_input_size;
-            in_out_string_p._string_pointer += first_index_p;
+        size_t l_count_to_be_removed = last_index_p - first_index_p;
+        size_t l_bytes_to_move = in_out_string_p._length - (l_count_to_be_removed + first_index_p);
+        CharT* l_move_to = nullptr;
+        CharT* l_move_from = nullptr;
+        size_t l_input_count = input_last_p - input_first_p;
 
-            while (in_out_string_p._string_pointer != l_end_ptrc)
+        if (l_count_to_be_removed > l_input_count)
+        {
+            for (const CharT* const l_end = in_out_string_p._string_pointer + l_input_count; in_out_string_p._string_pointer != l_end; ++in_out_string_p._string_pointer)
             {
                 *in_out_string_p._string_pointer = *input_first_p;
-                ++in_out_string_p._string_pointer;
                 ++input_first_p;
             }
-            *in_out_string_p._string_pointer = _NULL_;
+
+            l_move_from = in_out_string_p._string_pointer + l_count_to_be_removed;
+            l_move_to = in_out_string_p._string_pointer + l_input_count;
+            std::memmove(l_move_to, l_move_from, l_bytes_to_move * sizeof(CharT));
+
+            return;
+        }
+        else if (l_count_to_be_removed < l_input_count)
+        {
+            l_move_from = in_out_string_p._string_pointer + l_count_to_be_removed;
+            l_move_to = in_out_string_p._string_pointer + l_input_count;
+            std::memmove(l_move_to, l_move_from, l_bytes_to_move * sizeof(CharT));
+            
+            for (const CharT* const l_end = in_out_string_p._string_pointer + l_input_count; in_out_string_p._string_pointer != l_end; ++in_out_string_p._string_pointer)
+            {
+                *in_out_string_p._string_pointer = *input_first_p;
+                ++input_first_p;
+            }
+            return;
+        }
+
+        for (const CharT* const l_end = in_out_string_p._string_pointer + l_input_count; in_out_string_p._string_pointer != l_end; ++in_out_string_p._string_pointer)
+        {
+            *in_out_string_p._string_pointer = *input_first_p;
+            ++input_first_p;
         }
     }
 };

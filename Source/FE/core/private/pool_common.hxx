@@ -2,19 +2,34 @@
 #define _FE_CORE_PRIVATE_POOL_COMMON_HXX_
 // Copyright © from 2023 to current, UNKNOWN STRYKER. All Rights Reserved.
 #include <FE/core/prerequisites.h>
-#include <FE/core/allocator.hxx>
 #include <FE/core/fstring.hxx>
 #include <FE/core/hash.hpp>
+#include <FE/core/type_traits.hxx>
+
 
 // std
+#include <array>
+#include <map>
 #include <memory>
-#include <unordered_map>
+
+// robin hood hash
+#include <robin_hood.h>
 #pragma warning (push)
-#pragma warning (disable: 6262)
+
 
 
 
 BEGIN_NAMESPACE(FE)
+
+
+using memory_namespace_t = FE::fstring<64>;
+
+
+template<>
+struct is_string_class<memory_namespace_t>
+{
+    _MAYBE_UNUSED_ static constexpr inline bool value = true;
+};
 
 
 enum struct POOL_TYPE : uint8
@@ -22,8 +37,6 @@ enum struct POOL_TYPE : uint8
     _BLOCK = 0,
     _GENERIC = 1,
 };
-
-using memory_region_t = FE::fstring<64>;
 
 
 namespace internal::pool

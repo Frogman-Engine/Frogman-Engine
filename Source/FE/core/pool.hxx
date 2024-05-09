@@ -12,6 +12,8 @@
 
 
 
+// Double Free Issue Found!
+// To Do: fix the bug
 BEGIN_NAMESPACE(FE)
 
 
@@ -26,10 +28,10 @@ namespace internal::pool
 
 
     template<size_t PossibleAddressCount>
-    class address_map : public std::map<FE::var::byte*, FE::var::size_t, std::greater<FE::var::byte*>, FE::block_pool_allocator< std::pair<FE::var::byte* const, FE::var::size_t>, FE::object_count<PossibleAddressCount> >>
+    class address_map : public std::map<FE::var::byte*, FE::var::size_t, std::greater<FE::var::byte*>, FE::block_pool_allocator< std::pair<FE::var::byte* const, FE::var::size_t>, FE::object_count<PossibleAddressCount>>> 
     {
     public:
-        using base_type = std::map<FE::var::byte*, FE::var::size_t, std::greater<FE::var::byte*>, FE::block_pool_allocator< std::pair<FE::var::byte* const, FE::var::size_t>, FE::object_count<PossibleAddressCount> >>;
+        using base_type = std::map<FE::var::byte*, FE::var::size_t, std::greater<FE::var::byte*>, FE::block_pool_allocator< std::pair<FE::var::byte* const, FE::var::size_t>, FE::object_count<PossibleAddressCount>>>;
         using key_type = var::byte*;
         using key_compare = std::greater<var::byte*>;
         using value_compare = typename base_type::value_compare;
@@ -47,6 +49,7 @@ namespace internal::pool
         using const_reverse_iterator = typename base_type::const_reverse_iterator;
 
         _FORCE_INLINE_ address_map() noexcept : base_type() {}
+        _FORCE_INLINE_ ~address_map() noexcept {}
         _FORCE_INLINE_ address_map(const address_map& other_p) noexcept : base_type()
         {
             const base_type* l_other = &other_p;
@@ -73,7 +76,7 @@ namespace internal::pool
     struct recycler
     {
         constexpr static count_t chunk_capacity = ChunkCapacity;
-        constexpr static size_t recycler_capacity = ChunkCapacity / Alignment::size;
+        constexpr static size_t recycler_capacity = ((ChunkCapacity / Alignment::size) / 2) + 1; // The possible fragment count would be ((ChunkCapacity / Alignment::size) / 2) + 1 because adjacent fragments gets immediately merged during deallocate() operation.
 
         using underlying_container_type = FE::internal::pool::address_map<recycler_capacity>;
         using iterator = typename underlying_container_type::iterator;
@@ -110,6 +113,54 @@ namespace internal::pool
         {
             return (_free_blocks._begin_tree.is_empty() == true) && (_page_iterator >= _end);
         }
+    };
+
+    // For debugging purpose only
+    template<size_t PossibleAddressCount>
+    class pool_monitor
+    {
+    public:
+        using tracker_type = std::unordered_map<std::string,
+                                                address_map<PossibleAddressCount>, 
+                                                FE::hash<std::string>>;
+
+    private:
+        tracker_type m_tracker;
+
+    public:
+        template<typename T>
+		void track_allocation(void* pointer_p, size_t size_in_bytes_including_alignment) noexcept
+		{
+            _DO_ONCE_AT_THREAD_PROCESS_ pool_monitor<PossibleAddressCount>::tracker_type* l_ref = &m_tracker;
+            FE_DO_ONCE(_DO_ONCE_AT_THREAD_PROCESS_, l_ref->emplace(typeid(T).name(), typename tracker_type::mapped_type{}));
+           
+            auto l_insertion_result = this->m_tracker.find(typeid(T).name())->second.insert(typename tracker_type::mapped_type::value_type{ static_cast<var::byte*>(pointer_p), size_in_bytes_including_alignment });
+			FE_ASSERT(l_insertion_result.second == false, "Pool Monitor: something went wrong with memory recycling algorithm. The same address has been allocated twice.");
+		}
+
+        template<typename T>
+        void track_deallocation(void* pointer_p) noexcept
+        {
+			this->m_tracker.find(typeid(T).name())->second.erase(static_cast<var::byte*>(pointer_p));
+        }
+
+		void log_current_memory_utilization() noexcept
+		{
+#ifdef _ENABLE_LOG_
+            auto l_last_type = this->m_tracker.end();
+            for (auto type_iterator = this->m_tracker.begin(); type_iterator != l_last_type; ++type_iterator)
+            {
+				var::uint64 l_total_size_in_bytes = 0;
+                auto l_last_address = type_iterator->second.end();
+                for (auto address_iterator = type_iterator->second.begin(); address_iterator != l_last_address; ++address_iterator)
+                {
+					l_total_size_in_bytes += address_iterator->second;
+                }
+                float64 l_percent = ((float64)l_total_size_in_bytes / (float64)PossibleAddressCount) * (float64)100;
+				FE_LOG("Pool Monitor: [Total ${%s@0} data allocated on pool: ${%lu@1} bytes | ${%s@0} uses ${%lf@2}% of pool memory].", type_iterator->first.c_str(), &l_total_size_in_bytes, &l_percent);
+            }
+#endif
+		}
     };
 }
 
@@ -251,14 +302,17 @@ public:
 
     template<typename U>
     using deleter_type = pool_deleter<U, POOL_TYPE::_GENERIC, ChunkCapacity, Alignment, GlobalAllocator, NamespaceAllocator>;
-
-    using global_pool_type = std::list<chunk_type, GlobalAllocator>;
-    using namespace_pool_type = std::unordered_multimap<FE::memory_region_t, chunk_type, FE::hash<FE::memory_region_t>, std::equal_to<FE::memory_region_t>, NamespaceAllocator>;
+   
+	using global_pool_type = std::list<chunk_type, GlobalAllocator>; //  std::unordered_map<thread_id, chunk_type> or std::unordered_map<thread_id, std::list<chunk_type>> can be used for thread-local storage.
+    using namespace_pool_type = std::unordered_multimap<FE::memory_namespace_t, chunk_type, FE::hash<FE::memory_namespace_t>, std::equal_to<FE::memory_namespace_t>, NamespaceAllocator>;
 
     using block_info_type = typename chunk_type::block_info_type;
 
-    constexpr static size_t chunk_capacity = chunk_type::chunk_capacity;
-    constexpr static size_t recycler_capacity = chunk_type::recycler_capacity;
+    static constexpr size_t chunk_capacity = chunk_type::chunk_capacity;
+    static constexpr size_t recycler_capacity = chunk_type::recycler_capacity;
+    static constexpr count_t maximum_list_node_count = 10;
+
+    internal::pool::pool_monitor<ChunkCapacity / Alignment::size> _pool_monitor;
 
 private:
 
@@ -283,7 +337,6 @@ public:
         FE_STATIC_ASSERT(std::is_const<U>::value == true, "Static Assertion Failed: The T must not be a const type.");
         FE_ASSERT(size_p == 0, "${%s@0}: ${%s@1} was 0", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_INVALID_SIZE), TO_STRING(size_p));
         FE_EXIT(size_p > ChunkCapacity, MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_CAPACITY, "Fatal Error: Unable to allocate the size of memmory that exceeds the pool chunk's capacity.");
-
 
         size_t l_queried_allocation_size_in_bytes = FE::calculate_aligned_memory_size_in_bytes<U, Alignment>(size_p);
 
@@ -357,7 +410,11 @@ public:
                     continue;
                 }
 
-                return std::unique_ptr<U, deleter_type<U>>{static_cast<U*>(l_allocation_result), deleter_type<U>{reinterpret_cast<chunk_type*>(l_list_iterator.operator->()), size_p, l_queried_allocation_size_in_bytes}};
+                std::unique_ptr<U, deleter_type<U>> l_result{static_cast<U*>(l_allocation_result), deleter_type<U>{reinterpret_cast<chunk_type*>(l_list_iterator.operator->()), size_p, l_queried_allocation_size_in_bytes}};
+#ifdef _ENABLE_LOG_
+                this->_pool_monitor.track_allocation<U>(l_result.get(), FE::calculate_aligned_memory_size_in_bytes<U, Alignment>(size_p));
+#endif
+                return std::move(l_result);
             }   
             else
             {
@@ -377,18 +434,20 @@ public:
         {
             this->m_global_memory.emplace_back();
         }
+
+		FE_ASSERT(this->m_global_memory.size() == maximum_list_node_count, "Maximum chunk count of a memory chunk list is limited to ${%lu@0} for some performance reasons.");
     }
 
-    void shrink_to_fit() noexcept
+    var::boolean shrink_to_fit() noexcept
     {
         typename global_pool_type::iterator  l_list_iterator = this->m_global_memory.begin();
         typename global_pool_type::const_iterator l_cend = this->m_global_memory.cend();
-        FE_ASSERT(l_list_iterator == l_cend, "Unable to shrink_to_fit() an empty pool.");
-        
-        /*
-                  first contains the address of the memory block.
-                  second contains the size of the memory block.
-        */
+     
+        if (l_list_iterator == l_cend)
+        {
+            FE_ASSERT(true, "Unable to shrink_to_fit() an empty pool.");
+            return false; // this is to ignore the operation if it is running in a release mode.
+        }
 
         for (; l_list_iterator != l_cend; ++l_list_iterator)
         {
@@ -415,6 +474,8 @@ public:
                 l_list_iterator = this->m_global_memory.begin();
             }
         }
+
+        return true;
     }
 
     template <typename T>
@@ -424,6 +485,9 @@ public:
         typename global_pool_type::const_iterator l_cend = this->m_global_memory.cend();
         FE_ASSERT(l_list_iterator == l_cend, "Unable to request deallocate() to an empty pool.");
 
+#ifdef _ENABLE_LOG_
+        this->_pool_monitor.track_deallocation<T>(pointer_p);
+#endif
 
         var::byte* const l_value = reinterpret_cast<var::byte*>(pointer_p);
 
@@ -462,7 +526,7 @@ public:
 
 
     template<typename U>
-    std::unique_ptr<U, deleter_type<U>> allocate(const char* region_name_p, count_t size_p = 1) noexcept
+    std::unique_ptr<U, deleter_type<U>> allocate(const char* namespace_p, count_t size_p = 1) noexcept
     {
         FE_STATIC_ASSERT((Alignment::size % 2) != 0, "Static Assertion Failed: The Alignment::size must be an even number.");
         FE_STATIC_ASSERT(std::is_array<U>::value == true, "Static Assertion Failed: The T must not be an array[] type.");
@@ -475,10 +539,10 @@ public:
 
         if ((this->m_memory_regions.empty() == true))
         {
-            create_pages(region_name_p, 1);
+            create_pages(namespace_p, 1);
         }
 
-        index_t l_bucket_index = this->m_memory_regions.bucket(region_name_p);
+        index_t l_bucket_index = this->m_memory_regions.bucket(namespace_p);
         typename namespace_pool_type::iterator l_list_iterator = this->m_memory_regions.begin(l_bucket_index);
         typename namespace_pool_type::const_iterator l_cend = this->m_memory_regions.cend(l_bucket_index);
 
@@ -502,7 +566,7 @@ public:
                     {
                         if ((l_list_iterator->second._page_iterator + l_queried_allocation_size_in_bytes) >= l_list_iterator->second._end)
                         {
-                            create_pages(region_name_p, 1);
+                            create_pages(namespace_p, 1);
                             continue;
                         }
 
@@ -518,7 +582,7 @@ public:
                 {
                     if ((l_list_iterator->second._page_iterator + l_queried_allocation_size_in_bytes) >= l_list_iterator->second._end)
                     {
-                        create_pages(region_name_p, 1);
+                        create_pages(namespace_p, 1);
                         continue;
                     }
 
@@ -540,40 +604,55 @@ public:
 
                 if (l_list_iterator->second._page_iterator > l_list_iterator->second._end)
                 {
-                    create_pages(region_name_p, 1);
+                    create_pages(namespace_p, 1);
                     continue;
                 }
 
-                return std::unique_ptr<U, deleter_type<U>>{static_cast<U*>(l_allocation_result), deleter_type<U>{reinterpret_cast<chunk_type*>(&(l_list_iterator->second)), size_p, l_queried_allocation_size_in_bytes}};
+                std::unique_ptr<U, deleter_type<U>> l_result{ static_cast<U*>(l_allocation_result), deleter_type<U>{reinterpret_cast<chunk_type*>(&(l_list_iterator->second)), size_p, l_queried_allocation_size_in_bytes} };
+#ifdef _ENABLE_LOG_
+                this->_pool_monitor.track_allocation<U>(l_result.get(), FE::calculate_aligned_memory_size_in_bytes<U, Alignment>(size_p));
+#endif
+                return std::move(l_result);
             }
             else
             {
-                create_pages(region_name_p, 1);
+                create_pages(namespace_p, 1);
             }
         }
 
-        create_pages(region_name_p, 1);
-        return allocate<U>(region_name_p, size_p);
+        create_pages(namespace_p, 1);
+        return allocate<U>(namespace_p, size_p);
     }
 
-    _FORCE_INLINE_ void create_pages(const char* region_name_p, size_t chunk_count_p) noexcept
+    _FORCE_INLINE_ void create_pages(const char* namespace_p, size_t chunk_count_p) noexcept
     {
         FE_ASSERT(chunk_count_p == 0, "${%s@0}: ${%s@1} was 0", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_INVALID_SIZE), TO_STRING(chunk_count_p));
 
         static chunk_type l_s_initial_value;
         for (var::size_t i = 0; i < chunk_count_p; ++i)
         {
-            this->m_memory_regions.emplace(region_name_p, l_s_initial_value);
+            this->m_memory_regions.emplace(namespace_p, l_s_initial_value);
         }
+
+        FE_ASSERT(this->count_chunks_with_namespace(namespace_p) == maximum_list_node_count, "Maximum chunk count of a memory chunk list is limited to ${%lu@0} for some performance reasons.");
     }
 
-    void shrink_to_fit(const char* region_name_p) noexcept
+    _FORCE_INLINE_ count_t count_chunks_with_namespace(const char* namespace_p) const noexcept
     {
-        index_t l_bucket_index = this->m_memory_regions.bucket(region_name_p);
+        index_t l_bucket_index = this->m_memory_regions.bucket(namespace_p);
+        return this->m_memory_regions.bucket_size(l_bucket_index);
+    }
+
+    var::boolean shrink_to_fit(const char* namespace_p) noexcept
+    {
+        index_t l_bucket_index = this->m_memory_regions.bucket(namespace_p);
         typename namespace_pool_type::iterator  l_list_iterator = this->m_memory_regions.begin(l_bucket_index);
         typename namespace_pool_type::const_iterator l_cend = this->m_memory_regions.cend(l_bucket_index);
-        FE_ASSERT(l_list_iterator == l_cend, "Unable to shrink_to_fit() an empty pool.");
-
+        if (l_list_iterator == l_cend)
+        {
+            FE_ASSERT(true, "Unable to shrink_to_fit() an empty pool.");
+            return false; // this is to ignore the operation if it is running in a release mode.
+        }
         /*
                   first contains the address of the memory block.
                   second contains the size of the memory block.
@@ -595,18 +674,23 @@ public:
 
         if (l_unused_memory_size_in_bytes == (ChunkCapacity * this->m_memory_regions.bucket_size(l_bucket_index)))
         {
-            this->m_memory_regions.erase(this->m_memory_regions.find(region_name_p));
+            this->m_memory_regions.erase(this->m_memory_regions.find(namespace_p));
         }
+
+        return true;
     }
 
     template <typename T>
-    void deallocate(const char* region_name_p, T* pointer_p, count_t element_count_p) noexcept
+    void deallocate(const char* namespace_p, T* pointer_p, count_t element_count_p) noexcept
     {
-        index_t l_bucket_index = this->m_memory_regions.bucket(region_name_p);
+        index_t l_bucket_index = this->m_memory_regions.bucket(namespace_p);
         typename namespace_pool_type::iterator  l_list_iterator = this->m_memory_regions.begin(l_bucket_index);
         typename namespace_pool_type::const_iterator l_cend = this->m_memory_regions.cend(l_bucket_index);
         FE_ASSERT(l_list_iterator == l_cend, "Unable to request deallocate() to an empty pool.");
 
+#ifdef _ENABLE_LOG_
+		this->_pool_monitor.track_deallocation<T>(pointer_p);
+#endif
 
         var::byte* const l_value = reinterpret_cast<var::byte*>(pointer_p);
 
@@ -742,10 +826,10 @@ private:
 };
 
 
-template<size_t ChunkCapacity = 512 MB, class Alignment = FE::align_8bytes, class GlobalAllocator = FE::aligned_allocator<internal::pool::chunk<void, POOL_TYPE::_GENERIC, ChunkCapacity, Alignment>>, class NamespaceAllocator = FE::aligned_allocator<std::pair<const FE::memory_region_t, internal::pool::chunk<void, POOL_TYPE::_GENERIC, ChunkCapacity, Alignment>>>>
+template<size_t ChunkCapacity = 512 MB, class Alignment = FE::align_8bytes, class GlobalAllocator = FE::aligned_allocator<internal::pool::chunk<void, POOL_TYPE::_GENERIC, ChunkCapacity, Alignment>>, class NamespaceAllocator = FE::aligned_allocator<std::pair<const FE::memory_namespace_t, internal::pool::chunk<void, POOL_TYPE::_GENERIC, ChunkCapacity, Alignment>>>>
 using generic_pool = pool<void, POOL_TYPE::_GENERIC, ChunkCapacity, Alignment, GlobalAllocator, NamespaceAllocator>;
 
-template<typename T, size_t ChunkCapacity = 512 MB, class Alignment = FE::align_8bytes, class GlobalAllocator = FE::aligned_allocator<internal::pool::chunk<void, POOL_TYPE::_GENERIC, ChunkCapacity, Alignment>>, class NamespaceAllocator = FE::aligned_allocator<std::pair<const FE::memory_region_t, internal::pool::chunk<void, POOL_TYPE::_GENERIC, ChunkCapacity, Alignment>>>>
+template<typename T, size_t ChunkCapacity = 512 MB, class Alignment = FE::align_8bytes, class GlobalAllocator = FE::aligned_allocator<internal::pool::chunk<void, POOL_TYPE::_GENERIC, ChunkCapacity, Alignment>>, class NamespaceAllocator = FE::aligned_allocator<std::pair<const FE::memory_namespace_t, internal::pool::chunk<void, POOL_TYPE::_GENERIC, ChunkCapacity, Alignment>>>>
 using generic_pool_ptr = std::unique_ptr<T, pool_deleter<T, FE::POOL_TYPE::_GENERIC, ChunkCapacity, Alignment, GlobalAllocator, NamespaceAllocator>>;
 
 

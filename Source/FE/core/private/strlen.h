@@ -7,7 +7,7 @@
 namespace FE::internal
 {
     template<typename CharT>
-    _NODISCARD_ _CONSTEXPR17_ uint64 strlen(const CharT* const str_p) noexcept
+    _NODISCARD_ _CONSTEXPR17_ _FORCE_INLINE_ uint64 strlen(const CharT* const str_p) noexcept
     {
         const CharT* l_iterator_pointer = str_p;
 
@@ -16,7 +16,7 @@ namespace FE::internal
             return 0;
         }
 
-        while (*(++l_iterator_pointer) != _NULL_) _LIKELY_ {}
+        while (*(++l_iterator_pointer) != _NULL_) {}
 
         return (l_iterator_pointer - str_p);
     }

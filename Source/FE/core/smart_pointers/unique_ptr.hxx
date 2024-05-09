@@ -5,11 +5,13 @@
 #include <FE/core/allocator.hxx>
 #include <FE/core/iterator.hxx>
 #include <FE/core/memory.hxx>
-#include <initializer_list>
+
 #ifdef _MEMORY_POOL_FE_UNIQUE_PTR_PROPERTIES_
 #include <FE/core/pool_allocator.hxx>
 #endif
 
+// std
+#include <initializer_list>
 
 
 BEGIN_NAMESPACE(FE)

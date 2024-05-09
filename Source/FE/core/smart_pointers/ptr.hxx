@@ -16,6 +16,10 @@ template<typename T, class Allocator>
 class exclusive_ptr;
 
 
+/*
+A smart pointer that is used to access an object safely without the dangling pointer issue, and has to be used with FE::exclusive_ptr.
+It is a non-owning pointer and its functionality is similar to eastl's smart pointer.
+*/
 template<typename T>
 class ptr final : public internal::smart_ptr::ptr_base
 {

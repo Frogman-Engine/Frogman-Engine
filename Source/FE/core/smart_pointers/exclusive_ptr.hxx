@@ -3,14 +3,18 @@
 // Copyright © from 2023 to current, UNKNOWN STRYKER. All Rights Reserved.
 #include <FE/core/prerequisites.h>
 #include <FE/core/smart_pointers/private/smart_ptr_variants_base.hpp>
-#include <FE/core/allocator.hxx>
+
 #include <FE/core/algorithm/utility.hxx>
 #include <FE/core/iterator.hxx>
 #include <FE/core/memory.hxx>
-#include <initializer_list>
+
 #ifdef _MEMORY_POOL_FE_EXCLUSIVE_PTR_PROPERTIES_
 #include <FE/core/pool_allocator.hxx>
 #endif
+
+// std
+#include <initializer_list>
+
 
 
 
@@ -20,7 +24,7 @@ BEGIN_NAMESPACE(FE)
 template<typename T>
 class ptr;
 
-
+// A smart pointer with exclusive ownership of the object it points to.
 template <typename T,
 #ifdef _MEMORY_POOL_FE_EXCLUSIVE_PTR_PROPERTIES_
 	class Allocator = FE::new_delete_allocator<FE::pool_allocator<typename std::remove_all_extents<T>::type>>

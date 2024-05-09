@@ -1,7 +1,6 @@
 ﻿#ifndef _FE_CONFIGURATION_H_
 #define _FE_CONFIGURATION_H_
-#pragma warning(disable: 4530)
-#pragma warning(disable: 4099)
+#pragma warning(disable: 4819) // The following warning is treated as an error: the file contains a character that cannot be represented in the current code page (949). Save the file in Unicode format to prevent data loss.
 // Copyright © from 2023 to current, UNKNOWN STRYKER. All Rights Reserved.
 // To enable or disable a certain feature, remove the macro.
 // 
@@ -9,7 +8,7 @@
 // The binary files e.g. (.lib, .a, .dll, or .so) need to be rebuilt to apply changes that have been made.
 
 
-constexpr inline auto allowed_directory_string_length = 512;
+constexpr inline auto allowed_directory_string_length = 16 * 1024;
 
 
 #ifdef _LEAVE_THIRD_PARTY_EXCEPTIONS_OUT_

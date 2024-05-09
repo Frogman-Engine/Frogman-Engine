@@ -5,13 +5,14 @@
 #include <FE/core/algorithm/utility.hxx>
 #include <FE/core/iterator.hxx>
 #include <FE/core/memory.hxx>
+
+// std
 #include <array>
 #include <initializer_list>
 #include <memory_resource>
-#include <queue>
-#include <vector>
+
 #pragma warning(push)
-#pragma warning(disable: 26444)
+
 
 
 
@@ -19,63 +20,6 @@
 BEGIN_NAMESPACE(FE)
 
 
-template<class T, size_t Capacity, class Comparator = std::greater<T>>
-class fpriority_queue : public std::priority_queue<T, std::pmr::vector<T>, Comparator>
-{
-public:
-	using base_type = std::priority_queue<T, std::pmr::vector<T>, Comparator>;
-	using container_type = typename base_type::container_type;
-	using comparison = Comparator;
-	using value_type = typename container_type::value_type;
-	using size_type = typename container_type::size_type;
-	using reference = typename container_type::reference;
-	using const_reference = typename container_type::const_reference;
-
-private:
-	std::array<var::byte, sizeof(T) * Capacity> m_actual_memory;
-	std::pmr::monotonic_buffer_resource m_memory_resource;
-
-public:
-	_FORCE_INLINE_ fpriority_queue() noexcept : m_actual_memory(), m_memory_resource(m_actual_memory.data(), m_actual_memory.size()) 
-	{
-		base_type(std::pmr::polymorphic_allocator<T>{&m_memory_resource}); 
-	}
-	_FORCE_INLINE_ fpriority_queue(const fpriority_queue& other_p) noexcept : m_actual_memory(), m_memory_resource(m_actual_memory.data(), m_actual_memory.size()) 
-	{
-		base_type(comparison(), other_p.c, std::pmr::polymorphic_allocator<T>{&m_memory_resource}); 
-	}
-	_FORCE_INLINE_ fpriority_queue(fpriority_queue&& rvalue_p) noexcept : m_actual_memory(), m_memory_resource(m_actual_memory.data(), m_actual_memory.size()) 
-	{
-		base_type(comparison(), std::move(rvalue_p.c), std::pmr::polymorphic_allocator<T>{&m_memory_resource}); 
-	}
-
-	_FORCE_INLINE_ boolean is_empty() const noexcept
-	{
-		return this->c.empty();
-	}
-
-	_FORCE_INLINE_ container_type& get_container() noexcept
-	{
-		return this->c;
-	}
-
-	_FORCE_INLINE_ typename container_type::const_iterator cbegin() const noexcept
-	{
-		return this->c.cbegin();
-	}
-
-	_FORCE_INLINE_ typename container_type::const_iterator cend() const noexcept
-	{
-		return this->c.cend();
-	}
-};
-
-
-template<class T, class Comparator, class Allocator>
-class priority_queue
-{
-	// heap-based
-};
 
 
 template<class T, size_t Capacity, class Traits = FE::memory_traits<T>>

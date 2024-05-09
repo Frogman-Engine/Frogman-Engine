@@ -9,6 +9,7 @@ INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/../../../Frogman-Engine-Tests/Be
 
 
 SOURCE_GROUP("Third-Party\\City-Hash" FILES ${_THIRD_PARTY_CITY_HASH_})
+SOURCE_GROUP("Third-Party\\Robin-Hood-Hash" FILES ${_THIRD_PARTY_ROBIN_HOOD_HASH_})
 SOURCE_GROUP("FE\\core\\algorithm" FILES ${_ALGORITHM_})
 SOURCE_GROUP("FE\\core\\algorithm\\private" FILES ${_ALGORITHM_PRIVATE_})
 SOURCE_GROUP("FE\\core\\log" FILES ${_LOG_})
@@ -54,6 +55,7 @@ SOURCE_GROUP("Tests" FILES ${_TEST_CODE_})
 
 ADD_EXECUTABLE(	${FE_CORE_TEST} 
 				${_THIRD_PARTY_CITY_HASH_}
+				${_THIRD_PARTY_ROBIN_HOOD_HASH_}
 				main.cpp
 				${_ALGORITHM_}
 				${_ALGORITHM_PRIVATE_}

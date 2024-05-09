@@ -35,7 +35,7 @@ class logger_base
 {
 public:
     _MAYBE_UNUSED_ static constexpr uint16 line_info_buffer_size = 32;
-    _MAYBE_UNUSED_ static constexpr uint32 default_buffer_size = 16 * 1024;
+    _MAYBE_UNUSED_ static constexpr uint32 default_buffer_size = allowed_directory_string_length;
 
 #ifdef _WINDOWS_X86_64_
     using directory_char_type = var::wchar;

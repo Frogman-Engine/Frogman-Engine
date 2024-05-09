@@ -1,15 +1,15 @@
 ﻿#ifndef _FE_CORE_ALGORITHM_UTILITY_HXX_
 #define _FE_CORE_ALGORITHM_UTILITY_HXX_
 // Copyright © from 2023 to current, UNKNOWN STRYKER. All Rights Reserved.
-#include <FE/core/types.hxx>
 #include <FE/core/private/debug.h>
 #include <FE/core/private/strlen.h>
 #include <FE/core/type_traits.hxx>
-#include <bitset>
-#pragma warning(push)
-#pragma warning(disable: 4244)
-#pragma warning(disable: 26479)
 
+// std
+#include <bitset>
+
+#pragma warning(push)
+#pragma warning(disable: 4244) // silent the warning 'argument': conversion from 'FE::var::float64' to 'IntT', possible loss of data
 #ifdef FE_CHAR_TO_INT
 #error FE_CHAR_TO_INT is a reserved Frogman Engine macro keyword.
 #endif

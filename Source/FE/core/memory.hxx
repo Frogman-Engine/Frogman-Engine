@@ -37,8 +37,9 @@
 #include <FE/core/prerequisites.h>
 #include <FE/core/algorithm/math.h>
 #include <FE/core/iterator.hxx>
+
+// SIMD
 #include <immintrin.h>
-#include <memory_resource>
 
 
 

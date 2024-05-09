@@ -15,8 +15,14 @@ template <typename T, class ChunkCapacity = object_count<512>>
 class block_pool_allocator_base
 {
 public:
+	using chunk_capacity = ChunkCapacity;
 	using global_allocator = FE::aligned_allocator < internal::pool::chunk< T, POOL_TYPE::_BLOCK, ChunkCapacity::size, FE::align_custom_bytes<sizeof(T)> > >;
-	using namespace_allocator = FE::aligned_allocator< std::pair< const FE::memory_region_t, internal::pool::chunk< T, POOL_TYPE::_BLOCK, ChunkCapacity::size, FE::align_custom_bytes<sizeof(T)> > > >;
+	using namespace_allocator = FE::aligned_allocator< std::pair< const FE::memory_namespace_t, internal::pool::chunk< T, POOL_TYPE::_BLOCK, ChunkCapacity::size, FE::align_custom_bytes<sizeof(T)> > > >;
+
+	_CONSTEXPR17_ var::count_t page_capacity() const noexcept
+	{
+		return ChunkCapacity::size;
+	}
 
 protected:
 	static FE::block_pool<T, ChunkCapacity::size, global_allocator, namespace_allocator> s_pool;
@@ -33,6 +39,7 @@ template <typename T, class ChunkCapacity = object_count<512>>
 class new_delete_block_pool_allocator final : public block_pool_allocator_base<T, ChunkCapacity>
 {
 public:
+	using chunk_capacity = ChunkCapacity;
 	using base_type = block_pool_allocator_base<T, ChunkCapacity>;
 	using value_type = T;
 	using pointer = value_type*;
@@ -106,6 +113,7 @@ template <typename T, class ChunkCapacity = object_count<512>>
 class block_pool_allocator final : public block_pool_allocator_base<FE::internal::pool::uninitialized_bytes<sizeof(T)>, ChunkCapacity>
 {
 public:
+	using chunk_capacity = ChunkCapacity;
 	using base_type = block_pool_allocator_base<FE::internal::pool::uninitialized_bytes<sizeof(T)>, ChunkCapacity>;
 	using value_type = T;
 	using pointer = value_type*;
@@ -176,9 +184,10 @@ public:
 template <typename T, class ChunkCapacity = object_count<512>>
 class new_delete_namespace_block_pool_allocator final : public block_pool_allocator_base<T, ChunkCapacity>
 {
-	const FE::memory_region_t m_namespace;
+	const FE::memory_namespace_t m_namespace;
 
 public:
+	using chunk_capacity = ChunkCapacity;
 	using base_type = block_pool_allocator_base<T, ChunkCapacity>;
 	using value_type = T;
 	using pointer = value_type*;
@@ -256,9 +265,10 @@ public:
 template <typename T, class ChunkCapacity = object_count<512>>
 class namespace_block_pool_allocator final : public block_pool_allocator_base<FE::internal::pool::uninitialized_bytes<sizeof(T)>, ChunkCapacity>
 {
-	const FE::memory_region_t m_namespace;
+	const FE::memory_namespace_t m_namespace;
 
 public:
+	using chunk_capacity = ChunkCapacity;
 	using base_type = block_pool_allocator_base<FE::internal::pool::uninitialized_bytes<sizeof(T)>, ChunkCapacity>;
 	using value_type = T;
 	using pointer = value_type*;

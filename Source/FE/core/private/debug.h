@@ -2,8 +2,6 @@
 #define _FE_CORE_PRIVATE_DEBUG_H_
 // Copyright © from 2023 to current, UNKNOWN STRYKER. All Rights Reserved.
 #include <iostream>
-#include <FE/miscellaneous/configuration.h>
-#include <FE/core/macros/attributes.h>
 
 
 

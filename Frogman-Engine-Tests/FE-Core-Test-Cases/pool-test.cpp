@@ -20,7 +20,7 @@ TEST(pool, block_allocation)
 	{
 		FE::block_pool<std::string> l_block_pool;
 
-		FE::memory_region_t l_memory_region = "Restaurant";
+		FE::memory_namespace_t l_memory_region = "Restaurant";
 
 		FE::block_pool_ptr<std::string> l_smart_ptr1 = l_block_pool.allocate(l_memory_region.data());
 		l_smart_ptr1->reserve(20);
@@ -89,6 +89,8 @@ TEST(pool, generic_block_allocation)
 		FE::generic_pool_ptr<std::string, 1 KB> l_smart_ptr = l_pool.allocate<std::string>();
 	}
 
+	FE::pool_allocator_base<FE::SIMD_auto_alignment>::get_pool()._pool_monitor.log_current_memory_utilization();
+	
 	{
 		FE::generic_pool_ptr<FE::var::int64, 1 KB> l_smart_ptr[8];
 
@@ -113,7 +115,7 @@ TEST(pool, generic_block_allocation)
 	}
 
 
-	FE::memory_region_t l_memory_region = "Restaurant";
+	FE::memory_namespace_t l_memory_region = "Restaurant";
 	{
 		FE::generic_pool<1 KB> l_namespace_pool;
 		FE::generic_pool_ptr<std::string, 1 KB> l_smart_ptr1 = l_namespace_pool.allocate<std::string>(l_memory_region.data(), 1);
@@ -172,7 +174,6 @@ TEST(namespace_pool_allocator, all)
 {
 	{
 		std::list<int, FE::namespace_pool_allocator<int>> l_list{ FE::namespace_pool_allocator<int>{"list node pool"} };
-		l_list.get_allocator().create_pages(1);
 		for (int i = 0; i < 10; ++i)
 		{
 			l_list.push_back(1);
@@ -188,7 +189,6 @@ void memory_pooled_std_list_iteration(benchmark::State& state_p) noexcept
 	benchmark::DoNotOptimize(l_allocator);
 	std::list<int, FE::namespace_pool_allocator<int>> l_list{ l_allocator };
 	benchmark::DoNotOptimize(l_list);
-	l_allocator.create_pages(1);
 	for (int i = 0; i < 10; ++i)
 	{
 		l_list.push_back(1);
@@ -265,6 +265,8 @@ void boost_pool_allocator_extreme_test(benchmark::State& state_p) noexcept
 BENCHMARK(boost_pool_allocator_extreme_test);
 
 
+
+
 void boost_object_pool_allocator_extreme_test(benchmark::State& state_p) noexcept
 {
 	static std::string* l_s_strings[_MAX_ITERATION_];
@@ -272,7 +274,7 @@ void boost_object_pool_allocator_extreme_test(benchmark::State& state_p) noexcep
 
 	boost::object_pool<std::string> l_allocator;
 	benchmark::DoNotOptimize(l_allocator);
-
+	
 	for (auto _ : state_p)
 	{
 		for (FE::var::uint32 i = 0; i < _MAX_ITERATION_; ++i)
@@ -300,12 +302,12 @@ void boost_object_pool_allocator_extreme_test(benchmark::State& state_p) noexcep
 BENCHMARK(boost_object_pool_allocator_extreme_test);
 
 
+
+
 void FE_pool_allocator_extreme_test(benchmark::State& state_p) noexcept
 {
 	FE::pool_allocator<std::string> l_allocator;
 	benchmark::DoNotOptimize(l_allocator);
-
-	l_allocator.create_pages(1);
 
 	static std::string* l_s_strings[_MAX_ITERATION_];
 	benchmark::DoNotOptimize(l_s_strings);
@@ -335,6 +337,47 @@ void FE_pool_allocator_extreme_test(benchmark::State& state_p) noexcept
 	}
 }
 BENCHMARK(FE_pool_allocator_extreme_test);
+
+
+
+
+void FE_block_pool_allocator_extreme_test(benchmark::State& state_p) noexcept
+{
+	FE::block_pool_allocator<std::string> l_allocator;
+	benchmark::DoNotOptimize(l_allocator);
+
+	constexpr FE::count_t l_count = l_allocator.page_capacity();
+
+	static std::string* l_s_strings[l_count];
+	benchmark::DoNotOptimize(l_s_strings);
+
+	for (auto _ : state_p)
+	{
+		for (FE::var::uint32 i = 0; i < l_count; ++i)
+		{
+			l_s_strings[i] = l_allocator.allocate(1);
+		}
+
+		for (FE::var::uint32 i = 0; i < l_count; ++i)
+		{
+			if (i % 2 == 0)
+			{
+				l_allocator.deallocate(l_s_strings[i], 1);
+			}
+		}
+
+		for (FE::var::uint32 i = 0; i < l_count; ++i)
+		{
+			if (i % 2 == 1)
+			{
+				l_allocator.deallocate(l_s_strings[i], 1);
+			}
+		}
+	}
+}
+BENCHMARK(FE_block_pool_allocator_extreme_test);
+
+
 
 
 void cpp_new_delete_extreme_test(benchmark::State& state_p) noexcept

@@ -2,8 +2,10 @@
 #define _FE_CORE_FUNCTION_HXX_
 // Copyright © from 2023 to current, UNKNOWN STRYKER. All Rights Reserved.
 #include <FE/core/prerequisites.h>
+#include <FE/core/type_traits.hxx>
+
+// std
 #include <any>
-#define PASS_RETURN_BUFFER(return_buffer) (&return_buffer)
 
 
 

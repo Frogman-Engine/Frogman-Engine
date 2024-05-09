@@ -35,19 +35,28 @@ struct reflection_##method_name \
 { \
 	reflection_##method_name() noexcept \
 	{ \
-		FE_DO_ONCE(_DO_ONCE_AT_APP_PROCESS_, ::FE::framework::method_signature_t l_signature = get_signature(); ::FE::framework::application::get_function_table().register_task<::FE::cpp_style_task<class_meta_data::type, __VA_ARGS__>>(l_signature.data(), &class_meta_data::type::##method_name)); \
+		FE_DO_ONCE(_DO_ONCE_AT_APP_PROCESS_, ::FE::framework::method_signature_t signature = get_signature(); ::FE::framework::application::get_function_table().register_task<::FE::cpp_style_task<class_meta_data::type, __VA_ARGS__>>(std::move(signature), &class_meta_data::type::##method_name)); \
 	} \
 public: \
 	static ::FE::framework::method_signature_t get_signature() noexcept \
 	{ \
 		::FE::framework::method_signature_t l_full_signature = __FUNCTION__; \
-		::FE::framework::method_signature_t l_method_attribute = "const char* (void)"; \
-		auto l_result = l_method_attribute.find("("); \
+		::FE::framework::method_signature_t l_method_attribute = #__VA_ARGS__; \
+		auto l_result = l_method_attribute.find(")"); \
+		::FE::length_t l_unnecessary_part_length = l_method_attribute.length() - l_result->_end; \
+		l_full_signature.extend(l_method_attribute.length()); \
+		if (l_unnecessary_part_length != 0) \
+		{ \
+			l_method_attribute.erase(l_result->_end, l_unnecessary_part_length); \
+		} \
+		l_result = l_method_attribute.find("("); \
 		l_full_signature.insert(0, l_method_attribute, 0, l_result->_begin); \
 		auto l_namespace = l_full_signature.rfind("::"); \
-		l_full_signature.replace(l_namespace->_begin, l_full_signature.length() - l_namespace->_begin, l_method_attribute, l_result->_begin, l_method_attribute.find(")")->_end - l_result->_begin); \
+		::FE::count_t l_count_to_replace = l_full_signature.length() - l_namespace->_begin; \
+		::FE::count_t l_input_replacement_size = l_method_attribute.find(")")->_end - l_result->_begin; \
+		l_full_signature.replace(l_namespace->_begin, l_count_to_replace, l_method_attribute, l_result->_begin, l_input_replacement_size); \
 		l_full_signature.replace(l_full_signature.rfind("::reflection_")->_end - 1, 1, ':', 2); \
-		return l_full_signature; \
+		return std::move(l_full_signature); \
 	} \
 }; public: reflection_##method_name reflection_##method_name##_instance
 

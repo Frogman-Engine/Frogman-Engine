@@ -710,6 +710,9 @@ inline size_t hash_bytes(void const* ptr, size_t len) noexcept {
     }
 
     auto const* const data8 = reinterpret_cast<uint8_t const*>(data64 + n_blocks);
+
+#pragma warning(push)
+#pragma warning(disable : 26819)
     switch (len & 7U) {
     case 7:
         h ^= static_cast<uint64_t>(data8[6]) << 48U;
@@ -736,6 +739,7 @@ inline size_t hash_bytes(void const* ptr, size_t len) noexcept {
     default:
         break;
     }
+#pragma warning(pop)
 
     h ^= h >> r;
 

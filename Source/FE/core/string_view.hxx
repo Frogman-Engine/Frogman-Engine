@@ -6,6 +6,8 @@
 #include <FE/core/algorithm/string.hxx>
 #include <FE/core/algorithm/utility.hxx>
 #include <FE/core/iterator.hxx>
+
+// std
 #include <optional>
 
 
@@ -476,6 +478,51 @@ using string_view8 = basic_string_view<var::UTF8>;
 
 using string_view16 = basic_string_view<var::UTF16>;
 using string_view32 = basic_string_view<var::UTF32>;
+
+
+template<>
+struct is_string_class<FE::string_view>
+{
+	_MAYBE_UNUSED_ static constexpr inline bool value = true;
+};
+
+template<>
+struct is_string_class<FE::ustring_view>
+{
+	_MAYBE_UNUSED_ static constexpr inline bool value = true;
+};
+
+template<>
+struct is_string_class<FE::sstring_view>
+{
+	_MAYBE_UNUSED_ static constexpr inline bool value = true;
+};
+
+template<>
+struct is_string_class<FE::wstring_view>
+{
+	_MAYBE_UNUSED_ static constexpr inline bool value = true;
+};
+
+#ifdef _HAS_CXX20_
+template<>
+struct is_string_class<FE::string_view8>
+{
+	_MAYBE_UNUSED_ static constexpr inline bool value = true;
+};
+#endif
+
+template<>
+struct is_string_class<FE::string_view16>
+{
+	_MAYBE_UNUSED_ static constexpr inline bool value = true;
+};
+
+template<>
+struct is_string_class<FE::string_view32>
+{
+	_MAYBE_UNUSED_ static constexpr inline bool value = true;
+};
 
 
 END_NAMESPACE

@@ -45,34 +45,37 @@ protected:
 	}
 
 #if defined(_ENABLE_MEMORY_TRACKER_)
-	_FORCE_INLINE_ static void __log_heap_memory_allocation(uint64 size_in_bytes_to_allocate_p, void* const allocated_address_p, const char* const type_name_p) noexcept
+	template <typename T>
+	_FORCE_INLINE_ static void __log_heap_memory_allocation(uint64 size_in_bytes_to_allocate_p, void* const allocated_address_p) noexcept
 	{
 		uint64 l_this_thread_id = FE::thread::this_thread_id();
 		add(size_in_bytes_to_allocate_p);
 		memory_utilization l_new_heap_mem_usage_in_bytes = query_all_data();
-		FE_LOG("\n\n This application is using ${%lu@0} bytes. \n Current thread[id:${%lu@1}] is using ${%lu@2} bytes.\n", &(l_new_heap_mem_usage_in_bytes._global_bytes), &l_this_thread_id, &(l_new_heap_mem_usage_in_bytes._thread_local_bytes));
-		FE_LOG("Allocated data information: [address: 0x${%p@0} | type name: ${%s@1}].\n", &allocated_address_p, &type_name_p);
+		FE_LOG("This application is using ${%lu@0} bytes. \n Current thread[id:${%lu@1}] is using ${%lu@2} bytes.", &(l_new_heap_mem_usage_in_bytes._global_bytes), &l_this_thread_id, &(l_new_heap_mem_usage_in_bytes._thread_local_bytes));
+		FE_LOG("Allocated data information: [address: 0x${%p@0} | allocation size: ${%lu@1} bytes | type name: ${%s@2} | size of type: ${%lu@3} bytes].\n", &allocated_address_p, &size_in_bytes_to_allocate_p, typeid(T).name(), &FE::buffer<var::size_t>::set_and_get(sizeof(T)));
 	}
 
-	_FORCE_INLINE_ static void __log_heap_memory_reallocation(uint64 prev_size_in_bytes_p, uint64 new_size_in_bytes_to_allocate_p, void* const realloc_target_p, const char* const type_name_p) noexcept
+	template <typename T>
+	_FORCE_INLINE_ static void __log_heap_memory_reallocation(uint64 prev_size_in_bytes_p, uint64 new_size_in_bytes_to_allocate_p, void* const realloc_target_p) noexcept
 	{
 		uint64 l_this_thread_id = FE::thread::this_thread_id();
 
 		sub(prev_size_in_bytes_p);
 		add(new_size_in_bytes_to_allocate_p);
 		memory_utilization l_new_heap_mem_usage_in_bytes = query_all_data();
-		FE_LOG("\n\n This application is using ${%lu@0} bytes. \n Current thread[id:${%lu@1}] is using ${%lu@2} bytes.\n", &(l_new_heap_mem_usage_in_bytes._global_bytes), &l_this_thread_id, &(l_new_heap_mem_usage_in_bytes._thread_local_bytes));
-		FE_LOG("Reallocated data information: [address: 0x${%p@0} | type name: ${%s@1}].\n", &realloc_target_p, &type_name_p);
+		FE_LOG("This application is using ${%lu@0} bytes. \n Current thread[id:${%lu@1}] is using ${%lu@2} bytes.", &(l_new_heap_mem_usage_in_bytes._global_bytes), &l_this_thread_id, &(l_new_heap_mem_usage_in_bytes._thread_local_bytes));
+		FE_LOG("Reallocated data information: [address: 0x${%p@0} | Reallocation size: ${%lu@1} bytes | type name: ${%s@2} | size of type: ${%lu@3} bytes].\n", &realloc_target_p, &new_size_in_bytes_to_allocate_p, typeid(T).name(), &FE::buffer<var::size_t>::set_and_get(sizeof(T)));
 	}
 
-	_FORCE_INLINE_ static void __log_heap_memory_deallocation(uint64 size_in_bytes_to_deallocate_p, void* const address_to_be_freed_p, const char* const type_name_p) noexcept
+	template <typename T>
+	_FORCE_INLINE_ static void __log_heap_memory_deallocation(uint64 size_in_bytes_to_deallocate_p, void* const address_to_be_freed_p) noexcept
 	{
 		uint64 l_this_thread_id = FE::thread::this_thread_id();
 
 		sub(size_in_bytes_to_deallocate_p);
 		memory_utilization l_new_heap_mem_usage_in_bytes = query_all_data();
-		FE_LOG("\n\n This application is using ${%lu@0} bytes. \n Current thread[id:${%lu@1}] is using ${%lu@2} bytes.\n", &(l_new_heap_mem_usage_in_bytes._global_bytes), &l_this_thread_id, &(l_new_heap_mem_usage_in_bytes._thread_local_bytes));
-		FE_LOG("Deleted data information: [address: 0x${%p@0} | type name: ${%s@1}].\n", &address_to_be_freed_p, &type_name_p);
+		FE_LOG("This application is using ${%lu@0} bytes. \n Current thread[id:${%lu@1}] is using ${%lu@2} bytes.", &(l_new_heap_mem_usage_in_bytes._global_bytes), &l_this_thread_id, &(l_new_heap_mem_usage_in_bytes._thread_local_bytes));
+		FE_LOG("Deleted data information: [address: 0x${%p@0} | Deleted size: ${%lu@1} bytes | type name: ${%s@2} | size of type: ${%lu@3} bytes].\n", &address_to_be_freed_p, &size_in_bytes_to_deallocate_p, typeid(T).name(), &FE::buffer<var::size_t>::set_and_get(sizeof(T)));
 	}
 #endif
 
@@ -103,7 +106,7 @@ public:
 		FE_ASSERT((reinterpret_cast<uintptr_t>(l_result) % Alignment::size) != 0, "${%s@0}: The allocated heap memory address not aligned by ${%lu@1}.", TO_STRING(MEMORY_ERROR_1XX::_ERROR_ILLEGAL_ADDRESS_ALIGNMENT), &Alignment::size);
 
 #if defined(_ENABLE_MEMORY_TRACKER_)
-		allocator_base::__log_heap_memory_allocation(bytes_p, l_result, typeid(T).name());
+		allocator_base::__log_heap_memory_allocation<T>(bytes_p, l_result);
 #endif
 
 		return l_result;
@@ -117,7 +120,7 @@ public:
 		ALIGNED_FREE(ptr_to_memory_p);
 
 #if defined(_ENABLE_MEMORY_TRACKER_)
-		allocator_base::__log_heap_memory_deallocation(bytes_p, ptr_to_memory_p, typeid(T).name());
+		allocator_base::__log_heap_memory_deallocation<T>(bytes_p, ptr_to_memory_p);
 #endif 
 	}
 
@@ -145,7 +148,7 @@ public:
 		FE_ASSERT((reinterpret_cast<uintptr_t>(l_realloc_result) % Alignment::size) != 0, "${%s@0}: The allocated heap memory address not aligned by ${%lu@1}.", TO_STRING(MEMORY_ERROR_1XX::_ERROR_ILLEGAL_ADDRESS_ALIGNMENT), &Alignment::size);
 
 #if defined(_ENABLE_MEMORY_TRACKER_)
-		allocator_base::__log_heap_memory_reallocation(prev_bytes_p, new_bytes_p, l_realloc_result, typeid(T).name());
+		allocator_base::__log_heap_memory_reallocation<T>(prev_bytes_p, new_bytes_p, l_realloc_result);
 #endif
 
 		return l_realloc_result;

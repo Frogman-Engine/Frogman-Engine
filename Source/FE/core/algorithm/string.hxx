@@ -1,11 +1,12 @@
 ﻿#ifndef _FE_CORE_ALGORITHM_STRING_HXX_
 #define _FE_CORE_ALGORITHM_STRING_HXX_
 #pragma warning(push)
-#pragma warning(disable: 4702)
 // Copyright © from 2023 to current, UNKNOWN STRYKER. All Rights Reserved.
 #include <FE/core/prerequisites.h>
 #include <FE/core/iterator.hxx>
 #include <FE/core/memory.hxx>
+
+// std
 #include <optional>
 
 

@@ -8,8 +8,6 @@
 #include <FE/miscellaneous/private/macro_restrictions.h>
 
 
-
-
 /*
 Profile Guided Optimization: https://learn.microsoft.com/en-us/cpp/build/profile-guided-optimizations?view=msvc-170
 

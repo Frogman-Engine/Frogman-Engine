@@ -1,7 +1,7 @@
 ﻿#ifndef _FE_CORE_MEMORY_METRICS_HXX_
 #define _FE_CORE_MEMORY_METRICS_HXX_
 // Copyright © from 2023 to current, UNKNOWN STRYKER. All Rights Reserved.
-#include <FE/core/prerequisites.h>
+#include <FE/core/types.hxx>
 
 
 

@@ -2,7 +2,6 @@
 #define _FE_CORE_POOL_ALLOCATOR_HXX_
 // Copyright © from 2023 to current, UNKNOWN STRYKER. All Rights Reserved.
 #include <FE/core/prerequisites.h>
-#include <FE/core/allocator.hxx>
 #include <FE/core/private/pool_allocator_base.hxx>
 
 
@@ -98,7 +97,7 @@ public:
 template <typename T, class Alignment = FE::SIMD_auto_alignment>
 class namespace_pool_allocator final : public pool_allocator_base<Alignment>
 {
-	const FE::memory_region_t m_namespace;
+	const FE::memory_namespace_t m_namespace;
 
 public:
 	using base_type = pool_allocator_base<Alignment>;
