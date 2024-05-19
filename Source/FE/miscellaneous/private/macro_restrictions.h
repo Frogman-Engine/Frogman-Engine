@@ -7,7 +7,7 @@
 #if !defined(_MSVC_) && !defined(_GNUC_)&& !defined(_CLANG_)
 #error Frogman Engine requires Microsoft Visual Studio 2022 C++ v143, LLVM Clang, g++ 11 ,or latest g++ to compile. Please use one of these compilers.
 #endif
-#if !defined(_WINDOWS_X86_64_) && !defined(_LINUX_64BIT_OS_)
+#if !defined(_WINDOWS_X86_64_) && !defined(_LINUX_X86_64_)
 #error An Incompatible System Environment Detected: Frogman Engine supports Windows x86-64 and Linux(Ubuntu) x86-64. Please use one of them.
 #endif
 #ifdef __APPLE__

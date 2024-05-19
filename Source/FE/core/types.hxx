@@ -280,7 +280,7 @@ namespace container
 	public:
 
 		_CONSTEXPR17_ _FORCE_INLINE_ unsafe_ref() noexcept : m_ref_ptr() {}
-		_CONSTEXPR17_ _FORCE_INLINE_ ~unsafe_ref() noexcept {}
+		_FORCE_INLINE_ ~unsafe_ref() noexcept {}
 
 		_CONSTEXPR17_ _FORCE_INLINE_ unsafe_ref(T& ref_p) noexcept : m_ref_ptr(&ref_p) {}
 

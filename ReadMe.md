@@ -14,9 +14,9 @@ This project is under development and may contain some bugs and issues.
 https://savory-moth-a00.notion.site/5cef12dd2c9b43588f22045405e80cff?v=86ea5413ff4f40de9204c4aa22907ffc&pvs=4
 
 
-# Prerequisite: CMake 3.24.0 or latest.
+# Prerequisite: CMake 3.27.0 or latest.
 
-# C++ standard version: C++ 20 or latest.
+# C++ standard version: C++ 17 or latest.
 
 # Visual Studio 2022 C++ Runtime Library.
 The default settings use /MTd (Static C++ Standard Library Debug Build) for debug configuration and /MT (Static C++ Standard Library Release Build) for release.
@@ -25,7 +25,5 @@ All project settings can be adjusted by modifying CMakeLists.txt.
 
 | Platform     | Architecture  | Platform Support | 
 |--------------|---------------|------------------|
-| Windows      | X86-64        | In Development   |
-| Linux        | X86-64        | Canceled         | 
-
-(to focus on Windows Development)
+| Windows      | X86-64        | Discontinued     |
+| Linux        | X86-64        | In Development   |

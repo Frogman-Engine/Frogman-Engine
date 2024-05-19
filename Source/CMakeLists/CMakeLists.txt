@@ -235,10 +235,6 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
 		$<$<CONFIG:MINSIZEREL>:		${CMAKE_CURRENT_SOURCE_DIR}/FE_FRAMEWORK/Linux/minimally_sized_release/lib/libFE_FRAMEWORK.a>
 	)
 
-
-	ADD_COMPILE_DEFINITIONS(_LINUX_X86_64_)
-
-
 elseif(CMAKE_SYSTEM_NAME STREQUAL "Windows")
 	MESSAGE("Configurating The Build Environment for Windows X86-64")
 
@@ -281,9 +277,6 @@ elseif(CMAKE_SYSTEM_NAME STREQUAL "Windows")
 		$<$<CONFIG:MINSIZEREL>:		${CMAKE_CURRENT_SOURCE_DIR}/FE_FRAMEWORK/Windows/minimally_sized_release/lib/FE_FRAMEWORK.lib>
 	)
 	
-
-	ADD_COMPILE_DEFINITIONS(_WINDOWS_X86_64_)
-
 endif()
 
 

@@ -39,7 +39,7 @@ public:
 
 #ifdef _WINDOWS_X86_64_
     using directory_char_type = var::wchar;
-#elif defined(_LINUX_64BIT_OS_)
+#elif defined(_LINUX_X86_64_)
     using directory_char_type = var::character
 #endif
     using directory_buffer_type = std::basic_string<directory_char_type, std::char_traits<directory_char_type>>;

@@ -3,4 +3,7 @@
 *.idb
 *.pdb
 
+goorm.manifest
+
 Solution/
+Frogman-Engine-Tests/FE-Tests/build/

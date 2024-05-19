@@ -10,7 +10,7 @@
 #undef WIN32_LEAN_AND_MEAN
 
 
-#elif defined(_LINUX_64BIT_OS_)
+#elif defined(_LINUX_X86_64_)
 #include <sys/types.h>
 #include <sys/sysinfo.h>
 #endif
@@ -52,7 +52,7 @@ FE::var::uint64 FE::request_app_memory_utilization(const HEAP_MEMORY_UTIL_INFO s
 	}
 
 
-#elif defined(_LINUX_64BIT_OS_)
+#elif defined(_LINUX_X86_64_)
 	struct sysinfo l_memory_information;
 	sysinfo(&l_memory_information);
 

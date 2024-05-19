@@ -7,7 +7,7 @@ FE::mutex::mutex() noexcept : m_is_locked(false)
 , m_mutex( CreateMutex(NULL, FALSE, NULL) )
 #endif
 {
-#ifdef _LINUX_64BIT_OS_
+#ifdef _LINUX_X86_64_
     pthread_mutex_init(&(this->m_mutex), nullptr);
 #endif
 }
@@ -18,7 +18,7 @@ FE::mutex::~mutex() noexcept
 
 #ifdef _WINDOWS_64BIT_OS_
     CloseHandle(this->m_mutex);
-#elif defined(_LINUX_64BIT_OS_)
+#elif defined(_LINUX_X86_64_)
     pthread_mutex_destroy(&(this->m_mutex));
 #endif
 }
@@ -28,7 +28,7 @@ void FE::mutex::lock() noexcept
     this->m_is_locked.store(true, std::memory_order_release);
 #ifdef _WINDOWS_64BIT_OS_
     WaitForSingleObject(this->m_mutex, INFINITE);
-#elif defined(_LINUX_64BIT_OS_)
+#elif defined(_LINUX_X86_64_)
     pthread_mutex_lock(&(this->m_mutex));
 #endif
 }
@@ -38,7 +38,7 @@ void FE::mutex::unlock() noexcept
     this->m_is_locked.store(false, std::memory_order_release);
 #ifdef _WINDOWS_64BIT_OS_
     ReleaseMutex(this->m_mutex);
-#elif defined(_LINUX_64BIT_OS_)
+#elif defined(_LINUX_X86_64_)
     pthread_mutex_unlock(&(this->m_mutex));
 #endif
 }
@@ -56,7 +56,7 @@ FE::var::boolean FE::mutex::try_lock() noexcept
 
     return _SUCCESSFUL_;
 
-#elif defined(_LINUX_64BIT_OS_)
+#elif defined(_LINUX_X86_64_)
     this->m_is_locked.store(true, std::memory_order_release);
     return pthread_mutex_trylock(&(this->m_mutex)) == 0;
 #endif
@@ -75,7 +75,7 @@ FE::timed_mutex::timed_mutex() noexcept : m_is_locked(false)
 , m_timed_mutex(CreateMutex(NULL, FALSE, NULL))
 #endif
 {
-#ifdef _LINUX_64BIT_OS_ 
+#ifdef _LINUX_X86_64_ 
     pthread_mutex_init(&(this->m_timed_mutex), nullptr);
 #endif
 }
@@ -86,7 +86,7 @@ FE::timed_mutex::~timed_mutex() noexcept
 
 #ifdef _WINDOWS_64BIT_OS_
     CloseHandle(this->m_timed_mutex);
-#elif defined(_LINUX_64BIT_OS_)
+#elif defined(_LINUX_X86_64_)
     pthread_mutex_destroy(&(this->m_timed_mutex));
 #endif
 }
@@ -97,7 +97,7 @@ void FE::timed_mutex::lock(uint32 milliseconds_p) noexcept
     this->m_is_locked.store(true, std::memory_order_release);
 #ifdef _WINDOWS_64BIT_OS_
     WaitForSingleObject(this->m_timed_mutex, milliseconds_p);
-#elif defined(_LINUX_64BIT_OS_)
+#elif defined(_LINUX_X86_64_)
     struct timespec l_timer;
     l_timer.tv_sec = milliseconds_p / 1000;
     l_timer.tv_nsec = (milliseconds_p % 1000) * 1000000;
@@ -110,7 +110,7 @@ void FE::timed_mutex::unlock() noexcept
     this->m_is_locked.store(false, std::memory_order_release);
 #ifdef _WINDOWS_64BIT_OS_
     ReleaseMutex(this->m_timed_mutex);
-#elif defined(_LINUX_64BIT_OS_)
+#elif defined(_LINUX_X86_64_)
     pthread_mutex_unlock(&(this->m_timed_mutex));
 #endif
 }
@@ -128,7 +128,7 @@ FE::var::boolean FE::timed_mutex::try_lock(uint32 milliseconds_p) noexcept
 
     return _SUCCESSFUL_;
 
-#elif defined(_LINUX_64BIT_OS_)
+#elif defined(_LINUX_X86_64_)
     struct timespec l_timer;
     l_timer.tv_sec = milliseconds_p / 1000;
     l_timer.tv_nsec = (milliseconds_p % 1000) * 1000000;

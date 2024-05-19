@@ -10,7 +10,7 @@
 #define _MUTEX_TYPE_ HANDLE
 #undef WIN32_LEAN_AND_MEAN
 
-#elif defined(_LINUX_64BIT_OS_)
+#elif defined(_LINUX_X86_64_)
 #include <pthread.h>
 #define _MUTEX_TYPE_ pthread_mutex_t
 #endif

@@ -95,8 +95,8 @@
 
 #ifdef _WINDOWS_X86_64_
 #define STRING(s) L#s
-#elif defined(_LINUX_64BIT_OS_)
-#define STRING(s) s
+#elif defined(_LINUX_X86_64_)
+#define STRING(s) #s
 #endif
 
 

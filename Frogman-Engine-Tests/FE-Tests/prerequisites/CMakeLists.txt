@@ -1,0 +1,20 @@
+SET(prerequisites "prerequisites")
+
+SOURCE_GROUP("prerequisites" FILES ${PREREQUISITES})
+
+ADD_EXECUTABLE(prerequisites 
+main.cpp
+${PREREQUISITES}
+)
+
+SET_TARGET_PROPERTIES(${prerequisites} PROPERTIES
+    ARCHIVE_OUTPUT_DIRECTORY_DEBUG 			${CMAKE_CURRENT_SOURCE_DIR}/linux/debug
+    ARCHIVE_OUTPUT_DIRECTORY_RELWITHDEBINFO ${CMAKE_CURRENT_SOURCE_DIR}/linux/release_with_debug_info
+    ARCHIVE_OUTPUT_DIRECTORY_RELEASE 		${CMAKE_CURRENT_SOURCE_DIR}/linux/release
+    ARCHIVE_OUTPUT_DIRECTORY_MINSIZEREL 	${CMAKE_CURRENT_SOURCE_DIR}/linux/minimally_sized_release
+)
+
+TARGET_LINK_LIBRARIES(${prerequisites} 
+    stdc++fs 
+)
+
