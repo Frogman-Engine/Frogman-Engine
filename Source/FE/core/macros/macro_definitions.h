@@ -3,19 +3,9 @@
 // Copyright © from 2023 to current, UNKNOWN STRYKER. All Rights Reserved.
 
 
-
-
 #ifdef _MSC_VER
 #define _MSVC_
 #include <vcruntime.h>
-#endif
-
-#ifdef __clang__
-#define _CLANG_ 
-#endif
-
-#ifdef __GNUC__
-#define _GNUC_ 
 #endif
 
 
@@ -32,15 +22,14 @@
 
 
 
-#if defined(_CLANG_) && defined(_LINUX_X86_64_) || defined(_GNUC_) && defined(_LINUX_X86_64_)
-#define _FORCE_INLINE_ inline
-#define _STDCALL_ 
-#define _FASTCALL_
-
-#elif defined(_MSVC_)
+#if defined(_MSVC_)
 #define _FORCE_INLINE_ __forceinline
 #define _STDCALL_ __stdcall
 #define _FASTCALL_ __fastcall
+#else
+#define _FORCE_INLINE_ inline
+#define _STDCALL_ 
+#define _FASTCALL_
 #endif
 
 #define _CDECL_ __cdecl
