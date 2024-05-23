@@ -3,7 +3,7 @@
 #pragma warning(push)
 #pragma warning(disable: 4702)
 // Copyright © from 2023 to current, UNKNOWN STRYKER. All Rights Reserved.
-#include <FE/core/private/strlen.h>
+#include <FE/core/private/strlen.hxx>
 #include <FE/core/random.hxx>
 #include <FE/core/type_traits.hxx>
 

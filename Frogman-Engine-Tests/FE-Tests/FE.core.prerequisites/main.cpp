@@ -7,9 +7,12 @@
 #include <iostream>
 
 
-
+/*
+ls: lists all folders in the current working directory
+ls filename: checks the presence of files with the specified name.
+*/
 int main()
 {
-    std::cout << "Test compilation of FE.prerequisites source code is successful.";
+    std::cout << "Compilation test of FE.core.prerequisites source code is successful.\n";
     return 0;
 }

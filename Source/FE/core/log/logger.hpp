@@ -11,8 +11,7 @@
 #include <string>
 
 
-#if defined(_ENABLE_LOG_)
-#define _IS_LOGGER_ENABLED_
+#ifdef _ENABLE_LOG_
 #define IF_LOGGER_ENABLED(true_p, false_p) true_p
 #define ENABLE_IF_LOGGER_ENABLED(code_p) code_p
 #else
@@ -39,12 +38,14 @@ public:
 
 #ifdef _WINDOWS_X86_64_
     using directory_char_type = var::wchar;
-#elif defined(_LINUX_X86_64_)
-    using directory_char_type = var::character
+#else
+    #ifdef _LINUX_X86_64_
+    using directory_char_type = var::character;
+    #endif
 #endif
     using directory_buffer_type = std::basic_string<directory_char_type, std::char_traits<directory_char_type>>;
     using filename_buffer_type = directory_buffer_type;
-    using buffer_type = std::basic_string<char, std::char_traits<char>>;
+    using buffer_type = std::string;
 
 protected:
     std::ofstream m_file_logger;

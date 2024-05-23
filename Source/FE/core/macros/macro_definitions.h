@@ -9,20 +9,14 @@
 #endif
 
 
-
-
 #ifdef __x86_64
-#define _X64_ 
-#elif defined(_M_X64)
-#define _X64_ 
-#elif defined(_M_AMD64)
-#define _X64_ 
+#define _X86_64_
+#else
+#error platform macro not defined
 #endif
 
 
-
-
-#if defined(_MSVC_)
+#ifdef _MSVC_
 #define _FORCE_INLINE_ __forceinline
 #define _STDCALL_ __stdcall
 #define _FASTCALL_ __fastcall
@@ -31,10 +25,7 @@
 #define _STDCALL_ 
 #define _FASTCALL_
 #endif
-
 #define _CDECL_ __cdecl
-
-
 
 
 #if __cplusplus >= 202004L
@@ -71,21 +62,20 @@
 #endif
 
 
-
-
 #define BEGIN_NAMESPACE(NAME_P) namespace NAME_P {
 #define END_NAMESPACE }
 #define CLASS_FORWARD_DECLARATION(namespace_p, class_p) namespace namespace_p { class class_p; }
 #define STRUCT_FORWARD_DECLARATION(namespace_p, struct_p) namespace namespace_p { struct struct_p; }
 #define ENUM_STRUCT_FORWARD_DECLARATION(namespace_p, enum_struct_p) namespace namespace_p { enum struct enum_struct_p; }
-
 #define _SOURCE_CODE_LOCATION_ __FILE__, __func__, __LINE__
 
 
 #ifdef _WINDOWS_X86_64_
 #define STRING(s) L#s
-#elif defined(_LINUX_X86_64_)
-#define STRING(s) #s
+#else
+    #ifdef _LINUX_X86_64_
+    #define STRING(s) #s
+    #endif
 #endif
 
 

@@ -220,7 +220,7 @@ namespace performance_benchmark
 {
 	void fn() noexcept
 	{
-		static let var::uint32 l_uint32 = 0;
+		static FE::var::uint32 l_uint32 = 0;
 		benchmark::DoNotOptimize(l_uint32);
 		++l_uint32;
 	}

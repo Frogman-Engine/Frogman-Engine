@@ -13,7 +13,7 @@
 #ifdef __APPLE__
 #error Apple platforms are not supported. Please use Windows x86-64 or Linux(Ubuntu) x84-64 Operating System.
 #endif
-#ifndef _X64_
+#ifndef _X86_64_
 #error Frogman Engine is only works on X86-64 environment.
 #endif
 

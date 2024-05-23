@@ -31,7 +31,7 @@ select a configuration):
   wxWidgets_ROOT_DIR      - Base wxWidgets directory
                             (e.g., C:/wxWidgets-3.2.0).
   wxWidgets_LIB_DIR       - Path to wxWidgets libraries
-                            (e.g., C:/wxWidgets-3.2.0/lib/vc_x64_lib).
+                            (e.g., C:/wxWidgets-3.2.0/lib/vc_X86_64_lib).
   wxWidgets_CONFIGURATION - Configuration to use
                             (e.g., msw, mswd, mswu, mswunivud, etc.)
   wxWidgets_EXCLUDE_COMMON_LIBRARIES
@@ -521,7 +521,7 @@ if(wxWidgets_FIND_STYLE STREQUAL "win32")
     elseif(MSVC)
       set(_WX_TOOL vc)
       set(_WX_TOOLVER ${MSVC_TOOLSET_VERSION})
-      # support for a lib/vc14x_x64_dll/ path from wxW 3.1.3 distribution
+      # support for a lib/vc14x_X86_64_dll/ path from wxW 3.1.3 distribution
       string(REGEX REPLACE ".$" "x" _WX_TOOLVERx ${_WX_TOOLVER})
       if(CMAKE_SIZEOF_VOID_P EQUAL 8)
         set(_WX_ARCH _x64)

@@ -8,8 +8,10 @@
 #include <Windows.h>
 #undef WIN32_LEAN_AND_MEAN
 
-#elif defined(_LINUX_X86_64_)
+#else
+#ifdef _LINUX_X86_64_
 #include <pthread.h>
+#endif
 #endif
 
 #define _BUFFER_SIZE_ 64
@@ -24,8 +26,10 @@ _FORCE_INLINE_ var::uint64 this_thread_id() noexcept
 {
 #ifdef _WINDOWS_X86_64_
     return GetCurrentThreadId();
-#elif defined(_LINUX_X86_64_)
+#else
+    #ifdef _LINUX_X86_64_
     return (FE::var::uint64)pthread_self();
+    #endif
 #endif
 }
 
@@ -41,8 +45,10 @@ _FORCE_INLINE_ const char* get_current_local_time() noexcept
     localtime_s(&l_time, &l_current_time_t);
     ::std::strftime(tl_s_local_time_string_buffer, _BUFFER_SIZE_, "%Y-%B-%d-%A  %p %Ih.%Mm.%Ss", &l_time);
 
-#elif defined(_LINUX_X86_64_)
+#else
+    #ifdef_LINUX_X86_64_
     ::std::strftime(tl_s_local_time_string_buffer, _BUFFER_SIZE_, "%Y-%B-%d-%A  %p %Ih.%Mm.%Ss", localtime_r(&l_current_time_t, &l_time));
+    #endif
 #endif
     return tl_s_local_time_string_buffer;
 }

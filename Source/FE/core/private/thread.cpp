@@ -9,8 +9,10 @@
 #include <Windows.h>
 #undef WIN32_LEAN_AND_MEAN
 
-#elif defined(_LINUX_X86_64_)
+#else
+#ifdef _LINUX_X86_64_
 #include <pthread.h>
+#endif
 #endif
 
 
@@ -66,8 +68,10 @@ FE::uint64 FE::thread::this_thread_id() noexcept
 {
 #ifdef _WINDOWS_X86_64_
 	return GetCurrentThreadId();
-#elif defined(_LINUX_X86_64_)
+#else
+	#ifdef _LINUX_X86_64_
 	return (FE::var::uint64)pthread_self();
+	#endif
 #endif
 }
 

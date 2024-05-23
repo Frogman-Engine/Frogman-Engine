@@ -11,14 +11,6 @@
 #include <type_traits>
 #include <utility>
 #pragma warning(disable: 4530) // disable no-exception warnings
-#ifdef _MSVC_
-#ifdef max
-#undef max
-#endif
-#ifdef min
-#undef min
-#endif
-#endif
 
 
 
@@ -228,12 +220,12 @@ private:
 	var::boolean m_is_initialized;
 
 public:
-	_CONSTEXPR17_ lazy_const() noexcept : m_data(), m_is_initialized(false) {}
-	_CONSTEXPR17_ lazy_const(value_type&& data_p) noexcept : m_data(std::move(data_p)), m_is_initialized(true) {}
-	_CONSTEXPR20_ ~lazy_const() noexcept {};
+	_CONSTEXPR17_ _FORCE_INLINE_ lazy_const() noexcept : m_data(), m_is_initialized(false) {}
+	_CONSTEXPR17_ _FORCE_INLINE_ lazy_const(value_type&& data_p) noexcept : m_data(std::move(data_p)), m_is_initialized(true) {}
+	_CONSTEXPR20_ _FORCE_INLINE_ ~lazy_const() noexcept {};
 
-	_CONSTEXPR20_ _FORCE_INLINE_ lazy_const(const lazy_const& other_p) noexcept : m_data(other_p.m_data), m_is_initialized(true) {}
-	_CONSTEXPR20_ _FORCE_INLINE_ lazy_const(lazy_const&& rvalue_p) noexcept : m_data(std::move(rvalue_p.m_data)), m_is_initialized(true) {}
+	_CONSTEXPR17_ _FORCE_INLINE_ lazy_const(const lazy_const& other_p) noexcept : m_data(other_p.m_data), m_is_initialized(true) {}
+	_CONSTEXPR17_ _FORCE_INLINE_ lazy_const(lazy_const&& rvalue_p) noexcept : m_data(std::move(rvalue_p.m_data)), m_is_initialized(true) {}
 
 	_FORCE_INLINE_ lazy_const& operator=(value_type&& data_p) noexcept
 	{
@@ -280,7 +272,7 @@ namespace container
 	public:
 
 		_CONSTEXPR17_ _FORCE_INLINE_ unsafe_ref() noexcept : m_ref_ptr() {}
-		_FORCE_INLINE_ ~unsafe_ref() noexcept {}
+		_CONSTEXPR20_ _FORCE_INLINE_ ~unsafe_ref() noexcept {}
 
 		_CONSTEXPR17_ _FORCE_INLINE_ unsafe_ref(T& ref_p) noexcept : m_ref_ptr(&ref_p) {}
 
@@ -403,22 +395,4 @@ namespace internal
 
 
 END_NAMESPACE
-
-
-#ifndef let
-// let is a reserved experimental Frogman Engine keyword and can be removed without notifications.
-#define let ::FE::
-#else
-#error let is a reserved experimental Frogman Engine keyword.
-#endif
-
-
-//#ifdef _MSVC_
-//#ifndef max
-//#define max(a,b)            (((a) > (b)) ? (a) : (b))
-//#endif
-//#ifndef min
-//#define min(a,b)            (((a) < (b)) ? (a) : (b))
-//#endif
-//#endif
 #endif

@@ -1,5 +1,5 @@
-﻿#ifndef _FE_CORE_PRIVATE_STRLEN_H_
-#define _FE_CORE_PRIVATE_STRLEN_H_
+﻿#ifndef _FE_CORE_PRIVATE_STRLEN_HXX_
+#define _FE_CORE_PRIVATE_STRLEN_HXX_
 // Copyright © from 2023 to current, UNKNOWN STRYKER. All Rights Reserved.
 #include <FE/core/types.hxx>
 

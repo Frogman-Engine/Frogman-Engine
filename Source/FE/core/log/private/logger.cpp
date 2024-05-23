@@ -2,7 +2,6 @@
 #pragma warning(disable: 4996)
 // Copyright © from 2023 to current, UNKNOWN STRYKER. All Rights Reserved.
 #define _CRT_SECURE_NO_WARNINGS
-#include <FE/miscellaneous/misc.h>
 #include <FE/core/algorithm/string.hxx>
 #include <FE/core/clock.hpp>
 #include <FE/core/log/format_string.h>
@@ -57,8 +56,10 @@ void logger_base::mkdir(const directory_char_type* folder_name_p) noexcept
 
 #ifdef _WINDOWS_X86_64_
     this->m_directory_buffer += L"\\";
-#elif defined(_LINUX_X86_64_)
+#else
+    #ifdef _LINUX_X86_64_
     this->m_directory_buffer += "//";
+    #endif
 #endif
 
     this->m_directory_buffer += folder_name_p;
@@ -83,8 +84,10 @@ void logger_base::cd(const directory_char_type* folder_name_p) noexcept
         auto l_reverse_iterator = this->m_directory_buffer.rbegin();
 #ifdef _WINDOWS_X86_64_
         while (*l_reverse_iterator != L'\\')
-#elif defined(_LINUX_X86_64_)
+#else
+    #ifdef _LINUX_X86_64_
         while (*l_reverse_iterator != '/')
+    #endif
 #endif
         {
             ++l_reverse_iterator;
@@ -98,8 +101,10 @@ void logger_base::cd(const directory_char_type* folder_name_p) noexcept
     {
 #ifdef _WINDOWS_X86_64_
         this->m_directory_buffer += L"\\";
-#elif defined(_LINUX_X86_64_)
+#else
+    #ifdef _LINUX_X86_64_
         m_directory_buffer += "//";
+    #endif
 #endif
 
         this->m_directory_buffer += folder_name_p;
@@ -150,7 +155,8 @@ fatal_error_logger_base::fatal_error_logger_base() noexcept : base_type()
             }
     );
 
-#elif defined(_LINUX_X86_64_)
+#else
+#ifdef _LINUX_X86_64_
     var::character l_current_local_time_buffer[FE::clock::current_local_time_buffer_size] = "\0";
     std::strcpy(l_current_local_time_buffer, FE::clock::get_current_local_time());
 
@@ -173,7 +179,7 @@ fatal_error_logger_base::fatal_error_logger_base() noexcept : base_type()
                 ".txt"
             }
     );
-
+#endif
 #endif
     this->m_file_logger.open(l_path_to_log_file_buffer);
 
@@ -267,7 +273,8 @@ message_logger_base::message_logger_base() noexcept : base_type()
             }
     );
 
-#elif defined(_LINUX_X86_64_)
+#else
+#ifdef _LINUX_X86_64_
     var::character l_current_local_time_buffer[FE::clock::current_local_time_buffer_size] = "\0";
     std::strcpy(l_current_local_time_buffer, FE::clock::get_current_local_time());
 
@@ -290,7 +297,7 @@ message_logger_base::message_logger_base() noexcept : base_type()
                 ".txt"
             }
     );
-
+#endif
 #endif
     this->m_file_logger.open(l_path_to_log_file_buffer);
 

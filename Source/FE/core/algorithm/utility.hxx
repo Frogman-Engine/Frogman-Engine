@@ -2,11 +2,12 @@
 #define _FE_CORE_ALGORITHM_UTILITY_HXX_
 // Copyright © from 2023 to current, UNKNOWN STRYKER. All Rights Reserved.
 #include <FE/core/private/debug.h>
-#include <FE/core/private/strlen.h>
+#include <FE/core/private/strlen.hxx>
 #include <FE/core/type_traits.hxx>
 
 // std
 #include <bitset>
+#include <cstring>
 
 #pragma warning(push)
 #pragma warning(disable: 4244) // silent the warning 'argument': conversion from 'FE::var::float64' to 'IntT', possible loss of data

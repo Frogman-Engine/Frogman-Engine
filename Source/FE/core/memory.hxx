@@ -41,6 +41,9 @@
 // SIMD
 #include <immintrin.h>
 
+//std
+#include <cstring>
+
 
 
 
@@ -149,8 +152,10 @@ struct SIMD_auto_alignment
 {
 #ifdef _AVX512_
 	using alignment_type = align_64bytes;
-#elif defined(_AVX_)
+#else
+	#ifdef _AVX_
 	using alignment_type = align_32bytes;
+	#endif
 #else
 	using alignment_type = align_16bytes;
 #endif
@@ -495,7 +500,8 @@ _FORCE_INLINE_ void aligned_memmove_with_avx512(void* const out_dest_pointer_p, 
 	}
 }
 
-#elif defined(_AVX_)
+#else
+#ifdef _AVX_
 _FORCE_INLINE_ void unaligned_memset_with_avx(void* const out_dest_pointer_p, int8 value_p, size_t total_bytes_p) noexcept
 {
 	FE_ASSERT(out_dest_pointer_p == nullptr, "${%s@0}: ${%s@1} is nullptr.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_INVALID_SIZE), TO_STRING(out_dest_pointer_p));
@@ -823,7 +829,7 @@ _FORCE_INLINE_ void aligned_memmove_with_avx(void* const out_dest_pointer_p, con
 		return;
 	}
 }
-
+#endif
 #endif
 
 
@@ -837,16 +843,17 @@ _FORCE_INLINE_ void aligned_memmove_with_avx(void* const out_dest_pointer_p, con
 #define UNALIGNED_MEMMOVE(out_dest_pointer_p, source_pointer_p, bytes_to_move_p) ::FE::unaligned_memmove_with_avx512(out_dest_pointer_p, source_pointer_p, bytes_to_move_p)
 #define ALIGNED_MEMMOVE(out_dest_pointer_p, source_pointer_p, bytes_to_move_p) ::FE::aligned_memmove_with_avx512(out_dest_pointer_p, source_pointer_p, bytes_to_move_p)
 
-#elif defined(_AVX_)
-#define UNALIGNED_MEMSET(out_dest_pointer_p, value_p, total_bytes_p) ::FE::unaligned_memset_with_avx(out_dest_pointer_p, value_p, total_bytes_p)
-#define ALIGNED_MEMSET(out_dest_pointer_p, value_p, total_bytes_p) ::FE::aligned_memset_with_avx(out_dest_pointer_p, value_p, total_bytes_p)
-#define UNALIGNED_MEMCPY(out_dest_pointer_p, source_pointer_p, bytes_to_copy_p) ::FE::unaligned_memcpy_with_avx(out_dest_pointer_p, source_pointer_p, bytes_to_copy_p)
-#define ALIGNED_MEMCPY(out_dest_pointer_p, source_pointer_p, bytes_to_copy_p) ::FE::aligned_memcpy_with_avx(out_dest_pointer_p, source_pointer_p, bytes_to_copy_p)
-#define DEST_ALIGNED_MEMCPY(out_dest_pointer_p, source_pointer_p, bytes_to_copy_p) ::FE::dest_aligned_memcpy_with_avx(out_dest_pointer_p, source_pointer_p, bytes_to_copy_p)
-#define SOURCE_ALIGNED_MEMCPY(out_dest_pointer_p, source_pointer_p, bytes_to_copy_p) ::FE::source_aligned_memcpy_with_avx(out_dest_pointer_p, source_pointer_p, bytes_to_copy_p)
-#define UNALIGNED_MEMMOVE(out_dest_pointer_p, source_pointer_p, bytes_to_move_p) ::FE::unaligned_memmove_with_avx(out_dest_pointer_p, source_pointer_p, bytes_to_move_p)
-#define ALIGNED_MEMMOVE(out_dest_pointer_p, source_pointer_p, bytes_to_move_p) ::FE::aligned_memmove_with_avx(out_dest_pointer_p, source_pointer_p, bytes_to_move_p)
-
+#else
+	#ifdef _AVX_
+	#define UNALIGNED_MEMSET(out_dest_pointer_p, value_p, total_bytes_p) ::FE::unaligned_memset_with_avx(out_dest_pointer_p, value_p, total_bytes_p)
+	#define ALIGNED_MEMSET(out_dest_pointer_p, value_p, total_bytes_p) ::FE::aligned_memset_with_avx(out_dest_pointer_p, value_p, total_bytes_p)
+	#define UNALIGNED_MEMCPY(out_dest_pointer_p, source_pointer_p, bytes_to_copy_p) ::FE::unaligned_memcpy_with_avx(out_dest_pointer_p, source_pointer_p, bytes_to_copy_p)
+	#define ALIGNED_MEMCPY(out_dest_pointer_p, source_pointer_p, bytes_to_copy_p) ::FE::aligned_memcpy_with_avx(out_dest_pointer_p, source_pointer_p, bytes_to_copy_p)
+	#define DEST_ALIGNED_MEMCPY(out_dest_pointer_p, source_pointer_p, bytes_to_copy_p) ::FE::dest_aligned_memcpy_with_avx(out_dest_pointer_p, source_pointer_p, bytes_to_copy_p)
+	#define SOURCE_ALIGNED_MEMCPY(out_dest_pointer_p, source_pointer_p, bytes_to_copy_p) ::FE::source_aligned_memcpy_with_avx(out_dest_pointer_p, source_pointer_p, bytes_to_copy_p)
+	#define UNALIGNED_MEMMOVE(out_dest_pointer_p, source_pointer_p, bytes_to_move_p) ::FE::unaligned_memmove_with_avx(out_dest_pointer_p, source_pointer_p, bytes_to_move_p)
+	#define ALIGNED_MEMMOVE(out_dest_pointer_p, source_pointer_p, bytes_to_move_p) ::FE::aligned_memmove_with_avx(out_dest_pointer_p, source_pointer_p, bytes_to_move_p)
+	#endif
 #else
 #define UNALIGNED_MEMSET(out_dest_pointer_p, value_p, total_bytes_p) ::std::memset(out_dest_pointer_p, value_p, total_bytes_p)
 #define ALIGNED_MEMSET(out_dest_pointer_p, value_p, total_bytes_p) ::std::memset(out_dest_pointer_p, value_p, total_bytes_p)
