@@ -154,7 +154,7 @@ void format_string(char* out_buffer_pointer_p, const char* string_format_p, _MAY
 
             case 'p': // %p - hexadecimal 64bit pointer
             {
-                std::snprintf(tl_s_buffer, _16_BYTES_BIT_COUNT_ * sizeof(char), "%p\0", arguments_pointer_p[l_index._value]);
+                std::snprintf(tl_s_buffer, _16_BYTES_BIT_COUNT_ * sizeof(char), "%p", arguments_pointer_p[l_index._value]);
                 uint64 l_data_bytes_to_copy = FE::internal::strlen(tl_s_buffer);
                 std::memcpy(out_buffer_pointer_p, tl_s_buffer, l_data_bytes_to_copy);
                 out_buffer_pointer_p += l_data_bytes_to_copy;

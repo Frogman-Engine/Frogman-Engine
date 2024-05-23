@@ -26,13 +26,6 @@
 #error UNALIGNED_MEMMOVE is a reserved Frogman Engine macro keyword.
 #endif
 
-#ifdef __AVX__
-#define _AVX_
-#endif
-
-#ifdef __AVX512F__
-#define _AVX512_
-#endif
 
 #include <FE/core/prerequisites.h>
 #include <FE/core/algorithm/math.h>
@@ -137,8 +130,17 @@ struct align_128bytes final
 
 struct align_CPU_L1_cache_line final
 {
-	_MAYBE_UNUSED_ static constexpr size_t size = std::hardware_destructive_interference_size;
+    /*
+    	Sixty-four bytes is commonly used CPU L1 cache line size for X86-64, but the actual size may vary.
+    	A hardcoded value is used if the current system's compiler does not support std::hardware_destructive_interference_size.
+	*/
+	#ifdef _CLANG_
+	_MAYBE_UNUSED_ static constexpr size_t size = 64;
+	#else
+    _MAYBE_UNUSED_ static constexpr size_t size = std::hardware_destructive_interference_size;
+	#endif
 };
+
 
 
 template<uint64 PaddingSize>
@@ -152,10 +154,8 @@ struct SIMD_auto_alignment
 {
 #ifdef _AVX512_
 	using alignment_type = align_64bytes;
-#else
-	#ifdef _AVX_
+#elif defined(_AVX_) || defined(_AVX2_)
 	using alignment_type = align_32bytes;
-	#endif
 #else
 	using alignment_type = align_16bytes;
 #endif
@@ -843,8 +843,7 @@ _FORCE_INLINE_ void aligned_memmove_with_avx(void* const out_dest_pointer_p, con
 #define UNALIGNED_MEMMOVE(out_dest_pointer_p, source_pointer_p, bytes_to_move_p) ::FE::unaligned_memmove_with_avx512(out_dest_pointer_p, source_pointer_p, bytes_to_move_p)
 #define ALIGNED_MEMMOVE(out_dest_pointer_p, source_pointer_p, bytes_to_move_p) ::FE::aligned_memmove_with_avx512(out_dest_pointer_p, source_pointer_p, bytes_to_move_p)
 
-#else
-	#ifdef _AVX_
+#elif defined(_AVX_)
 	#define UNALIGNED_MEMSET(out_dest_pointer_p, value_p, total_bytes_p) ::FE::unaligned_memset_with_avx(out_dest_pointer_p, value_p, total_bytes_p)
 	#define ALIGNED_MEMSET(out_dest_pointer_p, value_p, total_bytes_p) ::FE::aligned_memset_with_avx(out_dest_pointer_p, value_p, total_bytes_p)
 	#define UNALIGNED_MEMCPY(out_dest_pointer_p, source_pointer_p, bytes_to_copy_p) ::FE::unaligned_memcpy_with_avx(out_dest_pointer_p, source_pointer_p, bytes_to_copy_p)
@@ -853,7 +852,6 @@ _FORCE_INLINE_ void aligned_memmove_with_avx(void* const out_dest_pointer_p, con
 	#define SOURCE_ALIGNED_MEMCPY(out_dest_pointer_p, source_pointer_p, bytes_to_copy_p) ::FE::source_aligned_memcpy_with_avx(out_dest_pointer_p, source_pointer_p, bytes_to_copy_p)
 	#define UNALIGNED_MEMMOVE(out_dest_pointer_p, source_pointer_p, bytes_to_move_p) ::FE::unaligned_memmove_with_avx(out_dest_pointer_p, source_pointer_p, bytes_to_move_p)
 	#define ALIGNED_MEMMOVE(out_dest_pointer_p, source_pointer_p, bytes_to_move_p) ::FE::aligned_memmove_with_avx(out_dest_pointer_p, source_pointer_p, bytes_to_move_p)
-	#endif
 #else
 #define UNALIGNED_MEMSET(out_dest_pointer_p, value_p, total_bytes_p) ::std::memset(out_dest_pointer_p, value_p, total_bytes_p)
 #define ALIGNED_MEMSET(out_dest_pointer_p, value_p, total_bytes_p) ::std::memset(out_dest_pointer_p, value_p, total_bytes_p)
@@ -1120,7 +1118,7 @@ public:
 		FE_ASSERT(dest_capacity_p == 0, "${%s@0}: ${%s@1} is zero", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(dest_capacity_p));
 		FE_ASSERT(source_count_p == 0, "${%s@0}: ${%s@1} is zero", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(source_count_p));
 
-		memory_traits<T>::copy_construct<Iterator>(out_dest_pointer_p, dest_capacity_p, source_pointer_p, source_count_p);
+		memory_traits<T>::template copy_construct<Iterator>(out_dest_pointer_p, dest_capacity_p, source_pointer_p, source_count_p);
 	}
 
 	template<class Iterator, class InputIterator>
@@ -1130,7 +1128,7 @@ public:
 		FE_ASSERT(source_pointer_p == nullptr, "${%s@0}: ${%s@1} is nullptr", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(source_pointer_p));
 		FE_ASSERT(count_to_copy_p == 0, "${%s@0}: ${%s@1} is zero", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(count_to_copy_p));
 
-		memory_traits<T>::copy_construct<Iterator>(out_dest_pointer_p, source_pointer_p, count_to_copy_p);
+		memory_traits<T>::template copy_construct<Iterator>(out_dest_pointer_p, source_pointer_p, count_to_copy_p);
 	}
 
 
@@ -1155,7 +1153,7 @@ public:
 		FE_ASSERT(dest_capacity_p == 0, "${%s@0}: ${%s@1} is zero", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(dest_capacity_p));
 		FE_ASSERT(source_count_p == 0, "${%s@0}: ${%s@1} is zero", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(source_count_p));
 
-		memory_traits<T>::copy_construct<Iterator>(out_dest_pointer_p, dest_capacity_p, source_pointer_p, source_count_p);
+		memory_traits<T>::template copy_construct<Iterator>(out_dest_pointer_p, dest_capacity_p, source_pointer_p, source_count_p);
 	}
 	
 	template<class Iterator, class InputIterator>
@@ -1165,7 +1163,7 @@ public:
 		FE_ASSERT(source_pointer_p == nullptr, "${%s@0}: ${%s@1} is nullptr", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(source_pointer_p));
 		FE_ASSERT(count_to_copy_p == 0, "${%s@0}: ${%s@1} is zero", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(count_to_copy_p));
 
-		memory_traits<T>::copy_construct<Iterator>(out_dest_pointer_p, source_pointer_p, count_to_copy_p);
+		memory_traits<T>::template copy_construct<Iterator>(out_dest_pointer_p, source_pointer_p, count_to_copy_p);
 	}
 
 
@@ -1177,7 +1175,7 @@ public:
 		FE_ASSERT(dest_count_p == 0, "${%s@0}: ${%s@1} is zero", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(dest_capacity_p));
 		FE_ASSERT(source_count_p == 0, "${%s@0}: ${%s@1} is zero", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(source_count_p));
 
-		memory_traits<T>::copy_construct<Iterator>(out_dest_pointer_p, dest_count_p, source_pointer_p, source_count_p);
+		memory_traits<T>::template copy_construct<Iterator>(out_dest_pointer_p, dest_count_p, source_pointer_p, source_count_p);
 	}
 
 	template<class Iterator, class InputIterator>
@@ -1187,7 +1185,7 @@ public:
 		FE_ASSERT(source_pointer_p == nullptr, "${%s@0}: ${%s@1} is nullptr", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(source_pointer_p));
 		FE_ASSERT(count_to_copy_p == 0, "${%s@0}: ${%s@1} is zero", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(count_to_copy_p));
 
-		memory_traits<T>::copy_construct<Iterator>(out_dest_pointer_p, source_pointer_p, count_to_copy_p);
+		memory_traits<T>::template copy_construct<Iterator>(out_dest_pointer_p, source_pointer_p, count_to_copy_p);
 	}
 
 
@@ -1201,7 +1199,7 @@ public:
 
 		FE_ASSERT(in_out_dest_first_p > in_out_dest_last_p, "${%s@0}: The begin iterator ${%s@1} must be pointing at the first element of a container.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_ILLEGAL_POSITION), TO_STRING(in_out_dest_first_p));
 
-		memory_traits<T>::construct<Iterator>(in_out_dest_first_p, in_out_dest_last_p, value_p);
+		memory_traits<T>::template construct<Iterator>(in_out_dest_first_p, in_out_dest_last_p, value_p);
 	}
 };
 

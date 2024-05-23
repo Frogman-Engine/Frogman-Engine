@@ -4,6 +4,7 @@
 #include <FE/core/types.hxx>
 
 //std
+#include <cstring>
 #include <initializer_list>
 #define _BUFFERED_STRING_FORMATTER_BUFFER_SIZE_ 2 * 1024
 

@@ -14,9 +14,9 @@ ls filename: checks the presence of files with the specified name.
 */
 int main()
 {
-    FE::remove_const_reference<const int&>::type i = 0;
+    _MAYBE_UNUSED_ FE::remove_const_reference<const int&>::type i = 0;
 
-    FE::conditional_type<false, int, float>::type false_type = 0.0f;
+    _MAYBE_UNUSED_ FE::conditional_type<false, int, float>::type false_type = 0.0f;
 
     assert(FE::is_c_style_constant_string<const char*>::value == true);
     assert(FE::is_char<FE::UTF16>::value == true);

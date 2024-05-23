@@ -234,7 +234,7 @@ _CONSTEXPR20_ _FORCE_INLINE_ void int_to_string(CharT* const string_out_p, _MAYB
     FE_ABORT_IF(string_out_p == nullptr, "NULLPTR DETECTED: string_out_p is nullptr.");
     FE_ABORT_IF(value_p == FE::min_value<var::int64>, "NaCN ERROR: value_p is not a calculatable number");
 
-    var::int8 l_integral_digits = count_integral_digit_length<var::int64>(value_p);
+    var::uint8 l_integral_digits = count_integral_digit_length<var::int64>(value_p);
     var::boolean l_is_negative = false;
 
     if (value_p < 0)
@@ -275,7 +275,7 @@ _CONSTEXPR20_ _FORCE_INLINE_ void uint_to_string(CharT* const string_out_p, _MAY
     FE_STATIC_ASSERT(FE::is_char<CharT>::value == false, "an illegal type of value_p assigned to the template argument CharT");
     FE_ABORT_IF(string_out_p == nullptr, "NULLPTR DETECTED: string_out_p is nullptr.");
 
-    var::int8 l_integral_digits = count_integral_digit_length<var::uint64>(value_p);
+    var::uint8 l_integral_digits = count_integral_digit_length<var::uint64>(value_p);
     var::boolean l_is_negative = false;
 
     if (value_p == 0)

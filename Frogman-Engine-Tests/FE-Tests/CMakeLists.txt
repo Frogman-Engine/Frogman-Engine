@@ -1,16 +1,15 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 3.27.0...3.29.3)
-INCLUDE("${CMAKE_CURRENT_SOURCE_DIR}/../../Source/CMakeLists/predefined-settings.cmake") # INCLUDE() must be placed at the top line of a CMakeLists.txt script
-
 
 PROJECT(FE_TEST
         VERSION 0.0
         DESCRIPTION "A group of executable test code binaries"
         LANGUAGES CXX)
 
+INCLUDE("${CMAKE_CURRENT_SOURCE_DIR}/../../Source/CMakeLists/predefined-settings.cmake")
+
 IF(NOT (CMAKE_BUILD_TYPE STREQUAL "Debug" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo"))
     MESSAGE(FATAL_ERROR "Test code can only be built for debugging")
 ENDIF()
-
 
 ADD_COMPILE_DEFINITIONS(BENCHMARK_STATIC_DEFINE)
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/../../Third-Party-Tools/Google-Test/include)

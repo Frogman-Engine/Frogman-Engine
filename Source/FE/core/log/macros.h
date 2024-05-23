@@ -21,8 +21,9 @@
 #include <cstdlib>
 
 #define _ERROR_FROM_FE_CORE_EXIT_CODE_ (-70)
-
-
+#ifndef __FUNCSIG__
+#define __FUNCSIG__ __func__
+#endif
 
 
 #ifdef _ENABLE_LOG_

@@ -163,7 +163,7 @@ fatal_error_logger_base::fatal_error_logger_base() noexcept : base_type()
     std::filesystem::path l_path_to_log_file = std::filesystem::path{ m_directory_buffer.c_str() } / l_current_local_time_buffer;
 
     var::character l_thread_id[FE::thread::max_thread_id_digit_length] = "\0";
-    std::snprintf(l_thread_id, FE::thread::max_thread_id_digit_length, "%llu", FE::thread::this_thread_id()); // hashed thread-ids from std::hash are too long and hard to read 
+    std::snprintf(l_thread_id, FE::thread::max_thread_id_digit_length, "%lu", FE::thread::this_thread_id()); // hashed thread-ids from std::hash are too long and hard to read 
 
     var::character l_path_to_log_file_buffer[allowed_directory_string_length] = "\0";
     FE::algorithm::string::concatenate<var::character>
@@ -225,7 +225,7 @@ void fatal_error_logger_base::do_log(character* const message_p, character* cons
 
 
     boost::stacktrace::stacktrace l_stack_trace_dumps;
-    std::string l_stack_trace_dumps_string = std::move(boost::stacktrace::to_string(l_stack_trace_dumps));
+    std::string l_stack_trace_dumps_string = boost::stacktrace::to_string(l_stack_trace_dumps);
 
     this->m_file_logger << "\n-------------------------------------------------- BEGIN STACK TRACE RECORD --------------------------------------------------\n\n";
 
@@ -281,7 +281,7 @@ message_logger_base::message_logger_base() noexcept : base_type()
     std::filesystem::path l_path_to_log_file = std::filesystem::path{ m_directory_buffer.c_str() } / l_current_local_time_buffer;
 
     var::character l_thread_id[FE::thread::max_thread_id_digit_length] = "\0";
-    std::snprintf(l_thread_id, FE::thread::max_thread_id_digit_length, "%llu", FE::thread::this_thread_id()); // hashed thread-ids from std::hash are too long and hard to read 
+    std::snprintf(l_thread_id, FE::thread::max_thread_id_digit_length, "%lu", FE::thread::this_thread_id()); // hashed thread-ids from std::hash are too long and hard to read 
 
     var::character l_path_to_log_file_buffer[allowed_directory_string_length] = "\0";
     FE::algorithm::string::concatenate<var::character>

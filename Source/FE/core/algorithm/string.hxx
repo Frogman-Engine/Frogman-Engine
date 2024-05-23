@@ -251,7 +251,7 @@ struct equal_to
 {
     FE_STATIC_ASSERT(FE::is_char<CharT>::value == false, "CharT is not a valid character type");
 
-    _NODISCARD constexpr boolean operator()(const CharT* const left_p, const CharT* const right_p) const noexcept
+    _NODISCARD_ constexpr boolean operator()(const CharT* const left_p, const CharT* const right_p) const noexcept
     {
         FE_ASSERT(left_p == nullptr, "${%s@0}: ${%s@1} is ${%p@2}.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(left_p), nullptr);
         FE_ASSERT(right_p == nullptr, "${%s@0}: ${%s@1} is ${%p@2}.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(right_p), nullptr);
