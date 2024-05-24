@@ -35,7 +35,7 @@ struct reflection_##method_name \
 { \
 	reflection_##method_name() noexcept \
 	{ \
-		FE_DO_ONCE(_DO_ONCE_AT_APP_PROCESS_, ::FE::framework::method_signature_t signature = get_signature(); ::FE::framework::application::get_function_table().register_task<::FE::cpp_style_task<class_meta_data::type, __VA_ARGS__>>(std::move(signature), &class_meta_data::type::##method_name)); \
+		FE_DO_ONCE(_DO_ONCE_AT_APP_PROCESS_, ::FE::framework::method_signature_t signature = get_signature(); ::FE::framework::application_base::get_function_table().register_task<::FE::cpp_style_task<class_meta_data::type, __VA_ARGS__>>(std::move(signature), &class_meta_data::type::##method_name)); \
 	} \
 public: \
 	static ::FE::framework::method_signature_t get_signature() noexcept \

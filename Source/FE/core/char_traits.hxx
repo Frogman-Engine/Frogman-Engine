@@ -91,12 +91,12 @@ public:
         size_t l_size_to_assign = input_end_p - input_begin_p;
         FE_ASSERT(l_size_to_assign > in_out_string_p._capacity, "${%s@0}: input string range length exceeds the string capacity.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_RANGE));
 
-        if constexpr (std::is_same<ConstIterator::iterator_category, FE::contiguous_iterator<CharT>::category>::value == true)
+        if constexpr (std::is_same<typename ConstIterator::iterator_category, typename FE::contiguous_iterator<CharT>::category>::value == true)
         {
             algorithm::string::copy<CharT>(in_out_string_p._string_pointer, input_begin_p.operator->(), l_size_to_assign);
             in_out_string_p._string_pointer[l_size_to_assign] = _NULL_;
         }
-        else if constexpr (std::is_same<ConstIterator::iterator_category, FE::contiguous_iterator<CharT>::category>::value == false)
+        else if constexpr (std::is_same<typename ConstIterator::iterator_category, typename FE::contiguous_iterator<CharT>::category>::value == false)
         {
             const CharT* const l_end_ptrc = in_out_string_p._string_pointer + l_size_to_assign;
             while (in_out_string_p._string_pointer != l_end_ptrc)
@@ -207,14 +207,13 @@ public:
         
         in_out_string_p._string_pointer += in_out_string_p._length;
         algorithm::string::copy<CharT>(in_out_string_p._string_pointer, string_p, input_count_p);
-        return *this;
     }
 
     template<class ConstIterator>
     _FORCE_INLINE_ static void append(string_info<CharT> in_out_string_p, ConstIterator input_begin_p, ConstIterator input_end_p) noexcept
     {
         FE_STATIC_ASSERT((std::is_class<ConstIterator>::value == false), "static assertion failed: the template argument const_iterator must be a class or a struct type.");
-        FE_STATIC_ASSERT((std::is_same<ConstIterator::value_type, CharT>::value == false), "static assertion failed: const_iterator::value_type is not equal to CharT.");
+        FE_STATIC_ASSERT((std::is_same<typename ConstIterator::value_type, CharT>::value == false), "static assertion failed: const_iterator::value_type is not equal to CharT.");
         
         FE_ASSERT(input_begin_p == nullptr, "${%s@0}: ${%s@1} is nullptr.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(input_begin_p));
         FE_ASSERT(input_end_p == nullptr, "${%s@0}: ${%s@1} is nullptr.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(input_end_p));
@@ -225,11 +224,11 @@ public:
 
         in_out_string_p._string_pointer += in_out_string_p._length;
 
-        if constexpr (std::is_same<ConstIterator::iterator_category, FE::contiguous_iterator<CharT>::category>::value == true)
+        if constexpr (std::is_same<typename ConstIterator::iterator_category, typename FE::contiguous_iterator<CharT>::category>::value == true)
         {
             algorithm::string::copy<CharT>(in_out_string_p._string_pointer, input_begin_p.operator->(), l_input_size);
         }
-        else if constexpr (std::is_same<ConstIterator::iterator_category, FE::contiguous_iterator<CharT>::category>::value == false)
+        else if constexpr (std::is_same<typename ConstIterator::iterator_category, typename FE::contiguous_iterator<CharT>::category>::value == false)
         {
             const CharT* const l_end_ptrc = in_out_string_p._string_pointer + l_input_size;
 

@@ -10,6 +10,7 @@ TESTS=(
     "$CURRENT_DIRECTORY/build/FE.core.type_traits/FE.core.type_traits_test"
     "$CURRENT_DIRECTORY/build/FE.core.algorithm.utility/FE.core.algorithm.utility_test"
     "$CURRENT_DIRECTORY/build/FE.core.log/FE.core.log_test"
+    "$CURRENT_DIRECTORY/build/FE.framework.predefined_main/FE.framework.predefined_main_test"
 )
 
 

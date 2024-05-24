@@ -29,7 +29,7 @@ TEST(reflection, method)
 {
 
 	object l_object;
-	FE::task_base* l_task = FE::framework::application::get_function_table().invoke_method(l_object, "const char* object::reflection::initialize(void)");
+	FE::task_base* l_task = FE::framework::application_base::get_function_table().invoke_method(l_object, "const char* object::reflection::initialize(void)");
 	std::any l_result = std::move(l_task->get_result());
 	EXPECT_TRUE(l_result.has_value());
 	{
@@ -42,7 +42,7 @@ TEST(reflection, method)
 	l_args._first = "unsafe operations";
 	l_args._second = 16;
 	
-	l_task = FE::framework::application::get_function_table().invoke_method(l_object, l_object.reflection_do_as_what_i_say_instance.get_signature(), std::move(l_args));
+	l_task = FE::framework::application_base::get_function_table().invoke_method(l_object, l_object.reflection_do_as_what_i_say_instance.get_signature(), std::move(l_args));
 	l_result = std::move(l_task->get_result());
 	EXPECT_TRUE(l_result.has_value());
 	{

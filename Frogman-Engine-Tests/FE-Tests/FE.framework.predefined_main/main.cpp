@@ -1,11 +1,7 @@
-﻿// Copyright © from 2023 to current, UNKNOWN STRYKER. All Rights Reserved.
-#include <gtest/gtest.h>
-#include <benchmark/benchmark.h>
-
-#include <FE/core/prerequisites.h>
+// Copyright © from 2023 to current, UNKNOWN STRYKER. All Rights Reserved.
 #include <FE/framework/framework.hpp>
-#include <FE/core/block_pool.hxx>
-#include <FE/miscellaneous/private/macro_restrictions.h>
+
+
 
 
 /*
@@ -51,63 +47,38 @@ Memory Layer Traversal Order: Entry.FE::string m_name -> FE::string.FE::smart_pt
 											   |
 											   |--> FE::vector.x -> FE::vector.y -> FE::vector.z
 */ 
-class test final : public FE::framework::application_base
+class my_test_app : public FE::framework::application_base
 {
 public:
-	test(FE::size_t function_table_size_p)
-	{
-		s_function_table->reserve(function_table_size_p);
-	}
+    my_test_app() = default;
+    ~my_test_app() = default;
 
 private:
-	virtual bool set_up(_MAYBE_UNUSED_ int argc_p, _MAYBE_UNUSED_ char** argv_p) override final
-	{
-		testing::InitGoogleTest(&argc_p, argv_p);
+    virtual bool set_up(_MAYBE_UNUSED_ int argc_p, _MAYBE_UNUSED_ char** argv_p) override
+    {
 
-		if (argv_p == nullptr)
-		{
-			char l_arg0_default[] = "benchmark";
-			char* l_args_default = l_arg0_default;
+        return true;
+    }
 
-			argc_p = 1;
-			argv_p = &l_args_default;
-		}
-		benchmark::Initialize(&argc_p, argv_p);
-		FE_EXPECT(benchmark::ReportUnrecognizedArguments(argc_p, argv_p), false, "Expectation Failed: Unrecognized Benchmark Arguments Detected.");
+	virtual int run(_MAYBE_UNUSED_ int argc_p, _MAYBE_UNUSED_ char** argv_p) override
+    {
+        FE_LOG("Successfully launched an application via the predefined main()!");
+        return 0;
+    }
 
-		return _FE_SUCCESS_;
-	}
-	
-	virtual int run(_MAYBE_UNUSED_ int argc_p, _MAYBE_UNUSED_ char** argv_p) override final
-	{
+	virtual void clean_up()override
+    {
 
-		let int32 l_exit_code = RUN_ALL_TESTS();
-		std::cerr << "\n\n";
-		benchmark::RunSpecifiedBenchmarks();
-		std::cerr << "\n\n";
-		return l_exit_code;
-	}
-
-	virtual void clean_up() override final
-	{
-		benchmark::Shutdown();
-	}
-
-public:
-	virtual ~test() override
-	{
-
-	}
+    }
 };
 
 
 
 
-FE::framework::application_base::initializer_t g_init = FE::framework::application_base::create_application_base
+FE::framework::application_base::initializer_t g_init = FE::framework::application_base::create_application
 (
 	[]()
 	{
-		constexpr FE::size_t l_function_table_size = 128;
-		return _CREATE_AN_APP_ test(l_function_table_size);
+		return _CREATE_AN_APP_ my_test_app;
 	}
 );

@@ -501,8 +501,9 @@ public:
     {
         FE_ASSERT(extra_capacity_p == 0, "${%s@0}: Unable to extend(). ${%s@1} was zero.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_INVALID_SIZE), TO_STRING(extra_capacity_p));
         FE_ASSERT(extra_capacity_p + this->m_smart_string.capacity() > this->max_length(), "Assertion Failure: ${%s@0} must not be greater than ${%s@1}.", TO_STRING(extra_capacity_p + this->m_smart_string.capacity()), TO_STRING(this->max_length()));
+        FE_ASSERT(this->m_smart_string.capacity() == 0, "Assertion Failure: Unable to extend an empty string. Please reserve() or resize() before extend() to ensure allocating extra space for the null escape sequence.");
 
-        this->m_smart_string.reset(FE::resize_to{ extra_capacity_p + this->m_smart_string.capacity() + _NULL_ESCAPE_SIZE_ });
+        this->m_smart_string.reset(FE::resize_to{ extra_capacity_p + this->m_smart_string.capacity() });
     }
     
     // returns the current capacity of the string including the null terminator.
@@ -1102,7 +1103,7 @@ public:
             return std::nullopt;
         }
 
-        return std::move(this->find(other_p.m_smart_string.get(), position_p));
+        return this->find(other_p.m_smart_string.get(), position_p);
     }
 
     _NODISCARD_ _CONSTEXPR20_ std::optional<algorithm::string::range> find(const value_type* const string_p, const size_type position_p = 0) const noexcept
@@ -1120,7 +1121,7 @@ public:
 
         l_result->_begin += position_p;
         l_result->_end += position_p;
-        return std::move(l_result);
+        return l_result;
     }
 
     _NODISCARD_ _CONSTEXPR20_ std::optional<algorithm::string::range> find(const value_type value_p, const size_type position_p = 0) const noexcept
@@ -1137,7 +1138,7 @@ public:
 
         l_result->_begin += position_p;
         l_result->_end += position_p;
-        return std::move(l_result);
+        return l_result;
     }
 
     _NODISCARD_ _CONSTEXPR20_ std::optional<algorithm::string::range> rfind(const basic_string& other_p, const size_type position_p = 0) const noexcept
@@ -1150,7 +1151,7 @@ public:
             return std::nullopt;
         }
 
-        return std::move(this->rfind(other_p.m_smart_string.get(), position_p));
+        return this->rfind(other_p.m_smart_string.get(), position_p);
     }
 
     _NODISCARD_ _CONSTEXPR20_ std::optional<algorithm::string::range> rfind(const value_type* const string_p, const size_type position_p = 0) const noexcept
@@ -1159,7 +1160,7 @@ public:
         FE_ASSERT(position_p > this->m_length, "${%s@0}: position_p cannot be greater than ${%s@1}.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_RANGE), TO_STRING(this->m_length));
         FE_ASSERT(this->m_smart_string.get() == nullptr, "${%s@0}: ${%s@1} was nullptr.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(this->m_smart_string.get()));
 
-        return std::move(algorithm::string::find_the_last_within_range(this->m_smart_string.get(), algorithm::string::range{ position_p, this->m_length }, string_p));
+        return algorithm::string::find_the_last_within_range(this->m_smart_string.get(), algorithm::string::range{ position_p, this->m_length }, string_p);
     }
 
     _NODISCARD_ _CONSTEXPR20_ std::optional<algorithm::string::range> rfind(const value_type value_p, const size_type position_p = 0) const noexcept
@@ -1167,7 +1168,7 @@ public:
         FE_ASSERT(position_p > this->m_length, "${%s@0}: position_p cannot be greater than ${%s@1}.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_RANGE), TO_STRING(this->m_length));
         FE_ASSERT(this->m_smart_string.get() == nullptr, "${%s@0}: ${%s@1} was nullptr.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(this->m_smart_string.get()));
 
-        return std::move(algorithm::string::find_the_last_within_range(this->m_smart_string.get(), algorithm::string::range{ position_p, this->m_length }, value_p));
+        return algorithm::string::find_the_last_within_range(this->m_smart_string.get(), algorithm::string::range{ position_p, this->m_length }, value_p);
     }
 
     _NODISCARD_ _CONSTEXPR20_ std::optional<algorithm::string::count<CharT>> count_chars(const value_type value_p, const size_type position_p = 0) const noexcept
@@ -1175,7 +1176,7 @@ public:
         FE_ASSERT(position_p > this->m_length, "${%s@0}: position_p cannot be greater than ${%s@1}.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_RANGE), TO_STRING(this->m_length));
         FE_ASSERT(this->m_smart_string.get() == nullptr, "${%s@0}: ${%s@1} was nullptr.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(this->m_smart_string.get()));
 
-        return std::move(algorithm::string::count_chars(this->m_smart_string.get() + position_p, value_p));
+        return algorithm::string::count_chars(this->m_smart_string.get() + position_p, value_p);
     }
 
 

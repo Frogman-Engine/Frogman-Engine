@@ -235,12 +235,12 @@ public:
 	}
 
 
-	_CONSTEXPR20_ void copy(CharT* const out_dest_buffer_pointer_p, const size_type buffer_capacity_p, const size_type count_p, const size_type position_p = 0) const noexcept
+	_CONSTEXPR20_ void copy(CharT* const out_out_dest_buffer_pointer_p, const size_type buffer_capacity_p, const size_type count_p, const size_type position_p = 0) const noexcept
 	{
-		FE_ASSERT(out_dest_buffer_pointer_p == nullptr, "${%s@0}: out_dest_string_buffer_p is nullptr", TO_STRING(FE::MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR));
+		FE_ASSERT(out_out_dest_buffer_pointer_p == nullptr, "${%s@0}: out_dest_string_buffer_p is nullptr", TO_STRING(FE::MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR));
 		FE_ASSERT(count_p > this->length(), "${%s@0}: ${%s@1} cannot be greater than ${%s@2}.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_RANGE), TO_STRING(count_p), TO_STRING(this->length()));
 
-		algorithm::string::copy(out_dest_buffer_pointer_p, buffer_capacity_p, this->begin().operator->() + position_p, count_p);
+		algorithm::string::copy(out_out_dest_buffer_pointer_p, buffer_capacity_p, this->begin().operator->() + position_p, count_p);
 	}
 
 	template<typename CharT, class Allocator, class Traits>
@@ -359,7 +359,7 @@ public:
 
 		FE_ASSERT(position_p > this->length(), "${%s@0}: ${%s@1} cannot be greater than ${%s@2}.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_RANGE), TO_STRING(position_p), TO_STRING(this->length()));
 
-		return std::move(this->find(other_p.begin().operator->(), position_p));
+		return this->find(other_p.begin().operator->(), position_p);
 	}
 
 	_NODISCARD_ _CONSTEXPR20_ std::optional<algorithm::string::range> find(const CharT* const string_p, const size_type position_p = 0) const noexcept
@@ -376,7 +376,7 @@ public:
 
 		l_result->_begin += position_p;
 		l_result->_end += position_p;
-		return std::move(l_result);
+		return l_result;
 	}
 
 	_NODISCARD_ _CONSTEXPR20_ std::optional<algorithm::string::range> find(const CharT value_p, const size_type position_p = 0) const noexcept
@@ -392,7 +392,7 @@ public:
 
 		l_result->_begin += position_p;
 		l_result->_end += position_p;
-		return std::move(l_result);
+		return l_result;
 	}
 
 	_NODISCARD_ _CONSTEXPR20_ std::optional<algorithm::string::range> rfind(const basic_string_view& other_p, const size_type position_p = 0) const noexcept
@@ -404,7 +404,7 @@ public:
 
 		FE_ASSERT(position_p > this->length(), "${%s@0}: position_p cannot be greater than ${%s@1}.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_RANGE), TO_STRING(this->length()));
 
-		return std::move(this->rfind(other_p.begin().operator->(), position_p));
+		return this->rfind(other_p.begin().operator->(), position_p);
 	}
 
 	_NODISCARD_ _CONSTEXPR20_ std::optional<algorithm::string::range> rfind(const CharT* const string_p, const size_type position_p = 0) const noexcept
@@ -412,21 +412,21 @@ public:
 		FE_ASSERT(string_p == nullptr, "${%s@0}: string_p is nullptr", TO_STRING(FE::MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR));
 		FE_ASSERT(position_p > this->length(), "${%s@0}: position_p cannot be greater than ${%s@1}.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_RANGE), TO_STRING(this->length()));
 
-		return std::move(algorithm::string::find_the_last_within_range(this->begin().operator->(), algorithm::string::range{this->m_begin, position_p}, string_p));
+		return algorithm::string::find_the_last_within_range(this->begin().operator->(), algorithm::string::range{this->m_begin, position_p}, string_p);
 	}
 
 	_NODISCARD_ _CONSTEXPR20_ std::optional<algorithm::string::range> rfind(const CharT value_p, size_type position_p = 0) const noexcept
 	{
 		FE_ASSERT(position_p > this->length(), "${%s@0}: position_p cannot be greater than ${%s@1}.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_RANGE), TO_STRING(this->length()));
 
-		return std::move(algorithm::string::find_the_last_within_range(this->begin().operator->(), algorithm::string::range{this->m_begin, position_p}, value_p));
+		return algorithm::string::find_the_last_within_range(this->begin().operator->(), algorithm::string::range{this->m_begin, position_p}, value_p);
 	}
 
 	_NODISCARD_ _CONSTEXPR20_ algorithm::string::count<CharT> count_chars(const CharT value_p, const size_type position_p = 0) const noexcept
 	{
 		FE_ASSERT(position_p > this->length(), "${%s@0}: position_p cannot be greater than ${%s@1}.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_RANGE), TO_STRING(this->length()));
 
-		return std::move(algorithm::string::count_chars(this->begin().operator->() + position_p, value_p));
+		return algorithm::string::count_chars(this->begin().operator->() + position_p, value_p);
 	}
 
 	template<typename CharT, class Allocator, class Traits>

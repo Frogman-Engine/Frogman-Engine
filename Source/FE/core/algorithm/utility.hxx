@@ -343,7 +343,7 @@ _CONSTEXPR20_ _FORCE_INLINE_ const CharT* boolean_to_string(boolean value_p) noe
 
 
 template <typename CharT, typename T>
-_CONSTEXPR20_ _FORCE_INLINE_ void any_object_binary_representation(CharT* const dest_buffer_p, _MAYBE_UNUSED_ capacity_t dest_buffer_capacity_p, T& object_p)
+_CONSTEXPR20_ _FORCE_INLINE_ void any_object_binary_representation(CharT* const out_dest_buffer_p, _MAYBE_UNUSED_ capacity_t dest_buffer_capacity_p, T& object_p)
 {
     FE_STATIC_ASSERT(FE::is_char<CharT>::value == false, "an illegal type assigned to the template argument CharT");
 
@@ -373,14 +373,14 @@ _CONSTEXPR20_ _FORCE_INLINE_ void any_object_binary_representation(CharT* const 
         ++l_buffer_pointer;
         *l_buffer_pointer = (l_binary_representation[7] + 48);
         ++l_buffer_pointer;
-        *l_buffer_pointer = '\n';
+        *l_buffer_pointer = (CharT)'\n';
 
         ++l_ptr;
         l_binary_representation = *l_ptr;
         ++l_buffer_pointer;
     }
 
-    std::memcpy(dest_buffer_p, l_buffer, l_required_bit_count * sizeof(CharT));
+    std::memcpy(out_dest_buffer_p, l_buffer, l_required_bit_count * sizeof(CharT));
 }
 
 
@@ -443,7 +443,7 @@ _CONSTEXPR20_ _FORCE_INLINE_ const CharT* buffered_any_primitive_to_string(T val
 
 
 template<typename CharT, typename T>
-_CONSTEXPR20_ _FORCE_INLINE_ void any_primitive_to_string(CharT* const dest_buffer_p, capacity_t dest_buffer_capacity_p, T value_p) noexcept
+_CONSTEXPR20_ _FORCE_INLINE_ void any_primitive_to_string(CharT* const out_dest_buffer_p, capacity_t dest_buffer_capacity_p, T value_p) noexcept
 {
     FE_STATIC_ASSERT(FE::is_char<CharT>::value == false, "an illegal type assigned to the template argument CharT");
     FE_STATIC_ASSERT(FE::is_primitive<T>::value == false, "static assertion failed: T must be a primitive type.");
@@ -452,48 +452,48 @@ _CONSTEXPR20_ _FORCE_INLINE_ void any_primitive_to_string(CharT* const dest_buff
     {
         const CharT* const l_result = boolean_to_string<CharT>(value_p);
         uint64 l_length = internal::strlen(l_result);
-        std::memcpy(dest_buffer_p, l_result, l_length * sizeof(CharT));
-        dest_buffer_p[l_length] = _NULL_;
+        std::memcpy(out_dest_buffer_p, l_result, l_length * sizeof(CharT));
+        out_dest_buffer_p[l_length] = _NULL_;
     }
     else if constexpr (FE::is_char<T>::value)
     {
-        dest_buffer_p[0] = value_p;
-        dest_buffer_p[1] = _NULL_;
+        out_dest_buffer_p[0] = value_p;
+        out_dest_buffer_p[1] = _NULL_;
     }
     else if constexpr (std::is_unsigned<T>::value && std::is_integral<T>::value)
     {
-        uint_to_string<CharT>(dest_buffer_p, dest_buffer_capacity_p, value_p);
+        uint_to_string<CharT>(out_dest_buffer_p, dest_buffer_capacity_p, value_p);
     }
     else if constexpr (std::is_signed<T>::value && std::is_integral<T>::value)
     {
-        int_to_string<CharT>(dest_buffer_p, dest_buffer_capacity_p, value_p);
+        int_to_string<CharT>(out_dest_buffer_p, dest_buffer_capacity_p, value_p);
     }
     else if constexpr (std::is_floating_point<T>::value)
     {
-        float_to_string<CharT>(dest_buffer_p, dest_buffer_capacity_p, value_p);
+        float_to_string<CharT>(out_dest_buffer_p, dest_buffer_capacity_p, value_p);
     }
     else if constexpr (FE::is_c_style_constant_string<T>::value)
     {
         uint64 l_length = internal::strlen(value_p);
         uint64 l_bytes_to_copy = l_length * sizeof(CharT);
         if (dest_buffer_capacity_p < l_bytes_to_copy) _UNLIKELY_{ std::abort(); }
-        std::memcpy(dest_buffer_p, value_p, l_bytes_to_copy);
-        dest_buffer_p[l_length] = _NULL_;
+        std::memcpy(out_dest_buffer_p, value_p, l_bytes_to_copy);
+        out_dest_buffer_p[l_length] = _NULL_;
     }
     else if constexpr (std::is_pointer<T>::value)
     {
-        std::snprintf(dest_buffer_p, dest_buffer_capacity_p, "%p", value_p);
+        std::snprintf(out_dest_buffer_p, dest_buffer_capacity_p, "%p", value_p);
     }
     else if constexpr (FE::is_nullptr<T>::value)
     {
-        dest_buffer_p[0] = 'n';
-        dest_buffer_p[1] = 'u';
-        dest_buffer_p[2] = 'l';
-        dest_buffer_p[3] = 'l';
-        dest_buffer_p[4] = 'p';
-        dest_buffer_p[5] = 't';
-        dest_buffer_p[6] = 'r';
-        dest_buffer_p[7] = _NULL_;
+        out_dest_buffer_p[0] = 'n';
+        out_dest_buffer_p[1] = 'u';
+        out_dest_buffer_p[2] = 'l';
+        out_dest_buffer_p[3] = 'l';
+        out_dest_buffer_p[4] = 'p';
+        out_dest_buffer_p[5] = 't';
+        out_dest_buffer_p[6] = 'r';
+        out_dest_buffer_p[7] = _NULL_;
     }
 }
 
@@ -523,17 +523,17 @@ _CONSTEXPR20_ _FORCE_INLINE_ const CharT* buffered_any_to_string(U& value_p) noe
 
 
 template<typename CharT, typename U>
-_CONSTEXPR20_ _FORCE_INLINE_ void any_to_string(CharT* const dest_buffer_p, capacity_t dest_buffer_capacity_p, U& value_p) noexcept
+_CONSTEXPR20_ _FORCE_INLINE_ void any_to_string(CharT* const out_dest_buffer_p, capacity_t dest_buffer_capacity_p, U& value_p) noexcept
 {
     FE_STATIC_ASSERT(FE::is_char<CharT>::value == false, "an illegal type assigned to the template argument CharT");
 
     if constexpr (std::is_class< typename std::remove_reference< decltype(value_p) >::type >::value == true)
     {
-        any_object_binary_representation(dest_buffer_p, dest_buffer_capacity_p, value_p);
+        any_object_binary_representation(out_dest_buffer_p, dest_buffer_capacity_p, value_p);
     }
     else if constexpr (FE::is_primitive< typename std::remove_reference< decltype(value_p) >::type >::value == true)
     {
-        any_primitive_to_string(dest_buffer_p, dest_buffer_capacity_p, value_p);
+        any_primitive_to_string(out_dest_buffer_p, dest_buffer_capacity_p, value_p);
     }
 }
 

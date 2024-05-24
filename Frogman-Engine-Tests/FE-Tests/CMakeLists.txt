@@ -75,7 +75,6 @@ ADD_SUBDIRECTORY(FE.core.algorithm.utility)
 
 SET(FE_CORE_LOG
 ${CMAKE_CURRENT_SOURCE_DIR}/../../Source/FE/core/log/macros.h
-
 ${CMAKE_CURRENT_SOURCE_DIR}/../../Source/FE/core/log/logger.hpp
 ${CMAKE_CURRENT_SOURCE_DIR}/../../Source/FE/core/log/private/logger.cpp
 ${CMAKE_CURRENT_SOURCE_DIR}/../../Source/FE/core/algorithm/string.hxx
@@ -87,12 +86,21 @@ ${CMAKE_CURRENT_SOURCE_DIR}/../../Source/FE/core/clock.hpp
 ${CMAKE_CURRENT_SOURCE_DIR}/../../Source/FE/core/private/clock.cpp
 ${CMAKE_CURRENT_SOURCE_DIR}/../../Source/FE/core/thread.hpp
 ${CMAKE_CURRENT_SOURCE_DIR}/../../Source/FE/core/private/thread.cpp
-
 ${CMAKE_CURRENT_SOURCE_DIR}/../../Source/FE/core/log/format_string.h
 ${CMAKE_CURRENT_SOURCE_DIR}/../../Source/FE/core/log/private/format_string.cpp
 ${CMAKE_CURRENT_SOURCE_DIR}/../../Source/FE/core/memory_metrics.h
 )
 ADD_SUBDIRECTORY(FE.core.log)
+
+SET(FE_FRAMEWORK_PREDEFINED_MAIN
+${CMAKE_CURRENT_SOURCE_DIR}/../../Source/FE/framework/framework.hpp
+${CMAKE_CURRENT_SOURCE_DIR}/../../Source/FE/framework/private/framework.cpp
+${CMAKE_CURRENT_SOURCE_DIR}/../../Source/FE/core/clock.hpp
+${CMAKE_CURRENT_SOURCE_DIR}/../../Source/FE/core/private/clock.cpp
+${CMAKE_CURRENT_SOURCE_DIR}/../../Source/FE/core/fstream_guard.hxx
+${CMAKE_CURRENT_SOURCE_DIR}/../../Source/FE/core/fstring.hxx
+)
+ADD_SUBDIRECTORY(FE.framework.predefined_main)
 
 
 
@@ -101,5 +109,6 @@ IF(CMAKE_SYSTEM_NAME STREQUAL "Windows")
 ADD_DEPENDENCIES("FE.core.type_traits" "FE.core.prerequisites")
 ADD_DEPENDENCIES("FE.core.algorithm.utility" "FE.core.type_traits")
 ADD_DEPENDENCIES("FE.core.log" "FE.core.algorithm.utility")
+ADD_DEPENDENCIES("FE.framework.predefined_main" "FE.core.log")
 ENDIF()
 
