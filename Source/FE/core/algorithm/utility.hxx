@@ -498,25 +498,25 @@ _CONSTEXPR20_ _FORCE_INLINE_ void any_primitive_to_string(CharT* const out_dest_
 }
 
 
-#define _UTILITY_ALGORITHM_BUUFFER_SIZE_ 2048
+#define _UTILITY_ALGORITHM_BUFER_SIZE_ 2048
 
 template<typename CharT, typename U>
 _CONSTEXPR20_ _FORCE_INLINE_ const CharT* buffered_any_to_string(U& value_p) noexcept
 {
     FE_STATIC_ASSERT((FE::is_char<CharT>::value == false), "Static Assertion Failed: an illegal type assigned to the template argument CharT");
 
-    FE_STATIC_ASSERT((sizeof(U) > _UTILITY_ALGORITHM_BUUFFER_SIZE_), "Static Assertion Failed: Buffer Overflow Detected!");
+    FE_STATIC_ASSERT((sizeof(U) > _UTILITY_ALGORITHM_BUFER_SIZE_), "Static Assertion Failed: Buffer Overflow Detected!");
 
-    thread_local static CharT tl_s_buffer[_UTILITY_ALGORITHM_BUUFFER_SIZE_]{};
-    std::memset(tl_s_buffer, _NULL_, sizeof(CharT) * _UTILITY_ALGORITHM_BUUFFER_SIZE_);
+    thread_local static CharT tl_s_buffer[_UTILITY_ALGORITHM_BUFER_SIZE_]{};
+    std::memset(tl_s_buffer, _NULL_, sizeof(CharT) * _UTILITY_ALGORITHM_BUFER_SIZE_);
 
     if constexpr (std::is_class< typename std::remove_reference< decltype(value_p) >::type >::value == true)
     {
-        any_object_binary_representation(tl_s_buffer, _UTILITY_ALGORITHM_BUUFFER_SIZE_, value_p);
+        any_object_binary_representation(tl_s_buffer, _UTILITY_ALGORITHM_BUFER_SIZE_, value_p);
     }
     else if constexpr (FE::is_primitive< typename std::remove_reference< decltype(value_p) >::type >::value == true)
     {
-        any_primitive_to_string(tl_s_buffer, _UTILITY_ALGORITHM_BUUFFER_SIZE_, value_p);
+        any_primitive_to_string(tl_s_buffer, _UTILITY_ALGORITHM_BUFER_SIZE_, value_p);
     }
     return tl_s_buffer;
 }

@@ -18,7 +18,7 @@ BEGIN_NAMESPACE(FE)
 template<class T, size_t Capacity, class Traits = FE::memory_traits<T>>
 class fstack final
 {
-	FE_STATIC_ASSERT((std::is_same<T, Traits::value_type>::value == false), "Static Assertion Failed: The template argument T and Traits' value_type have be the same type.");
+	FE_STATIC_ASSERT((std::is_same<T, typename Traits::value_type>::value == false), "Static Assertion Failed: The template argument T and Traits' value_type have be the same type.");
 	FE_STATIC_ASSERT(std::is_class<Traits>::value == false, "Static Assertion Failed: The template argument Traits is not a class or a struct type.");
 
 public:

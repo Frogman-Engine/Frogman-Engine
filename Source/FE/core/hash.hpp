@@ -68,7 +68,7 @@ struct hash<T, HasherType, HASH_INPUT_DATA_TYPE::_ADDRESS> : public hash_base
 	using base = hash_base;
 	static constexpr HASH_INPUT_DATA_TYPE hash_input_data_type = HASH_INPUT_DATA_TYPE::_ADDRESS;
 
-	_FORCE_INLINE_ _NODISCARD_ var::uintptr_t operator()(T value_p) const noexcept
+	_NODISCARD_ _FORCE_INLINE_ var::uintptr_t operator()(T value_p) const noexcept
 	{
 		if constexpr (HasherType == HASHER_TYPE::_ROBIN_HOOD_HASH)
 		{
@@ -87,7 +87,7 @@ struct hash<T, HasherType, HASH_INPUT_DATA_TYPE::_C_STRING> : public hash_base
 	using base = hash_base;
 	static constexpr HASH_INPUT_DATA_TYPE hash_input_data_type = HASH_INPUT_DATA_TYPE::_C_STRING;
 
-	_FORCE_INLINE_ _NODISCARD_ var::uint64 operator()(T value_p) const noexcept
+	_NODISCARD_ _FORCE_INLINE_ var::uint64 operator()(T value_p) const noexcept
 	{
 		if constexpr (HasherType == HASHER_TYPE::_ROBIN_HOOD_HASH)
 		{
@@ -106,7 +106,7 @@ struct hash<T, HasherType, HASH_INPUT_DATA_TYPE::_STRING_CLASS> : public hash_ba
 	using base = hash_base;
 	static constexpr HASH_INPUT_DATA_TYPE hash_input_data_type = HASH_INPUT_DATA_TYPE::_STRING_CLASS;
 
-	_FORCE_INLINE_ _NODISCARD_ var::uintptr_t operator()(const T& value_p) const noexcept
+	_NODISCARD_ _FORCE_INLINE_ var::uintptr_t operator()(const T& value_p) const noexcept
 	{
 		if constexpr (HasherType == HASHER_TYPE::_ROBIN_HOOD_HASH)
 		{
@@ -125,7 +125,7 @@ struct hash<T, HasherType, HASH_INPUT_DATA_TYPE::_BINARY> : public hash_base
 	using base = hash_base;
 	static constexpr HASH_INPUT_DATA_TYPE hash_input_data_type = HASH_INPUT_DATA_TYPE::_BINARY;
 
-	_FORCE_INLINE_ _NODISCARD_ var::uint64 operator()(const T& value_p) const noexcept
+	_NODISCARD_ _FORCE_INLINE_ var::uint64 operator()(const T& value_p) const noexcept
 	{
 		if constexpr (HasherType == HASHER_TYPE::_ROBIN_HOOD_HASH)
 		{

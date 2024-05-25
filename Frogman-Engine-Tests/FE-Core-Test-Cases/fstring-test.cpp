@@ -170,7 +170,7 @@ TEST(fstring, front_back)
 	FE::fstring<_TEST_FSTRING_LENGTH_>::value_type l_buffer[3] = "\0";
 	string::concatenate<FE::fstring<_TEST_FSTRING_LENGTH_>::value_type>(l_buffer, 3, { l_fstring.front(), l_fstring.back() });
 
-	EXPECT_TRUE(string::compare(l_buffer, "F."));
+	EXPECT_EQ(0, strcmp(l_buffer, "F."));
 }
 
 
@@ -218,7 +218,7 @@ TEST(fstring, push_pop_back)
 	FE::fstring<_TEST_FSTRING_LENGTH_> l_fstring = "FE::fstring<_UNIT_TEST_FSTRING_LENGTH_> is a fixed sized string class template";
 	l_fstring.push_back('.');
 
-	EXPECT_TRUE(string::compare("FE::fstring<_UNIT_TEST_FSTRING_LENGTH_> is a fixed sized string class template.", l_fstring.data()));
+	EXPECT_EQ(0, strcmp("FE::fstring<_UNIT_TEST_FSTRING_LENGTH_> is a fixed sized string class template.", l_fstring.data()));
 
 	EXPECT_EQ(l_fstring.pop_back(), '.');
 }
@@ -229,7 +229,7 @@ TEST(fstring, concatenation)
 	FE::fstring<_TEST_FSTRING_LENGTH_> l_fstring = "FE::fstring<_UNIT_TEST_FSTRING_LENGTH_> is a";
 	l_fstring += " fixed sized string class template.";
 
-	EXPECT_TRUE(string::compare("FE::fstring<_UNIT_TEST_FSTRING_LENGTH_> is a fixed sized string class template.", l_fstring.data()));
+	EXPECT_EQ(0, strcmp("FE::fstring<_UNIT_TEST_FSTRING_LENGTH_> is a fixed sized string class template.", l_fstring.data()));
 }
 
 
@@ -291,7 +291,7 @@ TEST(fstring, copy)
 	FE::fstring<_TEST_FSTRING_LENGTH_> l_fstring = "FE::fstring is a string class template.";
 	FE::fstring<_TEST_FSTRING_LENGTH_>::value_type l_buffer[20] = "\0";
 	l_fstring.copy(l_buffer, capacity_t{20}, count_t{ 5 }, index_t{ 24 });
-	EXPECT_TRUE(string::compare(l_buffer, "class"));
+	EXPECT_EQ(0, strcmp(l_buffer, "class"));
 }
 
 
@@ -303,14 +303,14 @@ TEST(fstring, find)
 	std::optional<string::range> l_search_result = l_fstring.find(l_substring);
 	EXPECT_TRUE(l_search_result.has_value());
 
-	EXPECT_TRUE(string::compare_ranged(l_fstring.data(), *l_search_result, l_substring.data(), string::range{0, l_substring.length()}));
+	EXPECT_EQ(0, string::compare_ranged(l_fstring.data(), *l_search_result, l_substring.data(), string::range{0, l_substring.length()}));
 
 
 	l_substring = "string";
 	l_search_result.reset();
 	l_search_result = *(l_fstring.find(l_substring, 10));
 
-	EXPECT_TRUE(string::compare_ranged(l_fstring.data(), *l_search_result, l_substring.data(), string::range{0, l_substring.length()}));
+	EXPECT_EQ(0, string::compare_ranged(l_fstring.data(), *l_search_result, l_substring.data(), string::range{0, l_substring.length()}));
 }
 
 
@@ -322,7 +322,7 @@ TEST(fstring, rfind)
 	std::optional<string::range> l_search_result = l_fstring.rfind(l_substring);
 	EXPECT_TRUE(l_search_result.has_value());
 
-	EXPECT_TRUE(string::compare_ranged(l_fstring.data(), *l_search_result, l_substring.data(), string::range{0, l_substring.length()}));
+	EXPECT_EQ(0, string::compare_ranged(l_fstring.data(), *l_search_result, l_substring.data(), string::range{0, l_substring.length()}));
 
 
 	std::optional<algorithm::string::range> l_result2 = l_fstring.rfind('t', FE::index_t{10});

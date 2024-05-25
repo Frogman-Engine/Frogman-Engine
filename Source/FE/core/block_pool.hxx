@@ -59,8 +59,8 @@ namespace internal::pool
 }
 
 
-template<typename T, size_t ChunkCapacity, class GlobalAllocator, class NamespaceAllocator>
-struct pool_deleter<T, POOL_TYPE::_BLOCK, ChunkCapacity, FE::align_custom_bytes<sizeof(T)>, GlobalAllocator, NamespaceAllocator>
+template<typename T, size_t ChunkCapacity, class Allocator>
+struct pool_deleter<T, POOL_TYPE::_BLOCK, ChunkCapacity, FE::align_custom_bytes<sizeof(T)>, Allocator>
 {
     FE_STATIC_ASSERT(std::is_array<T>::value == true, "Static Assertion Failed: The T must not be an array[] type.");
     FE_STATIC_ASSERT(std::is_const<T>::value == true, "Static Assertion Failed: The T must not be a const type.");
@@ -93,22 +93,19 @@ public:
 };
 
 
-template<typename T, size_t ChunkCapacity, class GlobalAllocator, class NamespaceAllocator>
-class pool<T, POOL_TYPE::_BLOCK, ChunkCapacity, FE::align_custom_bytes<sizeof(T)>, GlobalAllocator, NamespaceAllocator>
+template<typename T, size_t ChunkCapacity, class Allocator>
+class pool<T, POOL_TYPE::_BLOCK, ChunkCapacity, FE::align_custom_bytes<sizeof(T)>, Allocator>
 {
     FE_STATIC_ASSERT(std::is_array<T>::value == true, "Static Assertion Failed: The T must not be an array[] type.");
     FE_STATIC_ASSERT(std::is_const<T>::value == true, "Static Assertion Failed: The T must not be a const type.");
 
 public:
     using chunk_type = internal::pool::chunk<T, POOL_TYPE::_BLOCK, ChunkCapacity, FE::align_custom_bytes<sizeof(T)>>;
-    using deleter_type = pool_deleter<T, POOL_TYPE::_BLOCK, ChunkCapacity, FE::align_custom_bytes<sizeof(T)>, GlobalAllocator, NamespaceAllocator>;
+    using deleter_type = pool_deleter<T, POOL_TYPE::_BLOCK, ChunkCapacity, FE::align_custom_bytes<sizeof(T)>, Allocator>;
     using block_info_type = typename chunk_type::block_info_type;
 
-    FE_STATIC_ASSERT((std::is_same<chunk_type, typename GlobalAllocator::value_type>::value == false), "Static Assertion Failed: The chunk_type has to be equivalent to GlobalAllocator::value_type.");
-    using global_pool_type = std::list<chunk_type, GlobalAllocator>;
-
-    FE_STATIC_ASSERT((std::is_same<std::pair<const FE::memory_namespace_t, chunk_type>, typename NamespaceAllocator::value_type>::value == false), "Static Assertion Failed: NamespaceAllocator::value_type has to be std::pair<const FE::memory_namespace_t, chunk_type>.");
-    using namespace_pool_type = std::unordered_multimap<FE::memory_namespace_t, chunk_type, FE::hash<FE::memory_namespace_t>, std::equal_to<FE::memory_namespace_t>, NamespaceAllocator>;
+    FE_STATIC_ASSERT((std::is_same<chunk_type, typename Allocator::value_type>::value == false), "Static Assertion Failed: The chunk_type has to be equivalent to Allocator::value_type.");
+    using pool_type = std::list<chunk_type, Allocator>;
 
     constexpr static count_t chunk_capacity = ChunkCapacity;
     static constexpr count_t maximum_list_node_count = 10;
@@ -117,11 +114,10 @@ public:
     FE_STATIC_ASSERT((std::is_same<T*, typename chunk_type::pointer>::value == false), "Static Assertion Failed: The value_type* does not match.");
     
 private:
-    typename global_pool_type m_global_memory;
-    typename namespace_pool_type m_memory_regions;
+    pool_type m_memory_pool;
 
 public:
-    pool() noexcept : m_global_memory(), m_memory_regions() {}
+    pool() noexcept : m_memory_pool() {}
     ~pool() noexcept = default;
 
     pool(const pool& other_p) noexcept = delete;
@@ -132,13 +128,8 @@ public:
 
     std::unique_ptr<T, deleter_type> allocate() noexcept
     {
-        if ((m_global_memory.empty() == true))
-        {
-            create_pages(1);
-        }
-
-        typename global_pool_type::iterator l_list_iterator = this->m_global_memory.begin();
-        typename global_pool_type::const_iterator l_cend = this->m_global_memory.cend();
+        typename pool_type::iterator l_list_iterator = this->m_memory_pool.begin();
+        typename pool_type::const_iterator l_cend = this->m_memory_pool.cend();
 
         for (; l_list_iterator != l_cend; ++l_list_iterator)
         {
@@ -181,8 +172,8 @@ public:
 
     void deallocate(T* const pointer_p) noexcept
     {
-        typename global_pool_type::iterator  l_list_iterator = this->m_global_memory.begin();
-        typename global_pool_type::const_iterator l_cend = this->m_global_memory.cend();
+        typename pool_type::iterator  l_list_iterator = this->m_memory_pool.begin();
+        typename pool_type::const_iterator l_cend = this->m_memory_pool.cend();
         FE_ASSERT(l_list_iterator == l_cend, "Unable to request deallocate() to an empty pool.");
 
 
@@ -207,16 +198,16 @@ public:
 
         for (var::size_t i = 0; i < chunk_count_p; ++i)
         {
-            this->m_global_memory.emplace_back();
+            this->m_memory_pool.emplace_back();
         }
 
-        FE_ASSERT(this->m_memory_regions.size() == maximum_list_node_count, "Maximum chunk count of a memory chunk list is limited to ${%lu@0} for some performance reasons.", &maximum_list_node_count);
+        FE_ASSERT(this->m_memory_pool.size() == maximum_list_node_count, "Maximum chunk count of a memory chunk list is limited to ${%lu@0} for some performance reasons.", &maximum_list_node_count);
     }
 
-    var::boolean shrink_to_fit() noexcept
+    boolean shrink_to_fit() noexcept
     {
-        typename global_pool_type::iterator l_list_iterator = this->m_global_memory.begin();
-        typename global_pool_type::const_iterator l_cend = this->m_global_memory.cend();
+        typename pool_type::iterator l_list_iterator = this->m_memory_pool.begin();
+        typename pool_type::const_iterator l_cend = this->m_memory_pool.cend();
         if (l_list_iterator == l_cend)
         {
             FE_ASSERT(l_list_iterator == l_cend, "Unable to shrink_to_fit() an empty pool.");
@@ -237,164 +228,27 @@ public:
 
             if (l_unused_element_size == ChunkCapacity)
             {
-                this->m_global_memory.erase(l_list_iterator);
+                this->m_memory_pool.erase(l_list_iterator);
 
-                if (this->m_global_memory.size() == 0)
+                if (this->m_memory_pool.size() == 0)
                 {
                     break;
                 }
 
-                l_list_iterator = this->m_global_memory.begin();
+                l_list_iterator = this->m_memory_pool.begin();
             }
         }
 
         return true;
     }
-
-
-
-
-
-
-    std::unique_ptr<T, deleter_type> allocate(const char* namespace_p) noexcept
-    {
-        if ((this->m_memory_regions.empty() == true))
-        {
-            create_pages(namespace_p, 1);
-        }
-
-        index_t l_bucket_index = this->m_memory_regions.bucket(namespace_p);
-        typename namespace_pool_type::iterator l_list_iterator = this->m_memory_regions.begin(l_bucket_index);
-        typename namespace_pool_type::const_iterator l_cend = this->m_memory_regions.cend(l_bucket_index);
-
-        for (; l_list_iterator != l_cend; ++l_list_iterator)
-        {
-            if (l_list_iterator->second.is_full() == false)
-            {
-                T* l_value;
-                if (l_list_iterator->second._free_blocks.is_empty() == false)
-                {
-                    l_value = l_list_iterator->second._free_blocks.pop()._address;
-
-                    if constexpr (FE::is_trivial<T>::value == FE::TYPE_TRIVIALITY::_NOT_TRIVIAL)
-                    {
-                        new(l_value) T();
-                    }
-                }
-                else
-                {
-                    l_value = l_list_iterator->second._page_iterator;
-
-                    if constexpr (FE::is_trivial<T>::value == FE::TYPE_TRIVIALITY::_NOT_TRIVIAL)
-                    {
-                        new(l_value) T();
-                    }
-
-                    ++(l_list_iterator->second._page_iterator);
-                }
-
-                return std::unique_ptr<T, deleter_type>(l_value, deleter_type(&(l_list_iterator->second)));
-            }
-            else
-            {
-                create_pages(namespace_p, 1);
-                continue;
-            }
-        }
-
-        create_pages(namespace_p, 1);
-        return allocate(namespace_p);
-    }
-
-    void deallocate(const char* namespace_p, T* const pointer_p) noexcept
-    {
-        index_t l_bucket_index = this->m_memory_regions.bucket(namespace_p);
-        typename namespace_pool_type::iterator  l_list_iterator = this->m_memory_regions.begin(l_bucket_index);
-        typename namespace_pool_type::const_iterator l_cend = this->m_memory_regions.cend(l_bucket_index);
-        FE_ASSERT(l_list_iterator == l_cend, "Unable to request deallocate() to an empty pool.");
-
-
-        for (; l_list_iterator != l_cend; ++l_list_iterator)
-        {
-            if ((l_list_iterator->second._begin <= pointer_p) && (pointer_p < l_list_iterator->second._end))
-            {
-                if constexpr (FE::is_trivial<T>::value == FE::TYPE_TRIVIALITY::_NOT_TRIVIAL)
-                {
-                    pointer_p->~T();
-                }
-
-                l_list_iterator->second._free_blocks.push(block_info_type{ pointer_p });
-                return;
-            }
-        }
-    }
-
-    _FORCE_INLINE_ void create_pages(const char* namespace_p, size_t chunk_count_p) noexcept
-    {
-        FE_ASSERT(chunk_count_p == 0, "${%s@0}: ${%s@1} was 0", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_INVALID_SIZE), TO_STRING(chunk_count_p));
-
-        static chunk_type l_s_initial_value;
-
-        for (var::size_t i = 0; i < chunk_count_p; ++i)
-        {
-            this->m_memory_regions.emplace(namespace_p, l_s_initial_value);
-        }
-
-		FE_ASSERT(this->count_chunks_with_namespace(namespace_p) == maximum_list_node_count, "Maximum chunk count of a memory chunk list is limited to ${%lu@0} for some performance reasons.", &maximum_list_node_count);
-    }
-
-    _FORCE_INLINE_ count_t count_chunks_with_namespace(const char* namespace_p) const noexcept
-    {
-        index_t l_bucket_index = this->m_memory_regions.bucket(namespace_p);
-        return this->m_memory_regions.bucket_size(l_bucket_index);
-    }
-
-    var::boolean shrink_to_fit(const char* namespace_p) noexcept
-    {
-        index_t l_bucket_index = this->m_memory_regions.bucket(namespace_p);
-        typename namespace_pool_type::iterator l_list_iterator = this->m_memory_regions.begin(l_bucket_index);
-        typename namespace_pool_type::const_iterator l_cend = this->m_memory_regions.cend(l_bucket_index);
-        if (l_list_iterator == l_cend)
-        {
-            FE_ASSERT(true, "Unable to shrink_to_fit() an empty pool.");
-			return false; // this is to ignore the operation if it is running in a release mode.
-        }
-
-
-        for (; l_list_iterator != l_cend; ++l_list_iterator)
-        {
-            var::size_t l_unused_element_size = l_list_iterator->second._free_blocks.size();
-
-            FE_ASSERT((l_list_iterator->second._end - l_list_iterator->second._begin) != ChunkCapacity, "The chunk range is invalid.");
-
-            if (l_list_iterator->second._page_iterator < l_list_iterator->second._end)
-            {
-                l_unused_element_size += (l_list_iterator->second._end - l_list_iterator->second._page_iterator);
-            }
-
-            if (l_unused_element_size == ChunkCapacity)
-            {
-                this->m_memory_regions.erase(l_list_iterator);
-
-                if (this->m_memory_regions.size() == 0)
-                {
-                    break;
-                }
-
-                l_list_iterator = this->m_memory_regions.begin(l_bucket_index);
-            }
-        }
-
-		return true;
-    }
 };
 
 
-template<typename T, size_t ChunkCapacity = 128, class GlobalAllocator = FE::aligned_allocator<internal::pool::chunk<T, POOL_TYPE::_BLOCK, ChunkCapacity, FE::align_custom_bytes<sizeof(T)>>>, class NamespaceAllocator = FE::aligned_allocator<std::pair<const FE::memory_namespace_t, internal::pool::chunk<T, POOL_TYPE::_BLOCK, ChunkCapacity, FE::align_custom_bytes<sizeof(T)>>>>>
-using block_pool = pool<T, POOL_TYPE::_BLOCK, ChunkCapacity, FE::align_custom_bytes<sizeof(T)>, GlobalAllocator, NamespaceAllocator>;
+template<typename T, size_t ChunkCapacity = 128, class Allocator = FE::aligned_allocator<internal::pool::chunk<T, POOL_TYPE::_BLOCK, ChunkCapacity, FE::align_custom_bytes<sizeof(T)>>>>
+using block_pool = pool<T, POOL_TYPE::_BLOCK, ChunkCapacity, FE::align_custom_bytes<sizeof(T)>, Allocator>;
 
-template<typename T, size_t ChunkCapacity = 128, class GlobalAllocator = FE::aligned_allocator<internal::pool::chunk<T, POOL_TYPE::_BLOCK, ChunkCapacity, FE::align_custom_bytes<sizeof(T)>>>, class NamespaceAllocator = FE::aligned_allocator<std::pair<const FE::memory_namespace_t, internal::pool::chunk<T, POOL_TYPE::_BLOCK, ChunkCapacity, FE::align_custom_bytes<sizeof(T)>>>>>
-using block_pool_ptr = std::unique_ptr<T, pool_deleter<T, FE::POOL_TYPE::_BLOCK, ChunkCapacity, FE::align_custom_bytes<sizeof(T)>, GlobalAllocator, NamespaceAllocator>>;
+template<typename T, size_t ChunkCapacity = 128, class Allocator = FE::aligned_allocator<internal::pool::chunk<T, POOL_TYPE::_BLOCK, ChunkCapacity, FE::align_custom_bytes<sizeof(T)>>>>
+using block_pool_ptr = std::unique_ptr<T, pool_deleter<T, FE::POOL_TYPE::_BLOCK, ChunkCapacity, FE::align_custom_bytes<sizeof(T)>, Allocator>>;
 
 
 END_NAMESPACE

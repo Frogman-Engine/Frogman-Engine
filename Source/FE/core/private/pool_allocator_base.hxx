@@ -19,7 +19,7 @@ class pool_allocator_base : public allocator_base
 {
 public:
 	using alignment_type = Alignment;
-	using pool_type = FE::generic_pool<capacity<512 MB>::size, Alignment, FE::aligned_allocator<internal::pool::chunk<void, POOL_TYPE::_GENERIC, capacity<512 MB>::size, Alignment>>, FE::aligned_allocator<std::pair<const FE::memory_namespace_t, internal::pool::chunk<void, POOL_TYPE::_GENERIC, capacity<512 MB>::size, Alignment>>>>;
+	using pool_type = FE::generic_pool<capacity<512 MB>::size, Alignment, FE::aligned_allocator<internal::pool::chunk<void, POOL_TYPE::_GENERIC, capacity<512 MB>::size, Alignment>>>;
 
 protected:
 	static std::unique_ptr<pool_type> s_pool;

@@ -35,7 +35,7 @@ public:
 													FE::task_base*, 
 													FE::hash<method_signature_t>,
 													std::equal_to<method_signature_t>,	
-													FE::namespace_pool_allocator<std::pair<const method_signature_t, FE::task_base*>>>;
+													FE::pool_allocator<std::pair<const method_signature_t, FE::task_base*>>>;
 private:
 	FE::generic_pool<function_pool_size, FE::align_CPU_L1_cache_line> m_function_pool;
 	underlying_container m_task_map;
