@@ -4,13 +4,13 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
-        
         {
+            "name": "Clang++ Debug",
             "type": "lldb",
             "request": "launch",
-            "name": "Debug",
-            "program": "${workspaceFolder}/<executable file>",
+            "program": "${workspaceFolder}/Frogman-Engine-Tests/FE-Tests/build/FE.core.pool/FE.core.pool_test",
             "args": [],
+            "stopOnEntry": true,
             "cwd": "${workspaceFolder}"
         }
     ]

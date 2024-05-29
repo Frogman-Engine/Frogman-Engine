@@ -4,5 +4,7 @@
 
 
 std::atomic_int64_t FE::allocator_base::s_total_memory_util = 0;
-
 thread_local FE::var::int64 FE::allocator_base::tl_s_thread_local_memory_util = 0;
+
+std::atomic_int64_t FE::allocator_base::s_total_memory_pool_util = 0;
+thread_local FE::var::int64 FE::allocator_base::tl_s_thread_local_memory_pool_util = 0;

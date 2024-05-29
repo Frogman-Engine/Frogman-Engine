@@ -30,8 +30,8 @@ namespace internal::pool
     };
 
 
-    template<typename T, size_t ChunkCapacity>
-    struct chunk<T, POOL_TYPE::_BLOCK, ChunkCapacity, FE::align_custom_bytes<sizeof(T)>>
+    template<typename T, count_t PageCapacity>
+    struct chunk<T, POOL_TYPE::_BLOCK, PageCapacity, FE::align_custom_bytes<sizeof(T)>>
     {
         FE_STATIC_ASSERT(std::is_array<T>::value == true, "Static Assertion Failed: The T must not be an array[] type.");
         FE_STATIC_ASSERT(std::is_const<T>::value == true, "Static Assertion Failed: The T must not be a const type.");
@@ -41,15 +41,15 @@ namespace internal::pool
         using pointer = typename block_info_type::pointer;
 
     private:
-        alignas(FE::SIMD_auto_alignment::size) std::array<var::byte, sizeof(T)* ChunkCapacity> m_memory;
+        alignas(FE::SIMD_auto_alignment::size) std::array<var::byte, sizeof(T)* PageCapacity> m_memory;
 
     public:
-        constexpr static size_t chunk_capacity = ChunkCapacity;
+        constexpr static size_t page_capacity = PageCapacity;
 
-        FE::fstack<block_info_type, ChunkCapacity> _free_blocks;
+        FE::fstack<block_info_type, PageCapacity> _free_blocks;
         pointer const _begin = reinterpret_cast<pointer const>(m_memory.data());
         pointer _page_iterator = _begin;
-        pointer const _end = _begin + ChunkCapacity;
+        pointer const _end = _begin + PageCapacity;
 
         _FORCE_INLINE_ boolean is_full() const noexcept
         {
@@ -59,13 +59,13 @@ namespace internal::pool
 }
 
 
-template<typename T, size_t ChunkCapacity, class Allocator>
-struct pool_deleter<T, POOL_TYPE::_BLOCK, ChunkCapacity, FE::align_custom_bytes<sizeof(T)>, Allocator>
+template<typename T, count_t PageCapacity, class Allocator>
+struct pool_deleter<T, POOL_TYPE::_BLOCK, PageCapacity, FE::align_custom_bytes<sizeof(T)>, Allocator>
 {
     FE_STATIC_ASSERT(std::is_array<T>::value == true, "Static Assertion Failed: The T must not be an array[] type.");
     FE_STATIC_ASSERT(std::is_const<T>::value == true, "Static Assertion Failed: The T must not be a const type.");
 
-    using chunk_type = internal::pool::chunk<T, POOL_TYPE::_BLOCK, ChunkCapacity, FE::align_custom_bytes<sizeof(T)>>;
+    using chunk_type = internal::pool::chunk<T, POOL_TYPE::_BLOCK, PageCapacity, FE::align_custom_bytes<sizeof(T)>>;
     using value_type = typename FE::remove_const_reference<typename chunk_type::value_type>::type;
     using block_info_type = typename chunk_type::block_info_type;
 
@@ -73,7 +73,7 @@ private:
     chunk_type* m_host_chunk = nullptr;
 
 public:
-    constexpr static count_t chunk_capacity = ChunkCapacity;
+    constexpr static count_t page_capacity = PageCapacity;
 
     _FORCE_INLINE_ pool_deleter() noexcept : m_host_chunk() {}
     _FORCE_INLINE_ pool_deleter(chunk_type* host_p) noexcept : m_host_chunk(host_p) {}
@@ -93,21 +93,21 @@ public:
 };
 
 
-template<typename T, size_t ChunkCapacity, class Allocator>
-class pool<T, POOL_TYPE::_BLOCK, ChunkCapacity, FE::align_custom_bytes<sizeof(T)>, Allocator>
+template<typename T, count_t PageCapacity, class Allocator>
+class pool<T, POOL_TYPE::_BLOCK, PageCapacity, FE::align_custom_bytes<sizeof(T)>, Allocator>
 {
     FE_STATIC_ASSERT(std::is_array<T>::value == true, "Static Assertion Failed: The T must not be an array[] type.");
     FE_STATIC_ASSERT(std::is_const<T>::value == true, "Static Assertion Failed: The T must not be a const type.");
 
 public:
-    using chunk_type = internal::pool::chunk<T, POOL_TYPE::_BLOCK, ChunkCapacity, FE::align_custom_bytes<sizeof(T)>>;
-    using deleter_type = pool_deleter<T, POOL_TYPE::_BLOCK, ChunkCapacity, FE::align_custom_bytes<sizeof(T)>, Allocator>;
+    using chunk_type = internal::pool::chunk<T, POOL_TYPE::_BLOCK, PageCapacity, FE::align_custom_bytes<sizeof(T)>>;
+    using deleter_type = pool_deleter<T, POOL_TYPE::_BLOCK, PageCapacity, FE::align_custom_bytes<sizeof(T)>, Allocator>;
     using block_info_type = typename chunk_type::block_info_type;
 
     FE_STATIC_ASSERT((std::is_same<chunk_type, typename Allocator::value_type>::value == false), "Static Assertion Failed: The chunk_type has to be equivalent to Allocator::value_type.");
     using pool_type = std::list<chunk_type, Allocator>;
 
-    constexpr static count_t chunk_capacity = ChunkCapacity;
+    constexpr static count_t page_capacity = PageCapacity;
     static constexpr count_t maximum_list_node_count = 10;
 
     FE_STATIC_ASSERT((std::is_same<T, typename chunk_type::value_type>::value == false), "Static Assertion Failed: The value_type does not match.");
@@ -117,7 +117,7 @@ private:
     pool_type m_memory_pool;
 
 public:
-    pool() noexcept : m_memory_pool() {}
+    pool() noexcept = default;
     ~pool() noexcept = default;
 
     pool(const pool& other_p) noexcept = delete;
@@ -219,14 +219,14 @@ public:
         {
             var::size_t l_unused_element_size = l_list_iterator->_free_blocks.size();
 
-            FE_ASSERT((l_list_iterator->_end - l_list_iterator->_begin) != ChunkCapacity, "The chunk range is invalid.");
+            FE_ASSERT((l_list_iterator->_end - l_list_iterator->_begin) != PageCapacity, "The chunk range is invalid.");
 
             if (l_list_iterator->_page_iterator < l_list_iterator->_end)
             {
                 l_unused_element_size += (l_list_iterator->_end - l_list_iterator->_page_iterator);
             }
 
-            if (l_unused_element_size == ChunkCapacity)
+            if (l_unused_element_size == PageCapacity)
             {
                 this->m_memory_pool.erase(l_list_iterator);
 
@@ -244,11 +244,11 @@ public:
 };
 
 
-template<typename T, size_t ChunkCapacity = 128, class Allocator = FE::aligned_allocator<internal::pool::chunk<T, POOL_TYPE::_BLOCK, ChunkCapacity, FE::align_custom_bytes<sizeof(T)>>>>
-using block_pool = pool<T, POOL_TYPE::_BLOCK, ChunkCapacity, FE::align_custom_bytes<sizeof(T)>, Allocator>;
+template<typename T, count_t PageCapacity = 128, class Allocator = FE::aligned_allocator<internal::pool::chunk<T, POOL_TYPE::_BLOCK, PageCapacity, FE::align_custom_bytes<sizeof(T)>>>>
+using block_pool = pool<T, POOL_TYPE::_BLOCK, PageCapacity, FE::align_custom_bytes<sizeof(T)>, Allocator>;
 
-template<typename T, size_t ChunkCapacity = 128, class Allocator = FE::aligned_allocator<internal::pool::chunk<T, POOL_TYPE::_BLOCK, ChunkCapacity, FE::align_custom_bytes<sizeof(T)>>>>
-using block_pool_ptr = std::unique_ptr<T, pool_deleter<T, FE::POOL_TYPE::_BLOCK, ChunkCapacity, FE::align_custom_bytes<sizeof(T)>, Allocator>>;
+template<typename T, count_t PageCapacity = 128, class Allocator = FE::aligned_allocator<internal::pool::chunk<T, POOL_TYPE::_BLOCK, PageCapacity, FE::align_custom_bytes<sizeof(T)>>>>
+using block_pool_ptr = std::unique_ptr<T, pool_deleter<T, FE::POOL_TYPE::_BLOCK, PageCapacity, FE::align_custom_bytes<sizeof(T)>, Allocator>>;
 
 
 END_NAMESPACE

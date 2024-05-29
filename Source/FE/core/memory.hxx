@@ -69,12 +69,6 @@ enum struct MEMORY_ERROR_1XX : int32
 	_FATAL_ERROR_DOUBLE_FREE = 108
 };
 
-struct memory_utilization
-{
-	var::int64 _global_bytes = 0;
-	var::int64 _thread_local_bytes = 0;
-};
-
 
 _MAYBE_UNUSED_ constexpr uint8 byte_size = 1;
 _MAYBE_UNUSED_ constexpr uint8 word_size = 2;

@@ -2,15 +2,12 @@
 #define _FE_CORE_POOL_HXX_
 // Copyright © from 2023 to current, UNKNOWN STRYKER. All Rights Reserved.
 #include <FE/core/prerequisites.h>
-#include <FE/core/block_pool.hxx>
 #include <FE/core/block_pool_allocator.hxx>
 #include <FE/core/private/pool_common.hxx>
 
 
 
 
-// Double Free Issue Found!
-// To Do: fix the bug
 BEGIN_NAMESPACE(FE)
 
 
@@ -23,12 +20,14 @@ namespace internal::pool
         var::size_t _size_in_bytes = 0;
     };
 
-
-    template<size_t PossibleAddressCount>
-    class address_map : public std::map<FE::var::byte*, FE::var::size_t, std::greater<FE::var::byte*>, FE::block_pool_allocator< std::pair<FE::var::byte* const, FE::var::size_t>, FE::object_count<PossibleAddressCount>>> 
+    template<count_t PossibleAddressCount>
+    class address_map : public std::map<var::byte*, var::size_t, std::greater<var::byte*>, FE::block_pool_allocator< std::pair<var::byte* const, var::size_t>, FE::object_count<PossibleAddressCount>>> 
     {
     public:
-        using base_type = std::map<FE::var::byte*, FE::var::size_t, std::greater<FE::var::byte*>, FE::block_pool_allocator< std::pair<FE::var::byte* const, FE::var::size_t>, FE::object_count<PossibleAddressCount>>>;
+        using base_type = std::map< var::byte*, var::size_t, 
+                                    std::greater<var::byte*>, 
+                                    FE::block_pool_allocator<   std::pair<var::byte* const, var::size_t>, 
+                                                                FE::object_count<PossibleAddressCount>>>;
         using key_type = var::byte*;
         using key_compare = std::greater<var::byte*>;
         using value_compare = typename base_type::value_compare;
@@ -45,22 +44,11 @@ namespace internal::pool
         using reverse_iterator = typename base_type::reverse_iterator;
         using const_reverse_iterator = typename base_type::const_reverse_iterator;
 
-        _FORCE_INLINE_ address_map() noexcept : base_type() {}
-        _FORCE_INLINE_ ~address_map() noexcept {}
-        _FORCE_INLINE_ address_map(const address_map& other_p) noexcept : base_type()
-        {
-            const base_type* l_other = &other_p;
-            base_type* l_this = this;
-
-            *l_this = *l_other;
-        }
-        _FORCE_INLINE_ address_map(address_map&& rvalue_p) noexcept : base_type()
-        {
-            base_type* l_rvalue = &rvalue_p;
-            base_type* l_this = this;
-
-            *l_this = std::move(*l_rvalue);
-        }
+    public:
+        _FORCE_INLINE_ address_map() noexcept = default;
+        _FORCE_INLINE_ ~address_map() noexcept = default;
+        _FORCE_INLINE_ address_map(const address_map& other_p) noexcept = delete;
+        _FORCE_INLINE_ address_map(address_map&& rvalue_p) noexcept = delete;
 
         _FORCE_INLINE_ boolean is_empty() const noexcept
         {
@@ -68,17 +56,17 @@ namespace internal::pool
         }
     };
 
-    template<size_t ChunkCapacity, class Alignment>
-    struct chunk<void, POOL_TYPE::_GENERIC, ChunkCapacity, Alignment>
+    template<count_t PageCapacity, class Alignment>
+    struct chunk<void, POOL_TYPE::_GENERIC, PageCapacity, Alignment>
     {
-        constexpr static count_t chunk_capacity = ChunkCapacity;
-        constexpr static size_t recycler_capacity = ((ChunkCapacity / Alignment::size) / 2) + 1; // The possible fragment count would be ((ChunkCapacity / Alignment::size) / 2) + 1 because adjacent fragments gets immediately merged during deallocate() operation.
+        constexpr static count_t page_capacity = PageCapacity;
+        constexpr static size_t recycler_capacity = ((PageCapacity / Alignment::size) / 2) + 1; // The possible fragment count would be ((PageCapacity / Alignment::size) / 2) + 1 because adjacent fragments gets immediately merged during deallocate() operation.
         using recycler_type = FE::internal::pool::address_map<recycler_capacity>;
         using recycler_iterator = typename recycler_type::iterator;
         using block_info_type = typename recycler_type::value_type;
 
     private:
-        alignas(FE::SIMD_auto_alignment::size) std::array<var::byte, ChunkCapacity> m_memory;
+        alignas(FE::SIMD_auto_alignment::size) std::array<var::byte, PageCapacity> m_memory;
         /*
          std::pair's first contains the address of the memory block.
          std::pair's second contains the size of the memory block.
@@ -110,7 +98,6 @@ namespace internal::pool
         template<typename T>
 		void track_allocation(void* pointer_p, size_t size_in_bytes_including_alignment) noexcept
 		{
-            _DO_ONCE_AT_THREAD_PROCESS_ typename pool_monitor<PossibleAddressCount>::tracker_type* l_ref = &m_tracker;
             auto l_insertion_result = this->m_tracker.insert(typename tracker_type::value_type{ static_cast<var::byte*>(pointer_p), size_in_bytes_including_alignment });
 			FE_ASSERT(l_insertion_result.second == false, "Pool Monitor: something went wrong with memory recycling algorithm. The same address has been allocated twice.");
 		}
@@ -138,17 +125,17 @@ namespace internal::pool
 }
 
 
-template<size_t ChunkCapacity, class Alignment>
+template<size_t PageCapacity, class Alignment>
 struct generic_deleter_base
 {
-    template<typename T, POOL_TYPE pool_ype, size_t chunk_capacity, class alignment, class allocator>
+    template<typename T, POOL_TYPE pool_ype, size_t page_capacity, class alignment, class allocator>
     friend class pool;
 
-    using chunk_type = internal::pool::chunk<void, POOL_TYPE::_GENERIC, ChunkCapacity, Alignment>;
+    using chunk_type = internal::pool::chunk<void, POOL_TYPE::_GENERIC, PageCapacity, Alignment>;
     using block_info_type = typename chunk_type::block_info_type;
 
-    constexpr static size_t chunk_capacity = ChunkCapacity;
-    constexpr static size_t temporary_storage_capacity = ChunkCapacity / Alignment::size;
+    constexpr static size_t page_capacity = PageCapacity;
+    constexpr static size_t temporary_storage_capacity = PageCapacity / Alignment::size;
 
 protected:
     chunk_type* m_host_chunk = nullptr;
@@ -170,10 +157,10 @@ public:
 };
 
 
-template<size_t ChunkCapacity, class Alignment, class Allocator>
-struct nondestructive_generic_deleter final : public generic_deleter_base<ChunkCapacity, Alignment>
+template<size_t PageCapacity, class Alignment, class Allocator>
+struct nondestructive_generic_deleter final : public generic_deleter_base<PageCapacity, Alignment>
 {
-    using base_type = generic_deleter_base<ChunkCapacity, Alignment>;
+    using base_type = generic_deleter_base<PageCapacity, Alignment>;
     using chunk_type = typename base_type::chunk_type;
     using block_info_type = typename base_type::block_info_type;
 
@@ -191,19 +178,19 @@ struct nondestructive_generic_deleter final : public generic_deleter_base<ChunkC
 
         if (this->m_host_chunk->_free_blocks.size() > 1)
         {
-            pool<void, POOL_TYPE::_GENERIC, ChunkCapacity, Alignment, Allocator>::__merge(l_address_tree_insertion_result.first, this->m_host_chunk->_free_blocks);
+            pool<void, POOL_TYPE::_GENERIC, PageCapacity, Alignment, Allocator>::__merge(l_address_tree_insertion_result.first, this->m_host_chunk->_free_blocks);
         }
     }
 };
 
 
-template<typename T, size_t ChunkCapacity, class Alignment, class Allocator>
-struct pool_deleter<T, POOL_TYPE::_GENERIC, ChunkCapacity, Alignment, Allocator> final : public generic_deleter_base<ChunkCapacity, Alignment>
+template<typename T, size_t PageCapacity, class Alignment, class Allocator>
+struct pool_deleter<T, POOL_TYPE::_GENERIC, PageCapacity, Alignment, Allocator> final : public generic_deleter_base<PageCapacity, Alignment>
 {
     FE_STATIC_ASSERT(std::is_array<T>::value == true, "Static Assertion Failed: The T must not be an array[] type.");
     FE_STATIC_ASSERT(std::is_const<T>::value == true, "Static Assertion Failed: The T must not be a const type.");
 
-    using base_type = generic_deleter_base<ChunkCapacity, Alignment>;
+    using base_type = generic_deleter_base<PageCapacity, Alignment>;
     using chunk_type = typename base_type::chunk_type;
     using block_info_type = typename base_type::block_info_type;
     using value_type = typename FE::remove_const_reference<T>::type;
@@ -240,7 +227,7 @@ public:
 
         if (this->m_host_chunk->_free_blocks.size() > 1)
         {
-            pool<void, POOL_TYPE::_GENERIC, ChunkCapacity, Alignment, Allocator>::__merge(l_address_tree_insertion_result.first, this->m_host_chunk->_free_blocks);
+            pool<void, POOL_TYPE::_GENERIC, PageCapacity, Alignment, Allocator>::__merge(l_address_tree_insertion_result.first, this->m_host_chunk->_free_blocks);
         }
     }
 
@@ -252,41 +239,41 @@ public:
 
 
 
-
-template<size_t ChunkCapacity, class Alignment, class Allocator>
-class pool<void, POOL_TYPE::_GENERIC, ChunkCapacity, Alignment, Allocator>
+// static declaration of FE.generic_pool is not supported.
+template<count_t PageCapacity, class Alignment, class Allocator>
+class pool<void, POOL_TYPE::_GENERIC, PageCapacity, Alignment, Allocator>
 {
-    template<typename T, POOL_TYPE pool_ype, size_t chunk_capacity, class alignment, class allocator>
+    template<typename T, POOL_TYPE pool_ype, count_t page_capacity, class alignment, class allocator>
     friend struct pool_deleter;
 
-    template<size_t chunk_capacity, class alignment, class allocator>
+    template<count_t page_capacity, class alignment, class allocator>
     friend struct nondestructive_generic_deleter;
 
 public:
-    using chunk_type = internal::pool::chunk<void, POOL_TYPE::_GENERIC, ChunkCapacity, Alignment>;
+    using chunk_type = internal::pool::chunk<void, POOL_TYPE::_GENERIC, PageCapacity, Alignment>;
     using recycler_type = typename chunk_type::recycler_type;
     using recycler_iterator = typename chunk_type::recycler_iterator;
 
     template<typename U>
-    using deleter_type = pool_deleter<U, POOL_TYPE::_GENERIC, ChunkCapacity, Alignment, Allocator>;
+    using deleter_type = pool_deleter<U, POOL_TYPE::_GENERIC, PageCapacity, Alignment, Allocator>;
    
 	using pool_type = std::list<chunk_type, Allocator>;
 
     using block_info_type = typename chunk_type::block_info_type;
 
-    static constexpr size_t chunk_capacity = chunk_type::chunk_capacity;
+    static constexpr size_t page_capacity = chunk_type::page_capacity;
     static constexpr size_t recycler_capacity = chunk_type::recycler_capacity;
     static constexpr count_t maximum_list_node_count = 10;
-
-#ifdef _ENABLE_LOG_
-    internal::pool::pool_monitor<ChunkCapacity / Alignment::size> _pool_monitor;
-#endif
 
 private:
     pool_type m_memory_pool;
 
 public:
-    pool() noexcept : m_memory_pool() {}
+#ifdef _ENABLE_LOG_
+    internal::pool::pool_monitor<PageCapacity / Alignment::size> _pool_monitor;
+#endif
+
+    pool() noexcept = default;
     ~pool() noexcept = default;
 
     pool(const pool& other_p) noexcept = delete;
@@ -302,7 +289,7 @@ public:
         FE_STATIC_ASSERT(std::is_array<U>::value == true, "Static Assertion Failed: The T must not be an array[] type.");
         FE_STATIC_ASSERT(std::is_const<U>::value == true, "Static Assertion Failed: The T must not be a const type.");
         FE_ASSERT(size_p == 0, "${%s@0}: ${%s@1} was 0", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_INVALID_SIZE), TO_STRING(size_p));
-        FE_EXIT(size_p > ChunkCapacity, MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_CAPACITY, "Fatal Error: Unable to allocate the size of memmory that exceeds the pool chunk's capacity.");
+        FE_EXIT(size_p > PageCapacity, MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_CAPACITY, "Fatal Error: Unable to allocate the size of memmory that exceeds the pool chunk's capacity.");
 
         size_t l_queried_allocation_size_in_bytes = FE::calculate_aligned_memory_size_in_bytes<U, Alignment>(size_p);
         typename pool_type::iterator l_list_iterator = this->m_memory_pool.begin();
@@ -422,7 +409,7 @@ public:
                 l_unused_memory_size_in_bytes += l_list_iterator->_end - l_list_iterator->_page_iterator;
             }
 
-            if (l_unused_memory_size_in_bytes == ChunkCapacity)
+            if (l_unused_memory_size_in_bytes == PageCapacity)
             {
                 this->m_memory_pool.erase(l_list_iterator);
 
@@ -478,15 +465,6 @@ public:
     }
 
 private:
-    /*
-    FE.generic_pool
-
-    allocation:
-
-
-    deallocation:
-  
-    */
     static void __merge(recycler_iterator in_out_recently_deleted_p, recycler_type& in_out_free_block_list_p) noexcept
     {
         auto l_null = in_out_free_block_list_p.end();
@@ -575,11 +553,11 @@ private:
 };
 
 
-template<size_t ChunkCapacity = 512 MB, class Alignment = FE::align_8bytes, class Allocator = FE::aligned_allocator<internal::pool::chunk<void, POOL_TYPE::_GENERIC, ChunkCapacity, Alignment>>>
-using generic_pool = pool<void, POOL_TYPE::_GENERIC, ChunkCapacity, Alignment, Allocator>;
+template<size_t PageCapacity = 1 MB, class Alignment = FE::SIMD_auto_alignment, class Allocator = FE::aligned_allocator<internal::pool::chunk<void, POOL_TYPE::_GENERIC, PageCapacity, Alignment>>>
+using generic_pool = pool<void, POOL_TYPE::_GENERIC, PageCapacity, Alignment, Allocator>;
 
-template<typename T, size_t ChunkCapacity = 512 MB, class Alignment = FE::align_8bytes, class Allocator = FE::aligned_allocator<internal::pool::chunk<void, POOL_TYPE::_GENERIC, ChunkCapacity, Alignment>>>
-using generic_pool_ptr = std::unique_ptr<T, pool_deleter<T, FE::POOL_TYPE::_GENERIC, ChunkCapacity, Alignment, Allocator>>;
+template<typename T, size_t PageCapacity = 1 MB, class Alignment = FE::SIMD_auto_alignment, class Allocator = FE::aligned_allocator<internal::pool::chunk<void, POOL_TYPE::_GENERIC, PageCapacity, Alignment>>>
+using generic_pool_ptr = std::unique_ptr<T, pool_deleter<T, FE::POOL_TYPE::_GENERIC, PageCapacity, Alignment, Allocator>>; 
 
 
 END_NAMESPACE

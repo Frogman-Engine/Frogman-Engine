@@ -81,13 +81,46 @@ int main(int argc_p, char** argv_p)
 }
 
 
+
+
+TEST(pool_allocator, all)
+{
+	{
+		FE::pool_allocator<std::string> l_allocator;
+		std::string* l_ptr = l_allocator.allocate(1);
+		l_allocator.deallocate(l_ptr, 1);
+	}
+	{
+		std::vector<std::string, FE::pool_allocator<std::string>> l_vector;
+
+		l_vector.reserve(64);
+		l_vector.shrink_to_fit();
+	}
+}
+
+
+TEST(new_delete_pool_allocator, all)
+{
+	FE::new_delete_allocator<FE::pool_allocator<std::string>> l_allocator;
+
+	{
+		auto l_ptr = l_allocator.allocate(1);
+
+		l_ptr = l_allocator.reallocate(l_ptr, 1, 2);
+
+		l_allocator.deallocate(l_ptr, 2);
+	}
+}
+
+
+
+
 void memory_pooled_std_list_iteration(benchmark::State& state_p) noexcept
 {
-	FE::pool_allocator<int> l_allocator; // std::list nodes are allocated under the memory pool namespace named "list node pool". This provides higher cache hit ratio. 
-	benchmark::DoNotOptimize(l_allocator);
-	std::list<int, FE::pool_allocator<int>> l_list{ l_allocator };
+	// std::list nodes are allocated under the memory pool namespace named "list node pool". This provides higher cache hit ratio. 
+	std::list<int, FE::pool_allocator<int>> l_list;
 	benchmark::DoNotOptimize(l_list);
-	for (int i = 0; i < 10; ++i)
+	for (int i = 0; i < 1000; ++i)
 	{
 		l_list.push_back(1);
 	}
@@ -99,16 +132,15 @@ void memory_pooled_std_list_iteration(benchmark::State& state_p) noexcept
 			benchmark::DoNotOptimize(element);
 		}
 	}
-	l_allocator.shrink_to_fit();
 }
-//BENCHMARK(memory_pooled_std_list_iteration);
+BENCHMARK(memory_pooled_std_list_iteration);
 
 void std_list_iteration(benchmark::State& state_p) noexcept
 {
 	std::list<int> l_list;
 	benchmark::DoNotOptimize(l_list);
 
-	for (int i = 0; i < 10; ++i)
+	for (int i = 0; i < 1000; ++i)
 	{
 		l_list.push_back(1);
 	}
@@ -123,7 +155,7 @@ void std_list_iteration(benchmark::State& state_p) noexcept
 }
 BENCHMARK(std_list_iteration);
 
-#define _MAX_ITERATION_ 5000
+#define _MAX_ITERATION_ 10000
 void boost_pool_allocator_extreme_test(benchmark::State& state_p) noexcept
 {
 	static std::string* l_s_strings[_MAX_ITERATION_];
@@ -224,24 +256,24 @@ void FE_pool_allocator_extreme_test(benchmark::State& state_p) noexcept
 		}
 	}
 }
-//BENCHMARK(FE_pool_allocator_extreme_test);
+BENCHMARK(FE_pool_allocator_extreme_test);
 
 void FE_block_pool_allocator_extreme_test(benchmark::State& state_p) noexcept
 {
-	FE::block_pool<std::string> l_allocator;
+	FE::block_pool<std::string, _MAX_ITERATION_> l_allocator;
 	benchmark::DoNotOptimize(l_allocator);
 
-	static std::string* l_s_strings[FE::block_pool<std::string>::chunk_capacity];
+	static std::string* l_s_strings[_MAX_ITERATION_];
 	benchmark::DoNotOptimize(l_s_strings);
 
 	for (auto _ : state_p)
 	{
-		for (FE::var::uint32 i = 0; i < FE::block_pool<std::string>::chunk_capacity; ++i)
+		for (FE::var::uint32 i = 0; i < _MAX_ITERATION_; ++i)
 		{
 			l_s_strings[i] = l_allocator.allocate().release();
 		}
 
-		for (FE::var::uint32 i = 0; i < FE::block_pool<std::string>::chunk_capacity; ++i)
+		for (FE::var::uint32 i = 0; i < _MAX_ITERATION_; ++i)
 		{
 			if (i % 2 == 0)
 			{
@@ -249,7 +281,7 @@ void FE_block_pool_allocator_extreme_test(benchmark::State& state_p) noexcept
 			}
 		}
 
-		for (FE::var::uint32 i = 0; i < FE::block_pool<std::string>::chunk_capacity; ++i)
+		for (FE::var::uint32 i = 0; i < _MAX_ITERATION_; ++i)
 		{
 			if (i % 2 == 1)
 			{
@@ -258,7 +290,7 @@ void FE_block_pool_allocator_extreme_test(benchmark::State& state_p) noexcept
 		}
 	}
 }
-//BENCHMARK(FE_block_pool_allocator_extreme_test);
+BENCHMARK(FE_block_pool_allocator_extreme_test);
 
 void cpp_new_delete_extreme_test(benchmark::State& state_p) noexcept
 {

@@ -14,5 +14,6 @@ ls filename: checks the presence of files with the specified name.
 int main()
 {
     std::cout << "Compilation test of FE.core.prerequisites source code is successful.\n";
+
     return 0;
 }

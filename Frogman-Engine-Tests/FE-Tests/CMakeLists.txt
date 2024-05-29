@@ -129,7 +129,6 @@ ADD_SUBDIRECTORY(FE.core.log)
 
 SET(FE_CORE_POOL
 ${CMAKE_CURRENT_SOURCE_DIR}/../../Source/FE/core/private/pool_common.hxx
-${CMAKE_CURRENT_SOURCE_DIR}/../../Source/FE/core/private/pool_allocator_base.hxx
 ${CMAKE_CURRENT_SOURCE_DIR}/../../Source/FE/core/pool.hxx
 ${CMAKE_CURRENT_SOURCE_DIR}/../../Source/FE/core/block_pool.hxx
 ${CMAKE_CURRENT_SOURCE_DIR}/../../Source/FE/core/pool_allocator.hxx
@@ -147,6 +146,12 @@ ${CMAKE_CURRENT_SOURCE_DIR}/../../Source/FE/core/private/memory_metrics.cpp
 )
 ADD_SUBDIRECTORY(FE.core.pool)
 
+SET(FE_CORE_THREAD
+${CMAKE_CURRENT_SOURCE_DIR}/../../Source/FE/core/thread.hpp
+${CMAKE_CURRENT_SOURCE_DIR}/../../Source/FE/core/private/thread.cpp
+)
+ADD_SUBDIRECTORY(FE.core.thread)
+
 SET(FE_FRAMEWORK_PREDEFINED_MAIN
 ${CMAKE_CURRENT_SOURCE_DIR}/../../Source/FE/framework/framework.hpp
 ${CMAKE_CURRENT_SOURCE_DIR}/../../Source/FE/framework/private/framework.cpp
@@ -162,7 +167,8 @@ IF(CMAKE_SYSTEM_NAME STREQUAL "Windows")
 ADD_DEPENDENCIES("FE.core.type_traits" "FE.core.prerequisites")
 ADD_DEPENDENCIES("FE.core.algorithm.utility" "FE.core.type_traits")
 ADD_DEPENDENCIES("FE.core.log" "FE.core.algorithm.utility")
-ADD_DEPENDENCIES("FE.core.pool" "FE.core.log")
+ADD_DEPENDENCIES("FE.core.thread" "FE.core.log")
+ADD_DEPENDENCIES("FE.core.pool" "FE.core.thread")
 ADD_DEPENDENCIES("FE.framework.predefined_main" "FE.core.pool")
 ENDIF()
 

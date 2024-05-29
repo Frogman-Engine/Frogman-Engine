@@ -15,8 +15,8 @@ fi
 mkdir $BUILD_FILES_FOLDER_NAME
 cd $BUILD_FILES_FOLDER_NAME
 
-$CMAKE_DIRECTORY -DCMAKE_SYSTEM_NAME=Linux -DCMAKE_CXX_COMPILER=clang++-12 -DCMAKE_CXX_STANDARD=17 -DCMAKE_BUILD_TYPE=Debug ..
+$CMAKE_DIRECTORY -DCMAKE_SYSTEM_NAME=Linux -DCMAKE_CXX_COMPILER=clang++-12 -DCMAKE_CXX_STANDARD=17 -DCMAKE_BUILD_TYPE=Debug .. -G "Ninja"
 
-sudo apt-get install make
-make -j2
+sudo apt-get install ninja-build
+ninja -j2
 cd ..
