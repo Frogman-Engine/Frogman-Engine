@@ -33,16 +33,18 @@ private:
 	std::shared_ptr<pool_type> m_pool;
 	
 public:
-	_CONSTEXPR20_ pool_allocator(const std::shared_ptr<pool_type>& pool_p = std::make_shared<pool_type>()) noexcept : m_pool(pool_p) {}
+	_CONSTEXPR20_ pool_allocator() noexcept : m_pool(std::make_shared<pool_type>()) {}
+	_CONSTEXPR20_ pool_allocator(const std::shared_ptr<pool_type>& pool_p) noexcept : m_pool(pool_p) {}
+	_CONSTEXPR20_ pool_allocator(const pool_allocator<T, PageCapacity, Alignment>& other_p) noexcept : m_pool(other_p.m_pool) {}
+	_CONSTEXPR20_ pool_allocator(pool_allocator<T, PageCapacity, Alignment>&& other_p) noexcept : m_pool(other_p.m_pool) {}
 
-	template <typename U = T>
+	template <typename U>
 	_CONSTEXPR20_ pool_allocator(_MAYBE_UNUSED_ const pool_allocator<U, PageCapacity, Alignment>& other_p) noexcept : m_pool(std::make_shared<pool_type>()) {}
 
-	~pool_allocator() noexcept = default;
+	_FORCE_INLINE_ ~pool_allocator() noexcept {};
 
-
-	_CONSTEXPR20_ pool_allocator& operator=(const pool_allocator&) noexcept = delete;
-	_CONSTEXPR20_ pool_allocator& operator=(const pool_allocator&&) noexcept = delete;
+	_CONSTEXPR17_ pool_allocator& operator=(const pool_allocator&) noexcept { return *this; };
+	_CONSTEXPR17_ pool_allocator& operator=(const pool_allocator&&) noexcept { return *this; };
 
 
 	_FORCE_INLINE_ void create_pages(const size_type count_p) noexcept
@@ -91,12 +93,12 @@ public:
 	}
 
 
-	_CONSTEXPR20_ boolean operator==(_MAYBE_UNUSED_ const pool_allocator& other_p) noexcept
+	_FORCE_INLINE_ _CONSTEXPR17_ boolean operator==(_MAYBE_UNUSED_ const pool_allocator& other_p) noexcept
 	{
 		return true;
 	}
 #ifndef _HAS_CXX23_
-	_CONSTEXPR20_ boolean operator!=(_MAYBE_UNUSED_ const pool_allocator& other_p) noexcept
+	_FORCE_INLINE_ _CONSTEXPR17_ boolean operator!=(_MAYBE_UNUSED_ const pool_allocator& other_p) noexcept
 	{
 		return false;
 	}

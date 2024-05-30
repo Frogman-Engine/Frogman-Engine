@@ -33,12 +33,17 @@ private:
 	std::shared_ptr<pool_type> m_pool;
 
 public:
-	_CONSTEXPR20_ new_delete_block_pool_allocator(const std::shared_ptr<pool_type>& pool_p = std::make_shared<pool_type>()) noexcept : m_pool(pool_p) {}
+	_CONSTEXPR20_ new_delete_block_pool_allocator() noexcept : m_pool(std::make_shared<pool_type>()) {}
+	_CONSTEXPR20_ new_delete_block_pool_allocator(const std::shared_ptr<pool_type>& pool_p) noexcept : m_pool(pool_p) {}
+	_CONSTEXPR20_ new_delete_block_pool_allocator(const new_delete_block_pool_allocator<T, PageCapacity>& other_p) noexcept : m_pool(other_p.m_pool) {}
+	_CONSTEXPR20_ new_delete_block_pool_allocator(new_delete_block_pool_allocator<T, PageCapacity>&& other_p) noexcept : m_pool(other_p.m_pool) {}
+	_FORCE_INLINE_ ~new_delete_block_pool_allocator() noexcept {};
 
-	template <typename U = T>
+	template <typename U>
 	_CONSTEXPR20_ new_delete_block_pool_allocator(_MAYBE_UNUSED_ const new_delete_block_pool_allocator<U, PageCapacity>& other_p) noexcept : m_pool(std::make_shared<FE::block_pool<U, PageCapacity::size>>()) {}
 
-	~new_delete_block_pool_allocator() noexcept = default;
+	_FORCE_INLINE_ _CONSTEXPR17_ new_delete_block_pool_allocator& operator=(const new_delete_block_pool_allocator&) noexcept { return *this; };
+	_FORCE_INLINE_ _CONSTEXPR17_ new_delete_block_pool_allocator& operator=(const new_delete_block_pool_allocator&&) noexcept { return *this; };
 
 
 	_FORCE_INLINE_ void create_pages(const size_type count_p) noexcept
@@ -68,12 +73,12 @@ public:
 	}
 
 
-	_CONSTEXPR20_ boolean operator==(_MAYBE_UNUSED_ const new_delete_block_pool_allocator& other_p) noexcept
+	_FORCE_INLINE_ _CONSTEXPR17_ boolean operator==(_MAYBE_UNUSED_ const new_delete_block_pool_allocator& other_p) noexcept
 	{
 		return true;
 	}
 #ifndef _HAS_CXX23_
-	_CONSTEXPR20_ boolean operator!=(_MAYBE_UNUSED_ const new_delete_block_pool_allocator& other_p) noexcept
+	_FORCE_INLINE_ _CONSTEXPR17_ boolean operator!=(_MAYBE_UNUSED_ const new_delete_block_pool_allocator& other_p) noexcept
 	{
 		return false;
 	}
@@ -105,16 +110,19 @@ private:
 	std::shared_ptr<pool_type> m_pool;
 
 public:
-	_CONSTEXPR20_ block_pool_allocator(const std::shared_ptr<pool_type>& pool_p = std::make_shared<pool_type>()) noexcept : m_pool(pool_p) {}
+	_CONSTEXPR20_ block_pool_allocator() noexcept : m_pool(std::make_shared<pool_type>()) {}
+	_CONSTEXPR20_ block_pool_allocator(const std::shared_ptr<pool_type>& pool_p) noexcept : m_pool(pool_p) {}
+	_CONSTEXPR20_ block_pool_allocator(const block_pool_allocator<T, PageCapacity>& other_p) noexcept : m_pool(other_p.m_pool) {}
+	_CONSTEXPR20_ block_pool_allocator(block_pool_allocator<T, PageCapacity>&& other_p) noexcept : m_pool(other_p.m_pool) {}
 
-	template <typename U = T>
+	_FORCE_INLINE_ ~block_pool_allocator() noexcept {};
+
+	template <typename U>
 	_CONSTEXPR20_ block_pool_allocator(_MAYBE_UNUSED_ const block_pool_allocator<U, PageCapacity>& other_p) noexcept : m_pool(std::make_shared<FE::block_pool<FE::internal::pool::uninitialized_bytes<sizeof(U)>, PageCapacity::size>>()) {}
 
-	~block_pool_allocator() noexcept = default;
+	_FORCE_INLINE_ _CONSTEXPR17_ block_pool_allocator& operator=(const block_pool_allocator&) noexcept { return *this; };
+	_FORCE_INLINE_ _CONSTEXPR17_ block_pool_allocator& operator=(const block_pool_allocator&&) noexcept { return *this; };
 
-	_CONSTEXPR20_ block_pool_allocator& operator=(const block_pool_allocator&) noexcept = delete;
-
-	_CONSTEXPR20_ block_pool_allocator& operator=(const block_pool_allocator&&) noexcept = delete;
 
 	_FORCE_INLINE_ void create_pages(const size_type count_p) noexcept
 	{
@@ -143,12 +151,12 @@ public:
 	}
 	
 
-	_CONSTEXPR20_ boolean operator==(_MAYBE_UNUSED_ const block_pool_allocator& other_p) noexcept
+	_FORCE_INLINE_ _CONSTEXPR17_ boolean operator==(_MAYBE_UNUSED_ const block_pool_allocator& other_p) noexcept
 	{
 		return true;
 	}
 #ifndef _HAS_CXX23_
-	_CONSTEXPR20_ boolean operator!=(_MAYBE_UNUSED_ const block_pool_allocator& other_p) noexcept
+	_FORCE_INLINE_ _CONSTEXPR17_ boolean operator!=(_MAYBE_UNUSED_ const block_pool_allocator& other_p) noexcept
 	{
 		return false;
 	}

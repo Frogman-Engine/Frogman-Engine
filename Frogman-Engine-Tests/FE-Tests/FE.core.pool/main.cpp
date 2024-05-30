@@ -106,9 +106,7 @@ TEST(new_delete_pool_allocator, all)
 	{
 		auto l_ptr = l_allocator.allocate(1);
 
-		l_ptr = l_allocator.reallocate(l_ptr, 1, 2);
-
-		l_allocator.deallocate(l_ptr, 2);
+		l_allocator.deallocate(l_ptr, 1);
 	}
 }
 
@@ -155,7 +153,7 @@ void std_list_iteration(benchmark::State& state_p) noexcept
 }
 BENCHMARK(std_list_iteration);
 
-#define _MAX_ITERATION_ 10000
+#define _MAX_ITERATION_ 1000
 void boost_pool_allocator_extreme_test(benchmark::State& state_p) noexcept
 {
 	static std::string* l_s_strings[_MAX_ITERATION_];

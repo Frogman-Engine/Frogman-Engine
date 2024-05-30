@@ -4,6 +4,9 @@
 #include <FE/core/prerequisites.h>
 #include <FE/core/private/allocator_base.hpp>
 
+// std
+#include <memory>
+
 
 
 
@@ -28,20 +31,28 @@ public:
 	_MAYBE_UNUSED_ static constexpr inline ADDRESS is_address_aligned = Implementation::is_address_aligned;
 
 private:
-	static allocator s_allocator;
+	std::shared_ptr<allocator> m_allocator;
 
 public:
-	constexpr new_delete_allocator() noexcept {}
+	_CONSTEXPR20_ new_delete_allocator() noexcept : m_allocator(std::make_shared<allocator>()) {}
+	_CONSTEXPR20_ new_delete_allocator(const std::shared_ptr<allocator>& allocator_p) noexcept : m_allocator(allocator_p) {}
+	_CONSTEXPR20_ new_delete_allocator(const new_delete_allocator<Implementation>& other_p) noexcept : m_allocator(other_p.m_allocator) {}
+	_CONSTEXPR20_ new_delete_allocator(new_delete_allocator<Implementation>&& other_p) noexcept : m_allocator(other_p.m_allocator) {}
 
 	template <typename AnotherImplementation = Implementation>
-	constexpr new_delete_allocator(_MAYBE_UNUSED_ const new_delete_allocator<AnotherImplementation>& other_p) noexcept {}
+	constexpr new_delete_allocator(_MAYBE_UNUSED_ const new_delete_allocator<AnotherImplementation>& other_p) noexcept : m_allocator(std::make_shared<AnotherImplementation>()) {}
+	
+	_FORCE_INLINE_ ~new_delete_allocator() noexcept {};
+
+	_CONSTEXPR17_ new_delete_allocator& operator=(const new_delete_allocator&) noexcept { return *this; };
+	_CONSTEXPR17_ new_delete_allocator& operator=(const new_delete_allocator&&) noexcept { return *this; };
 
 
 	_NODISCARD_ _FORCE_INLINE_ pointer allocate(size_type count_p) noexcept
 	{
 		FE_ASSERT(count_p == 0, "${%s@0}: queried allocation size is ${%lu@1}.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_INVALID_SIZE), &count_p);
 
-		pointer const l_result = s_allocator.allocate(count_p);
+		pointer const l_result = this->m_allocator->allocate(count_p);
 
 		if constexpr (is_trivial == FE::TYPE_TRIVIALITY::_NOT_TRIVIAL)
 		{
@@ -53,35 +64,6 @@ public:
 		}
 		return l_result;
 	}
-
-
-	_NODISCARD_ _FORCE_INLINE_ pointer reallocate(pointer pointer_p, size_type prev_count_p, size_type new_count_p) noexcept
-	{
-		pointer const l_result = s_allocator.reallocate(pointer_p, prev_count_p, new_count_p);
-
-		if constexpr (is_trivial == FE::TYPE_TRIVIALITY::_NOT_TRIVIAL)
-		{
-			if (new_count_p > prev_count_p)
-			{
-				pointer const l_end = l_result + new_count_p;
-				for (pointer begin = l_result + prev_count_p; begin != l_end; ++begin)
-				{
-					new(begin) value_type();
-				}
-			}
-			else
-			{
-				pointer const l_end = pointer_p + prev_count_p;
-				for (pointer begin = pointer_p + new_count_p; begin != l_end; ++begin)
-				{
-					begin->~value_type();
-				}
-			}
-		}
-
-		return l_result;
-	}
-
 
 	_FORCE_INLINE_ void deallocate(pointer pointer_p, size_type count_p) noexcept
 	{
@@ -96,12 +78,21 @@ public:
 				begin->~value_type();
 			}
 		}
-		s_allocator.deallocate(pointer_p, count_p);
+		this->m_allocator->deallocate(pointer_p, count_p);
 	}
-};
 
-template <class Implementation>
-typename new_delete_allocator<Implementation>::allocator new_delete_allocator<Implementation>::s_allocator;
+
+	_FORCE_INLINE_ _CONSTEXPR17_ boolean operator==(_MAYBE_UNUSED_ const new_delete_allocator& other_p) noexcept
+	{
+		return true;
+	}
+#ifndef _HAS_CXX23_
+	_FORCE_INLINE_ _CONSTEXPR17_ boolean operator!=(_MAYBE_UNUSED_ const new_delete_allocator& other_p) noexcept
+	{
+		return false;
+	}
+#endif
+};
 
 
 
@@ -156,6 +147,18 @@ public:
 		
 		base_type::trackable_free<value_type, Alignment>(pointer_p, count_p * sizeof(value_type));
 	}
+
+
+	_FORCE_INLINE_ _CONSTEXPR17_ boolean operator==(_MAYBE_UNUSED_ const aligned_allocator& other_p) noexcept
+	{
+		return true;
+	}
+#ifndef _HAS_CXX23_
+	_FORCE_INLINE_ _CONSTEXPR17_ boolean operator!=(_MAYBE_UNUSED_ const aligned_allocator& other_p) noexcept
+	{
+		return false;
+	}
+#endif
 };
 
 
