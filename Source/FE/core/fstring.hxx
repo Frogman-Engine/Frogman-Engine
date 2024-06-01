@@ -45,9 +45,9 @@ private:
 
 
 public:
-    _CONSTEXPR20_ fixed_sized_string() noexcept : m_fstring{ _NULL_ }, m_length() {}
+    _CONSTEXPR20_ fixed_sized_string() noexcept : m_fstring{ _FE_NULL_ }, m_length() {}
 
-    _CONSTEXPR20_ fixed_sized_string(const value_type* const string_p) noexcept : m_fstring{ _NULL_ }, m_length(algorithm::string::length<CharT>(string_p))
+    _CONSTEXPR20_ fixed_sized_string(const value_type* const string_p) noexcept : m_fstring{ _FE_NULL_ }, m_length(algorithm::string::length<CharT>(string_p))
     {
         FE_ASSERT(string_p == nullptr, "${%s@0}: ${%s@1} is nullptr.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(string_p));
         FE_ASSERT(this->m_length >= Capacity, "${%s@0}: the input string length exceeds the max string capacity.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_CAPACITY));
@@ -55,7 +55,7 @@ public:
         Traits::copy( this->m_fstring, string_p, this->m_length);
     }
 
-    _CONSTEXPR20_ fixed_sized_string(const fixed_sized_string& other_p) noexcept : m_fstring{ _NULL_ }, m_length(other_p.m_length)
+    _CONSTEXPR20_ fixed_sized_string(const fixed_sized_string& other_p) noexcept : m_fstring{ _FE_NULL_ }, m_length(other_p.m_length)
     {
         if (other_p.m_length == 0)
         {
@@ -77,10 +77,10 @@ public:
         Traits::assign(string_info<CharT>{ this->m_fstring, length_t{static_cast<length_t>(last_p - first_p)}, capacity_t{Capacity} }, first_p, last_p);
     }
 
-    _CONSTEXPR20_ fixed_sized_string(fixed_sized_string&& rvalue_p) noexcept : m_fstring{ _NULL_ }, m_length(rvalue_p.m_length)
+    _CONSTEXPR20_ fixed_sized_string(fixed_sized_string&& rvalue_p) noexcept : m_fstring{ _FE_NULL_ }, m_length(rvalue_p.m_length)
     {
         Traits::copy(this->m_fstring, rvalue_p.m_fstring, Capacity);
-        *(rvalue_p.m_fstring) = _NULL_;
+        *(rvalue_p.m_fstring) = _FE_NULL_;
         rvalue_p.m_length = 0;
     }
 
@@ -116,7 +116,7 @@ public:
         }
 
         Traits::copy(this->m_fstring, rvalue_p.m_fstring, Capacity);
-        *(rvalue_p.m_fstring) = _NULL_;
+        *(rvalue_p.m_fstring) = _FE_NULL_;
         this->m_length = rvalue_p.m_length;
         rvalue_p.m_length = 0;
         return *this;
@@ -151,7 +151,7 @@ public:
 
     _CONSTEXPR20_ fixed_sized_string& assign(const value_type* const string_p, const size_type input_begin_p, const size_type input_end_p) noexcept
     {
-        Traits::assign(string_info<CharT>{this->m_fstring, _NULL_, Capacity}, string_p, input_begin_p, input_end_p);
+        Traits::assign(string_info<CharT>{this->m_fstring, _FE_NULL_, Capacity}, string_p, input_begin_p, input_end_p);
         this->m_length = input_end_p - input_begin_p;
         return *this;
     }
@@ -162,7 +162,7 @@ public:
         FE_ASSERT(string_p == nullptr, "${%s@0}: {%s@1} is nullptr.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(string_p));
         FE_ASSERT(size_to_assign_p >= Capacity, "ERROR: size_to_assign_p exceeds fixed sized string capacity.");
        
-        Traits::assign(string_info<CharT>{this->m_fstring, _NULL_, Capacity}, string_p, size_to_assign_p);
+        Traits::assign(string_info<CharT>{this->m_fstring, _FE_NULL_, Capacity}, string_p, size_to_assign_p);
         this->m_length = size_to_assign_p;
         return *this;
     }
@@ -175,7 +175,7 @@ public:
         FE_ASSERT(input_begin_p >= input_end_p, "${%s@0}: ${%s@1} must be smaller than ${%s@2}.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_RANGE), TO_STRING(input_begin_p), TO_STRING(input_end_p));
         FE_ASSERT((input_end_p - input_begin_p) >= Capacity, "${%s@0}: input string range length exceeds fixed sized string capacity.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_RANGE));
         
-        Traits::assign(string_info<CharT>{this->m_fstring, _NULL_, Capacity}, input_begin_p, input_end_p);
+        Traits::assign(string_info<CharT>{this->m_fstring, _FE_NULL_, Capacity}, input_begin_p, input_end_p);
         this->m_length = input_end_p - input_begin_p;
         return *this;
     }
@@ -187,7 +187,7 @@ public:
        
         algorithm::string::concatenate(this->m_fstring, Capacity, std::move(initializer_list_p));
         this->m_length = initializer_list_p.size();
-        this->m_fstring[this->m_length] = _NULL_;
+        this->m_fstring[this->m_length] = _FE_NULL_;
         return *this;
     }
 
@@ -232,7 +232,7 @@ public:
 
     _CONSTEXPR20_ _FORCE_INLINE_ void clear() noexcept 
     {
-        this->m_fstring[0] = _NULL_;
+        this->m_fstring[0] = _FE_NULL_;
         this->m_length = 0;
     }
    
@@ -343,7 +343,7 @@ public:
         FE_ASSERT(this->m_length >= Capacity, "${%s0}: out of capacity", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_RANGE));
         this->m_fstring[this->m_length] = value_p;
         ++this->m_length;
-        this->m_fstring[this->m_length] = _NULL_;
+        this->m_fstring[this->m_length] = _FE_NULL_;
     }
 
     _CONSTEXPR20_ CharT pop_back() noexcept
@@ -351,7 +351,7 @@ public:
         FE_ASSERT(this->m_length == 0, "${%s0}: Unable to pop an empty fstring", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_RANGE));
         const CharT l_return_value = this->back();
         --this->m_length;
-        this->m_fstring[this->m_length] = _NULL_;
+        this->m_fstring[this->m_length] = _FE_NULL_;
         return l_return_value;
     }
 
@@ -421,7 +421,7 @@ public:
         
         algorithm::string::concatenate(this->data() + this->m_length, this->max_length(), std::move(initializer_list_p));
         this->m_length += initializer_list_p.size();
-        this->m_fstring[this->m_length] = _NULL_;
+        this->m_fstring[this->m_length] = _FE_NULL_;
         return *this;
     }
 
@@ -451,7 +451,7 @@ public:
 
         this->m_length += other_p.m_length;
         algorithm::string::concatenate<CharT>(this->m_fstring, Capacity, other_p.m_fstring, other_p.m_length);
-        this->m_fstring[this->m_length] = _NULL_;
+        this->m_fstring[this->m_length] = _FE_NULL_;
         return *this;
     }
 
@@ -462,7 +462,7 @@ public:
         length_type l_input_string_length = algorithm::string::length<CharT>(string_p);
         algorithm::string::concatenate<CharT>(this->m_fstring, Capacity, string_p, l_input_string_length);
         this->m_length += l_input_string_length;
-        this->m_fstring[this->m_length] = _NULL_;
+        this->m_fstring[this->m_length] = _FE_NULL_;
         return *this;
     }
 
@@ -470,7 +470,7 @@ public:
     {
         algorithm::string::concatenate<CharT>(this->m_fstring, Capacity, &value_p, 1);
         this->m_length += 1;
-        this->m_fstring[this->m_length] = _NULL_;
+        this->m_fstring[this->m_length] = _FE_NULL_;
         return *this;
     }
 
@@ -570,7 +570,7 @@ public:
         
         Traits::replace(string_info<CharT>{this->m_fstring, this->m_length, Capacity}, position_p, count_to_be_removed_p, other_p.m_fstring, other_p.m_length);
         this->m_length = (this->m_length + other_p.m_length) - count_to_be_removed_p;
-        this->m_fstring[this->m_length] = _NULL_;
+        this->m_fstring[this->m_length] = _FE_NULL_;
         FE_ASSERT(this->m_length > algorithm::string::length(this->m_fstring), "length integrity is broken: replace() opertation failed due to undesired use.");
         return *this;
     }
@@ -589,7 +589,7 @@ public:
 
         Traits::replace(string_info<CharT>{this->m_fstring, this->m_length, Capacity}, position_p, count_to_be_removed_p, other_p.m_fstring + other_position_p, other_count_p);
         this->m_length = (this->m_length + other_count_p) - count_to_be_removed_p;
-        this->m_fstring[this->m_length] = _NULL_;
+        this->m_fstring[this->m_length] = _FE_NULL_;
         FE_ASSERT(this->m_length > algorithm::string::length(this->m_fstring), "length integrity is broken: The replace() opertation failed due to undesired use.");
         return *this;
     }
@@ -603,7 +603,7 @@ public:
         
         Traits::replace(string_info<CharT>{this->m_fstring, this->m_length, Capacity}, position_p, count_to_be_removed_p, string_p, input_count_p);
         this->m_length = (this->m_length + input_count_p) - count_to_be_removed_p;
-        this->m_fstring[this->m_length] = _NULL_;
+        this->m_fstring[this->m_length] = _FE_NULL_;
         FE_ASSERT(this->m_length > algorithm::string::length(this->m_fstring), "length integrity is broken: The replace() opertation failed due to undesired use.");
         return *this;
     }
@@ -618,7 +618,7 @@ public:
 
         Traits::replace(string_info<CharT>{this->m_fstring, this->m_length, Capacity}, position_p, count_to_be_removed_p, string_p, l_input_length);
         this->m_length = (this->m_length + l_input_length) - count_to_be_removed_p;
-        this->m_fstring[this->m_length] = _NULL_;
+        this->m_fstring[this->m_length] = _FE_NULL_;
         FE_ASSERT(this->m_length > algorithm::string::length(this->m_fstring), "length integrity is broken: The replace() opertation failed due to undesired use.");
         return *this;
     }
@@ -631,7 +631,7 @@ public:
         
         Traits::replace(string_info<CharT>{this->m_fstring, this->m_length, Capacity}, position_p, count_to_be_removed_p, value_p, input_count_p);
         this->m_length = (this->m_length + input_count_p) - count_to_be_removed_p;
-        this->m_fstring[this->m_length] = _NULL_;
+        this->m_fstring[this->m_length] = _FE_NULL_;
         FE_ASSERT(this->m_length > algorithm::string::length(this->m_fstring), "length integrity is broken: The replace() opertation failed due to undesired use.");
         return *this;
     }
@@ -646,7 +646,7 @@ public:
 
         Traits::replace(string_info<CharT>{this->m_fstring, this->m_length, Capacity}, position_p, count_to_be_removed_p, std::move(initializer_list_p));
         this->m_length = (this->m_length + l_input_size) - count_to_be_removed_p;
-        this->m_fstring[this->m_length] = _NULL_;
+        this->m_fstring[this->m_length] = _FE_NULL_;
         FE_ASSERT(this->m_length > algorithm::string::length(this->m_fstring), "length integrity is broken: The replace() opertation failed due to undesired use.");
         return *this;
     }
@@ -662,7 +662,7 @@ public:
 
         Traits::replace(string_info<CharT>{this->m_fstring, this->m_length, Capacity}, first_index_p, last_index_p, input_first_p, input_last_p);
         this->m_length = (this->m_length + l_input_size) - l_this_count_to_replace;
-        this->m_fstring[this->m_length] = _NULL_;
+        this->m_fstring[this->m_length] = _FE_NULL_;
         FE_ASSERT(this->m_length > algorithm::string::length(this->m_fstring), "length integrity is broken: The replace() opertation failed due to undesired use.");
         return *this;
     }

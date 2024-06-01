@@ -53,7 +53,7 @@ public:
             *in_out_string_p = value_p;
             ++in_out_string_p;
         }
-        *in_out_string_p = _NULL_;
+        *in_out_string_p = _FE_NULL_;
 	}
 
     _FORCE_INLINE_ static void assign(string_info<CharT> in_out_string_p, const CharT* const string_p, size_t input_begin_p, size_t input_end_p) noexcept
@@ -94,7 +94,7 @@ public:
         if constexpr (std::is_same<typename ConstIterator::iterator_category, typename FE::contiguous_iterator<CharT>::category>::value == true)
         {
             algorithm::string::copy<CharT>(in_out_string_p._string_pointer, input_begin_p.operator->(), l_size_to_assign);
-            in_out_string_p._string_pointer[l_size_to_assign] = _NULL_;
+            in_out_string_p._string_pointer[l_size_to_assign] = _FE_NULL_;
         }
         else if constexpr (std::is_same<typename ConstIterator::iterator_category, typename FE::contiguous_iterator<CharT>::category>::value == false)
         {
@@ -105,7 +105,7 @@ public:
                 ++in_out_string_p._string_pointer;
                 ++input_begin_p;
             }
-            *in_out_string_p._string_pointer = _NULL_;
+            *in_out_string_p._string_pointer = _FE_NULL_;
         }
     }
 
@@ -124,7 +124,7 @@ public:
             ++in_out_string_p._string_pointer;
         }
 
-        in_out_string_p._string_pointer[in_out_string_p._length] = _NULL_;
+        in_out_string_p._string_pointer[in_out_string_p._length] = _FE_NULL_;
     }
 
     _FORCE_INLINE_ static void insert(string_info<CharT> in_out_string_p, size_t this_position_p, const CharT* const string_p, size_t input_begin_p, size_t input_end_p) noexcept
@@ -138,7 +138,7 @@ public:
         std::memmove(in_out_string_p._string_pointer + (this_position_p + l_input_string_length), in_out_string_p._string_pointer + this_position_p, (in_out_string_p._length - this_position_p) * sizeof(CharT));
         std::memcpy(in_out_string_p._string_pointer + this_position_p, string_p + input_begin_p, l_input_string_length * sizeof(CharT));
 
-        in_out_string_p._string_pointer[in_out_string_p._length + l_input_string_length] = _NULL_;
+        in_out_string_p._string_pointer[in_out_string_p._length + l_input_string_length] = _FE_NULL_;
     }
 
     _FORCE_INLINE_ static void insert(string_info<CharT> in_out_string_p, size_t this_position_p, const CharT* const string_p, size_t inout_string_length_p) noexcept
@@ -149,7 +149,7 @@ public:
         std::memmove(in_out_string_p._string_pointer + (this_position_p + inout_string_length_p), in_out_string_p._string_pointer + this_position_p, (in_out_string_p._length - this_position_p) * sizeof(CharT));
         std::memcpy(in_out_string_p._string_pointer + this_position_p, string_p, inout_string_length_p * sizeof(CharT));
 
-        in_out_string_p._string_pointer[in_out_string_p._length + inout_string_length_p] = _NULL_;
+        in_out_string_p._string_pointer[in_out_string_p._length + inout_string_length_p] = _FE_NULL_;
     }
 
     _FORCE_INLINE_ static void insert(string_info<CharT> in_out_string_p, size_t this_position_p, std::initializer_list<const CharT>&& initializer_list_p) noexcept
@@ -158,9 +158,9 @@ public:
         FE_ASSERT((in_out_string_p._length + initializer_list_p.size()) >= in_out_string_p._capacity, "${%s@0}: string capacity overflowed.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_CAPACITY));
 
         std::memmove(in_out_string_p._string_pointer + (this_position_p + initializer_list_p.size()), in_out_string_p._string_pointer + this_position_p, (in_out_string_p._length - this_position_p) * sizeof(CharT));
-        std::memset(in_out_string_p._string_pointer + this_position_p, _NULL_, initializer_list_p.size() * sizeof(CharT));
+        std::memset(in_out_string_p._string_pointer + this_position_p, _FE_NULL_, initializer_list_p.size() * sizeof(CharT));
         algorithm::string::concatenate(in_out_string_p._string_pointer + this_position_p, in_out_string_p._capacity - this_position_p, std::move(initializer_list_p));
-        in_out_string_p._string_pointer[in_out_string_p._length + initializer_list_p.size()] = _NULL_;
+        in_out_string_p._string_pointer[in_out_string_p._length + initializer_list_p.size()] = _FE_NULL_;
     }
 
     _FORCE_INLINE_ static void erase(string_info<CharT> in_out_string_p, size_t this_index_p = 0, size_t this_count_p = 1) noexcept
@@ -169,7 +169,7 @@ public:
         FE_ASSERT(this_count_p == 0, "${%s@0}: ${%s@1} is zero.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_INVALID_SIZE), TO_STRING(this_count_p));
 
         std::memmove(in_out_string_p._string_pointer + this_index_p, in_out_string_p._string_pointer + (this_index_p + this_count_p), (in_out_string_p._length - this_index_p) * sizeof(CharT));
-        in_out_string_p._string_pointer[in_out_string_p._length - this_count_p] = _NULL_;
+        in_out_string_p._string_pointer[in_out_string_p._length - this_count_p] = _FE_NULL_;
     }
 
     _FORCE_INLINE_ static void append(string_info<CharT> in_out_string_p, size_t input_count_p, CharT value_p) noexcept
@@ -186,7 +186,7 @@ public:
             ++in_out_string_p._string_pointer;
         }
 
-        *in_out_string_p._string_pointer = _NULL_;
+        *in_out_string_p._string_pointer = _FE_NULL_;
     }
 
     _FORCE_INLINE_ static void append(string_info<CharT> in_out_string_p, const CharT* const string_p, size_t input_position_p, size_t input_count_p = 1) noexcept
@@ -238,7 +238,7 @@ public:
                 ++in_out_string_p._string_pointer;
                 ++input_begin_p;
             }
-            *in_out_string_p._string_pointer = _NULL_;
+            *in_out_string_p._string_pointer = _FE_NULL_;
         }
     }
 

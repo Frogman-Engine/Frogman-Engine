@@ -21,7 +21,7 @@
 #define _STDCALL_ __stdcall
 #define _FASTCALL_ __fastcall
 #else
-#define _FORCE_INLINE_ inline
+#define _FORCE_INLINE_ inline __attribute__((always_inline))
 #define _STDCALL_ 
 #define _FASTCALL_
 #endif

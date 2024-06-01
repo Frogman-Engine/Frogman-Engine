@@ -40,9 +40,9 @@ _FORCE_INLINE_ T exchange(T& in_out_target_p, T value_p) noexcept
 }
 
 template<class Comparator, typename T>
-_FORCE_INLINE_ T& select(T& for_true_p, T& for_false_p) noexcept
+_FORCE_INLINE_ T& select(T& for_FE_TRUE_p, T& for_false_p) noexcept
 {
-    return Comparator()(for_true_p, for_false_p) ? for_true_p : for_false_p;
+    return Comparator()(for_FE_TRUE_p, for_false_p) ? for_FE_TRUE_p : for_false_p;
 }
 
 
@@ -136,16 +136,16 @@ _CONSTEXPR20_ _FORCE_INLINE_ boolean string_to_boolean(const CharT* const string
 
     const CharT* l_string_pointer = string_p;
 
-    const CharT* l_s_true_pointer = "true";
+    const CharT* l_s_FE_TRUE_pointer = "true";
     const CharT* l_s_false_pointer = "false";
 
 
     switch (*l_string_pointer)
     {
     case 't':
-        while ((*l_s_true_pointer == *l_string_pointer) && (*l_s_true_pointer != '\0'))
+        while ((*l_s_FE_TRUE_pointer == *l_string_pointer) && (*l_s_FE_TRUE_pointer != '\0'))
         {
-            ++l_s_true_pointer;
+            ++l_s_FE_TRUE_pointer;
             ++l_string_pointer;
         }
         FE_ABORT_IF((l_string_pointer - string_p) != 4, "ERROR: The calculation cannot be done properly. The input string is not \"true\".");
@@ -263,7 +263,7 @@ _CONSTEXPR20_ _FORCE_INLINE_ void int_to_string(CharT* const string_out_p, _MAYB
 
     if (l_is_negative) { *string_out_p = static_cast<CharT>('-'); }
 
-    string_out_p[l_integral_digits] = _NULL_;
+    string_out_p[l_integral_digits] = _FE_NULL_;
 }
 
 
@@ -298,7 +298,7 @@ _CONSTEXPR20_ _FORCE_INLINE_ void uint_to_string(CharT* const string_out_p, _MAY
 
     if (l_is_negative) { *string_out_p = static_cast<CharT>('-'); }
 
-    string_out_p[l_integral_digits] = _NULL_;
+    string_out_p[l_integral_digits] = _FE_NULL_;
 }
 
 
@@ -398,30 +398,30 @@ _CONSTEXPR20_ _FORCE_INLINE_ const CharT* buffered_any_primitive_to_string(T val
 
     if constexpr (FE::is_boolean<T>::value)
     {
-        std::memset(tl_s_buffer, _NULL_, sizeof(CharT) * internal::strlen(tl_s_buffer));
+        std::memset(tl_s_buffer, _FE_NULL_, sizeof(CharT) * internal::strlen(tl_s_buffer));
         return boolean_to_string<CharT>(value_p);
     }
     else if constexpr (FE::is_char<T>::value)
     {
         tl_s_buffer[0] = value_p;
-        tl_s_buffer[1] = _NULL_;
+        tl_s_buffer[1] = _FE_NULL_;
         return tl_s_buffer;
     }
     else if constexpr (std::is_unsigned<T>::value && std::is_integral<T>::value)
     {
-        std::memset(tl_s_buffer, _NULL_, sizeof(CharT) * internal::strlen(tl_s_buffer));
+        std::memset(tl_s_buffer, _FE_NULL_, sizeof(CharT) * internal::strlen(tl_s_buffer));
         uint_to_string<CharT>(tl_s_buffer, _MAX_NUMERIC_STRING_LENGTH_, value_p);
         return tl_s_buffer;
     }
     else if constexpr (std::is_signed<T>::value && std::is_integral<T>::value)
     {
-        std::memset(tl_s_buffer, _NULL_, sizeof(CharT) * internal::strlen(tl_s_buffer));
+        std::memset(tl_s_buffer, _FE_NULL_, sizeof(CharT) * internal::strlen(tl_s_buffer));
         int_to_string<CharT>(tl_s_buffer, _MAX_NUMERIC_STRING_LENGTH_, value_p);
         return tl_s_buffer;
     }
     else if constexpr (std::is_floating_point<T>::value)
     {
-        std::memset(tl_s_buffer, _NULL_, sizeof(CharT) * internal::strlen(tl_s_buffer));
+        std::memset(tl_s_buffer, _FE_NULL_, sizeof(CharT) * internal::strlen(tl_s_buffer));
         float_to_string<CharT>(tl_s_buffer, _MAX_NUMERIC_STRING_LENGTH_, value_p);
         return tl_s_buffer;
     }
@@ -431,7 +431,7 @@ _CONSTEXPR20_ _FORCE_INLINE_ const CharT* buffered_any_primitive_to_string(T val
     }
     else if constexpr (std::is_pointer<T>::value)
     {
-        std::memset(tl_s_buffer, _NULL_, sizeof(CharT) * internal::strlen(tl_s_buffer));
+        std::memset(tl_s_buffer, _FE_NULL_, sizeof(CharT) * internal::strlen(tl_s_buffer));
         std::snprintf(tl_s_buffer, _MAX_NUMERIC_STRING_LENGTH_, "%p", value_p);
         return tl_s_buffer;
     }
@@ -453,12 +453,12 @@ _CONSTEXPR20_ _FORCE_INLINE_ void any_primitive_to_string(CharT* const out_dest_
         const CharT* const l_result = boolean_to_string<CharT>(value_p);
         uint64 l_length = internal::strlen(l_result);
         std::memcpy(out_dest_buffer_p, l_result, l_length * sizeof(CharT));
-        out_dest_buffer_p[l_length] = _NULL_;
+        out_dest_buffer_p[l_length] = _FE_NULL_;
     }
     else if constexpr (FE::is_char<T>::value)
     {
         out_dest_buffer_p[0] = value_p;
-        out_dest_buffer_p[1] = _NULL_;
+        out_dest_buffer_p[1] = _FE_NULL_;
     }
     else if constexpr (std::is_unsigned<T>::value && std::is_integral<T>::value)
     {
@@ -476,9 +476,9 @@ _CONSTEXPR20_ _FORCE_INLINE_ void any_primitive_to_string(CharT* const out_dest_
     {
         uint64 l_length = internal::strlen(value_p);
         uint64 l_bytes_to_copy = l_length * sizeof(CharT);
-        if (dest_buffer_capacity_p < l_bytes_to_copy) _UNLIKELY_{ std::abort(); }
+        if (UNLIKELY(dest_buffer_capacity_p < l_bytes_to_copy)) _UNLIKELY_{ std::abort(); }
         std::memcpy(out_dest_buffer_p, value_p, l_bytes_to_copy);
-        out_dest_buffer_p[l_length] = _NULL_;
+        out_dest_buffer_p[l_length] = _FE_NULL_;
     }
     else if constexpr (std::is_pointer<T>::value)
     {
@@ -493,7 +493,7 @@ _CONSTEXPR20_ _FORCE_INLINE_ void any_primitive_to_string(CharT* const out_dest_
         out_dest_buffer_p[4] = 'p';
         out_dest_buffer_p[5] = 't';
         out_dest_buffer_p[6] = 'r';
-        out_dest_buffer_p[7] = _NULL_;
+        out_dest_buffer_p[7] = _FE_NULL_;
     }
 }
 
@@ -508,7 +508,7 @@ _CONSTEXPR20_ _FORCE_INLINE_ const CharT* buffered_any_to_string(U& value_p) noe
     FE_STATIC_ASSERT((sizeof(U) > _UTILITY_ALGORITHM_BUFER_SIZE_), "Static Assertion Failed: Buffer Overflow Detected!");
 
     thread_local static CharT tl_s_buffer[_UTILITY_ALGORITHM_BUFER_SIZE_]{};
-    std::memset(tl_s_buffer, _NULL_, sizeof(CharT) * _UTILITY_ALGORITHM_BUFER_SIZE_);
+    std::memset(tl_s_buffer, _FE_NULL_, sizeof(CharT) * _UTILITY_ALGORITHM_BUFER_SIZE_);
 
     if constexpr (std::is_class< typename std::remove_reference< decltype(value_p) >::type >::value == true)
     {

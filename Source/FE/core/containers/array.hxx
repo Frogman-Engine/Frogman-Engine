@@ -90,7 +90,7 @@ public:
 	}
 	
 
-	_FORCE_INLINE_ iterator begin() noexcept 
+	_FORCE_INLINE_ _CONSTEXPR17_ iterator begin() noexcept 
 	{
 		return iterator{ base_type::begin().operator->() };
 	}
@@ -100,32 +100,32 @@ public:
 		return const_iterator{ base_type::begin().operator->() };
 	}
 
-	_FORCE_INLINE_ iterator end() noexcept 
+	_FORCE_INLINE_ _CONSTEXPR17_ iterator end() noexcept 
 	{
 		return this->begin() + this->m_array_size;
 	}
 
-	_FORCE_INLINE_ const_iterator cend() noexcept 
+	_FORCE_INLINE_ _CONSTEXPR17_ const_iterator cend() noexcept 
 	{
 		return this->cbegin() + this->m_array_size;
 	}
 
-	_FORCE_INLINE_ reverse_iterator rbegin() noexcept 
+	_FORCE_INLINE_ _CONSTEXPR17_ reverse_iterator rbegin() noexcept 
 	{
 		return (this->begin() + this->m_array_size) - 1;
 	}
 
-	_FORCE_INLINE_ const_reverse_iterator crbegin() noexcept 
+	_FORCE_INLINE_ _CONSTEXPR17_ const_reverse_iterator crbegin() noexcept 
 	{
 		return (this->cbegin() + this->m_array_size) - 1;
 	}
 
-	_FORCE_INLINE_ reverse_iterator rend() noexcept 
+	_FORCE_INLINE_ _CONSTEXPR17_ reverse_iterator rend() noexcept 
 	{
 		return this->begin() - 1;
 	}
 
-	_FORCE_INLINE_ const_reverse_iterator crend() noexcept 
+	_FORCE_INLINE_ _CONSTEXPR17_ const_reverse_iterator crend() noexcept 
 	{
 		return this->cbegin() - 1;
 	}

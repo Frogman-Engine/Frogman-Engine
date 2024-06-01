@@ -137,7 +137,7 @@ void FE_aligned_memset_benchmark(benchmark::State& state_p) noexcept
 
 	for (auto _ : state_p)
 	{
-		FE::memset<FE::ADDRESS::_ALIGNED>(l_dest, _NULL_, _MAGICAL_SIZE_);
+		FE::memset<FE::ADDRESS::_ALIGNED>(l_dest, _FE_NULL_, _MAGICAL_SIZE_);
 		FE::memset<FE::ADDRESS::_ALIGNED>(l_dest, 1, _MAGICAL_SIZE_);
 	}
 }
@@ -150,7 +150,7 @@ void std_memset_benchmark(benchmark::State& state_p) noexcept
 
 	for (auto _ : state_p)
 	{
-		std::memset(l_dest, _NULL_, _MAGICAL_SIZE_);
+		std::memset(l_dest, _FE_NULL_, _MAGICAL_SIZE_);
 		std::memset(l_dest, 1, _MAGICAL_SIZE_);
 	}
 }

@@ -22,9 +22,17 @@
 			#define _NO_UNIQUE_ADDRESS_ [[no_unique_address]]
 		#endif
 #else
-#define _LIKELY_
-#define _UNLIKELY_
-#define _NO_UNIQUE_ADDRESS_
+	#ifdef _LINUX_X86_64_
+		#define LIKELY(c) __builtin_expect((c), 1)
+		#define UNLIKELY(c) __builtin_expect((c), 0)
+	#else
+		#define LIKELY(c) (c)
+		#define UNLIKELY(c) (c)
+	#endif
+
+	#define _LIKELY_ 
+	#define _UNLIKELY_
+	#define _NO_UNIQUE_ADDRESS_
 #endif
 
 

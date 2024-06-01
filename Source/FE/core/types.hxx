@@ -188,16 +188,16 @@ _MAYBE_UNUSED_	constexpr inline FE::uint32 uint32_min = min_value<FE::uint32>;
 _MAYBE_UNUSED_	constexpr inline FE::uint64 uint64_min = min_value<FE::uint64>;
 
 
-#define _NULL_ 0
-#define _NULL_f_ 0.0f
+#define _FE_NULL_ 0
+#define _FE_NULL_f_ 0.0f
 
 
-#define _TRUE_ 1
-#define _FALSE_ 0
+#define _FE_TRUE_ 1
+#define _FE_FALSE_ 0
 
 
-#define _FOUND_ true
-#define _NOT_FOUND_ false
+#define _FE_FOUND_ true
+#define _FE_NOT_FOUND_ false
 
 
 #define _FE_SUCCESS_ true

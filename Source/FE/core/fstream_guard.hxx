@@ -84,7 +84,7 @@ public:
 
 		for (auto& string_ref : container_p)
 		{
-			if (*(string_ref.unsafe_begin()) != _NULL_)
+			if (*(string_ref.unsafe_begin()) != _FE_NULL_)
 			{
 				this->m_fstream << string_ref.c_str() << std::endl;
 			}
@@ -101,12 +101,12 @@ public:
 			return false;
 		}
 
-		typename FStream::char_type l_string_buffer[line_buffer_max_size] = _NULL_;
+		typename FStream::char_type l_string_buffer[line_buffer_max_size] = _FE_NULL_;
 
 		while (this->m_fstream)
 		{
 			this->m_fstream.getline(l_string_buffer, line_buffer_max_size);
-			if (l_string_buffer[0] != _NULL_)
+			if (l_string_buffer[0] != _FE_NULL_)
 			{
 				container_p.emplace_back(l_string_buffer);
 			}

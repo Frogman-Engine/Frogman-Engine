@@ -23,10 +23,10 @@ BEGIN_NAMESPACE(FE::log)
 logger_base::logger_base() noexcept : m_file_logger(), m_file_guard(m_file_logger)
 {
     this->m_log_buffer.reserve(default_buffer_size);
-    std::memset(this->m_log_buffer.data(), _NULL_, this->m_log_buffer.capacity() * sizeof(typename buffer_type::value_type));
+    std::memset(this->m_log_buffer.data(), _FE_NULL_, this->m_log_buffer.capacity() * sizeof(typename buffer_type::value_type));
 
     this->m_directory_buffer.reserve(default_buffer_size);
-    std::memset(this->m_directory_buffer.data(), _NULL_, this->m_directory_buffer.capacity() * sizeof(typename directory_buffer_type::value_type));
+    std::memset(this->m_directory_buffer.data(), _FE_NULL_, this->m_directory_buffer.capacity() * sizeof(typename directory_buffer_type::value_type));
 
     this->set_root_directory(
         //(logger_base::s_root_directory_argument == nullptr) ?
@@ -92,7 +92,7 @@ void logger_base::cd(const directory_char_type* folder_name_p) noexcept
         {
             ++l_reverse_iterator;
         }
-        *l_reverse_iterator = _NULL_;
+        *l_reverse_iterator = _FE_NULL_;
         this->m_directory_buffer = this->m_directory_buffer.c_str();
     }
         break;
@@ -199,7 +199,7 @@ fatal_error_logger_base::~fatal_error_logger_base() noexcept
 
 void fatal_error_logger_base::do_log(character* const message_p, character* const file_name_p, character* const function_name_p, uint32 line_p) noexcept
 {
-    if (this->m_log_buffer.capacity() <= default_buffer_size) _UNLIKELY_
+    if (UNLIKELY(this->m_log_buffer.capacity() <= default_buffer_size)) _UNLIKELY_
     {
         this->__reserve();
     }
@@ -321,7 +321,7 @@ message_logger_base::~message_logger_base() noexcept
 
 void message_logger_base::do_log(character* const message_p, character* const file_name_p, character* const function_name_p, uint32 line_p) noexcept
 {
-    if (this->m_log_buffer.capacity() <= default_buffer_size) _UNLIKELY_
+    if (UNLIKELY(this->m_log_buffer.capacity() <= default_buffer_size)) _UNLIKELY_
     {
         __reserve();
     }
@@ -346,7 +346,7 @@ void message_logger_base::do_log(character* const message_p, character* const fi
 
     // re-calculate length
     this->m_log_buffer = this->m_log_buffer.c_str();
-    std::memset(this->m_log_buffer.data(), _NULL_, this->m_log_buffer.length() * sizeof(typename buffer_type::value_type));
+    std::memset(this->m_log_buffer.data(), _FE_NULL_, this->m_log_buffer.length() * sizeof(typename buffer_type::value_type));
 }
 
 END_NAMESPACE

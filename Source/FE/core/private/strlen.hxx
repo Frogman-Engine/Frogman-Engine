@@ -11,12 +11,12 @@ namespace FE::internal
     {
         const CharT* l_iterator_pointer = str_p;
 
-        if (*str_p == _NULL_)
+        if (*str_p == _FE_NULL_)
         {
             return 0;
         }
 
-        while (*(++l_iterator_pointer) != _NULL_) {}
+        while (*(++l_iterator_pointer) != _FE_NULL_) {}
 
         return (l_iterator_pointer - str_p);
     }

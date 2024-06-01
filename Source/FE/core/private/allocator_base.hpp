@@ -117,7 +117,7 @@ public:
 		};
 		return l_data;
 #else
-		memory_utilization l_null{ _NULL_ };
+		memory_utilization l_null{ _FE_NULL_ };
 		return l_null;
 #endif
 	}
@@ -129,7 +129,7 @@ public:
 		FE_ASSERT(l_result == nullptr, "${%s@0}: Failed to allocate memory from scalable_aligned_malloc()", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR));
 		FE_ASSERT((reinterpret_cast<uintptr_t>(l_result) % Alignment::size) != 0, "${%s@0}: The allocated heap memory address not aligned by ${%lu@1}.", TO_STRING(MEMORY_ERROR_1XX::_ERROR_ILLEGAL_ADDRESS_ALIGNMENT), &Alignment::size);
 #ifndef _RELEASE_
-		ALIGNED_MEMSET(l_result, _NULL_, bytes_p);
+		ALIGNED_MEMSET(l_result, _FE_NULL_, bytes_p);
 #endif
 #ifdef _ENABLE_MEMORY_TRACKER_
 		allocator_base::__log_heap_memory_allocation<T>(bytes_p, l_result);
@@ -155,17 +155,17 @@ public:
 	{
 		T* l_realloc_result = (T*)ALIGNED_REALLOC(ptr_to_memory_p, new_bytes_p, Alignment::size);
 
-		if (l_realloc_result == nullptr) _UNLIKELY_
+		if (UNLIKELY(l_realloc_result == nullptr)) _UNLIKELY_
 		{
 			l_realloc_result = (T*)ALIGNED_ALLOC(new_bytes_p, Alignment::size);
 	#ifndef _RELEASE_
-			ALIGNED_MEMSET(l_realloc_result, _NULL_, new_bytes_p);
+			ALIGNED_MEMSET(l_realloc_result, _FE_NULL_, new_bytes_p);
 	#endif
 			FE_ASSERT(l_realloc_result == nullptr, "${%s@0}: Failed to re-allocate memory from ALIGNED_ALLOC()", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR));
 
 			FE::memcpy<ADDRESS::_ALIGNED, ADDRESS::_ALIGNED>(l_realloc_result, new_bytes_p, ptr_to_memory_p, prev_bytes_p);
 
-			if (l_realloc_result != ptr_to_memory_p) _LIKELY_
+			if (LIKELY(l_realloc_result != ptr_to_memory_p)) _LIKELY_
 			{
 				ALIGNED_FREE(ptr_to_memory_p);
 			}

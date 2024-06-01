@@ -39,7 +39,7 @@ _FORCE_INLINE_ void copy(CharT* const destination_out_p, const CharT* const sour
         UNALIGNED_MEMCPY(destination_out_p, source_p, sizeof(CharT) * count_p);
     }
 
-    destination_out_p[count_p] = _NULL_;
+    destination_out_p[count_p] = _FE_NULL_;
 }
 
 
@@ -60,7 +60,7 @@ _NODISCARD_ _CONSTEXPR20_ _FORCE_INLINE_ count<CharT> count_chars(const CharT* s
 
     var::count_t l_match_count = 0;
 
-    while (*string_p != _NULL_)
+    while (*string_p != _FE_NULL_)
     {
         if (target_p == *string_p)
         {
@@ -69,7 +69,7 @@ _NODISCARD_ _CONSTEXPR20_ _FORCE_INLINE_ count<CharT> count_chars(const CharT* s
         ++string_p;
     }
 
-    CharT l_target_char_buffer = _NULL_;
+    CharT l_target_char_buffer = _FE_NULL_;
 
     if (l_match_count != 0)
     {
@@ -94,7 +94,7 @@ _CONSTEXPR20_ _FORCE_INLINE_ void capitalize(CharT* in_out_string_buffer_p) noex
     FE_STATIC_ASSERT(FE::is_char<CharT>::value == false, "CharT is not a valid character type");
     FE_ASSERT(in_out_string_buffer_p == nullptr, "${%s@0}: ${%s@1} is ${%p@2}.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(in_out_string_buffer_p), nullptr);
 
-    while (*in_out_string_buffer_p != _NULL_)
+    while (*in_out_string_buffer_p != _FE_NULL_)
     {
         if ((_ASCII_a_ <= static_cast<uint8>(*in_out_string_buffer_p) && static_cast<uint8>(*in_out_string_buffer_p) <= _ASCII_z_))
         {
@@ -124,7 +124,7 @@ _CONSTEXPR20_ _FORCE_INLINE_ void to_lowercase(CharT* in_out_string_buffer_p) no
     FE_STATIC_ASSERT(FE::is_char<CharT>::value == false, "CharT is not a valid character type");
     FE_ASSERT(in_out_string_buffer_p == nullptr, "${%s@0}: ${%s@1} is ${%p@2}.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(in_out_string_buffer_p), nullptr);
 
-    while (*in_out_string_buffer_p != _NULL_)
+    while (*in_out_string_buffer_p != _FE_NULL_)
     {
         if ((_ASCII_A_ <= static_cast<uint8>(*in_out_string_buffer_p) && static_cast<uint8>(*in_out_string_buffer_p) <= _ASCII_Z_))
         {
@@ -161,7 +161,7 @@ _CONSTEXPR20_ void capitalize_every_first_letter_of_words(CharT* in_out_string_p
         *in_out_string_p = static_cast<int16>(*in_out_string_p) - _ASCII_GAP_BETWEEN_UPPERCASE_and_lowercase_;
     }
 
-    while (*in_out_string_p != _NULL_)
+    while (*in_out_string_p != _FE_NULL_)
     {
         if (((*in_out_string_p == static_cast<CharT>(' ')) && (in_out_string_p[1] != static_cast<CharT>(' '))) ||
             ((*in_out_string_p == static_cast<CharT>('_')) && (in_out_string_p[1] != static_cast<CharT>('_'))))
@@ -185,7 +185,7 @@ _NODISCARD_ _CONSTEXPR20_ _FORCE_INLINE_ uint64 length(const CharT* const string
 
     const CharT* l_iterator_pointer = string_p;
 
-    while (*(l_iterator_pointer) != _NULL_) { ++l_iterator_pointer; }
+    while (*(l_iterator_pointer) != _FE_NULL_) { ++l_iterator_pointer; }
 
     return (l_iterator_pointer - string_p);
 }
@@ -209,7 +209,7 @@ _NODISCARD_ _CONSTEXPR20_ _FORCE_INLINE_ count<CharT> count_chars_within_range(c
     var::count_t l_match_count = 0;
     string_p += string_range_p._begin;
 
-    while (*string_p != _NULL_)
+    while (*string_p != _FE_NULL_)
     {
         if (target_p == *string_p)
         {
@@ -218,7 +218,7 @@ _NODISCARD_ _CONSTEXPR20_ _FORCE_INLINE_ count<CharT> count_chars_within_range(c
         ++string_p;
     }
 
-    CharT l_target_char_buffer = _NULL_;
+    CharT l_target_char_buffer = _FE_NULL_;
 
     if (l_match_count != 0)
     {
@@ -236,7 +236,7 @@ _NODISCARD_ _CONSTEXPR20_ _FORCE_INLINE_ boolean compare(const CharT* lstr_p, co
     FE_ASSERT(lstr_p == nullptr, "${%s@0}: ${%s@1} is ${%p@2}.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(lstr_p), nullptr);
     FE_ASSERT(rstr_p == nullptr, "${%s@0}: ${%s@1} is ${%p@2}.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(rstr_p), nullptr);
 
-    while ((*lstr_p != _NULL_) && (*lstr_p == *rstr_p))
+    while ((*lstr_p != _FE_NULL_) && (*lstr_p == *rstr_p))
     {
         ++lstr_p;
         ++rstr_p;
@@ -414,7 +414,7 @@ _NODISCARD_ _CONSTEXPR20_ _FORCE_INLINE_ std::optional<range> find_the_first(con
     FE_ASSERT(string_p == nullptr, "${%s@0}: ${%s@1} is nullptr.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(string_p));
 
     const CharT* l_string_pointer = string_p;
-    while (*l_string_pointer != _NULL_)
+    while (*l_string_pointer != _FE_NULL_)
     {
         if (*l_string_pointer == target_p)
         {
@@ -462,7 +462,7 @@ _NODISCARD_ _CONSTEXPR20_ std::optional<range> find_the_first_within_range(const
     FE_ASSERT(length(string_p) < string_range_p._end, "${%s@0}: ${%s@2} cannot be greater than the length of ${%s@1}.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_RANGE), TO_STRING(length(string_p)), TO_STRING(string_range_p._end));
 
     const CharT* l_string_pointer = string_p + string_range_p._begin;
-    while (*l_string_pointer != _NULL_)
+    while (*l_string_pointer != _FE_NULL_)
     {
         if (*l_string_pointer == target_p)
         {
@@ -518,7 +518,7 @@ _NODISCARD_ _CONSTEXPR20_ std::optional<range> find_the_first(const CharT* const
     FE_ASSERT(l_target_substring_length > l_string_length, "${%s@0}: the ${%s@1} is greater than to the string length of ${%s@2}. ${%s@1} was ${%lu@3}, and ${%s@2} was ${%lu@4}", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_RANGE), TO_STRING(l_target_substring_length), TO_STRING(l_string_length), &l_target_substring_length, &l_string_length);
 
     var::index_t l_string_idx = 0;
-    while (*l_target_substring_pointer != _NULL_ && l_string_idx < l_string_length)
+    while (*l_target_substring_pointer != _FE_NULL_ && l_string_idx < l_string_length)
     {
         if (*l_string_pointer == *l_target_substring_pointer)
         {
@@ -608,7 +608,7 @@ _NODISCARD_ _CONSTEXPR20_ std::optional<range> find_the_first_within_range(const
     FE_ASSERT(l_target_substring_length > l_string_length, "${%s@0}: the ${%s@1} is greater than or equal to the string length of ${%s@2}", TO_STRING(FE::MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_RANGE), TO_STRING(l_target_substring_length), TO_STRING(l_string_length));
 
     var::index_t l_string_idx = 0;
-    while (*l_target_substring_pointer != _NULL_ && l_string_idx < l_string_length)
+    while (*l_target_substring_pointer != _FE_NULL_ && l_string_idx < l_string_length)
     {
         if (*l_string_pointer == *l_target_substring_pointer)
         {
@@ -704,7 +704,7 @@ _NODISCARD_ _CONSTEXPR20_ IntT string_to_integer(const CharT* string_p) noexcept
 
     var::int16 l_sign = 1;
     if (*string_p == static_cast<const CharT>('-')) { l_sign = -1; }
-    while (*string_p >= static_cast<const CharT>('0') && *string_p <= static_cast<const CharT>('9') && *string_p != _NULL_)
+    while (*string_p >= static_cast<const CharT>('0') && *string_p <= static_cast<const CharT>('9') && *string_p != _FE_NULL_)
     {
         ++string_p;
     }
@@ -712,7 +712,7 @@ _NODISCARD_ _CONSTEXPR20_ IntT string_to_integer(const CharT* string_p) noexcept
 
     IntT l_result = 0;
     IntT l_multiplier = 1;
-    while (*string_p >= static_cast<const CharT>('0') && *string_p <= static_cast<const CharT>('9') && *string_p != _NULL_)
+    while (*string_p >= static_cast<const CharT>('0') && *string_p <= static_cast<const CharT>('9') && *string_p != _FE_NULL_)
     {
         l_result += static_cast<IntT>(*string_p - static_cast<const CharT>('0')) * l_multiplier;
         l_multiplier *= 10;
@@ -733,7 +733,7 @@ _CONSTEXPR20_ _FORCE_INLINE_ void invert(CharT* const in_out_string_p) noexcept
     var::index_t l_start = 0;
     var::index_t l_end = length(in_out_string_p);
 
-    CharT l_temporary = _NULL_;
+    CharT l_temporary = _FE_NULL_;
     while (l_start < l_end)
     {
         l_temporary = in_out_string_p[l_start];
@@ -759,13 +759,13 @@ _CONSTEXPR17_ uint64 hash_string(const CharT* string_p) noexcept
 
     constexpr uint64 l_magical_prime_number = 257;
 
-    if (*string_p == _NULL_)
+    if (*string_p == _FE_NULL_)
     {
         return 0;
     }
 
     var::uint64 l_hash = 0;
-    for (; *string_p != _NULL_; ++string_p)
+    for (; *string_p != _FE_NULL_; ++string_p)
     {
         l_hash = ((l_hash * l_hash * l_hash) + *string_p) ^ l_magical_prime_number;
     }

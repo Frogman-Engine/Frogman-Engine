@@ -40,7 +40,7 @@ _FORCE_INLINE_ const char* buffered_string_formatter(std::initializer_list<const
     constexpr static auto skip_string_format = 1;
 
     thread_local static char tl_s_buffer[_BUFFERED_STRING_FORMATTER_BUFFER_SIZE_] = { "\0" };
-    std::memset(tl_s_buffer, _NULL_, _BUFFERED_STRING_FORMATTER_BUFFER_SIZE_);
+    std::memset(tl_s_buffer, _FE_NULL_, _BUFFERED_STRING_FORMATTER_BUFFER_SIZE_);
 
     format_string(tl_s_buffer, static_cast<const char*>(*arguments_p.begin()), _BUFFERED_STRING_FORMATTER_BUFFER_SIZE_, const_cast<const void**>(arguments_p.begin()) + skip_string_format, arguments_p.size());
     return tl_s_buffer;
