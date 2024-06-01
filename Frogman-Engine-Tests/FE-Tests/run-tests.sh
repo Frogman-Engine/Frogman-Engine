@@ -2,12 +2,18 @@
 
 CURRENT_DIRECTORY=$(pwd)
 BUILD_FILES_FOLDER_NAME=build
-SPECIFIED_TEST_NAME=$1
+BUILD_TYPE=$1
+SPECIFIED_TEST_NAME=$2
+
+if [ -z "$BUILD_TYPE" ]; 
+    then
+    BUILD_TYPE=Debug
+fi
 
 chmod +x build-tests.sh
-./build-tests.sh $SPECIFIED_TEST_NAME
+./build-tests.sh $BUILD_TYPE $SPECIFIED_TEST_NAME
 
-if [ -z "$1" ]; 
+if [ -z "$SPECIFIED_TEST_NAME" ]; 
     then
 
     TESTS=(
