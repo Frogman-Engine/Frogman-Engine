@@ -1,10 +1,79 @@
-﻿#include <gtest/gtest.h>
+
+#include <gtest/gtest.h>
 // Copyright © from 2023 to current, UNKNOWN STRYKER. All Rights Reserved.
 #include <FE/miscellaneous/google_test_extension.h>
 #include <FE/core/string.hxx>
 #include <FE/core/string_view.hxx>
 #include <FE/core/clock.hpp>
 
+
+/*
+Profile Guided Optimization: https://learn.microsoft.com/en-us/cpp/build/profile-guided-optimizations?view=msvc-170
+
+TO DO: 
+1. variable table
+                                 
+																														  |--- int32 variable hash map
+																														  |--- float64 variable hash map
+																														  |--- FE::string variable hash map
+std::unordered_map<Key: type name string, Value: std::unordered_map<Key: varaible name string, Value: varaible address>> -|--- FE::array variable hash map
+																														  |--- std::list variable hash map
+																														  |--- std::deque variable hash map
+2. memory layout reflection for serialization  																		      |--- etc...
+                                                                                      *
+	                                                                                  |
+	Shallower <----- Memory Hierarchy Depth ----> Deeper                      Lower Memory Address
+                                                      |----------------|              |
+	                                                  | - FE::string - |              |
+	|----------------------------------|    ----------|FE::smart_ptr   |              |
+	|  Target Entry Non-Trivial Object |    |         |length, capacity|              |
+	|- member variables -              |    |         |----------------|              |
+	|  FE::string m_name --------------|----|                                         |
+	|  FE::vector<float64, 3> m_vector |-------|                                      |
+	|----------------------------------|       |       |----------------|             |
+	                                           |       | - FE::vector - |             |
+											   |-------| x              |             |
+													   | y              |             |
+													   | z              |             |
+													   |----------------|     Higher Memory Address
+													                                  |
+																					  *
+																					  
+Memory Layer Traversal Order: Entry.FE::string m_name -> FE::string.FE::smart_ptr -> FE::smart_ptr.m_smart_ptr data 
+																									|
+												    |-----------------------------------------------|
+												    |
+												    |--> FE::string.length -> FE::string.capacity
+																					   |
+																					   |
+									           |---------------------------------------|
+											   |
+											   |--> FE::vector.x -> FE::vector.y -> FE::vector.z
+*/ 
+int main(int argc_p, char** argv_p)
+{
+	using namespace FE;
+
+	std::cout << "Compilation test of FE.core.pool_test source code is successful.\n";
+  	testing::InitGoogleTest(&argc_p, argv_p);
+
+	if (argv_p == nullptr)
+	{
+		char l_arg0_default[] = "benchmark";
+		char* l_args_default = l_arg0_default;
+		argc_p = 1;
+		argv_p = &l_args_default;
+	}
+	
+    benchmark::Initialize(&argc_p, argv_p);
+	FE_ABORT_IF(benchmark::ReportUnrecognizedArguments(argc_p, argv_p) == true, "Failed to meet the expectation: Unrecognized Benchmark Arguments Detected.");
+    int32 l_exit_code = RUN_ALL_TESTS();
+	std::cerr << "\n\n";
+	benchmark::RunSpecifiedBenchmarks();
+	std::cerr << "\n\n";
+    benchmark::Shutdown();
+    return l_exit_code;
+}
 
 
 
@@ -271,13 +340,13 @@ TEST(basic_string, operations)
 
 	// append
 	{
-		let string l_string = "COD Modern Warfare is my favorite ";
+		 string l_string = "COD Modern Warfare is my favorite ";
 		l_string.reserve(256);
 		l_string.append(3, 'A');
 		EXPECT_TRUE(l_string == "COD Modern Warfare is my favorite AAA");
 
 
-		let string l_second_string = " shooter game.";
+		 string l_second_string = " shooter game.";
 		l_second_string.reserve(256);
 		l_string += l_second_string;
 		EXPECT_TRUE(l_string == "COD Modern Warfare is my favorite AAA shooter game.");
@@ -298,7 +367,7 @@ TEST(basic_string, operations)
 		EXPECT_TRUE(l_second_string == "Another my favorite AAA title is Tom Clancy's");
 
 
-		let var::character l_cstring[] = " Ghost Recon: ";
+		 var::character l_cstring[] = " Ghost Recon: ";
 		l_second_string.append(FE::const_iterator<FE::contiguous_iterator<char>>{l_cstring}, FE::const_iterator<FE::contiguous_iterator<char>>{l_cstring + 14});
 		EXPECT_TRUE(l_second_string == "Another my favorite AAA title is Tom Clancy's Ghost Recon: ");
 

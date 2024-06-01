@@ -8,6 +8,11 @@ BUILD_FILES_FOLDER_NAME=build
 BUILD_TYPE=$1
 SPECIFIED_TEST_NAME=$2
 
+if [ -z "$BUILD_TYPE" ]; 
+    then
+    BUILD_TYPE=Debug
+fi
+
 if [ -z "$SPECIFIED_TEST_NAME" ]; 
     then
 

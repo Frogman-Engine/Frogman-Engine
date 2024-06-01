@@ -90,6 +90,7 @@ TEST(pool_allocator, all)
 		std::string* l_ptr = l_allocator.allocate(1);
 		l_allocator.deallocate(l_ptr, 1);
 	}
+	
 	{
 		std::vector<std::string, FE::pool_allocator<std::string>> l_vector;
 
@@ -154,6 +155,7 @@ void std_list_iteration(benchmark::State& state_p) noexcept
 BENCHMARK(std_list_iteration);
 
 #define _MAX_ITERATION_ 1000
+
 void boost_pool_allocator_extreme_test(benchmark::State& state_p) noexcept
 {
 	static std::string* l_s_strings[_MAX_ITERATION_];
@@ -224,7 +226,8 @@ BENCHMARK(boost_object_pool_allocator_extreme_test);
 
 void FE_pool_allocator_extreme_test(benchmark::State& state_p) noexcept
 {
-	FE::generic_pool<> l_allocator;
+	FE::generic_pool<1000 MB> l_allocator;
+	l_allocator.create_pages(1);
 	benchmark::DoNotOptimize(l_allocator);
 
 	static std::string* l_s_strings[_MAX_ITERATION_];
@@ -259,6 +262,7 @@ BENCHMARK(FE_pool_allocator_extreme_test);
 void FE_block_pool_allocator_extreme_test(benchmark::State& state_p) noexcept
 {
 	FE::block_pool<std::string, _MAX_ITERATION_> l_allocator;
+	l_allocator.create_pages(1);
 	benchmark::DoNotOptimize(l_allocator);
 
 	static std::string* l_s_strings[_MAX_ITERATION_];

@@ -57,7 +57,7 @@ public:
 		FE_STATIC_ASSERT((std::is_same<typename std::remove_const<typename InputIterator::value_type>::type, typename std::remove_const<value_type>::type>::value == false), "Static Assertion Failure: InputIterator's value_type has to be the same as fstack's value_type.");
 
 		FE_ASSERT(first_p >= last_p, "${%s@0}: The input iterator ${%s@1} must not be greater than the iterator ${%s@2}.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_ILLEGAL_POSITION), TO_STRING(first_p), TO_STRING(last_p));
-		FE_ASSERT((last_p - first_p) > Capacity, "${%s@0}: The input size exceeds the fstack capacity.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_CAPACITY));
+		FE_ASSERT(static_cast<uint64>(last_p - first_p) > Capacity, "${%s@0}: The input size exceeds the fstack capacity.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_CAPACITY));
 
 		Traits::copy_construct(InputIterator{ this->m_absolute_begin_pointer }, first_p, last_p - first_p);
 	}

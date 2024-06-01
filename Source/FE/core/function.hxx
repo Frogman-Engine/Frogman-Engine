@@ -1204,15 +1204,15 @@ struct cpp_style_task<C, TaskImpl, FE::FORWARD_DATA::_AS_RVALUE_REF, ArgumentsBu
     using return_type = typename FE::remove_const_reference<typename FE::method<class_type, task_impl_type, FE::FORWARD_DATA::_AS_RVALUE_REF>::return_type>::type;
     using task_result_buffer_type = typename FE::conditional_type<std::is_void<return_type>::value, void_t, return_type>::type;
 
-    task_result_buffer_type _task_result;
     arguments_buffer_type _arguments_buffer;
     typename task_type::method_type _method;
+    task_result_buffer_type _task_result;
 
 private:
     class_type* m_instance;
 
 public:
-    _CONSTEXPR20_ _FORCE_INLINE_ cpp_style_task() noexcept : _task_result(), _arguments_buffer(), _method(), m_instance() {}
+    _CONSTEXPR20_ _FORCE_INLINE_ cpp_style_task() noexcept : _arguments_buffer(), _method(), _task_result() {}
     _FORCE_INLINE_ ~cpp_style_task() noexcept = default;
 
     _CONSTEXPR20_ _FORCE_INLINE_ cpp_style_task(typename task_type::method_type task_p) noexcept : _arguments_buffer(), _method(task_p), m_instance(), _task_result() {}
@@ -1379,7 +1379,7 @@ public:
     }
 
 
-    virtual void set_arguments(void* arguments_p, _MAYBE_UNUSED_ size_t size_in_bytes_p) noexcept
+    virtual void set_arguments(void* arguments_p, _MAYBE_UNUSED_ size_t size_in_bytes_p) noexcept override
     {
 		FE_ASSERT(arguments_p == nullptr, "The arguments are null!");
 		FE_ASSERT(size_in_bytes_p == 0, "The size of the arguments is 0!");
@@ -1616,15 +1616,15 @@ struct cpp_style_task<C, TaskImpl, FE::FORWARD_DATA::_AS_LVALUE_REF, ArgumentsBu
     using return_type = typename FE::remove_const_reference<typename FE::method<class_type, task_impl_type, FE::FORWARD_DATA::_AS_LVALUE_REF>::return_type>::type;
     using task_result_buffer_type = typename FE::conditional_type<std::is_void<return_type>::value, void_t, return_type>::type;
 
-    task_result_buffer_type _task_result;
     arguments_buffer_type _arguments_buffer;
     typename task_type::method_type _method;
+    task_result_buffer_type _task_result;
 
 private:
     class_type* m_instance;
 
 public:
-    _CONSTEXPR20_ _FORCE_INLINE_ cpp_style_task() noexcept : _task_result(), _arguments_buffer(), _method(), m_instance() {}
+    _FORCE_INLINE_ cpp_style_task() noexcept : _arguments_buffer(), _method(), _task_result(), m_instance() {}
     _FORCE_INLINE_ ~cpp_style_task() noexcept = default;
 
     _CONSTEXPR20_ _FORCE_INLINE_ cpp_style_task(typename task_type::method_type task_p) noexcept : _arguments_buffer(), _method(task_p), m_instance(), _task_result(){}
@@ -1791,7 +1791,7 @@ public:
     }
 
 
-    virtual void set_arguments(void* arguments_p, _MAYBE_UNUSED_ size_t size_in_bytes_p) noexcept
+    virtual void set_arguments(void* arguments_p, _MAYBE_UNUSED_ size_t size_in_bytes_p) noexcept override
     {
         FE_ASSERT(arguments_p == nullptr, "The arguments are null!");
         FE_ASSERT(size_in_bytes_p == 0, "The size of the arguments is 0!");
@@ -2032,11 +2032,11 @@ struct c_style_task<TaskImpl, FE::FORWARD_DATA::_AS_RVALUE_REF, ArgumentsBufferT
     using return_type = typename FE::remove_const_reference<typename FE::function<task_impl_type, FE::FORWARD_DATA::_AS_RVALUE_REF>::return_type>::type;
     using task_result_buffer_type = typename FE::conditional_type<std::is_void<return_type>::value, void_t, return_type>::type;
 
-    task_result_buffer_type _task_result;
     arguments_buffer_type _arguments_buffer;
     typename task_type::function_type _function;
-    
-    _CONSTEXPR20_ _FORCE_INLINE_ c_style_task() noexcept : _task_result(), _arguments_buffer(), _function() {}
+    task_result_buffer_type _task_result;
+
+    _CONSTEXPR20_ _FORCE_INLINE_ c_style_task() noexcept : _arguments_buffer(), _function(), _task_result() {}
     _FORCE_INLINE_ ~c_style_task() noexcept = default;
 
     _CONSTEXPR20_ _FORCE_INLINE_ c_style_task(typename task_type::function_type task_p) noexcept : _function(task_p), _task_result() {}
@@ -2186,7 +2186,7 @@ struct c_style_task<TaskImpl, FE::FORWARD_DATA::_AS_RVALUE_REF, ArgumentsBufferT
     }
 
 
-    virtual void set_arguments(void* arguments_p, _MAYBE_UNUSED_ size_t size_in_bytes_p) noexcept
+    virtual void set_arguments(void* arguments_p, _MAYBE_UNUSED_ size_t size_in_bytes_p) noexcept override
     {
         FE_ASSERT(arguments_p == nullptr, "The arguments are null!");
         FE_ASSERT(size_in_bytes_p == 0, "The size of the arguments is 0!");
@@ -2417,9 +2417,9 @@ struct c_style_task<TaskImpl, FE::FORWARD_DATA::_AS_LVALUE_REF, ArgumentsBufferT
     using return_type = typename FE::remove_const_reference<typename FE::function<task_impl_type, FE::FORWARD_DATA::_AS_LVALUE_REF>::return_type>::type;
     using task_result_buffer_type = typename FE::conditional_type<std::is_void<return_type>::value, void_t, return_type>::type;
     
-    task_result_buffer_type _task_result;
     arguments_buffer_type _arguments_buffer;
     typename task_type::function_type _function;
+    task_result_buffer_type _task_result;
 
     _CONSTEXPR20_ _FORCE_INLINE_ c_style_task() noexcept : _task_result(), _arguments_buffer(), _function() {}
     _FORCE_INLINE_ ~c_style_task() noexcept = default;
@@ -2571,7 +2571,7 @@ struct c_style_task<TaskImpl, FE::FORWARD_DATA::_AS_LVALUE_REF, ArgumentsBufferT
     }
 
 
-    virtual void set_arguments(void* arguments_p, _MAYBE_UNUSED_ size_t size_in_bytes_p) noexcept
+    virtual void set_arguments(void* arguments_p, _MAYBE_UNUSED_ size_t size_in_bytes_p) noexcept override
     {
         FE_ASSERT(arguments_p == nullptr, "The arguments are null!");
         FE_ASSERT(size_in_bytes_p == 0, "The size of the arguments is 0!");

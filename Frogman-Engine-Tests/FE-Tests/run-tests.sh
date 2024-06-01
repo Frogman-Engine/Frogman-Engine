@@ -20,10 +20,14 @@ if [ -z "$SPECIFIED_TEST_NAME" ];
         "$CURRENT_DIRECTORY/$BUILD_FILES_FOLDER_NAME/FE.core.prerequisites/FE.core.prerequisites_test"
         "$CURRENT_DIRECTORY/$BUILD_FILES_FOLDER_NAME/FE.core.type_traits/FE.core.type_traits_test"
         "$CURRENT_DIRECTORY/$BUILD_FILES_FOLDER_NAME/FE.core.algorithm.utility/FE.core.algorithm.utility_test"
-        "$CURRENT_DIRECTORY/$BUILD_FILES_FOLDER_NAME/FE.core.log/FE.core.log_test"
         "$CURRENT_DIRECTORY/$BUILD_FILES_FOLDER_NAME/FE.core.thread/FE.core.thread_test"
-        "$CURRENT_DIRECTORY/$BUILD_FILES_FOLDER_NAME/FE.framework.predefined_main/FE.framework.predefined_main_test"
+        "$CURRENT_DIRECTORY/$BUILD_FILES_FOLDER_NAME/FE.core.log/FE.core.log_test"
+        "$CURRENT_DIRECTORY/$BUILD_FILES_FOLDER_NAME/FE.core.algorithm.math/FE.core.algorithm.math_test"
+        "$CURRENT_DIRECTORY/$BUILD_FILES_FOLDER_NAME/FE.core.iterator/FE.core.iterator_test"
+        "$CURRENT_DIRECTORY/$BUILD_FILES_FOLDER_NAME/FE.core.memory/FE.core.memory_test"
+        "$CURRENT_DIRECTORY/$BUILD_FILES_FOLDER_NAME/FE.core.algorithm.string/FE.core.algorithm.string_test"
         "$CURRENT_DIRECTORY/$BUILD_FILES_FOLDER_NAME/FE.core.pool/FE.core.pool_test"
+        "$CURRENT_DIRECTORY/$BUILD_FILES_FOLDER_NAME/FE.framework.predefined_main/FE.framework.predefined_main_test"
     )
 
     echo " "
@@ -31,6 +35,7 @@ if [ -z "$SPECIFIED_TEST_NAME" ];
         echo "Running a test named: $TEST"
         chmod +x "$TEST"
         "$TEST" &
+        wait
     done
 
 else
@@ -40,5 +45,5 @@ else
     echo "Running a test named: $SPECIFIED_TEST_NAME"
     chmod +x "$TEST"
     "$TEST" &
+    wait
 fi
-wait
