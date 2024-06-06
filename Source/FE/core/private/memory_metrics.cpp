@@ -18,7 +18,7 @@
 #endif
 
 
-FE::var::uint64 FE::request_app_memory_utilization(const HEAP_MEMORY_UTIL_INFO select_data_p) noexcept
+var::uint64 FE::request_app_memory_utilization(const HEAP_MEMORY_UTIL_INFO select_data_p) noexcept
 {
 #ifdef _WINDOWS_X86_64_
 	MEMORYSTATUSEX l_memory_information;

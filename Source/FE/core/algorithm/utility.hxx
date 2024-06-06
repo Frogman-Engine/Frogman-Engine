@@ -10,7 +10,7 @@
 #include <cstring>
 
 #pragma warning(push)
-#pragma warning(disable: 4244) // silent the warning 'argument': conversion from 'FE::var::float64' to 'IntT', possible loss of data
+#pragma warning(disable: 4244) // silent the warning 'argument': conversion from 'var::float64' to 'IntT', possible loss of data
 #ifdef FE_CHAR_TO_INT
 #error FE_CHAR_TO_INT is a reserved Frogman Engine macro keyword.
 #endif
@@ -70,7 +70,7 @@ struct real_info
 
 
 template<typename UIntT, typename CharT>
-_CONSTEXPR20_ _FORCE_INLINE_ integral_info<UIntT> string_to_uint(const CharT* const integral_string_p) noexcept
+_FORCE_INLINE_ _CONSTEXPR20_ integral_info<UIntT> string_to_uint(const CharT* const integral_string_p) noexcept
 {
     FE_STATIC_ASSERT(std::is_unsigned<UIntT>::value == false, "static assertion failed: the template argument UIntT is not an unsigned integral type.");
     FE_STATIC_ASSERT(FE::is_char<CharT>::value == false, "static assertion failed: the template argument CharT is not a character type.");
@@ -90,7 +90,7 @@ _CONSTEXPR20_ _FORCE_INLINE_ integral_info<UIntT> string_to_uint(const CharT* co
 
 
 template<typename SIntT, typename CharT>
-_CONSTEXPR20_ _FORCE_INLINE_ integral_info<SIntT> string_to_int(const CharT* integral_string_p) noexcept
+_FORCE_INLINE_ _CONSTEXPR20_ integral_info<SIntT> string_to_int(const CharT* integral_string_p) noexcept
 {
     FE_STATIC_ASSERT(std::is_signed<SIntT>::value == false, "static assertion failed: the template argument SIntT is not a signed integral type.");
     FE_STATIC_ASSERT(FE::is_char<CharT>::value == false, "static assertion failed: the template argument CharT is not a character type.");
@@ -130,7 +130,7 @@ _CONSTEXPR20_ _FORCE_INLINE_ integral_info<SIntT> string_to_int(const CharT* int
 #pragma warning(push)
 #pragma warning(disable:4715)
 template<typename CharT>
-_CONSTEXPR20_ _FORCE_INLINE_ boolean string_to_boolean(const CharT* const string_p) noexcept
+_FORCE_INLINE_ _CONSTEXPR20_ boolean string_to_boolean(const CharT* const string_p) noexcept
 {
     FE_STATIC_ASSERT(FE::is_char<CharT>::value == false, "an illegal type assigned to the template argument CharT");
 
@@ -171,7 +171,7 @@ _CONSTEXPR20_ _FORCE_INLINE_ boolean string_to_boolean(const CharT* const string
 
 
 template<typename FloatT, typename CharT>
-_CONSTEXPR20_ _FORCE_INLINE_ real_info<FloatT> string_to_float(const CharT* float_string_p) noexcept
+_FORCE_INLINE_ _CONSTEXPR20_ real_info<FloatT> string_to_float(const CharT* float_string_p) noexcept
 {
     integral_info<var::int64> l_integral_part_info = string_to_int<var::int64>(float_string_p);
 
@@ -209,7 +209,7 @@ _CONSTEXPR20_ _FORCE_INLINE_ real_info<FloatT> string_to_float(const CharT* floa
 
 
 template<typename IntT>
-_NODISCARD_ _CONSTEXPR20_ _FORCE_INLINE_ var::uint8 count_integral_digit_length(IntT value_p) noexcept
+_NODISCARD_ _FORCE_INLINE_ _CONSTEXPR20_ var::uint8 count_integral_digit_length(IntT value_p) noexcept
 {
     static_assert(::std::is_integral<IntT>::value == true || ::std::is_floating_point<IntT>::value == true, "the type of the template parameter IntT is not numeric");
 
@@ -228,7 +228,7 @@ _NODISCARD_ _CONSTEXPR20_ _FORCE_INLINE_ var::uint8 count_integral_digit_length(
 
 
 template<typename CharT>
-_CONSTEXPR20_ _FORCE_INLINE_ void int_to_string(CharT* const string_out_p, _MAYBE_UNUSED_ length_t input_string_capacity_p, var::int64 value_p) noexcept
+_FORCE_INLINE_ _CONSTEXPR20_ void int_to_string(CharT* const string_out_p, _MAYBE_UNUSED_ length_t input_string_capacity_p, var::int64 value_p) noexcept
 {
     FE_STATIC_ASSERT(FE::is_char<CharT>::value == false, "an illegal type assigned to the template argument CharT");
     FE_ABORT_IF(string_out_p == nullptr, "NULLPTR DETECTED: string_out_p is nullptr.");
@@ -270,7 +270,7 @@ _CONSTEXPR20_ _FORCE_INLINE_ void int_to_string(CharT* const string_out_p, _MAYB
 
 
 template<typename CharT>
-_CONSTEXPR20_ _FORCE_INLINE_ void uint_to_string(CharT* const string_out_p, _MAYBE_UNUSED_ length_t input_string_capacity_p, var::uint64 value_p) noexcept
+_FORCE_INLINE_ _CONSTEXPR20_ void uint_to_string(CharT* const string_out_p, _MAYBE_UNUSED_ length_t input_string_capacity_p, var::uint64 value_p) noexcept
 {
     FE_STATIC_ASSERT(FE::is_char<CharT>::value == false, "an illegal type of value_p assigned to the template argument CharT");
     FE_ABORT_IF(string_out_p == nullptr, "NULLPTR DETECTED: string_out_p is nullptr.");
@@ -305,7 +305,7 @@ _CONSTEXPR20_ _FORCE_INLINE_ void uint_to_string(CharT* const string_out_p, _MAY
 
 
 template<typename CharT>
-_CONSTEXPR20_ _FORCE_INLINE_ void float_to_string(CharT* const string_out_p, length_t input_string_capacity_p, float64 value_p) noexcept
+_FORCE_INLINE_ _CONSTEXPR20_ void float_to_string(CharT* const string_out_p, length_t input_string_capacity_p, float64 value_p) noexcept
 {
     FE_STATIC_ASSERT(FE::is_char<CharT>::value == false, "an illegal type assigned to the template argument CharT");
 
@@ -332,7 +332,7 @@ _CONSTEXPR20_ _FORCE_INLINE_ void float_to_string(CharT* const string_out_p, len
 
 
 template<typename CharT>
-_CONSTEXPR20_ _FORCE_INLINE_ const CharT* boolean_to_string(boolean value_p) noexcept
+_FORCE_INLINE_ _CONSTEXPR20_ const CharT* boolean_to_string(boolean value_p) noexcept
 {
     FE_STATIC_ASSERT(FE::is_char<CharT>::value == false, "an illegal type assigned to the template argument CharT");
 
@@ -343,7 +343,7 @@ _CONSTEXPR20_ _FORCE_INLINE_ const CharT* boolean_to_string(boolean value_p) noe
 
 
 template <typename CharT, typename T>
-_CONSTEXPR20_ _FORCE_INLINE_ void any_object_binary_representation(CharT* const out_dest_buffer_p, _MAYBE_UNUSED_ capacity_t dest_buffer_capacity_p, T& object_p)
+_FORCE_INLINE_ _CONSTEXPR20_ void any_object_binary_representation(CharT* const out_dest_buffer_p, _MAYBE_UNUSED_ capacity_t dest_buffer_capacity_p, T& object_p)
 {
     FE_STATIC_ASSERT(FE::is_char<CharT>::value == false, "an illegal type assigned to the template argument CharT");
 
@@ -390,7 +390,7 @@ _CONSTEXPR20_ _FORCE_INLINE_ void any_object_binary_representation(CharT* const 
 
 
 template<typename CharT, typename T>
-_CONSTEXPR20_ _FORCE_INLINE_ const CharT* buffered_any_primitive_to_string(T value_p) noexcept
+_FORCE_INLINE_ _CONSTEXPR20_ const CharT* buffered_any_primitive_to_string(T value_p) noexcept
 {
     FE_STATIC_ASSERT(FE::is_char<CharT>::value == false, "an illegal type assigned to the template argument CharT");
     FE_STATIC_ASSERT(FE::is_primitive<T>::value == false, "static assertion failed: T must be a primitive type.");
@@ -443,7 +443,7 @@ _CONSTEXPR20_ _FORCE_INLINE_ const CharT* buffered_any_primitive_to_string(T val
 
 
 template<typename CharT, typename T>
-_CONSTEXPR20_ _FORCE_INLINE_ void any_primitive_to_string(CharT* const out_dest_buffer_p, capacity_t dest_buffer_capacity_p, T value_p) noexcept
+_FORCE_INLINE_ _CONSTEXPR20_ void any_primitive_to_string(CharT* const out_dest_buffer_p, capacity_t dest_buffer_capacity_p, T value_p) noexcept
 {
     FE_STATIC_ASSERT(FE::is_char<CharT>::value == false, "an illegal type assigned to the template argument CharT");
     FE_STATIC_ASSERT(FE::is_primitive<T>::value == false, "static assertion failed: T must be a primitive type.");
@@ -501,7 +501,7 @@ _CONSTEXPR20_ _FORCE_INLINE_ void any_primitive_to_string(CharT* const out_dest_
 #define _UTILITY_ALGORITHM_BUFER_SIZE_ 2048
 
 template<typename CharT, typename U>
-_CONSTEXPR20_ _FORCE_INLINE_ const CharT* buffered_any_to_string(U& value_p) noexcept
+_FORCE_INLINE_ _CONSTEXPR20_ const CharT* buffered_any_to_string(U& value_p) noexcept
 {
     FE_STATIC_ASSERT((FE::is_char<CharT>::value == false), "Static Assertion Failed: an illegal type assigned to the template argument CharT");
 
@@ -523,7 +523,7 @@ _CONSTEXPR20_ _FORCE_INLINE_ const CharT* buffered_any_to_string(U& value_p) noe
 
 
 template<typename CharT, typename U>
-_CONSTEXPR20_ _FORCE_INLINE_ void any_to_string(CharT* const out_dest_buffer_p, capacity_t dest_buffer_capacity_p, U& value_p) noexcept
+_FORCE_INLINE_ _CONSTEXPR20_ void any_to_string(CharT* const out_dest_buffer_p, capacity_t dest_buffer_capacity_p, U& value_p) noexcept
 {
     FE_STATIC_ASSERT(FE::is_char<CharT>::value == false, "an illegal type assigned to the template argument CharT");
 

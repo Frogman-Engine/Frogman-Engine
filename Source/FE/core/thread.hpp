@@ -10,7 +10,7 @@
 BEGIN_NAMESPACE(FE)
 
 
-struct task_base;
+class task_base;
 
 
 class thread final

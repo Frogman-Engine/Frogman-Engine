@@ -65,6 +65,56 @@ public:
 		return l_result;
 	}
 
+	_NODISCARD_ _FORCE_INLINE_ pointer reallocate(pointer const pointer_p, size_type prev_count_p, size_type new_count_p) noexcept
+	{
+		pointer const l_result = this->m_allocator->reallocate(pointer_p, prev_count_p, new_count_p);
+
+		if constexpr (is_trivial == FE::TYPE_TRIVIALITY::_NOT_TRIVIAL)
+		{
+			if(pointer_p == l_result)
+			{
+				if (new_count_p > prev_count_p)
+				{
+					for (pointer begin = l_result + prev_count_p, end = l_result + new_count_p; begin != end; ++begin)
+					{
+						new(begin) value_type();
+					}
+					return l_result;
+				}
+
+				for (pointer begin = pointer_p + new_count_p, end = pointer_p + prev_count_p; begin != end; ++begin)
+				{
+					begin->~value_type();
+				}
+				return l_result;
+			}
+			
+			if (new_count_p > prev_count_p)
+			{
+				for (pointer begin = l_result, end = l_result + prev_count_p, input = pointer_p; begin != end; ++begin)
+				{
+					new(begin) value_type(std::move(*input));
+					++input;
+				}
+
+				for (pointer begin = l_result + prev_count_p, end = l_result + new_count_p; begin != end; ++begin)
+				{
+					new(begin) value_type();
+				}
+				return l_result;
+			}
+				
+			for (pointer begin = l_result, end = l_result + new_count_p, input = pointer_p; begin != end; ++begin)
+			{
+				new(begin) value_type(std::move(*input));
+				++input;
+			}
+			return l_result;
+		}
+
+		return l_result;
+	}
+
 	_FORCE_INLINE_ void deallocate(pointer pointer_p, size_type count_p) noexcept
 	{
 		FE_ASSERT(count_p == 0, "${%s@0}: queried allocation size is ${%lu@1}.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_INVALID_SIZE), &count_p);

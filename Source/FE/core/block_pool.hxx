@@ -59,38 +59,6 @@ namespace internal::pool
 }
 
 
-template<typename T, count_t PageCapacity, class Allocator>
-struct pool_deleter<T, POOL_TYPE::_BLOCK, PageCapacity, FE::align_custom_bytes<sizeof(T)>, Allocator>
-{
-    FE_STATIC_ASSERT(std::is_array<T>::value == true, "Static Assertion Failed: The T must not be an array[] type.");
-    FE_STATIC_ASSERT(std::is_const<T>::value == true, "Static Assertion Failed: The T must not be a const type.");
-
-    using chunk_type = internal::pool::chunk<T, POOL_TYPE::_BLOCK, PageCapacity, FE::align_custom_bytes<sizeof(T)>>;
-    using value_type = typename FE::remove_const_reference<typename chunk_type::value_type>::type;
-    using block_info_type = typename chunk_type::block_info_type;
-
-private:
-    chunk_type* m_host_chunk = nullptr;
-
-public:
-    constexpr static count_t page_capacity = PageCapacity;
-
-    _FORCE_INLINE_ pool_deleter() noexcept : m_host_chunk() {}
-    _FORCE_INLINE_ pool_deleter(chunk_type* host_p) noexcept : m_host_chunk(host_p) {}
-
-    _FORCE_INLINE_ void operator()(value_type* ptr_p) const noexcept
-    {
-        FE_ASSERT(this->m_host_chunk == nullptr, "${%s@0}: ${%s@1} was nullptr", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(this->m_host_chunk));
-        if (ptr_p == nullptr || this->m_host_chunk == nullptr) { return; }
-
-        if constexpr (FE::is_trivial<value_type>::value == FE::TYPE_TRIVIALITY::_NOT_TRIVIAL)
-        {
-            ptr_p->~value_type();
-        }
-
-        this->m_host_chunk->_free_blocks.push(block_info_type{ ptr_p });
-    }
-};
 
 
 template<typename T, count_t PageCapacity, class Allocator>
@@ -126,7 +94,7 @@ public:
     pool& operator=(const pool& other_p) noexcept = delete;
     pool& operator=(pool&& rvalue) noexcept = delete;
 
-    std::unique_ptr<T, deleter_type> allocate() noexcept
+    T* allocate() noexcept
     {
         typename pool_type::iterator l_list_iterator = this->m_memory_pool.begin();
         typename pool_type::const_iterator l_cend = this->m_memory_pool.cend();
@@ -135,35 +103,27 @@ public:
         {
             if (l_list_iterator->is_full() == false)
             {
-                T* l_value;
-                if (l_list_iterator->_free_blocks.is_empty() == false)
+                T* l_allocation_result;
+                if (l_list_iterator->_free_blocks.is_empty() == true)
                 {
-                    l_value = l_list_iterator->_free_blocks.pop()._address;
-
-                    if constexpr (FE::is_trivial<T>::value == FE::TYPE_TRIVIALITY::_NOT_TRIVIAL)
-                    {
-                        new(l_value) T();
-                    }
+                    l_allocation_result = l_list_iterator->_page_iterator;
+                    ++(l_list_iterator->_page_iterator);
                 }
                 else
                 {
-                    l_value = l_list_iterator->_page_iterator;
-
-                    if constexpr (FE::is_trivial<T>::value == FE::TYPE_TRIVIALITY::_NOT_TRIVIAL)
-                    {
-                        new(l_value) T();
-                    }
-
-                    ++(l_list_iterator->_page_iterator);
+                    l_allocation_result = l_list_iterator->_free_blocks.pop()._address;
                 }
 
-                return std::unique_ptr<T, deleter_type>(l_value, deleter_type(l_list_iterator.operator->()));
+                if constexpr (FE::is_trivial<T>::value == FE::TYPE_TRIVIALITY::_NOT_TRIVIAL)
+                {
+                    new(l_allocation_result) T();
+                }
+
+                return l_allocation_result;
             }
-            else
-            {
-                create_pages(1);
-                continue;
-            }
+
+            create_pages(1);
+            continue;
         }
 
         create_pages(1);
@@ -208,9 +168,10 @@ public:
     {
         typename pool_type::iterator l_list_iterator = this->m_memory_pool.begin();
         typename pool_type::const_iterator l_cend = this->m_memory_pool.cend();
+        FE_ASSERT(l_list_iterator == l_cend, "Unable to shrink_to_fit() an empty pool.");
+
         if (l_list_iterator == l_cend)
         {
-            FE_ASSERT(l_list_iterator == l_cend, "Unable to shrink_to_fit() an empty pool.");
             return false;
         }
 
@@ -246,9 +207,6 @@ public:
 
 template<typename T, count_t PageCapacity = 128, class Allocator = FE::aligned_allocator<internal::pool::chunk<T, POOL_TYPE::_BLOCK, PageCapacity, FE::align_custom_bytes<sizeof(T)>>>>
 using block_pool = pool<T, POOL_TYPE::_BLOCK, PageCapacity, FE::align_custom_bytes<sizeof(T)>, Allocator>;
-
-template<typename T, count_t PageCapacity = 128, class Allocator = FE::aligned_allocator<internal::pool::chunk<T, POOL_TYPE::_BLOCK, PageCapacity, FE::align_custom_bytes<sizeof(T)>>>>
-using block_pool_ptr = std::unique_ptr<T, pool_deleter<T, FE::POOL_TYPE::_BLOCK, PageCapacity, FE::align_custom_bytes<sizeof(T)>, Allocator>>;
 
 
 END_NAMESPACE

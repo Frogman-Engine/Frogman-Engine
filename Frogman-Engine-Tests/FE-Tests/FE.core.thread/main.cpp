@@ -35,28 +35,28 @@ public:
 
 thread_local static tls tl_s_tls;
 
-int main()
+int main(int argc_p, char** argv_p)
 {
     using namespace FE;
-    
-    // This test sees if a host physical core of the logical thread can be changed over the app execution time.
-    // It seems like Thread Local Storage lifetime is bound with the lifecycle of a logical thread on Ubuntu x86-64.
-    // The result may vary on the operating system. 
 
-    uint64 thread_id = std::thread::hardware_concurrency();
-    FE_LOG("Total thread count: ${%lu@0}", &thread_id);
+  	testing::InitGoogleTest(&argc_p, argv_p);
 
-#ifdef _LINUX_X86_64_
-    int64 physical_core_id = sched_getcpu();
-    for(var::uint64 i = 0; i < 1000000000000000000; ++i)
-    {
-        int64 new_physical_core_id = sched_getcpu();
-        FE_ASSERT(physical_core_id != new_physical_core_id, "Whiskey Tango Foxtrot?"); // It aborts the process if its host physical core gets chaged.
-        (void)tl_s_tls;
-    }
-#endif
-
-    return 0;
+	if (argv_p == nullptr)
+	{
+		char l_arg0_default[] = "benchmark";
+		char* l_args_default = l_arg0_default;
+		argc_p = 1;
+		argv_p = &l_args_default;
+	}
+	
+    benchmark::Initialize(&argc_p, argv_p);
+	FE_ABORT_IF(benchmark::ReportUnrecognizedArguments(argc_p, argv_p) == true, "Failed to meet the expectation: Unrecognized Benchmark Arguments Detected.");
+    int32 l_exit_code = RUN_ALL_TESTS();
+	std::cerr << "\n\n";
+	benchmark::RunSpecifiedBenchmarks();
+	std::cerr << "\n\n";
+    benchmark::Shutdown();
+    return l_exit_code;
 }
 
 
@@ -108,24 +108,29 @@ int32 int_fn(int32 param_p) noexcept
 TEST(thread, fork_and_join)
 {
 	FE::thread l_thread;
-	FE::c_style_task<void(int32), FE::FORWARD_DATA::_AS_RVALUE_REF, var::int32> l_void_fn;
-	l_void_fn._function = void_fn;
-	l_void_fn._arguments_buffer._first = 0;
+	{
+		FE::c_style_task<void(int32), FE::FORWARD_DATA::_AS_LVALUE_REF, var::int32> l_void_fn;
+		l_void_fn._function = void_fn;
 
-	l_thread.fork(&l_void_fn);
-	l_thread.join();
+		var::int32 l_arg0 = 0;
+		l_void_fn.set_arguments(&l_arg0, sizeof(var::int32));
 
+		l_thread.fork(&l_void_fn);
+		l_thread.join();
+	}
 
+	{
+		FE::c_style_task<int32(int32), FE::FORWARD_DATA::_AS_LVALUE_REF, var::int32> l_int_fn;
+		l_int_fn._function = int_fn;
+		
+		var::int32 l_arg0 = 0;
+		l_int_fn.set_arguments(&l_arg0, sizeof(var::int32));
 
+		l_thread.fork(&l_int_fn);
+		l_thread.join();
 
-	FE::c_style_task<int32(int32), FE::FORWARD_DATA::_AS_RVALUE_REF, var::int32> l_int_fn;
-	l_int_fn._function = int_fn;
-	l_int_fn._arguments_buffer._first = 0;
-
-	l_thread.fork(&l_int_fn);
-	l_thread.join();
-
-	EXPECT_EQ(l_int_fn._task_result, 0);
+		EXPECT_EQ( std::any_cast<int32>(l_int_fn.get_result()) , 0);
+	}
 }
 
 
@@ -133,7 +138,7 @@ TEST(thread, fork_and_join)
 
 TEST(function, call_by_value)
 {
-	FE::function<long double(long double), FE::FORWARD_DATA::_AS_RVALUE_REF> l_abs = abs;
+	FE::function<long double(long double)> l_abs = abs;
 	float64 l_input = -7.0;
 	float64 l_result = l_abs(l_input);
 	EXPECT_EQ(l_result, 7.0f);
@@ -149,7 +154,7 @@ TEST(function, call_by_lvalue_reference)
 
 TEST(function, call_by_address)
 {
-	FE::function<var::float64(float64*), FE::FORWARD_DATA::_AS_RVALUE_REF> l_abs = test_sample::abs;
+	FE::function<var::float64(float64*)> l_abs = test_sample::abs;
 	var::float64 l_input = -5.0;
 	float64 l_result = l_abs(&l_input);
 	EXPECT_EQ(l_result, 5.0f);
@@ -160,7 +165,7 @@ TEST(function, call_by_address)
 
 TEST(method, call_by_value)
 {
-	FE::method<test_sample::s, int32(int32), FE::FORWARD_DATA::_AS_RVALUE_REF> l_fn = &test_sample::s::fn;
+	FE::method<test_sample::s, int32(int32)> l_fn = &test_sample::s::fn;
 	var::int32 l_input = 5;
 	test_sample::s l_s;
 	int32 l_result = l_fn(l_s, std::move(l_input));
@@ -178,7 +183,7 @@ TEST(method, call_by_lvalue_reference)
 
 TEST(method, call_by_address)
 {
-	FE::method<test_sample::s, int32(int32*), FE::FORWARD_DATA::_AS_RVALUE_REF> l_fn = &test_sample::s::fn;
+	FE::method<test_sample::s, int32(int32*)> l_fn = &test_sample::s::fn;
 	var::int32 l_input = 5;
 	test_sample::s l_s;
 	int32 l_result = l_fn(l_s, &l_input);
@@ -190,35 +195,41 @@ TEST(method, call_by_address)
 
 TEST(c_style_task, call_by_value)
 {
-	FE::c_style_task<long double(long double), FE::FORWARD_DATA::_AS_RVALUE_REF, long double> l_abs;
+	FE::c_style_task<long double(long double), FE::FORWARD_DATA::_AS_LVALUE_REF, long double> l_abs;
 	l_abs._function = abs;
-	l_abs._arguments_buffer._first = -9.0f;
 
+	long double l_arg0 = -9.0f;
+	l_abs.set_arguments(&l_arg0, sizeof(long double));
+	
 	l_abs();
 
-	EXPECT_EQ(l_abs._task_result, 9.0);
+	EXPECT_EQ( std::any_cast<long double>(l_abs.get_result()) , 9.0);
 }
 
 TEST(c_style_task, call_by_lvalue_reference)
 {
-	FE::c_style_task<var::float64(float64&), FE::FORWARD_DATA::_AS_RVALUE_REF, var::float64> l_abs;
+	FE::c_style_task<var::float64(float64&), FE::FORWARD_DATA::_AS_LVALUE_REF, var::float64> l_abs;
 	l_abs._function = test_sample::abs;
-	l_abs._arguments_buffer._first = -9.0f;
+
+	var::float64 l_arg0 = -9.0f;
+	l_abs.set_arguments(&l_arg0, sizeof(float64&));
 
 	l_abs();
 
-	EXPECT_EQ(l_abs._task_result, 9.0);
+	EXPECT_EQ( std::any_cast<var::float64>(l_abs.get_result()) , 9.0);
 }
 
 TEST(c_style_task, call_by_address)
 {
-	FE::c_style_task<var::float64(float64*), FE::FORWARD_DATA::_AS_RVALUE_REF, var::float64*> l_abs;
+	FE::c_style_task<var::float64(float64*), FE::FORWARD_DATA::_AS_LVALUE_REF, var::float64*> l_abs;
 	l_abs._function = test_sample::abs;
-	l_abs._arguments_buffer._first = &FE::buffer<var::float64>::set_and_get(-9.0f);
 
+	float64* l_p = new float64(-9.0f);
+	l_abs.set_arguments(&l_p, sizeof(float64*));
 	l_abs();
+	delete l_p;
 
-	EXPECT_EQ(l_abs._task_result, 9.0);
+	EXPECT_EQ( std::any_cast<var::float64>(l_abs.get_result()) , 9.0);
 }
 
 
@@ -226,44 +237,48 @@ TEST(c_style_task, call_by_address)
 
 TEST(cpp_style_task, call_by_value)
 {
+	FE::cpp_style_task<std::string, std::string&(const char*), FE::FORWARD_DATA::_AS_LVALUE_REF, const char*> l_assign;
 	std::string l_some_str;
 
-	FE::cpp_style_task<std::string, std::string&(const char*), FE::FORWARD_DATA::_AS_RVALUE_REF, const char*> l_reserve;
-	l_reserve._arguments_buffer._first = "std::string";
-	l_reserve._method = &std::string::assign;
-	l_reserve.set_instance(&l_some_str);
+	l_assign._method = &std::string::assign;
+	l_assign.set_instance(&l_some_str);
 
-	l_reserve();
-	EXPECT_TRUE(l_reserve._task_result == "std::string");
+	const char* l_arg0 = "std::string";
+	l_assign.set_arguments(&l_arg0, sizeof(const char*));
+
+	l_assign();
+
+	EXPECT_TRUE(std::any_cast<std::string>(l_assign.get_result()) == "std::string");
 }
 
 TEST(cpp_style_task, call_by_lvalue_reference)
 {
-	std::string l_some_str;
-
 	FE::cpp_style_task<std::string, std::string&(const std::string&), FE::FORWARD_DATA::_AS_LVALUE_REF, std::string> l_copy_assignment;
-	l_copy_assignment._arguments_buffer._first = "C++ is not Java.";
-	l_copy_assignment._method = &std::string::operator=;
+	std::string l_some_str;
 	l_copy_assignment.set_instance(&l_some_str);
+	l_copy_assignment._method = &std::string::operator=;
+
+	std::string l_arg0 = "C++ is not Java.";
+	l_copy_assignment.set_arguments(&l_arg0, sizeof(std::string));
 
 	l_copy_assignment();
 
-	EXPECT_TRUE(l_copy_assignment._task_result == "C++ is not Java.");
+	EXPECT_TRUE(std::any_cast<std::string>(l_copy_assignment.get_result()) == "C++ is not Java.");
 }
 
 TEST(cpp_style_task, call_by_address)
 {
+	FE::cpp_style_task<test_sample::s, int32(int32*), FE::FORWARD_DATA::_AS_LVALUE_REF, int32*> l_fn;
 	test_sample::s l_test_sample_instance;
-	FE::cpp_style_task<test_sample::s, int32(int32*), FE::FORWARD_DATA::_AS_RVALUE_REF, int32*> l_fn;
-
-	int32 l_input = 10;
-	l_fn._arguments_buffer._first = &l_input;
 	l_fn.set_instance(&l_test_sample_instance);
 	l_fn._method = &test_sample::s::fn;
 
+	int32* l_p = new int32(10);
+	l_fn.set_arguments(&l_p, sizeof(int32*));
 	l_fn();
+	delete l_p;
 
-	EXPECT_EQ(l_fn._task_result, 10);
+	EXPECT_EQ(std::any_cast<int32>(l_fn.get_result()), 10);
 }
 
 
@@ -273,9 +288,9 @@ namespace performance_benchmark
 {
 	void fn() noexcept
 	{
-		static FE::var::uint32 l_uint32 = 0;
+		static var::uint64 l_uint = 0;
 
-		++l_uint32;
+		++l_uint;
 	}
 
 	void FE_function(benchmark::State& state_p) noexcept

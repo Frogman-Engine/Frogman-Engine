@@ -2,7 +2,7 @@
 #define _FE_FRAMEWORK_HPP_
 // Copyright © from 2023 to current, UNKNOWN STRYKER. All Rights Reserved.
 #include <FE/core/prerequisites.h>
-//#include <FE/framework/reflection/function_table.hxx>
+//#include <FE/framework/reflection/function_table.hpp>
 #include <functional>
 #define _CREATE_AN_APP_ new
 

@@ -80,7 +80,7 @@ ${%s at n}  - string  | ${%p at n}  - hexadecimal 64bit pointer
 if(UNLIKELY(expression)) _UNLIKELY_ \
 { \
 	::FE::log::logger_base::get_fatal_error_logger<::FE::log::fatal_error_logger_base>().do_log(::FE::log::buffered_string_formatter({ __VA_ARGS__ }), __FILE__, __FUNCSIG__, __LINE__); \
-	::std::exit(static_cast<::FE::var::int32>(error_code)); \
+	::std::exit(static_cast<::var::int32>(error_code)); \
 }
 #else
 #define FE_EXIT(expression, error_code, ...)
@@ -107,7 +107,7 @@ ${%s at n}  - string  | ${%p at n}  - hexadecimal 64bit pointer
 		} \
 		else if constexpr (::FE::is_boolean<decltype(__FE_EXPECT_RESULT__)>::value == false) \
 		{ \
-			::std::exit((::FE::var::int32)__FE_EXPECT_RESULT__); \
+			::std::exit((::var::int32)__FE_EXPECT_RESULT__); \
 		} \
 	} \
 }

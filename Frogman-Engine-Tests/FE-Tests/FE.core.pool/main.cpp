@@ -59,7 +59,6 @@ int main(int argc_p, char** argv_p)
 {
 	using namespace FE;
 
-	std::cout << "Compilation test of FE.core.pool_test source code is successful.\n";
   	testing::InitGoogleTest(&argc_p, argv_p);
 
 	if (argv_p == nullptr)
@@ -166,12 +165,12 @@ void boost_pool_allocator_extreme_test(benchmark::State& state_p) noexcept
 
 	for (auto _ : state_p)
 	{
-		for (FE::var::uint32 i = 0; i < _MAX_ITERATION_; ++i)
+		for (var::uint32 i = 0; i < _MAX_ITERATION_; ++i)
 		{
 			l_s_strings[i] = boost::pool_allocator<std::string>::allocate(1);
 		}
 
-		for (FE::var::uint32 i = 0; i < _MAX_ITERATION_; ++i)
+		for (var::uint32 i = 0; i < _MAX_ITERATION_; ++i)
 		{
 			if (i % 2 == 0)
 			{
@@ -179,7 +178,7 @@ void boost_pool_allocator_extreme_test(benchmark::State& state_p) noexcept
 			}
 		}
 
-		for (FE::var::uint32 i = 0; i < _MAX_ITERATION_; ++i)
+		for (var::uint32 i = 0; i < _MAX_ITERATION_; ++i)
 		{
 			if (i % 2 == 1)
 			{
@@ -200,12 +199,12 @@ void boost_object_pool_allocator_extreme_test(benchmark::State& state_p) noexcep
 	
 	for (auto _ : state_p)
 	{
-		for (FE::var::uint32 i = 0; i < _MAX_ITERATION_; ++i)
+		for (var::uint32 i = 0; i < _MAX_ITERATION_; ++i)
 		{
 			l_s_strings[i] = l_allocator.malloc();
 		}
 
-		for (FE::var::uint32 i = 0; i < _MAX_ITERATION_; ++i)
+		for (var::uint32 i = 0; i < _MAX_ITERATION_; ++i)
 		{
 			if (i % 2 == 0)
 			{
@@ -213,7 +212,7 @@ void boost_object_pool_allocator_extreme_test(benchmark::State& state_p) noexcep
 			}
 		}
 
-		for (FE::var::uint32 i = 0; i < _MAX_ITERATION_; ++i)
+		for (var::uint32 i = 0; i < _MAX_ITERATION_; ++i)
 		{
 			if (i % 2 == 1)
 			{
@@ -235,12 +234,12 @@ void FE_pool_allocator_extreme_test(benchmark::State& state_p) noexcept
 
 	for (auto _ : state_p)
 	{
-		for(FE::var::uint32 i = 0; i < _MAX_ITERATION_; ++i)
+		for(var::uint32 i = 0; i < _MAX_ITERATION_; ++i)
 		{
-			l_s_strings[i] = l_allocator.allocate<std::string>(1).release();
+			l_s_strings[i] = l_allocator.allocate<std::string>(1);
 		}
 
-		for (FE::var::uint32 i = 0; i < _MAX_ITERATION_; ++i)
+		for (var::uint32 i = 0; i < _MAX_ITERATION_; ++i)
 		{
 			if (i % 2 == 0)
 			{
@@ -248,7 +247,7 @@ void FE_pool_allocator_extreme_test(benchmark::State& state_p) noexcept
 			}
 		}
 	
-		for (FE::var::uint32 i = 0; i < _MAX_ITERATION_; ++i)
+		for (var::uint32 i = 0; i < _MAX_ITERATION_; ++i)
 		{
 			if (i % 2 == 1)
 			{
@@ -270,12 +269,12 @@ void FE_block_pool_allocator_extreme_test(benchmark::State& state_p) noexcept
 
 	for (auto _ : state_p)
 	{
-		for (FE::var::uint32 i = 0; i < _MAX_ITERATION_; ++i)
+		for (var::uint32 i = 0; i < _MAX_ITERATION_; ++i)
 		{
-			l_s_strings[i] = l_allocator.allocate().release();
+			l_s_strings[i] = l_allocator.allocate();
 		}
 
-		for (FE::var::uint32 i = 0; i < _MAX_ITERATION_; ++i)
+		for (var::uint32 i = 0; i < _MAX_ITERATION_; ++i)
 		{
 			if (i % 2 == 0)
 			{
@@ -283,7 +282,7 @@ void FE_block_pool_allocator_extreme_test(benchmark::State& state_p) noexcept
 			}
 		}
 
-		for (FE::var::uint32 i = 0; i < _MAX_ITERATION_; ++i)
+		for (var::uint32 i = 0; i < _MAX_ITERATION_; ++i)
 		{
 			if (i % 2 == 1)
 			{
@@ -301,12 +300,12 @@ void cpp_new_delete_extreme_test(benchmark::State& state_p) noexcept
 
 	for (auto _ : state_p)
 	{
-		for (FE::var::uint32 i = 0; i < _MAX_ITERATION_; ++i)
+		for (var::uint32 i = 0; i < _MAX_ITERATION_; ++i)
 		{
 			l_s_strings[i] = new std::string;
 		}
 
-		for (FE::var::uint32 i = 0; i < _MAX_ITERATION_; ++i)
+		for (var::uint32 i = 0; i < _MAX_ITERATION_; ++i)
 		{
 			if (i % 2 == 0)
 			{
@@ -314,7 +313,7 @@ void cpp_new_delete_extreme_test(benchmark::State& state_p) noexcept
 			}
 		}
 
-		for (FE::var::uint32 i = 0; i < _MAX_ITERATION_; ++i)
+		for (var::uint32 i = 0; i < _MAX_ITERATION_; ++i)
 		{
 			if (i % 2 == 1)
 			{

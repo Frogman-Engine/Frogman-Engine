@@ -151,11 +151,11 @@ public:
 		return *this;
 	}
 
-	_FORCE_INLINE_ void push(value_type value_p) noexcept
+	_FORCE_INLINE_ void push(const value_type& value_p) noexcept
 	{
 		FE_ASSERT(this->m_top_ptr >= this->m_absolute_begin_pointer + Capacity, "${%s@0}: The fstack top exceeded the index boundary", TO_STRING(FE::MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_RANGE));
 
-		Traits::construct(*this->m_top_ptr, std::move(value_p));
+		Traits::construct(*this->m_top_ptr, value_p);
 		++this->m_top_ptr;
 	}
 
@@ -171,7 +171,7 @@ public:
 			Traits::destruct(*this->m_top_ptr);
 		}
 
-		return std::move(l_return_value_buffer);
+		return l_return_value_buffer;
 	}
 	
 	_FORCE_INLINE_ void pop_all() noexcept
@@ -185,12 +185,6 @@ public:
 			this->__set_top_pointer_to_zero();
 		}
 	}
-
-	//template<class Container>
-	//_CONSTEXPR23_ void push_range(container::range<Container>&& range_p) noexcept
-	//{
-
-	//}
 
 	_FORCE_INLINE_ const_reference top() const noexcept
 	{

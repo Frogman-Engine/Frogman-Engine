@@ -1,5 +1,6 @@
-
 #include <gtest/gtest.h>
+#include <benchmark/benchmark.h>
+
 #include <FE/core/string_view.hxx>
 #include <FE/core/string.hxx>
 // Copyright © from 2023 to current, UNKNOWN STRYKER. All Rights Reserved.
@@ -53,7 +54,6 @@ int main(int argc_p, char** argv_p)
 {
 	using namespace FE;
 
-	std::cout << "Compilation test of FE.core.pool_test source code is successful.\n";
   	testing::InitGoogleTest(&argc_p, argv_p);
 
 	if (argv_p == nullptr)

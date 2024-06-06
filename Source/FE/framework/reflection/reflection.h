@@ -2,9 +2,9 @@
 #define _FE_FRAMEWORK_REFLECTION_HPP_
 // Copyright © from 2023 to current, UNKNOWN STRYKER. All Rights Reserved.
 #include <FE/core/prerequisites.h>
-#include <FE/framework/framework.hpp>
+#include <FE/core/string.hxx>
 
-
+#include <FE/framework/reflection/function_table.hpp>
 
 
 #ifdef REGISTER_FE_CLASS
@@ -29,35 +29,38 @@ private:
 3rd - arguments forwarding mode[ EX: FE::FORWARD_DATA::AS_RVALUE_REF ]
 4th and so on - arguments buffer type[ EX: FE::string, var::length_t ] 
 */
-#define REGISTER_FE_METHOD(method_name, ...) \
+#define REGISTER_FE_METHOD(namespace, method_name, ...) \
 private: \
 struct reflection_##method_name \
 { \
 	reflection_##method_name() noexcept \
 	{ \
-		FE_DO_ONCE(_DO_ONCE_AT_APP_PROCESS_, ::FE::framework::method_signature_t signature = get_signature(); ::FE::framework::application_base::get_function_table().register_task<::FE::cpp_style_task<class_meta_data::type, __VA_ARGS__>>(std::move(signature), &class_meta_data::type::##method_name)); \
+		FE_DO_ONCE(_DO_ONCE_AT_APP_PROCESS_, ::FE::framework::function_table::register_task<::FE::cpp_style_task<class_meta_data::type, __VA_ARGS__>>(get_signature(), &class_meta_data::type::method_name)); \
 	} \
 public: \
-	static ::FE::framework::method_signature_t get_signature() noexcept \
+	static ::FE::string get_signature() noexcept \
 	{ \
-		::FE::framework::method_signature_t l_full_signature = __FUNCTION__; \
-		::FE::framework::method_signature_t l_method_attribute = #__VA_ARGS__; \
-		auto l_result = l_method_attribute.find(")"); \
-		::FE::length_t l_unnecessary_part_length = l_method_attribute.length() - l_result->_end; \
-		l_full_signature.extend(l_method_attribute.length()); \
-		if (l_unnecessary_part_length != 0) \
+		::FE::string l_full_signature = #__VA_ARGS__; \
+		auto l_result = l_full_signature.rfind("("); \
+		if(l_full_signature[l_result->_begin - 1] != ' ') \
 		{ \
-			l_method_attribute.erase(l_result->_end, l_unnecessary_part_length); \
+		    l_full_signature.extend(1); \
+		    l_full_signature.insert(l_result->_begin, " "); \
 		} \
-		l_result = l_method_attribute.find("("); \
-		l_full_signature.insert(0, l_method_attribute, 0, l_result->_begin); \
-		auto l_namespace = l_full_signature.rfind("::"); \
-		::FE::count_t l_count_to_replace = l_full_signature.length() - l_namespace->_begin; \
-		::FE::count_t l_input_replacement_size = l_method_attribute.find(")")->_end - l_result->_begin; \
-		l_full_signature.replace(l_namespace->_begin, l_count_to_replace, l_method_attribute, l_result->_begin, l_input_replacement_size); \
-		l_full_signature.replace(l_full_signature.rfind("::reflection_")->_end - 1, 1, ':', 2); \
-		return std::move(l_full_signature); \
+		::FE::string l_signature = #namespace; \
+		l_signature.extend(::FE::algorithm::string::length(#method_name) + 2); \
+		l_signature += "::"; \
+		l_signature += #method_name; \
+		l_full_signature.extend(l_signature.length()); \
+		l_result = l_full_signature.rfind("("); \
+		l_full_signature.insert(l_result->_begin, l_signature.c_str()); \
+		if(l_full_signature.back() != ')') \
+		{ \
+		    l_result = l_full_signature.find(")"); \
+			l_full_signature.erase(l_result->_end, l_full_signature.length() - l_result->_end); \
+		} \
+		return l_full_signature; \
 	} \
-}; public: reflection_##method_name reflection_##method_name##_instance
+}; public: reflection_##method_name reflection_instance_##method_name
 
 #endif

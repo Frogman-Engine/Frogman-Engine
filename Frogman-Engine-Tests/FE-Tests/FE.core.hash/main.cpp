@@ -55,7 +55,6 @@ int main(int argc_p, char** argv_p)
 {
 	using namespace FE;
 
-	std::cout << "Compilation test of FE.core.pool_test source code is successful.\n";
   	testing::InitGoogleTest(&argc_p, argv_p);
 
 	if (argv_p == nullptr)
@@ -83,13 +82,12 @@ int main(int argc_p, char** argv_p)
 void std_hash_benchmark(benchmark::State& state_p)
 {
 	std::hash<std::string> l_hasher;
-	static std::string l_string = "_NODISCARD_ _CONSTEXPR20_ _FORCE_INLINE_ count<char> count_chars(const char* string_p, const char target_p) noexcept";
-	benchmark::DoNotOptimize(l_string);
+	static std::string l_string = "_NODISCARD_ _FORCE_INLINE_ _CONSTEXPR20_ count<char> count_chars(const char* string_p, const char target_p) noexcept";
 
 	for (auto _ : state_p)
 	{
 		auto l_result = l_hasher(l_string);
-		benchmark::DoNotOptimize(l_result);
+		(void)l_result;
 	}
 }
 
@@ -98,16 +96,14 @@ BENCHMARK(std_hash_benchmark);
 
 void city_hash_benchmark(benchmark::State& state_p)
 {
-	auto l_content = "_NODISCARD_ _CONSTEXPR20_ _FORCE_INLINE_ count<char> count_chars(const char* string_p, const char target_p) noexcept";
-	size_t l_length = FE::algorithm::string::length(l_content);
-	benchmark::DoNotOptimize(l_content);
-	benchmark::DoNotOptimize(l_length);
+	auto l_content = "_NODISCARD_ _FORCE_INLINE_ _CONSTEXPR20_ count<char> count_chars(const char* string_p, const char target_p) noexcept";
+	size_t l_length = strlen(l_content);
 
 
 	for (auto _ : state_p)
 	{
 		auto l_result = CityHash64(l_content, l_length);
-		benchmark::DoNotOptimize(l_result);
+		(void)l_result;
 	}
 }
 
@@ -116,15 +112,13 @@ BENCHMARK(city_hash_benchmark);
 
 void robin_hood_hash_benchmark(benchmark::State& state_p)
 {
-	const char* l_content = "_NODISCARD_ _CONSTEXPR20_ _FORCE_INLINE_ count<char> count_chars(const char* string_p, const char target_p) noexcept";
-	size_t l_length = FE::algorithm::string::length(l_content);
-	benchmark::DoNotOptimize(l_content);
-	benchmark::DoNotOptimize(l_length);
+	const char* l_content = "_NODISCARD_ _FORCE_INLINE_ _CONSTEXPR20_ count<char> count_chars(const char* string_p, const char target_p) noexcept";
+	size_t l_length = strlen(l_content);
 
 	for (auto _ : state_p)
 	{
 		auto l_result = robin_hood::hash_bytes(l_content, l_length);
-		benchmark::DoNotOptimize(l_result);
+		(void)l_result;
 	}
 }
 

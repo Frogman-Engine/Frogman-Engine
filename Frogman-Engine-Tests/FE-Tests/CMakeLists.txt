@@ -7,9 +7,6 @@ PROJECT(FE_TEST
 
 INCLUDE("${CMAKE_CURRENT_SOURCE_DIR}/../../Source/CMakeLists/predefined-settings.cmake")
 
-IF(NOT (CMAKE_BUILD_TYPE STREQUAL "Debug" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo"))
-    MESSAGE(FATAL_ERROR "Test code can only be built for debugging")
-ENDIF()
 
 ADD_COMPILE_DEFINITIONS(BENCHMARK_STATIC_DEFINE)
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/../../Third-Party-Tools/Google-Test/include)
@@ -32,10 +29,10 @@ SET(THIRD_PARTY_ROBIN_HOOD_HASH
 IF(CMAKE_SYSTEM_NAME STREQUAL "Linux")
 
     SET(BOOST_STACKTRACE 
-    $<$<CONFIG:DEBUG>:			${CMAKE_CURRENT_SOURCE_DIR}/../../Third-Party-Libraries/boost-1.85.0/lib/linux/clang-10/debug/libboost_stacktrace_basic.a>
-    $<$<CONFIG:RELWITHDEBINFO>: ${CMAKE_CURRENT_SOURCE_DIR}/../../Third-Party-Libraries/boost-1.85.0/lib/linux/clang-10/release/libboost_stacktrace_basic.a>
-    $<$<CONFIG:RELEASE>:		${CMAKE_CURRENT_SOURCE_DIR}/../../Third-Party-Libraries/boost-1.85.0/lib/linux/clang-10/release/libboost_stacktrace_basic.a>
-    $<$<CONFIG:MINSIZEREL>:		${CMAKE_CURRENT_SOURCE_DIR}/../../Third-Party-Libraries/boost-1.85.0/lib/linux/clang-10/release/libboost_stacktrace_basic.a>
+    $<$<CONFIG:DEBUG>:			${CMAKE_CURRENT_SOURCE_DIR}/../../Third-Party-Libraries/boost-1.85.0/lib/linux/clang-10/debug/libboost_stacktrace_addr2line.a>
+    $<$<CONFIG:RELWITHDEBINFO>: ${CMAKE_CURRENT_SOURCE_DIR}/../../Third-Party-Libraries/boost-1.85.0/lib/linux/clang-10/release/libboost_stacktrace_addr2line.a>
+    $<$<CONFIG:RELEASE>:		${CMAKE_CURRENT_SOURCE_DIR}/../../Third-Party-Libraries/boost-1.85.0/lib/linux/clang-10/release/libboost_stacktrace_noop.a>
+    $<$<CONFIG:MINSIZEREL>:		${CMAKE_CURRENT_SOURCE_DIR}/../../Third-Party-Libraries/boost-1.85.0/lib/linux/clang-10/release/libboost_stacktrace_noop.a>
     )
 
     SET(BOOST_CHRONO 
@@ -112,6 +109,12 @@ ${CMAKE_CURRENT_SOURCE_DIR}/../../Source/FE/core/algorithm/utility.hxx
 )
 ADD_SUBDIRECTORY(FE.core.algorithm.utility)  
 
+SET(FE_CORE_HASH
+${CMAKE_CURRENT_SOURCE_DIR}/../../Source/FE/core/hash.hpp
+${CMAKE_CURRENT_SOURCE_DIR}/../../Source/FE/core/private/hash.cpp
+)
+ADD_SUBDIRECTORY(FE.core.hash)
+
 SET(FE_CORE_LOG
 ${CMAKE_CURRENT_SOURCE_DIR}/../../Source/FE/core/log/macros.h
 ${CMAKE_CURRENT_SOURCE_DIR}/../../Source/FE/core/log/logger.hpp
@@ -150,7 +153,12 @@ ADD_SUBDIRECTORY(FE.core.memory)
 SET(FE_CORE_ALGORITHM_STRING
 ${CMAKE_CURRENT_SOURCE_DIR}/../../Source/FE/core/algorithm/string.hxx
 )
-ADD_SUBDIRECTORY(FE.core.algorithm.string)   
+ADD_SUBDIRECTORY(FE.core.algorithm.string)  
+
+SET(FE_CORE_FSTRING
+${CMAKE_CURRENT_SOURCE_DIR}/../../Source/FE/core/fstring.hxx
+)
+ADD_SUBDIRECTORY(FE.core.fstring)
 
 SET(FE_CORE_POOL
 ${CMAKE_CURRENT_SOURCE_DIR}/../../Source/FE/core/private/pool_common.hxx
@@ -169,6 +177,30 @@ ${CMAKE_CURRENT_SOURCE_DIR}/../../Source/FE/core/private/memory_metrics.cpp
 )
 ADD_SUBDIRECTORY(FE.core.pool)
 
+SET(FE_CORE_SMART_PTRS
+${CMAKE_CURRENT_SOURCE_DIR}/../../Source/FE/core/smart_ptrs/exclusive_ptr.hxx
+${CMAKE_CURRENT_SOURCE_DIR}/../../Source/FE/core/smart_ptrs/ptr.hxx
+${CMAKE_CURRENT_SOURCE_DIR}/../../Source/FE/core/smart_ptrs/unique_ptr.hxx
+${CMAKE_CURRENT_SOURCE_DIR}/../../Source/FE/core/smart_ptrs/private/smart_ptr_variants_base.hpp
+${CMAKE_CURRENT_SOURCE_DIR}/../../Source/FE/core/smart_ptrs/private/smart_ptr_variants_base.cpp
+
+${CMAKE_CURRENT_SOURCE_DIR}/../../Source/FE/core/smart_refs/trackable.hxx
+${CMAKE_CURRENT_SOURCE_DIR}/../../Source/FE/core/smart_refs/ref.hxx
+${CMAKE_CURRENT_SOURCE_DIR}/../../Source/FE/core/smart_refs/private/smart_ref_base.hpp
+${CMAKE_CURRENT_SOURCE_DIR}/../../Source/FE/core/smart_refs/private/smart_ref_base.cpp
+)
+ADD_SUBDIRECTORY(FE.core.smart_ptrs)
+
+SET(FE_CORE_STRING
+${CMAKE_CURRENT_SOURCE_DIR}/../../Source/FE/core/string.hxx
+)
+ADD_SUBDIRECTORY(FE.core.string)
+
+SET(FE_CORE_STRING_VIEW
+${CMAKE_CURRENT_SOURCE_DIR}/../../Source/FE/core/string_view.hxx
+)
+ADD_SUBDIRECTORY(FE.core.string_view)
+
 SET(FE_CORE_CONTAINERS
 ${CMAKE_CURRENT_SOURCE_DIR}/../../Source/FE/core/containers/stack.hxx
 ${CMAKE_CURRENT_SOURCE_DIR}/../../Source/FE/core/containers/queue.hxx
@@ -185,5 +217,11 @@ ${CMAKE_CURRENT_SOURCE_DIR}/../../Source/FE/core/private/clock.cpp
 )
 ADD_SUBDIRECTORY(FE.framework.predefined_main)
 
+SET(FE_FRAMEWORK_REFLECTION
+${CMAKE_CURRENT_SOURCE_DIR}/../../Source/FE/framework/reflection/reflection.h
+${CMAKE_CURRENT_SOURCE_DIR}/../../Source/FE/framework/reflection/function_table.hpp
+${CMAKE_CURRENT_SOURCE_DIR}/../../Source/FE/framework/reflection/private/function_table.cpp
+)
+ADD_SUBDIRECTORY(FE.framework.reflection)
 
 

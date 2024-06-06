@@ -58,7 +58,6 @@ int main(int argc_p, char** argv_p)
 {
 	using namespace FE;
 
-	std::cout << "Compilation test of FE.core.pool_test source code is successful.\n";
   	testing::InitGoogleTest(&argc_p, argv_p);
 
 	if (argv_p == nullptr)
@@ -371,14 +370,15 @@ TEST(smart_ptr_variants, array_exclusive_ptr_and_safe_ptrs)
 
 
 
-#define _MAGICAL_SIZE_ 102400
+#define _MAGICAL_SIZE_ 8
 void FE_smart_ptrs(benchmark::State& state_p) noexcept
 {
-	FE::exclusive_ptr<std::byte[]> l_exclusive_ptr = FE::make_exclusive<std::byte[]>(_MAGICAL_SIZE_);
+	using namespace FE;
+	FE::exclusive_ptr<var::uint32[]> l_exclusive_ptr = FE::make_exclusive<var::uint32[]>(_MAGICAL_SIZE_);
 
 	for (auto _ : state_p)
 	{
-		FE::ptr<std::byte[]> l_safe_ptr = l_exclusive_ptr;
+		FE::ptr<var::uint32[]> l_safe_ptr = l_exclusive_ptr;
 		if (l_safe_ptr.is_expired() == false)
 		{
 			auto* l_ptr = l_safe_ptr.get_unchecked();
@@ -392,11 +392,12 @@ BENCHMARK(FE_smart_ptrs);
 
 void std_smart_ptrs(benchmark::State& state_p) noexcept
 {
-	std::shared_ptr<std::byte[]> l_shared_ptr = std::make_shared<std::byte[]>(_MAGICAL_SIZE_);
+	using namespace FE;
+	std::shared_ptr<var::uint32[]> l_shared_ptr = std::make_shared<var::uint32[]>(_MAGICAL_SIZE_);
 
 	for (auto _ : state_p)
 	{
-		std::weak_ptr<std::byte[]> l_weak_ptr = l_shared_ptr;
+		std::weak_ptr<var::uint32[]> l_weak_ptr = l_shared_ptr;
 		if (l_weak_ptr.expired() == false)
 		{
 			auto* l_ptr = l_weak_ptr.lock().get();
@@ -457,11 +458,12 @@ TEST(FE_smart_ptr_variants, never_dangling_pointer)
 
 TEST(std_smart_ptrs, dangling_pointer)
 {
-	std::shared_ptr<std::byte[]> l_shared = std::make_shared<std::byte[]>(16);
-	std::weak_ptr<std::byte[]>l_watcher = l_shared; // The weak pointer is pointing to the sixteen bytes sized memory.
+	using namespace FE;
+	std::shared_ptr<var::byte[]> l_shared = std::make_shared<var::byte[]>(16);
+	std::weak_ptr<var::byte[]>l_watcher = l_shared; // The weak pointer is pointing to the sixteen bytes sized memory.
 
 	{
-		std::shared_ptr<std::byte[]> l_new_capacity = std::make_shared<std::byte[]>(64);
+		std::shared_ptr<var::byte[]> l_new_capacity = std::make_shared<var::byte[]>(64);
 		l_shared.swap(l_new_capacity); // It swaps to extend the size.
 	}
 

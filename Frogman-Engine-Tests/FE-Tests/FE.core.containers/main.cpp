@@ -2,8 +2,10 @@
 #include <benchmark/benchmark.h>
 
 // Copyright © from 2023 to current, UNKNOWN STRYKER. All Rights Reserved.
+#include <FE/core/containers/array.hxx>
 #include <FE/core/containers/queue.hxx>
 #include <FE/core/containers/stack.hxx>
+
 #include <FE/core/fstring.hxx>
 
 // std
@@ -59,7 +61,6 @@ int main(int argc_p, char** argv_p)
 {
 	using namespace FE;
 
-	std::cout << "Compilation test of FE.core.pool_test source code is successful.\n";
   	testing::InitGoogleTest(&argc_p, argv_p);
 
 	if (argv_p == nullptr)
@@ -220,7 +221,7 @@ TEST(queue, push_pop)
 	{
 		l_fstring_queue.push(l_cstring_queue.pop().c_str());
 
-		EXPECT_TRUE(algorithm::string::compare(L_fstring_const_iterator_begin[i].c_str(), l_initializer_list.begin()[i].c_str()));
+		EXPECT_EQ(strcmp(L_fstring_const_iterator_begin[i].c_str(), l_initializer_list.begin()[i].c_str()), 0);
 	}
 }
 
@@ -228,15 +229,15 @@ TEST(queue, multiple_assignments_)
 {
 	FE::fqueue<std::string, 5> l_queue = { "hi", ",", " ", "world", "." };
 	l_queue = { "hello", ",", " ", "C++", "." };
-	EXPECT_TRUE(FE::algorithm::string::compare((l_queue.cbegin())->c_str(), "hello"));
-	EXPECT_TRUE(FE::algorithm::string::compare((l_queue.cend() - 1)->c_str(), "."));
+	EXPECT_EQ(strcmp((l_queue.cbegin())->c_str(), "hello"), 0);
+	EXPECT_EQ(strcmp((l_queue.cend() - 1)->c_str(), "."), 0);
 	{
 		std::initializer_list<const char*> l_initializer_list = { "hello", ",", " ", "C++", "." };
 		auto l_initializer_list_cbegin = l_initializer_list.begin();
-		EXPECT_TRUE(FE::algorithm::string::compare((l_queue.cend() - 1)->c_str(), "."));
+		EXPECT_EQ(strcmp((l_queue.cend() - 1)->c_str(), "."), 0);
 		for (auto iterator = l_queue.cbegin(); iterator != l_queue.cend(); ++iterator)
 		{
-			EXPECT_TRUE(FE::algorithm::string::compare<FE::var::character>(iterator->c_str(), *l_initializer_list_cbegin));
+			EXPECT_EQ(strcmp(iterator->c_str(), *l_initializer_list_cbegin), 0);
 			++l_initializer_list_cbegin;
 		}
 	}
@@ -249,7 +250,7 @@ TEST(queue, multiple_assignments_)
 		auto l_initializer_list_cbegin = l_initializer_list.begin();
 		for (auto iterator = l_queue.cbegin(); iterator != l_queue.cend(); ++iterator)
 		{
-			EXPECT_TRUE(FE::algorithm::string::compare<FE::var::character>(iterator->c_str(), *l_initializer_list_cbegin));
+			EXPECT_EQ(strcmp(iterator->c_str(), *l_initializer_list_cbegin), 0);
 			++l_initializer_list_cbegin;
 		}
 	}
@@ -259,15 +260,15 @@ TEST(queue, multiple_assignments_)
 TEST(queue, container_comparison_)
 {
 	FE::fqueue<std::string, 5> l_languages1 = { "C++", "C#", "Python", "Java", "C"};
-    EXPECT_TRUE(FE::algorithm::string::compare(l_languages1.front().c_str(), "C++"));
+    EXPECT_EQ(strcmp(l_languages1.front().c_str(), "C++"), 0);
 	FE::fqueue<std::string, 5> l_languages2 = { "C++", "C#", "Python", "Java", "C" };
-    EXPECT_TRUE(FE::algorithm::string::compare(l_languages2.back().c_str(), "C"));
+    EXPECT_EQ(strcmp(l_languages2.back().c_str(), "C"), 0);
 	EXPECT_TRUE(l_languages1 == l_languages2);
 
-    EXPECT_TRUE(FE::algorithm::string::compare(l_languages1.pop().c_str(), "C++"));
-    EXPECT_TRUE(FE::algorithm::string::compare(l_languages1.pop().c_str(), "C#"));
-    EXPECT_TRUE(FE::algorithm::string::compare(l_languages1.pop().c_str(), "Python"));
-    EXPECT_TRUE(FE::algorithm::string::compare(l_languages1.pop().c_str(), "Java"));
+    EXPECT_EQ(strcmp(l_languages1.pop().c_str(), "C++"), 0);
+    EXPECT_EQ(strcmp(l_languages1.pop().c_str(), "C#"), 0);
+    EXPECT_EQ(strcmp(l_languages1.pop().c_str(), "Python"), 0);
+    EXPECT_EQ(strcmp(l_languages1.pop().c_str(), "Java"), 0);
     EXPECT_FALSE(l_languages1 == l_languages2); // C++ is not equivalent to C
 
 	l_languages1.push("Python");
@@ -457,19 +458,19 @@ TEST(fstack, push_pop)
 
 
 	std::initializer_list<std::string> l_initializer_list = { "hello", ",", " ", "C++", "." };
-	FE::fstack<std::string, 5> l_cstring_stack = { ".", "C++", " ", ",", "hello" };
+	FE::fstack<std::string, 5> l_string_stack = { ".", "C++", " ", ",", "hello" };
 	FE::fstack<FE::fstring<10>, 5> l_fstring_stack;
 
-	FE::fstack<std::string, 5>::const_iterator L_cstring_const_iterator_begin = l_cstring_stack.cbegin();
+	FE::fstack<std::string, 5>::const_iterator L_cstring_const_iterator_begin = l_string_stack.cbegin();
 	FE::fstack<FE::fstring<10>, 5>::const_iterator L_fstring_const_iterator_begin = l_fstring_stack.cbegin();
 
-	EXPECT_EQ(l_cstring_stack.capacity(), l_fstring_stack.capacity());
+	EXPECT_EQ(l_string_stack.capacity(), l_fstring_stack.capacity());
 
-	for (var::uint64 i = 0; i < l_cstring_stack.capacity(); ++i)
+	for (var::uint64 i = 0; i < l_string_stack.capacity(); ++i)
 	{
-		l_fstring_stack.push(l_cstring_stack.pop().c_str());
+		l_fstring_stack.push(l_string_stack.pop().c_str());
 		
-		EXPECT_TRUE(FE::algorithm::string::compare(L_fstring_const_iterator_begin[i].c_str(), l_initializer_list.begin()[i].c_str()));
+		EXPECT_EQ(strcmp(L_fstring_const_iterator_begin[i].c_str(), l_initializer_list.begin()[i].c_str()), 0);
 	}
 }
 
@@ -477,15 +478,15 @@ TEST(fstack, multiple_assignments_)
 {
 	FE::fstack<std::string, 5> l_stack = { "hi", ",", " ", "world", "." };
 	l_stack = { "hello", ",", " ", "C++", "." };
-	EXPECT_TRUE(FE::algorithm::string::compare((l_stack.cbegin())->c_str(), "hello"));
-	EXPECT_TRUE(FE::algorithm::string::compare((l_stack.cend() - 1)->c_str(), "."));
+	EXPECT_EQ(strcmp(l_stack.cbegin()->c_str(), "hello"), 0);
+	EXPECT_EQ(strcmp((l_stack.cend() - 1)->c_str(), "."), 0);
 	{
 		std::initializer_list<const char*> l_initializer_list = { "hello", ",", " ", "C++", "." };
 		auto l_initializer_list_cbegin = l_initializer_list.begin();
-		EXPECT_TRUE(FE::algorithm::string::compare((l_stack.cend() - 1)->c_str(), "."));
+		EXPECT_EQ(strcmp((l_stack.cend() - 1)->c_str(), "."), 0);
 		for (auto iterator = l_stack.cbegin(); iterator != l_stack.cend(); ++iterator)
 		{
-			EXPECT_TRUE(FE::algorithm::string::compare<FE::var::character>(iterator->c_str(), *l_initializer_list_cbegin));
+			EXPECT_EQ(strcmp(iterator->c_str(), *l_initializer_list_cbegin), 0);
 			++l_initializer_list_cbegin;
 		}
 	}
@@ -498,7 +499,7 @@ TEST(fstack, multiple_assignments_)
 		auto l_initializer_list_cbegin = l_initializer_list.begin();
 		for (auto iterator = l_stack.cbegin(); iterator != l_stack.cend(); ++iterator)
 		{
-			EXPECT_TRUE(FE::algorithm::string::compare<FE::var::character>(iterator->c_str(), *l_initializer_list_cbegin));
+			EXPECT_EQ(strcmp(iterator->c_str(), *l_initializer_list_cbegin), 0);
 			++l_initializer_list_cbegin;
 		}
 	}
@@ -508,16 +509,16 @@ TEST(fstack, multiple_assignments_)
 TEST(fstack, container_comparison_)
 {
 	FE::fstack<std::string, 5> l_languages1 = { "C++", "C#", "Python", "Java", "C"};
-    EXPECT_TRUE(FE::algorithm::string::compare(l_languages1.top().c_str(), "C"));
+    EXPECT_EQ(strcmp(l_languages1.top().c_str(), "C"), 0);
 	FE::fstack<std::string, 5> l_languages2 = { "C++", "C#", "Python", "Java", "C" };
-    EXPECT_TRUE(FE::algorithm::string::compare(l_languages2.top().c_str(), "C"));
+    EXPECT_EQ(strcmp(l_languages2.top().c_str(), "C"), 0);
 	EXPECT_TRUE(l_languages1 == l_languages2);
 
-    EXPECT_TRUE(FE::algorithm::string::compare(l_languages1.pop().c_str(), "C"));
-    EXPECT_TRUE(FE::algorithm::string::compare(l_languages1.pop().c_str(), "Java"));
-    EXPECT_TRUE(FE::algorithm::string::compare(l_languages1.pop().c_str(), "Python"));
-    EXPECT_TRUE(FE::algorithm::string::compare(l_languages1.pop().c_str(), "C#"));
-    EXPECT_TRUE(FE::algorithm::string::compare(l_languages2.top().c_str(), "C"));
+    EXPECT_EQ(strcmp(l_languages1.pop().c_str(), "C"), 0);
+    EXPECT_EQ(strcmp(l_languages1.pop().c_str(), "Java"), 0);
+    EXPECT_EQ(strcmp(l_languages1.pop().c_str(), "Python"), 0);
+    EXPECT_EQ(strcmp(l_languages1.pop().c_str(), "C#"), 0);
+    EXPECT_EQ(strcmp(l_languages2.top().c_str(), "C"), 0);
     EXPECT_FALSE(l_languages1 == l_languages2); // C++ is not equivalent to C
 
 	l_languages1.push("Python");
@@ -552,3 +553,459 @@ void std_stack_push_and_pop(benchmark::State& state_p) noexcept
 	}
 }
 BENCHMARK(std_stack_push_and_pop);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+TEST(farray, all)
+{
+	{
+		FE::farray<const char*, 64> l_array;
+		l_array.push_back("Pizza");
+		
+		EXPECT_EQ(strcmp(l_array.back(), "Pizza"), 0);
+		l_array.pop_back();
+	}
+}
+
+
+TEST(array, constructor_and_destructor)
+{
+	{
+		FE::array<std::string> l_array;
+	}
+
+	{
+		FE::array<std::string> l_array(2, "A bottle of water");
+		EXPECT_TRUE(l_array[0] == "A bottle of water");
+		EXPECT_TRUE(l_array[1] == "A bottle of water");
+	}
+
+	{
+		std::initializer_list<std::string> l_initializer_list = {"A", "bottle", "of", "water"};
+		FE::array<std::string> l_array(l_initializer_list.begin(), l_initializer_list.end());
+		
+		EXPECT_TRUE(l_array[0] == "A");
+		EXPECT_TRUE(l_array[1] == "bottle");
+		EXPECT_TRUE(l_array[2] == "of");
+		EXPECT_TRUE(l_array[3] == "water");
+
+	}
+
+	{
+		FE::array<std::string> l_array(2, "A bottle of water");
+		FE::array<std::string> l_another_array = l_array;
+		EXPECT_TRUE(l_another_array[0] == "A bottle of water");
+		EXPECT_TRUE(l_another_array[1] == "A bottle of water");
+	}
+
+	{
+		FE::array<std::string> l_array(2, "A bottle of water");
+		FE::array<std::string> l_another_array = std::move(l_array);
+		EXPECT_TRUE(l_another_array[0] == "A bottle of water");
+		EXPECT_TRUE(l_another_array[1] == "A bottle of water");
+	}
+
+	{
+		FE::array<std::string> l_array = { "A", "bottle", "of", "water" };
+		EXPECT_TRUE(l_array[0] == "A");
+		EXPECT_TRUE(l_array[1] == "bottle");
+		EXPECT_TRUE(l_array[2] == "of");
+		EXPECT_TRUE(l_array[3] == "water");
+	}
+
+	{
+		FE::array<std::string> l_array(2, "A bottle of water");
+		FE::array<std::string> l_another_array;
+		l_another_array = l_array;
+		EXPECT_TRUE(l_another_array[0] == "A bottle of water");
+		EXPECT_TRUE(l_another_array[1] == "A bottle of water");
+	}
+
+	{
+		FE::array<std::string> l_array(2, "A bottle of water");
+		FE::array<std::string> l_another_array;
+		l_another_array = std::move(l_array);
+		EXPECT_TRUE(l_another_array[0] == "A bottle of water");
+		EXPECT_TRUE(l_another_array[1] == "A bottle of water");
+	}
+
+	{
+		FE::array<std::string> l_array;
+		l_array = { "A", "bottle", "of", "water" };
+		EXPECT_TRUE(l_array[0] == "A");
+		EXPECT_TRUE(l_array[1] == "bottle");
+		EXPECT_TRUE(l_array[2] == "of");
+		EXPECT_TRUE(l_array[3] == "water");
+	}
+}
+
+
+
+
+TEST(array, Element_access)
+{
+	{
+		FE::array<std::string> l_array;
+		l_array.reserve(2);
+		l_array.assign(2, "A bottle of water");
+
+		EXPECT_TRUE(l_array[0] == "A bottle of water");
+		EXPECT_TRUE(l_array[1] == "A bottle of water");
+	}
+
+	{
+		std::initializer_list<std::string> l_initializer_list = { "A", "bottle", "of", "water" };
+		FE::array<std::string> l_array;
+		l_array.reserve(8);
+		l_array.assign(l_initializer_list.begin(), l_initializer_list.end());
+
+		EXPECT_TRUE(l_array[0] == "A");
+		EXPECT_TRUE(l_array[1] == "bottle");
+		EXPECT_TRUE(l_array[2] == "of");
+		EXPECT_TRUE(l_array[3] == "water");
+	}
+
+	{
+		FE::array<std::string> l_array;
+		l_array.reserve(8);
+		l_array.assign({ "A", "bottle", "of", "water" });
+
+		EXPECT_TRUE(l_array[0] == "A");
+		EXPECT_TRUE(l_array[1] == "bottle");
+		EXPECT_TRUE(l_array[2] == "of");
+		EXPECT_TRUE(l_array[3] == "water");
+
+	}
+}
+
+
+
+
+TEST(array, Iterators)
+{
+	{
+		FE::array<std::string> l_array = { "A", "bottle", "of", "water" };
+		std::initializer_list<std::string> l_initializer_list = { "A", "bottle", "of", "water" };
+		auto l_l_initializer_list_iterator = l_initializer_list.begin();
+
+		for (auto value : l_array)
+		{
+			EXPECT_TRUE(value == *l_l_initializer_list_iterator);
+			++l_l_initializer_list_iterator;
+		}
+	}
+
+
+	{
+		FE::array<std::string> l_array = { "A", "bottle", "of", "water" };
+		std::initializer_list<std::string> l_initializer_list = { "A", "bottle", "of", "water" };
+		auto l_l_initializer_list_iterator = l_initializer_list.begin();
+
+		for (auto it = l_array.cbegin(); it != l_array.cend(); ++it)
+		{
+			EXPECT_TRUE(*it == *l_l_initializer_list_iterator);
+			++l_l_initializer_list_iterator;
+		}
+	}
+
+
+	{
+		FE::array<std::string> l_array = { "water", "of", "bottle", "A" };
+		std::initializer_list<std::string> l_initializer_list = { "A", "bottle", "of", "water" };
+		auto l_l_initializer_list_iterator = l_initializer_list.begin();
+
+		for (auto it = l_array.rbegin(); it != l_array.rend(); ++it)
+		{
+			EXPECT_TRUE(*it == *l_l_initializer_list_iterator);
+			++l_l_initializer_list_iterator;
+		}
+	}
+
+
+	{
+		FE::array<std::string> l_array = { "water", "of", "bottle", "A" };
+		std::initializer_list<std::string> l_initializer_list = { "A", "bottle", "of", "water" };
+		auto l_l_initializer_list_iterator = l_initializer_list.begin();
+
+		for (auto it = l_array.crbegin(); it != l_array.crend(); ++it)
+		{
+			EXPECT_TRUE(*it == *l_l_initializer_list_iterator);
+			++l_l_initializer_list_iterator;
+		}
+	}
+}
+
+
+
+
+TEST(array, Capacity)
+{
+	{
+		FE::array<std::string> l_array = { "water", "of", "bottle", "A" };
+		EXPECT_FALSE(l_array.is_empty());
+
+		EXPECT_EQ(l_array.size(), 4);
+
+		l_array.reserve(10);
+		EXPECT_EQ(l_array.capacity(), 10);
+
+		l_array.extend(6);
+		EXPECT_EQ(l_array.capacity(), 16);
+
+		l_array.shrink_to_fit();
+		EXPECT_EQ(l_array.capacity(), 4);
+	}
+}
+
+
+
+
+TEST(array, Modifiers)
+{
+	{
+		{
+			FE::array<std::string> l_another_array = { "Christmas" };
+			l_another_array.extend(2);
+			l_another_array.emplace_back("Tree");
+			EXPECT_TRUE(l_another_array[1] == "Tree");
+
+			l_another_array.emplace_back("s");
+			EXPECT_TRUE(l_another_array.back() == "s");
+		}
+
+	
+	
+	}
+}
+
+
+
+
+
+
+TEST(array, TrivialConstructorAndDestructor)
+{
+	using namespace FE;
+	{
+		FE::array<character*> l_array;
+	}
+
+	{
+		FE::array<character*> l_array(2, "A bottle of water");
+		EXPECT_EQ(strcmp(l_array[0], "A bottle of water"), 0);
+		EXPECT_EQ(strcmp(l_array[1], "A bottle of water"), 0);
+	}
+
+	{
+		std::initializer_list<character*> l_initializer_list = { "A", "bottle", "of", "water" };
+		FE::array<character*> l_array(l_initializer_list.begin(), l_initializer_list.end());
+
+		EXPECT_EQ(strcmp(l_array[0], "A"), 0);
+		EXPECT_EQ(strcmp(l_array[1], "bottle"), 0);
+		EXPECT_EQ(strcmp(l_array[2], "of"), 0);
+		EXPECT_EQ(strcmp(l_array[3], "water"), 0);
+
+	}
+
+	{
+		FE::array<character*> l_array(2, "A bottle of water");
+		FE::array<character*> l_another_array = l_array;
+		EXPECT_EQ(strcmp(l_another_array[0], "A bottle of water"), 0);
+		EXPECT_EQ(strcmp(l_another_array[1], "A bottle of water"), 0);
+	}
+
+	{
+		FE::array<character*> l_array(2, "A bottle of water");
+		FE::array<character*> l_another_array = std::move(l_array);
+		EXPECT_EQ(strcmp(l_another_array[0], "A bottle of water"), 0);
+		EXPECT_EQ(strcmp(l_another_array[1], "A bottle of water"), 0);
+	}
+
+	{
+		FE::array<character*> l_array = { "A", "bottle", "of", "water" };
+		EXPECT_EQ(strcmp(l_array[0], "A"), 0);
+		EXPECT_EQ(strcmp(l_array[1], "bottle"), 0);
+		EXPECT_EQ(strcmp(l_array[2], "of"), 0);
+		EXPECT_EQ(strcmp(l_array[3], "water"), 0);
+	}
+
+	{
+		FE::array<character*> l_array(2, "A bottle of water");
+		FE::array<character*> l_another_array;
+		l_another_array = l_array;
+		EXPECT_EQ(strcmp(l_another_array[0], "A bottle of water"), 0);
+		EXPECT_EQ(strcmp(l_another_array[1], "A bottle of water"), 0);
+	}
+
+	{
+		FE::array<character*> l_array(2, "A bottle of water");
+		FE::array<character*> l_another_array;
+		l_another_array = std::move(l_array);
+		EXPECT_EQ(strcmp(l_another_array[0], "A bottle of water"), 0);
+		EXPECT_EQ(strcmp(l_another_array[1], "A bottle of water"), 0);
+	}
+
+	{
+		FE::array<character*> l_array;
+		l_array = { "A", "bottle", "of", "water" };
+		EXPECT_EQ(strcmp(l_array[0], "A"), 0);
+		EXPECT_EQ(strcmp(l_array[1], "bottle"), 0);
+		EXPECT_EQ(strcmp(l_array[2], "of"), 0);
+		EXPECT_EQ(strcmp(l_array[3], "water"), 0);
+	}
+}
+
+
+
+
+TEST(array, TrivialElementAccess)
+{
+	using namespace FE;
+	{
+		FE::array<character*> l_array;
+		l_array.reserve(2);
+		l_array.assign(2, "A bottle of water");
+
+		EXPECT_EQ(strcmp(l_array[0], "A bottle of water"), 0);
+		EXPECT_EQ(strcmp(l_array[1], "A bottle of water"), 0);
+	}
+
+	{
+		std::initializer_list<character*> l_initializer_list = { "A", "bottle", "of", "water" };
+		FE::array<character*> l_array;
+		l_array.reserve(8);
+		l_array.assign(l_initializer_list.begin(), l_initializer_list.end());
+
+		EXPECT_EQ(strcmp(l_array[0], "A"), 0);
+		EXPECT_EQ(strcmp(l_array[1], "bottle"), 0);
+		EXPECT_EQ(strcmp(l_array[2], "of"), 0);
+		EXPECT_EQ(strcmp(l_array[3], "water"), 0);
+	}
+
+	{
+		FE::array<character*> l_array;
+		l_array.reserve(8);
+		l_array.assign({ "A", "bottle", "of", "water" });
+
+		EXPECT_EQ(strcmp(l_array[0], "A"), 0);
+		EXPECT_EQ(strcmp(l_array[1], "bottle"), 0);
+		EXPECT_EQ(strcmp(l_array[2], "of"), 0);
+		EXPECT_EQ(strcmp(l_array[3], "water"), 0);
+
+	}
+
+}
+
+
+
+
+TEST(array, TrivialIterators)
+{
+	using namespace FE;
+	{
+		FE::array<character*> l_array = { "A", "bottle", "of", "water" };
+		std::initializer_list<character*> l_initializer_list = { "A", "bottle", "of", "water" };
+		auto l_l_initializer_list_iterator = l_initializer_list.begin();
+
+		for (auto value : l_array)
+		{
+			EXPECT_EQ(strcmp(value, *l_l_initializer_list_iterator), 0);
+			++l_l_initializer_list_iterator;
+		}
+	}
+
+
+	{
+		FE::array<character*> l_array = { "A", "bottle", "of", "water" };
+		std::initializer_list<character*> l_initializer_list = { "A", "bottle", "of", "water" };
+		auto l_l_initializer_list_iterator = l_initializer_list.begin();
+
+		for (auto it = l_array.cbegin(); it != l_array.cend(); ++it)
+		{
+			EXPECT_EQ(strcmp(*it, *l_l_initializer_list_iterator), 0);
+			++l_l_initializer_list_iterator;
+		}
+	}
+
+
+	{
+		FE::array<character*> l_array = { "water", "of", "bottle", "A" };
+		std::initializer_list<character*> l_initializer_list = { "A", "bottle", "of", "water" };
+		auto l_l_initializer_list_iterator = l_initializer_list.begin();
+
+		for (auto it = l_array.rbegin(); it != l_array.rend(); ++it)
+		{
+			EXPECT_EQ(strcmp(*it, *l_l_initializer_list_iterator), 0);
+			++l_l_initializer_list_iterator;
+		}
+	}
+
+
+	{
+		FE::array<character*> l_array = { "water", "of", "bottle", "A" };
+		std::initializer_list<character*> l_initializer_list = { "A", "bottle", "of", "water" };
+		auto l_l_initializer_list_iterator = l_initializer_list.begin();
+
+		for (auto it = l_array.crbegin(); it != l_array.crend(); ++it)
+		{
+			EXPECT_EQ(strcmp(*it, *l_l_initializer_list_iterator), 0);
+			++l_l_initializer_list_iterator;
+		}
+	}
+}
+
+
+
+
+TEST(array, TrivialCapacity)
+{
+	using namespace FE;
+	{
+		FE::array<character*> l_array = { "water", "of", "bottle", "A" };
+		EXPECT_FALSE(l_array.is_empty());
+
+		EXPECT_EQ(l_array.size(), 4);
+
+		l_array.reserve(10);
+		EXPECT_EQ(l_array.capacity(), 10);
+
+		l_array.extend(6);
+		EXPECT_EQ(l_array.capacity(), 16);
+
+		l_array.shrink_to_fit();
+		EXPECT_EQ(l_array.capacity(), 4);
+	}
+}
+
+
+
+
+TEST(array, TrivialModifiers)
+{
+	using namespace FE;
+	{
+		{
+			FE::array<character*> l_another_array = { "Christmas", "Tree" };
+			l_another_array.extend(1);
+			l_another_array.emplace_back("s");
+			EXPECT_EQ(strcmp(l_another_array.back(), "s"), 0);
+		}
+
+
+	}
+}

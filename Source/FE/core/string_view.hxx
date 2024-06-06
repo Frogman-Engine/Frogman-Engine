@@ -2,7 +2,7 @@
 #define _FE_CORE_STRING_VIEW_HXX_
 // Copyright © from 2023 to current, UNKNOWN STRYKER. All Rights Reserved.
 #include <FE/core/prerequisites.h>
-#include <FE/core/smart_pointers/ptr.hxx>
+#include <FE/core/smart_ptrs/ptr.hxx>
 #include <FE/core/algorithm/string.hxx>
 #include <FE/core/algorithm/utility.hxx>
 #include <FE/core/iterator.hxx>
@@ -243,7 +243,7 @@ public:
 		algorithm::string::copy(out_out_dest_buffer_pointer_p, buffer_capacity_p, this->begin().operator->() + position_p, count_p);
 	}
 
-	template<typename CharT, class Allocator, class Traits>
+	template<class Allocator, class Traits>
 	_CONSTEXPR20_ void copy(basic_string<CharT, Allocator, Traits>& out_dest_string_buffer_p, _MAYBE_UNUSED_ const size_type buffer_capacity_p, const size_type count_p, const size_type position_p = 0) const noexcept
 	{
 		pointer l_out_dest_string_buffer = out_dest_string_buffer_p.data();
@@ -304,9 +304,7 @@ public:
 		{
 			return false;
 		}
-
-		length_t l_other_string_length = other_p.length();
-
+		
 		return algorithm::string::compare_ranged(this->begin().operator->(), algorithm::string::range{ this->m_end - this->length(), this->m_end },
 			other_p.begin().operator->(), algorithm::string::range{ other_p.m_end - other_p.length(), other_p.m_end }
 		);
@@ -429,7 +427,7 @@ public:
 		return algorithm::string::count_chars(this->begin().operator->() + position_p, value_p);
 	}
 
-	template<typename CharT, class Allocator, class Traits>
+	template<class Allocator, class Traits>
 	_CONSTEXPR20_ boolean operator==(const basic_string<CharT, Allocator, Traits>& string_p) const noexcept
 	{
 		return algorithm::string::compare_ranged(this->m_watcher.operator->(), algorithm::string::range{ this->m_begin, this->m_end }, string_p.c_str(), algorithm::string::range{ 0, string_p.length() });
@@ -447,7 +445,7 @@ public:
 		return algorithm::string::compare_ranged(other_p.m_watcher.operator->(), algorithm::string::range{ other_p.m_begin(), other_p.m_end}, string_p, algorithm::string::range{0, algorithm::string::length(string_p)});
 	}
 
-	template<typename CharT, class Allocator, class Traits>
+	template<class Allocator, class Traits>
 	_CONSTEXPR20_ boolean operator!=(const basic_string<CharT, Allocator, Traits>& string_p) const noexcept
 	{
 		return !algorithm::string::compare_ranged(this->m_watcher.operator->(), algorithm::string::range{ this->m_begin, this->m_end }, string_p.c_str(), algorithm::string::range{ 0, string_p.length() });

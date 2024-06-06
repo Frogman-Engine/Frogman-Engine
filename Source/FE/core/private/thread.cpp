@@ -18,7 +18,7 @@
 #endif
 
 
-thread_local FE::var::uint64 FE::thread::tl_s_this_thread_instance_id = 0;
+thread_local var::uint64 FE::thread::tl_s_this_thread_instance_id = 0;
 
 
 FE::thread::thread(thread& other_p) noexcept : m_thread(::std::move(other_p.m_thread)) {}
@@ -71,7 +71,7 @@ FE::uint64 FE::thread::this_thread_id() noexcept
 	return GetCurrentThreadId();
 #else
 	#ifdef _LINUX_X86_64_
-	return (FE::var::uint64)pthread_self();
+	return (var::uint64)pthread_self();
 	#endif
 #endif
 }

@@ -124,7 +124,7 @@
 BEGIN_NAMESPACE(FE::algorithm::math)
 
 
-_CONSTEXPR17_ _FORCE_INLINE_ boolean is_prime(uint64 number_p) noexcept
+_FORCE_INLINE_ _CONSTEXPR17_ boolean is_prime(uint64 number_p) noexcept
 {
 	var::uint64 l_count = 2;
 	while ((l_count < number_p) && (number_p % l_count) != 0)

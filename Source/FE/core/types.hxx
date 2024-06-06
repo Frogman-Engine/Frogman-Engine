@@ -65,107 +65,12 @@ typedef const ::std::intptr_t intptr_t; // primitive types are const by default
 typedef const ::std::uintptr_t uintptr_t; // primitive types are const by default
 
 
-	// variable types
-	namespace var 
-	{
-		typedef bool boolean;
-		static_assert(::std::atomic<boolean>::is_always_lock_free == true, "std::atomic is not compatible with boolean.");
-		static_assert(sizeof(boolean) == 1, "The size of boolean must be one byte.");
+template <typename T>
+constexpr inline auto max_value = ::std::numeric_limits<T>::max();
 
-		typedef char character;
-		static_assert(::std::atomic<character>::is_always_lock_free == true, "std::atomic is not compatible with character.");
-		static_assert(sizeof(character) == 1, "The size of character must be one byte.");
+template <typename T>
+constexpr inline auto min_value = ::std::numeric_limits<T>::min();
 
-		typedef signed char schar;
-		static_assert(::std::atomic<schar>::is_always_lock_free == true, "std::atomic is not compatible with schar.");
-		static_assert(sizeof(schar) == 1, "The size of schar must be one byte.");
-
-		typedef unsigned char uchar;
-		static_assert(::std::atomic<uchar>::is_always_lock_free == true, "std::atomic is not compatible with uchar.");
-		static_assert(sizeof(uchar) == 1, "The size of uchar must be one byte.");
-
-		typedef wchar_t wchar;
-		static_assert(::std::atomic<wchar>::is_always_lock_free == true, "std::atomic is not compatible with wchar.");
-		static_assert(sizeof(wchar) <= 4, "The size of wchar must be less than or equal to four bytes.");
-
-#ifdef _HAS_CXX20_
-		typedef char8_t UTF8;
-		static_assert(::std::atomic<UTF8>::is_always_lock_free == true, "std::atomic is not compatible with UTF8.");
-		static_assert(sizeof(UTF8) <= 1, "The size of UTF8 must be one byte.");
-#endif
-
-		typedef char16_t UTF16;
-		static_assert(::std::atomic<UTF16>::is_always_lock_free == true, "std::atomic is not compatible with UTF16.");
-		static_assert(sizeof(UTF16) == 2, "The size of UTF16 must be two bytes.");
-
-		typedef char32_t UTF32;
-		static_assert(::std::atomic<UTF32>::is_always_lock_free == true, "std::atomic is not compatible with UTF32.");
-		static_assert(sizeof(UTF32) == 4, "The size of UTF32 must be four bytes.");
-
-		typedef float float32;
-		static_assert(::std::atomic<float32>::is_always_lock_free == true, "std::atomic is not compatible with float32.");
-		static_assert(sizeof(float32) == 4, "The size of float32 must be four bytes.");
-
-		typedef double float64;
-		static_assert(::std::atomic<float64>::is_always_lock_free == true, "std::atomic is not compatible with float64.");
-		static_assert(sizeof(float64) == 8, "The size of float64 must be eight bytes.");
-
-		typedef bool binary;
-		static_assert(sizeof(binary) == 1, "The size of binary must be one byte.");
-
-		typedef ::std::uint8_t byte;
-		typedef ::std::uint16_t word; // primitive types are const by default
-		typedef ::std::uint32_t dword; // primitive types are const by default
-		typedef ::std::uint64_t qword; // primitive types are const by default
-
-		typedef ::std::int8_t int8;
-		static_assert(::std::atomic<int8>::is_always_lock_free == true, "std::atomic is not compatible with int8.");
-		static_assert(sizeof(int8) == 1, "The size of int8 must be one byte.");
-
-		typedef ::std::uint8_t uint8;
-		static_assert(::std::atomic<uint8>::is_always_lock_free == true, "std::atomic is not compatible with uint8.");
-		static_assert(sizeof(uint8) == 1, "The size of uint8 must be one byte.");
-
-		typedef ::std::int16_t int16;
-		static_assert(::std::atomic<int16>::is_always_lock_free == true, "std::atomic is not compatible with int16.");
-		static_assert(sizeof(int16) == 2, "The size of int16 must be two bytes.");
-
-		typedef ::std::uint16_t uint16;
-		static_assert(::std::atomic<uint16>::is_always_lock_free == true, "std::atomic is not compatible with uint16.");
-		static_assert(sizeof(uint16) == 2, "The size of uint16 must be two bytes.");
-
-		typedef ::std::int32_t int32;
-		static_assert(::std::atomic<int32>::is_always_lock_free == true, "std::atomic is not compatible with int32.");
-		static_assert(sizeof(int32) == 4, "The size of int32 must be four bytes.");
-
-		typedef ::std::uint32_t uint32;
-		static_assert(::std::atomic<uint32>::is_always_lock_free == true, "std::atomic is not compatible with uint32.");
-		static_assert(sizeof(uint32) == 4, "The size of uint32 must be four bytes.");
-
-		typedef ::std::int64_t int64;
-		static_assert(::std::atomic<int64>::is_always_lock_free == true, "std::atomic is not compatible with int64.");
-		static_assert(sizeof(int64) == 8, "The size of int64 must be eight bytes.");
-
-		typedef ::std::uint64_t uint64;
-		static_assert(::std::atomic<uint64>::is_always_lock_free == true, "std::atomic is not compatible with uint64.");
-		static_assert(sizeof(uint64) == 8, "The size of uint64 must be eight bytes.");
-
-		typedef ::std::size_t size_t;
-		typedef ::std::size_t length_t;
-		typedef ::std::size_t index_t;
-		typedef ::std::size_t count_t;
-		typedef ::std::size_t capacity_t;
-		typedef ::std::ptrdiff_t ptrdiff_t;
-		typedef ::std::intptr_t intptr_t;
-		typedef ::std::uintptr_t uintptr_t;
-	}
-
-
-	template <typename T>
-	constexpr inline auto max_value = ::std::numeric_limits<T>::max();
-
-	template <typename T>
-	constexpr inline auto min_value = ::std::numeric_limits<T>::min();
 
 _MAYBE_UNUSED_	constexpr inline FE::int8 int8_max = max_value<FE::int8>;
 _MAYBE_UNUSED_	constexpr inline FE::int16 int16_max = max_value<FE::int16>;
@@ -189,19 +94,17 @@ _MAYBE_UNUSED_	constexpr inline FE::uint64 uint64_min = min_value<FE::uint64>;
 
 
 #define _FE_NULL_ 0
-#define _FE_NULL_f_ 0.0f
-
 
 #define _FE_TRUE_ 1
 #define _FE_FALSE_ 0
 
 
-#define _FE_FOUND_ true
-#define _FE_NOT_FOUND_ false
+#define _FE_FOUND_ 1
+#define _FE_NOT_FOUND_ 0
 
 
-#define _FE_SUCCESS_ true
-#define _FE_FAILED_ false
+#define _FE_SUCCESS_ 1
+#define _FE_FAILED_ 0
 
 
 struct null {};
@@ -217,15 +120,15 @@ public:
 
 private:
 	value_type m_data;
-	var::boolean m_is_initialized;
+	bool m_is_initialized;
 
 public:
-	_CONSTEXPR17_ _FORCE_INLINE_ lazy_const() noexcept : m_data(), m_is_initialized(false) {}
-	_CONSTEXPR17_ _FORCE_INLINE_ lazy_const(value_type&& data_p) noexcept : m_data(std::move(data_p)), m_is_initialized(true) {}
-	_CONSTEXPR20_ _FORCE_INLINE_ ~lazy_const() noexcept {};
+	_FORCE_INLINE_ _CONSTEXPR17_ lazy_const() noexcept : m_data(), m_is_initialized(false) {}
+	_FORCE_INLINE_ _CONSTEXPR17_ lazy_const(value_type&& data_p) noexcept : m_data(std::move(data_p)), m_is_initialized(true) {}
+	_FORCE_INLINE_ _CONSTEXPR20_ ~lazy_const() noexcept {};
 
-	_CONSTEXPR17_ _FORCE_INLINE_ lazy_const(const lazy_const& other_p) noexcept : m_data(other_p.m_data), m_is_initialized(true) {}
-	_CONSTEXPR17_ _FORCE_INLINE_ lazy_const(lazy_const&& rvalue_p) noexcept : m_data(std::move(rvalue_p.m_data)), m_is_initialized(true) {}
+	_FORCE_INLINE_ _CONSTEXPR17_ lazy_const(const lazy_const& other_p) noexcept : m_data(other_p.m_data), m_is_initialized(true) {}
+	_FORCE_INLINE_ _CONSTEXPR17_ lazy_const(lazy_const&& rvalue_p) noexcept : m_data(std::move(rvalue_p.m_data)), m_is_initialized(true) {}
 
 	_FORCE_INLINE_ lazy_const& operator=(value_type&& data_p) noexcept
 	{
@@ -261,73 +164,6 @@ public:
 };
 
 
-namespace container
-{
-	// unsafe_ref is a non-deletable pointer class template.
-	template<typename T>
-	class unsafe_ref
-	{
-		T* m_ref_ptr;
-
-	public:
-
-		_CONSTEXPR17_ _FORCE_INLINE_ unsafe_ref() noexcept : m_ref_ptr() {}
-		_CONSTEXPR20_ _FORCE_INLINE_ ~unsafe_ref() noexcept {}
-
-		_CONSTEXPR17_ _FORCE_INLINE_ unsafe_ref(T& ref_p) noexcept : m_ref_ptr(&ref_p) {}
-
-		_CONSTEXPR17_ _FORCE_INLINE_ unsafe_ref(const unsafe_ref& ref_p) noexcept : m_ref_ptr(ref_p.m_ref_ptr) {}
-		_CONSTEXPR17_ _FORCE_INLINE_ unsafe_ref(unsafe_ref&& ref_p) noexcept : m_ref_ptr(ref_p.m_ref_ptr) { ref_p.m_ref_ptr = nullptr; }
-
-		_FORCE_INLINE_ unsafe_ref& operator=(T& ref_p) noexcept
-		{
-			this->m_ref_ptr = &ref_p;
-			return *this;
-		}
-
-		_FORCE_INLINE_ unsafe_ref& operator=(unsafe_ref&& ref_p) noexcept
-		{
-			this->m_ref_ptr = ref_p.m_ref_ptr;
-			ref_p.m_ref_ptr = nullptr;
-			return *this;
-		}
-
-		_FORCE_INLINE_ explicit operator bool() const noexcept
-		{
-			return this->m_ref_ptr != nullptr;
-		}
-
-		_FORCE_INLINE_ bool operator!() const noexcept
-		{
-			return this->m_ref_ptr == nullptr;
-		}
-
-		_FORCE_INLINE_ operator T& () const noexcept
-		{
-			return *this->m_ref_ptr;
-		}
-
-		_FORCE_INLINE_ boolean is_null() const noexcept
-		{
-			return this->m_ref_ptr != nullptr;
-		}
-
-		_FORCE_INLINE_ T& get() const noexcept
-		{
-			return *(this->m_ref_ptr);
-		}
-	};
-
-	template <class Container>
-	struct range
-	{
-		unsafe_ref<Container> _container;
-		typename Container::size_type _begin;
-		typename Container::size_type _end;
-	};
-}
-
-
 template<typename T>
 class buffer final
 {
@@ -338,18 +174,18 @@ public:
 	using reference = T&;
 	using rvalue_reference = T&&;
 
-	_CONSTEXPR20_ _FORCE_INLINE_ static void set(rvalue_reference rvalue_p) noexcept
+	_FORCE_INLINE_ _CONSTEXPR20_ static void set(rvalue_reference rvalue_p) noexcept
 	{
 		tl_s_rvalue_buffer = std::move(rvalue_p);
 	}
 
-	_CONSTEXPR20_ _FORCE_INLINE_ static reference set_and_get(rvalue_reference rvalue_p) noexcept
+	_FORCE_INLINE_ _CONSTEXPR20_ static reference set_and_get(rvalue_reference rvalue_p) noexcept
 	{
 		tl_s_rvalue_buffer = std::move(rvalue_p);
 		return tl_s_rvalue_buffer;
 	}
 
-	_CONSTEXPR20_ _FORCE_INLINE_ static reference get() noexcept
+	_FORCE_INLINE_ _CONSTEXPR20_ static reference get() noexcept
 	{
 		return tl_s_rvalue_buffer;
 	}
@@ -357,8 +193,6 @@ public:
 
 template<typename T>
 thread_local T buffer<T>::tl_s_rvalue_buffer;
-
-
 
 
 namespace internal
@@ -371,6 +205,7 @@ namespace internal
 		}
 	};
 }
+
 #ifdef _DO_ONCE_AT_APP_PROCESS_
 #error _DO_ONCE_AT_APP_PROCESS_ is a reserved Frogman Engine macro keyword.
 #endif 
@@ -393,6 +228,101 @@ namespace internal
 	frequency ::FE::internal::do_once __FE_DO_ONCE_INSTANCE__([]() { __VA_ARGS__; }); \
 }
 
-
 END_NAMESPACE
+
+// variable types
+namespace var 
+{
+	typedef bool boolean;
+	static_assert(::std::atomic<boolean>::is_always_lock_free == true, "std::atomic is not compatible with boolean.");
+	static_assert(sizeof(boolean) == 1, "The size of boolean must be one byte.");
+
+	typedef char character;
+	static_assert(::std::atomic<character>::is_always_lock_free == true, "std::atomic is not compatible with character.");
+	static_assert(sizeof(character) == 1, "The size of character must be one byte.");
+
+	typedef signed char schar;
+	static_assert(::std::atomic<schar>::is_always_lock_free == true, "std::atomic is not compatible with schar.");
+	static_assert(sizeof(schar) == 1, "The size of schar must be one byte.");
+
+	typedef unsigned char uchar;
+	static_assert(::std::atomic<uchar>::is_always_lock_free == true, "std::atomic is not compatible with uchar.");
+	static_assert(sizeof(uchar) == 1, "The size of uchar must be one byte.");
+
+	typedef wchar_t wchar;
+	static_assert(::std::atomic<wchar>::is_always_lock_free == true, "std::atomic is not compatible with wchar.");
+	static_assert(sizeof(wchar) <= 4, "The size of wchar must be less than or equal to four bytes.");
+
+#ifdef _HAS_CXX20_
+	typedef char8_t UTF8;
+	static_assert(::std::atomic<UTF8>::is_always_lock_free == true, "std::atomic is not compatible with UTF8.");
+	static_assert(sizeof(UTF8) <= 1, "The size of UTF8 must be one byte.");
+#endif
+
+	typedef char16_t UTF16;
+	static_assert(::std::atomic<UTF16>::is_always_lock_free == true, "std::atomic is not compatible with UTF16.");
+	static_assert(sizeof(UTF16) == 2, "The size of UTF16 must be two bytes.");
+
+	typedef char32_t UTF32;
+	static_assert(::std::atomic<UTF32>::is_always_lock_free == true, "std::atomic is not compatible with UTF32.");
+	static_assert(sizeof(UTF32) == 4, "The size of UTF32 must be four bytes.");
+
+	typedef float float32;
+	static_assert(::std::atomic<float32>::is_always_lock_free == true, "std::atomic is not compatible with float32.");
+	static_assert(sizeof(float32) == 4, "The size of float32 must be four bytes.");
+
+	typedef double float64;
+	static_assert(::std::atomic<float64>::is_always_lock_free == true, "std::atomic is not compatible with float64.");
+	static_assert(sizeof(float64) == 8, "The size of float64 must be eight bytes.");
+
+	typedef bool binary;
+	static_assert(sizeof(binary) == 1, "The size of binary must be one byte.");
+
+	typedef ::std::uint8_t byte;
+	typedef ::std::uint16_t word; // primitive types are const by default
+	typedef ::std::uint32_t dword; // primitive types are const by default
+	typedef ::std::uint64_t qword; // primitive types are const by default
+
+	typedef ::std::int8_t int8;
+	static_assert(::std::atomic<int8>::is_always_lock_free == true, "std::atomic is not compatible with int8.");
+	static_assert(sizeof(int8) == 1, "The size of int8 must be one byte.");
+
+	typedef ::std::uint8_t uint8;
+	static_assert(::std::atomic<uint8>::is_always_lock_free == true, "std::atomic is not compatible with uint8.");
+	static_assert(sizeof(uint8) == 1, "The size of uint8 must be one byte.");
+
+	typedef ::std::int16_t int16;
+	static_assert(::std::atomic<int16>::is_always_lock_free == true, "std::atomic is not compatible with int16.");
+	static_assert(sizeof(int16) == 2, "The size of int16 must be two bytes.");
+
+	typedef ::std::uint16_t uint16;
+	static_assert(::std::atomic<uint16>::is_always_lock_free == true, "std::atomic is not compatible with uint16.");
+	static_assert(sizeof(uint16) == 2, "The size of uint16 must be two bytes.");
+
+	typedef ::std::int32_t int32;
+	static_assert(::std::atomic<int32>::is_always_lock_free == true, "std::atomic is not compatible with int32.");
+	static_assert(sizeof(int32) == 4, "The size of int32 must be four bytes.");
+
+	typedef ::std::uint32_t uint32;
+	static_assert(::std::atomic<uint32>::is_always_lock_free == true, "std::atomic is not compatible with uint32.");
+	static_assert(sizeof(uint32) == 4, "The size of uint32 must be four bytes.");
+
+	typedef ::std::int64_t int64;
+	static_assert(::std::atomic<int64>::is_always_lock_free == true, "std::atomic is not compatible with int64.");
+	static_assert(sizeof(int64) == 8, "The size of int64 must be eight bytes.");
+
+	typedef ::std::uint64_t uint64;
+	static_assert(::std::atomic<uint64>::is_always_lock_free == true, "std::atomic is not compatible with uint64.");
+	static_assert(sizeof(uint64) == 8, "The size of uint64 must be eight bytes.");
+
+	typedef ::std::size_t size_t;
+	typedef ::std::size_t length_t;
+	typedef ::std::size_t index_t;
+	typedef ::std::size_t count_t;
+	typedef ::std::size_t capacity_t;
+	typedef ::std::ptrdiff_t ptrdiff_t;
+	typedef ::std::intptr_t intptr_t;
+	typedef ::std::uintptr_t uintptr_t;
+}
+
 #endif

@@ -133,7 +133,7 @@ public:
 		return *this;
 	}
 
-	_CONSTEXPR20_ void push(value_type value_p) noexcept
+	_CONSTEXPR20_ void push(const value_type& value_p) noexcept
 	{
 		if (this->m_back_ptr >= this->m_absolute_begin_pointer + Capacity)
 		{
@@ -141,7 +141,7 @@ public:
 			FE_ASSERT(this->m_back_ptr >= this->m_front_ptr, "${%s@0}: Exceeded the queue index boundary", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_RANGE));
 		}
 
-		Traits::construct(*this->m_back_ptr, std::move(value_p));
+		Traits::construct(*this->m_back_ptr, value_p);
 		++this->m_back_ptr;
 		++this->m_element_count;
 	}
@@ -163,7 +163,7 @@ public:
 
 		++this->m_front_ptr;
 		--this->m_element_count;
-		return std::move(l_return_value_buffer);
+		return l_return_value_buffer;
 	}
 
 	_CONSTEXPR20_ void pop_all() noexcept
@@ -188,12 +188,6 @@ public:
 			this->m_element_count = 0;
 		}
 	}
-
-	//template<class Container>
-	//_CONSTEXPR23_ void push_range(container::range<Container>&& range_p) noexcept
-	//{
-
-	//}
 
 	_NODISCARD_ _FORCE_INLINE_ const_reference front() const noexcept
 	{

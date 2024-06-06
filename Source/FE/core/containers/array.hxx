@@ -23,7 +23,7 @@ public:
 	using size_type = typename base_type::size_type;
 	using difference_type = typename base_type::difference_type;
 	using reference = value_type&;
-	using const_reference = const reference;
+	using const_reference = const value_type&;
 	using pointer = value_type*;
 	using const_pointer = const pointer;
 	using iterator = FE::iterator<FE::contiguous_iterator<T>>;

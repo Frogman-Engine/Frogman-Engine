@@ -53,7 +53,7 @@ struct count
 
 
 template<typename CharT>
-_NODISCARD_ _CONSTEXPR20_ _FORCE_INLINE_ count<CharT> count_chars(const CharT* string_p, const CharT target_p) noexcept
+_NODISCARD_ _FORCE_INLINE_ _CONSTEXPR20_ count<CharT> count_chars(const CharT* string_p, const CharT target_p) noexcept
 {
     FE_STATIC_ASSERT(FE::is_char<CharT>::value == false, "CharT is not a valid character type");
     FE_ASSERT(string_p == nullptr, "${%s@0}: ${%s@1} is ${%p@2}.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(string_p), nullptr);
@@ -89,7 +89,7 @@ _MAYBE_UNUSED_ constexpr int8 _ASCII_GAP_BETWEEN_UPPERCASE_and_lowercase_ = 32;
 
 
 template<typename CharT>
-_CONSTEXPR20_ _FORCE_INLINE_ void capitalize(CharT* in_out_string_buffer_p) noexcept
+_FORCE_INLINE_ _CONSTEXPR20_ void capitalize(CharT* in_out_string_buffer_p) noexcept
 {
     FE_STATIC_ASSERT(FE::is_char<CharT>::value == false, "CharT is not a valid character type");
     FE_ASSERT(in_out_string_buffer_p == nullptr, "${%s@0}: ${%s@1} is ${%p@2}.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(in_out_string_buffer_p), nullptr);
@@ -105,7 +105,7 @@ _CONSTEXPR20_ _FORCE_INLINE_ void capitalize(CharT* in_out_string_buffer_p) noex
 }
 
 template<typename CharT>
-_CONSTEXPR20_ _FORCE_INLINE_ CharT capitalize(const CharT value_p) noexcept
+_FORCE_INLINE_ _CONSTEXPR20_ CharT capitalize(const CharT value_p) noexcept
 {
     FE_STATIC_ASSERT(FE::is_char<CharT>::value == false, "CharT is not a valid character type");
 
@@ -119,7 +119,7 @@ _CONSTEXPR20_ _FORCE_INLINE_ CharT capitalize(const CharT value_p) noexcept
 
 
 template<typename CharT>
-_CONSTEXPR20_ _FORCE_INLINE_ void to_lowercase(CharT* in_out_string_buffer_p) noexcept
+_FORCE_INLINE_ _CONSTEXPR20_ void to_lowercase(CharT* in_out_string_buffer_p) noexcept
 {
     FE_STATIC_ASSERT(FE::is_char<CharT>::value == false, "CharT is not a valid character type");
     FE_ASSERT(in_out_string_buffer_p == nullptr, "${%s@0}: ${%s@1} is ${%p@2}.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(in_out_string_buffer_p), nullptr);
@@ -135,7 +135,7 @@ _CONSTEXPR20_ _FORCE_INLINE_ void to_lowercase(CharT* in_out_string_buffer_p) no
 }
 
 template<typename CharT>
-_CONSTEXPR20_ _FORCE_INLINE_ CharT to_lowercase(const CharT value_p) noexcept
+_FORCE_INLINE_ _CONSTEXPR20_ CharT to_lowercase(const CharT value_p) noexcept
 {
     FE_STATIC_ASSERT(sizeof(CharT) > sizeof(UTF32), "CharT is not a valid character type");
 
@@ -178,7 +178,7 @@ _CONSTEXPR20_ void capitalize_every_first_letter_of_words(CharT* in_out_string_p
 
 
 template <typename CharT>
-_NODISCARD_ _CONSTEXPR20_ _FORCE_INLINE_ uint64 length(const CharT* const string_p) noexcept // returns a string length without the null terminator
+_NODISCARD_ _FORCE_INLINE_ _CONSTEXPR20_ uint64 length(const CharT* const string_p) noexcept // returns a string length without the null terminator
 {
     FE_STATIC_ASSERT(FE::is_char<CharT>::value == false, "CharT is not a valid character type");
     FE_ASSERT(string_p == nullptr, "${%s@0}: ${%s@1} is ${%p@2}.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(string_p), nullptr);
@@ -199,7 +199,7 @@ struct range
 
 
 template<typename CharT>
-_NODISCARD_ _CONSTEXPR20_ _FORCE_INLINE_ count<CharT> count_chars_within_range(const CharT* string_p, const range string_range_p, const CharT target_p) noexcept
+_NODISCARD_ _FORCE_INLINE_ _CONSTEXPR20_ count<CharT> count_chars_within_range(const CharT* string_p, const range string_range_p, const CharT target_p) noexcept
 {
     FE_STATIC_ASSERT(FE::is_char<CharT>::value == false, "CharT is not a valid character type");
     FE_ASSERT(string_p == nullptr, "${%s@0}: ${%s@1} is ${%p@2}.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(string_p), nullptr);
@@ -230,7 +230,7 @@ _NODISCARD_ _CONSTEXPR20_ _FORCE_INLINE_ count<CharT> count_chars_within_range(c
 
 
 template <typename CharT>
-_NODISCARD_ _CONSTEXPR20_ _FORCE_INLINE_ boolean compare(const CharT* lstr_p, const CharT* rstr_p) noexcept
+_NODISCARD_ _FORCE_INLINE_ _CONSTEXPR20_ boolean compare(const CharT* lstr_p, const CharT* rstr_p) noexcept
 {
     FE_STATIC_ASSERT(FE::is_char<CharT>::value == false, "CharT is not a valid character type");
     FE_ASSERT(lstr_p == nullptr, "${%s@0}: ${%s@1} is ${%p@2}.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(lstr_p), nullptr);
@@ -262,7 +262,7 @@ struct equal_to
 
 
 template <typename CharT>
-_NODISCARD_ _CONSTEXPR20_ _FORCE_INLINE_ boolean compare_ranged(const CharT* const lstr_p, const range lstr_range_p, const CharT* const rstr_p, const range rstr_range_p) noexcept
+_NODISCARD_ _FORCE_INLINE_ _CONSTEXPR20_ boolean compare_ranged(const CharT* const lstr_p, const range lstr_range_p, const CharT* const rstr_p, const range rstr_range_p) noexcept
 {
     FE_STATIC_ASSERT(FE::is_char<CharT>::value == false, "CharT is not a valid character type");
     FE_ASSERT(lstr_p == nullptr, "${%s@0}: ${%s@1} is ${%p@2}.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(lstr_ptr_p), nullptr);
@@ -298,7 +298,7 @@ _NODISCARD_ _CONSTEXPR20_ _FORCE_INLINE_ boolean compare_ranged(const CharT* con
 
 
 template <typename CharT>
-_NODISCARD_ _CONSTEXPR20_ _FORCE_INLINE_ boolean insensitive_comparison(const CharT* const lstr_p, const CharT* const rstr_p) noexcept
+_NODISCARD_ _FORCE_INLINE_ _CONSTEXPR20_ boolean insensitive_comparison(const CharT* const lstr_p, const CharT* const rstr_p) noexcept
 {
     FE_STATIC_ASSERT(FE::is_char<CharT>::value == false, "CharT is not a valid character type");
     FE_ASSERT(lstr_p == nullptr, "${%s@0}: ${%s@1} is ${%p@2}.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(lstr_ptr_p), nullptr);
@@ -323,7 +323,7 @@ _NODISCARD_ _CONSTEXPR20_ _FORCE_INLINE_ boolean insensitive_comparison(const Ch
 
 
 template <typename CharT>
-_NODISCARD_ _CONSTEXPR20_ _FORCE_INLINE_ boolean insensitive_ranged_comparison(const CharT* const lstr_p, const range lstr_range_p, const CharT* const rstr_p, const range rstr_range_p) noexcept
+_NODISCARD_ _FORCE_INLINE_ _CONSTEXPR20_ boolean insensitive_ranged_comparison(const CharT* const lstr_p, const range lstr_range_p, const CharT* const rstr_p, const range rstr_range_p) noexcept
 {
     FE_STATIC_ASSERT(FE::is_char<CharT>::value == false, "CharT is not a valid character type");
     FE_ASSERT(lstr_p == nullptr, "${%s@0}: ${%s@1} is ${%p@2}.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(lstr_ptr_p), nullptr);
@@ -359,7 +359,7 @@ _NODISCARD_ _CONSTEXPR20_ _FORCE_INLINE_ boolean insensitive_ranged_comparison(c
 
 
 template <typename CharT>
-_CONSTEXPR20_ _FORCE_INLINE_ void concatenate(CharT* const destination_out_p, _MAYBE_UNUSED_ count_t string_buffer_size_p, const CharT* const source_p, count_t source_total_count_p) noexcept
+_FORCE_INLINE_ _CONSTEXPR20_ void concatenate(CharT* const destination_out_p, _MAYBE_UNUSED_ count_t string_buffer_size_p, const CharT* const source_p, count_t source_total_count_p) noexcept
 {
     FE_STATIC_ASSERT(FE::is_char<CharT>::value == false, "CharT is not a valid character type");
     FE_ASSERT(destination_out_p == nullptr, "${%s@0}: ${%s@1} is ${%p@2}.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(destination_out_p), nullptr);
@@ -374,7 +374,7 @@ _CONSTEXPR20_ _FORCE_INLINE_ void concatenate(CharT* const destination_out_p, _M
 
 
 template<typename CharT>
-_CONSTEXPR20_ _FORCE_INLINE_ void concatenate(CharT* const out_string_buffer_p, _MAYBE_UNUSED_ size_t string_buffer_size_p, ::std::initializer_list<const CharT* const>&& strings_p) noexcept
+_FORCE_INLINE_ _CONSTEXPR20_ void concatenate(CharT* const out_string_buffer_p, _MAYBE_UNUSED_ size_t string_buffer_size_p, ::std::initializer_list<const CharT* const>&& strings_p) noexcept
 {
     FE_STATIC_ASSERT(FE::is_char<CharT>::value == false, "CharT is not a valid character type");
     FE_ABORT_IF(out_string_buffer_p == nullptr, "NULLPTR DETECTED: out_string_buffer_p is nullptr.");
@@ -394,7 +394,7 @@ _CONSTEXPR20_ _FORCE_INLINE_ void concatenate(CharT* const out_string_buffer_p, 
 
 
 template<typename CharT>
-_CONSTEXPR20_ _FORCE_INLINE_ void concatenate(CharT* const out_string_buffer_p, _MAYBE_UNUSED_ size_t string_buffer_size_p, ::std::initializer_list<const CharT>&& chars_p) noexcept
+_FORCE_INLINE_ _CONSTEXPR20_ void concatenate(CharT* const out_string_buffer_p, _MAYBE_UNUSED_ size_t string_buffer_size_p, ::std::initializer_list<const CharT>&& chars_p) noexcept
 {
     FE_STATIC_ASSERT(FE::is_char<CharT>::value == false, "CharT is not a valid character type");
     FE_ASSERT(out_string_buffer_p == nullptr, "${%s@0}: ${%s@1} is nullptr.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(out_string_buffer_p));
@@ -408,7 +408,7 @@ _CONSTEXPR20_ _FORCE_INLINE_ void concatenate(CharT* const out_string_buffer_p, 
 
 
 template<typename CharT>
-_NODISCARD_ _CONSTEXPR20_ _FORCE_INLINE_ std::optional<range> find_the_first(const CharT* const string_p, const CharT target_p) noexcept
+_NODISCARD_ _FORCE_INLINE_ _CONSTEXPR20_ std::optional<range> find_the_first(const CharT* const string_p, const CharT target_p) noexcept
 {
     FE_STATIC_ASSERT(FE::is_char<CharT>::value == false, "CharT is not a valid character type");
     FE_ASSERT(string_p == nullptr, "${%s@0}: ${%s@1} is nullptr.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(string_p));
@@ -685,7 +685,7 @@ _NODISCARD_ _CONSTEXPR20_ std::optional<range> find_the_last_within_range(const 
 
 
 template<typename CharT, typename IntT>
-_CONSTEXPR20_ _FORCE_INLINE_ IntT char_to_integer(const CharT value_p) noexcept
+_FORCE_INLINE_ _CONSTEXPR20_ IntT char_to_integer(const CharT value_p) noexcept
 {
     FE_STATIC_ASSERT(FE::is_char<CharT>::value == false, "CharT is not a valid character type");
     FE_STATIC_ASSERT(::std::is_integral<IntT>::value == false, "typename IntT is not an integer");
@@ -725,7 +725,7 @@ _NODISCARD_ _CONSTEXPR20_ IntT string_to_integer(const CharT* string_p) noexcept
 
 
 template<typename CharT>
-_CONSTEXPR20_ _FORCE_INLINE_ void invert(CharT* const in_out_string_p) noexcept
+_FORCE_INLINE_ _CONSTEXPR20_ void invert(CharT* const in_out_string_p) noexcept
 {
     FE_STATIC_ASSERT(FE::is_char<CharT>::value == false, "CharT is not a valid character type");
     FE_ASSERT(in_out_string_p == nullptr, "${%s@0}: ${%s@1} is nullptr.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(in_out_string_p));

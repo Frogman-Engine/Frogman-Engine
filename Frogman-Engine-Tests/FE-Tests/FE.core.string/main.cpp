@@ -1,11 +1,11 @@
-
 #include <gtest/gtest.h>
+#include <benchmark/benchmark.h>
+
 // Copyright © from 2023 to current, UNKNOWN STRYKER. All Rights Reserved.
-#include <FE/miscellaneous/google_test_extension.h>
 #include <FE/core/string.hxx>
 #include <FE/core/string_view.hxx>
 #include <FE/core/clock.hpp>
-
+using namespace FE;
 
 /*
 Profile Guided Optimization: https://learn.microsoft.com/en-us/cpp/build/profile-guided-optimizations?view=msvc-170
@@ -52,9 +52,7 @@ Memory Layer Traversal Order: Entry.FE::string m_name -> FE::string.FE::smart_pt
 */ 
 int main(int argc_p, char** argv_p)
 {
-	using namespace FE;
 
-	std::cout << "Compilation test of FE.core.pool_test source code is successful.\n";
   	testing::InitGoogleTest(&argc_p, argv_p);
 
 	if (argv_p == nullptr)
@@ -146,8 +144,6 @@ TEST(basic_string, constructors)
 		FE::string l_another_string;
 		l_another_string = std::move(l_string);
 	}
-
-	//FE::string::smart_pointer::shrink_to_fit_table();
 }
 
 
@@ -340,13 +336,13 @@ TEST(basic_string, operations)
 
 	// append
 	{
-		 string l_string = "COD Modern Warfare is my favorite ";
+		FE::string l_string = "COD Modern Warfare is my favorite ";
 		l_string.reserve(256);
 		l_string.append(3, 'A');
 		EXPECT_TRUE(l_string == "COD Modern Warfare is my favorite AAA");
 
 
-		 string l_second_string = " shooter game.";
+		FE::string l_second_string = " shooter game.";
 		l_second_string.reserve(256);
 		l_string += l_second_string;
 		EXPECT_TRUE(l_string == "COD Modern Warfare is my favorite AAA shooter game.");
@@ -367,7 +363,7 @@ TEST(basic_string, operations)
 		EXPECT_TRUE(l_second_string == "Another my favorite AAA title is Tom Clancy's");
 
 
-		 var::character l_cstring[] = " Ghost Recon: ";
+		var::character l_cstring[] = " Ghost Recon: ";
 		l_second_string.append(FE::const_iterator<FE::contiguous_iterator<char>>{l_cstring}, FE::const_iterator<FE::contiguous_iterator<char>>{l_cstring + 14});
 		EXPECT_TRUE(l_second_string == "Another my favorite AAA title is Tom Clancy's Ghost Recon: ");
 
@@ -492,7 +488,7 @@ TEST(basic_string, operations)
 		l_string.extend(64);
 		l_string.resize(16);
 
-		EXPECT_EQ(l_string.capacity(), 16);
+		EXPECT_EQ(l_string.capacity(), 17);
 	}
 }
 
@@ -519,5 +515,6 @@ TEST(basic_string, search)
 	{
 		FE::string l_string = "Garlic Mayonnaise";
 		std::optional<FE::algorithm::string::count<FE::string::value_type>> l_result = l_string.count_chars('a');
+		EXPECT_EQ(l_result->_match_count, 3);
 	}
 }

@@ -20,7 +20,6 @@ ls filename: checks the presence of files with the specified name.
 */
 int main(_MAYBE_UNUSED_ int argc_p, _MAYBE_UNUSED_ char** argv_p)
 {
-    std::cout << "Compilation test of FE.core.algorithm.utility source code is successful.\n";
     
     testing::InitGoogleTest(&argc_p, argv_p);
 

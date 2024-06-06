@@ -11,13 +11,11 @@
 #ifdef _WINDOWS_X86_64_
 #define ALIGNED_ALLOC(size_p, alignment_p) ::_aligned_malloc(size_p, alignment_p)
 #define ALIGNED_FREE(ptr_to_memory_p) ::_aligned_free(ptr_to_memory_p)
-#define ALIGNED_REALLOC(ptr_to_memory_p, new_size_p, alignment_p) ::_aligned_realloc(ptr_to_memory_p, new_size_p, alignment_p)
 
 #else
 	#ifdef _LINUX_X86_64_
 	#define ALIGNED_ALLOC(size_p, alignment_p) ::aligned_alloc(alignment_p, size_p)
 	#define ALIGNED_FREE(ptr_to_memory_p) ::free(ptr_to_memory_p)
-	#define ALIGNED_REALLOC(ptr_to_memory_p, new_size_p, alignment_p) ::realloc(ptr_to_memory_p, new_size_p)
 	#endif
 #endif
 
@@ -153,30 +151,41 @@ public:
 	template<typename T, class Alignment = typename FE::SIMD_auto_alignment>
 	_FORCE_INLINE_ T* trackable_realloc(T* const ptr_to_memory_p, size_t prev_bytes_p, size_t new_bytes_p) noexcept
 	{
-		T* l_realloc_result = (T*)ALIGNED_REALLOC(ptr_to_memory_p, new_bytes_p, Alignment::size);
+#ifdef _WINDOWS_X86_64_
+		T* l_realloc_result = (T*)::_aligned_realloc(ptr_to_memory_p, new_bytes_p, Alignment::size);
 
-		if (UNLIKELY(l_realloc_result == nullptr)) _UNLIKELY_
+		if (l_realloc_result == nullptr) _UNLIKELY_
 		{
 			l_realloc_result = (T*)ALIGNED_ALLOC(new_bytes_p, Alignment::size);
+			FE_ASSERT(l_realloc_result == nullptr, "${%s@0}: Failed to re-allocate memory from ALIGNED_ALLOC()", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR));
 	#ifndef _RELEASE_
 			ALIGNED_MEMSET(l_realloc_result, _FE_NULL_, new_bytes_p);
 	#endif
-			FE_ASSERT(l_realloc_result == nullptr, "${%s@0}: Failed to re-allocate memory from ALIGNED_ALLOC()", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR));
-
 			FE::memcpy<ADDRESS::_ALIGNED, ADDRESS::_ALIGNED>(l_realloc_result, new_bytes_p, ptr_to_memory_p, prev_bytes_p);
-
-			if (LIKELY(l_realloc_result != ptr_to_memory_p)) _LIKELY_
+			if (l_realloc_result != ptr_to_memory_p) _LIKELY_
 			{
 				ALIGNED_FREE(ptr_to_memory_p);
 			}
 		}
 
-		FE_ASSERT((reinterpret_cast<uintptr_t>(l_realloc_result) % Alignment::size) != 0, "${%s@0}: The allocated heap memory address not aligned by ${%lu@1}.", TO_STRING(MEMORY_ERROR_1XX::_ERROR_ILLEGAL_ADDRESS_ALIGNMENT), &Alignment::size);
+#elif defined(_LINUX_X86_64_)
+		T* l_realloc_result = (T*)ALIGNED_ALLOC(new_bytes_p, Alignment::size);
+		FE_ASSERT(l_realloc_result == nullptr, "${%s@0}: Failed to re-allocate memory from ALIGNED_ALLOC()", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR));
+#ifndef _RELEASE_
+		ALIGNED_MEMSET(l_realloc_result, _FE_NULL_, new_bytes_p);
+#endif
+		if (ptr_to_memory_p != nullptr)
+		{
+			FE::memcpy<ADDRESS::_ALIGNED, ADDRESS::_ALIGNED>(l_realloc_result, new_bytes_p, ptr_to_memory_p, prev_bytes_p);
+			ALIGNED_FREE(ptr_to_memory_p);
+		}
+#endif
+
 
 #ifdef _ENABLE_MEMORY_TRACKER_
 		allocator_base::__log_heap_memory_reallocation<T>(prev_bytes_p, new_bytes_p, l_realloc_result);
 #endif
-
+		FE_ASSERT((reinterpret_cast<uintptr_t>(l_realloc_result) % Alignment::size) != 0, "${%s@0}: The allocated heap memory address not aligned by ${%lu@1}.", TO_STRING(MEMORY_ERROR_1XX::_ERROR_ILLEGAL_ADDRESS_ALIGNMENT), &Alignment::size);
 		return l_realloc_result;
 	}
 };

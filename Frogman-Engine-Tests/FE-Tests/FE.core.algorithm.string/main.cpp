@@ -57,7 +57,6 @@ int main(int argc_p, char** argv_p)
 {
 	using namespace FE;
 
-	std::cout << "Compilation test of FE.core.pool_test source code is successful.\n";
   	testing::InitGoogleTest(&argc_p, argv_p);
 
 	if (argv_p == nullptr)
@@ -85,7 +84,7 @@ int main(int argc_p, char** argv_p)
 TEST(FE_algorithm_string, string_to_integer)
 {
 	char l_buffer[10] = "2023";
-	var::int32 l_result = ::FE::algorithm::string::string_to_integer<char, ::FE::var::int32>(l_buffer);
+	var::int32 l_result = ::FE::algorithm::string::string_to_integer<char, ::var::int32>(l_buffer);
 	EXPECT_EQ(2023, l_result);
 
 
@@ -93,7 +92,7 @@ TEST(FE_algorithm_string, string_to_integer)
 	EXPECT_EQ(l_result, 1);
 
 
-	l_result = ::FE::algorithm::string::string_to_integer<char, ::FE::var::int32>("2023");
+	l_result = ::FE::algorithm::string::string_to_integer<char, ::var::int32>("2023");
 	EXPECT_EQ(2023, l_result);
 }
 
@@ -360,7 +359,7 @@ TEST(FE_algorithm_string, count_chars_within_range)
 {
 	char l_string[] = "Carrots contain carotene, antioxidants, etcetera.";
 
-	auto l_result = string::count_chars_within_range(l_string, string::range{25, 49}, 't');
+	auto l_result = string::count_chars_within_range(l_string, algorithm::string::range{25, 49}, 't');
 
 	EXPECT_EQ(l_result._match_count, 4);
 	EXPECT_EQ(l_result._target, 't');
@@ -370,7 +369,7 @@ TEST(FE_algorithm_string, constexpr_count_all_corresponding_chars_within_range)
 {
 	char l_string[] = "Carrots contain carotene, antioxidants, etcetera.";
 
-	auto l_result = string::count_chars_within_range(l_string, string::range{25, 49}, 't');
+	auto l_result = string::count_chars_within_range(l_string, algorithm::string::range{25, 49}, 't');
 
 	EXPECT_EQ(l_result._match_count, 4);
 	EXPECT_EQ(l_result._target, 't');
@@ -393,12 +392,12 @@ TEST(FE_algorithm_string, find_the_first_within_range)
 	{
 		char l_string[] = "Love never fails. But where there are prophecies, they will cease; where there are tongues, they will be stilled; where there is knowledge, it will pass away.";
 
-		std::optional l_result = ::FE::algorithm::string::find_the_first_within_range<var::character>(l_string, string::range{ 0, 17 }, "Love never fails.");
+		std::optional l_result = ::FE::algorithm::string::find_the_first_within_range<var::character>(l_string, algorithm::string::range{ 0, 17 }, "Love never fails.");
 		EXPECT_TRUE(l_result.has_value());
 
-		l_result = ::FE::algorithm::string::find_the_first_within_range<var::character>(l_string, string::range{ 0, 120 }, "will");
+		l_result = ::FE::algorithm::string::find_the_first_within_range<var::character>(l_string, algorithm::string::range{ 0, 120 }, "will");
 
-		EXPECT_TRUE(FE::algorithm::string::compare_ranged<char>(l_string, string::range{ l_result->_begin, l_result->_end }, "will", string::range{ 0, 4 }));
+		EXPECT_TRUE(FE::algorithm::string::compare_ranged<char>(l_string, algorithm::string::range{ l_result->_begin, l_result->_end }, "will", algorithm::string::range{ 0, 4 }));
 	}
 }
 
@@ -415,16 +414,16 @@ TEST(FE_algorithm_string, find_the_last_within_range)
 
 	{
 		const char* l_string = "Love is patient, love is kind. It does not envy, it does not boast, it is not proud. 5 It does not dishonor others, it is not self-seeking, it is not easily angered, it keeps no record of wrongs. 6 Love does not delight in evil but rejoices with the truth. 7 It always protects, always trusts, always hopes, always perseveres.\n";
-		std::optional l_result = ::FE::algorithm::string::find_the_last_within_range<var::character>(l_string, string::range{ 0, 21 }, "love");
+		std::optional l_result = ::FE::algorithm::string::find_the_last_within_range<var::character>(l_string, algorithm::string::range{ 0, 21 }, "love");
 		char l_substring[7] = "\0";
 		FE::algorithm::string::copy(l_substring, l_string + l_result->_begin, 4);
 		EXPECT_TRUE(FE::algorithm::string::compare<char>(l_substring, "love"));
 
 		l_string = "1 Corinthians 13:4-8\n";
-		l_result = ::FE::algorithm::string::find_the_last_within_range<var::character>(l_string, string::range{ 0, 13 }, "9");
+		l_result = ::FE::algorithm::string::find_the_last_within_range<var::character>(l_string, algorithm::string::range{ 0, 13 }, "9");
 		EXPECT_FALSE(l_result.has_value());
 
-		l_result = ::FE::algorithm::string::find_the_last_within_range<var::character>(l_string, string::range{ 2, 13 }, "i");
+		l_result = ::FE::algorithm::string::find_the_last_within_range<var::character>(l_string, algorithm::string::range{ 2, 13 }, "i");
 		EXPECT_TRUE(l_result.has_value());
 		FE::algorithm::string::copy(l_substring, l_string + l_result->_begin, 1);
 

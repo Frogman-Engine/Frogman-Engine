@@ -61,7 +61,7 @@ public:
 	{
 		FE_ASSERT((count_p > 1) || (count_p == 0), "${%s@0}: queried allocation size is ${%lu@1}.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_INVALID_SIZE), &count_p);
 
-		return this->m_pool->allocate().release();
+		return this->m_pool->allocate();
 	}
 
 	_FORCE_INLINE_ void deallocate(pointer const pointer_p, _MAYBE_UNUSED_ const size_type count_p = 1) noexcept
@@ -139,7 +139,7 @@ public:
 	{
 		FE_ASSERT((count_p > 1) || (count_p == 0), "${%s@0}: queried allocation size is ${%lu@1}.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_INVALID_SIZE), &count_p);
 
-		return (T*)this->m_pool->allocate().release();
+		return (T*)this->m_pool->allocate();
 	}
 
 	_FORCE_INLINE_ void deallocate(pointer const pointer_p, _MAYBE_UNUSED_ const size_type count_p = 1) noexcept

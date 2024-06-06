@@ -8,7 +8,7 @@
             "name": "Clang++ Debug",
             "type": "lldb",
             "request": "launch",
-            "program": "${workspaceFolder}/Frogman-Engine-Tests/FE-Tests/build/FE.core.pool/FE.core.pool_test",
+            "program": "${workspaceFolder}/Frogman-Engine-Tests/FE-Tests/build/FE.core.string/FE.core.string_test",
             "args": [],
             "stopOnEntry": true,
             "cwd": "${workspaceFolder}"

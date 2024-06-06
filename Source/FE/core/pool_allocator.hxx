@@ -62,7 +62,7 @@ public:
 	{
 		FE_ASSERT(count_p == 0, "${%s@0}: queried allocation size is ${%lu@1}.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_INVALID_SIZE), &count_p);
 
-		return (T*)this->m_pool->template allocate<var::byte>(sizeof(T) * count_p).release();
+		return (T*)this->m_pool->template allocate<var::byte>(sizeof(T) * count_p);
 	}
 
 	_NODISCARD_ _FORCE_INLINE_ pointer reallocate(pointer const pointer_p, const size_type prev_count_p, const size_type new_count_p) noexcept

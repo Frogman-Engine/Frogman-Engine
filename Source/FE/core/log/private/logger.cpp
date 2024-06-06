@@ -58,7 +58,7 @@ void logger_base::mkdir(const directory_char_type* folder_name_p) noexcept
     this->m_directory_buffer += L"\\";
 #else
     #ifdef _LINUX_X86_64_
-    this->m_directory_buffer += "//";
+    this->m_directory_buffer += "/";
     #endif
 #endif
 
@@ -79,7 +79,7 @@ void logger_base::cd(const directory_char_type* folder_name_p) noexcept
 
     SWITCH(folder_name_p)
     {
-    CASE(".."):
+    CASE(STRING(..)):
     {
         auto l_reverse_iterator = this->m_directory_buffer.rbegin();
 #ifdef _WINDOWS_X86_64_
@@ -103,7 +103,7 @@ void logger_base::cd(const directory_char_type* folder_name_p) noexcept
         this->m_directory_buffer += L"\\";
 #else
     #ifdef _LINUX_X86_64_
-        m_directory_buffer += "//";
+        m_directory_buffer += "/";
     #endif
 #endif
 
@@ -131,52 +131,52 @@ void logger_base::__reserve() noexcept
 fatal_error_logger_base::fatal_error_logger_base() noexcept : base_type()
 {
 #ifdef _WINDOWS_X86_64_
-    var::wchar l_current_local_time_buffer[FE::clock::current_local_time_buffer_size] = L"\0";
+    var::wchar l_current_local_time_buffer[FE::clock::current_local_time_buffer_size] = STRING(\0);
     std::mbstowcs(l_current_local_time_buffer, FE::clock::get_current_local_time(), FE::clock::current_local_time_buffer_size);
 
-    var::wchar l_thread_id[FE::thread::max_thread_id_digit_length] = L"\0";
-    std::swprintf(l_thread_id, FE::thread::max_thread_id_digit_length, L"%llu", FE::thread::this_thread_id()); // hashed thread-ids from std::hash are too long and hard to read 
+    var::wchar l_thread_id[FE::thread::max_thread_id_digit_length] = STRING(\0);
+    std::swprintf(l_thread_id, FE::thread::max_thread_id_digit_length, STRING(%lu), FE::thread::this_thread_id()); // hashed thread-ids from std::hash are too long and hard to read 
 
     FE::log::logger_base::mkdir(STRING(Crash Report));
     FE::log::logger_base::cd(STRING(Crash Report));
     std::filesystem::path l_path_to_log_file = this->m_directory_buffer.c_str();
-    var::wchar l_path_to_log_file_buffer[allowed_directory_string_length] = L"\0";
+    var::wchar l_path_to_log_file_buffer[allowed_directory_string_length] = STRING(\0);
     FE::algorithm::string::concatenate<var::wchar>
     (
             l_path_to_log_file_buffer,
             allowed_directory_string_length,
             {
                 l_path_to_log_file.c_str(),
-                L"\\thread ",
+                STRING(\\thread ),
                 l_thread_id,
-                L" @ ",
+                STRING( @ ),
                 l_current_local_time_buffer,
-                 L".txt"
+                STRING(.txt)
             }
     );
 
 #else
 #ifdef _LINUX_X86_64_
-    var::character l_current_local_time_buffer[FE::clock::current_local_time_buffer_size] = "\0";
+    var::character l_current_local_time_buffer[FE::clock::current_local_time_buffer_size] = STRING(\0);
     std::strcpy(l_current_local_time_buffer, FE::clock::get_current_local_time());
 
     std::filesystem::path l_path_to_log_file = std::filesystem::path{ m_directory_buffer.c_str() } / l_current_local_time_buffer;
 
-    var::character l_thread_id[FE::thread::max_thread_id_digit_length] = "\0";
-    std::snprintf(l_thread_id, FE::thread::max_thread_id_digit_length, "%lu", FE::thread::this_thread_id()); // hashed thread-ids from std::hash are too long and hard to read 
+    var::character l_thread_id[FE::thread::max_thread_id_digit_length] = STRING(\0);
+    std::snprintf(l_thread_id, FE::thread::max_thread_id_digit_length, STRING(%lu), FE::thread::this_thread_id()); // hashed thread-ids from std::hash are too long and hard to read 
 
-    var::character l_path_to_log_file_buffer[allowed_directory_string_length] = "\0";
+    var::character l_path_to_log_file_buffer[allowed_directory_string_length] = STRING(\0);
     FE::algorithm::string::concatenate<var::character>
     (
             l_path_to_log_file_buffer,
             allowed_directory_string_length,
             {
                 l_path_to_log_file.c_str(),
-                "/thread ",
+                STRING(/thread ),
                 l_thread_id,
-                " @ ",
+                STRING( @ ),
                 l_current_local_time_buffer,
-                ".txt"
+                STRING(.txt)
             }
     );
 #endif
