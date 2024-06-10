@@ -9,6 +9,7 @@
 
 // std
 #include <array>
+#include <cstring>
 #include <list>
 #include <map>
 #include <memory>

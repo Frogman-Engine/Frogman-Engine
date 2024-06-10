@@ -10,7 +10,7 @@
 #include <FE/core/pool_allocator.hxx>
 #endif
 
-#include <FE/core/smart_ptrs.h>
+#include <FE/core/managed.h>
 
 #pragma warning(push)
 
@@ -1325,7 +1325,7 @@ public:
     }
 
     
-    _CONSTEXPR20_ boolean operator==(basic_string_view<CharT>& other_p) const noexcept
+    _CONSTEXPR20_ boolean operator==(const basic_string_view<CharT>& other_p) const noexcept
     {
         return algorithm::string::compare(this->m_smart_string.get(), other_p.begin().operator->());
     }
@@ -1347,7 +1347,7 @@ public:
     }
 
     
-    _CONSTEXPR20_ boolean operator!=(basic_string_view<CharT>& other_p) const noexcept
+    _CONSTEXPR20_ boolean operator!=(const basic_string_view<CharT>& other_p) const noexcept
     {
         return !algorithm::string::compare(this->m_smart_string.get(), other_p.begin().operator->());
     }

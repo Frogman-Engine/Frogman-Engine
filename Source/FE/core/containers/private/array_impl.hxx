@@ -6,7 +6,7 @@
 #include <FE/core/algorithm/utility.hxx>
 #include <FE/core/iterator.hxx>
 #include <FE/core/memory.hxx>
-#include <FE/core/smart_ptrs.h>
+#include <FE/core/managed.h>
 #include <initializer_list>
 
 

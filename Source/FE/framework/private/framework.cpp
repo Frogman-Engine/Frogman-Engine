@@ -4,7 +4,7 @@
 #include <FE/core/fstream_guard.hxx>
 #include <FE/core/fstring.hxx>
 #include <FE/core/log/logger.hpp>
-//#include <FE/core/pool_allocator.hxx>
+#include <FE/framework/reflection/function_table.hpp>
 
 // boost
 #include <boost/stacktrace.hpp>
@@ -20,7 +20,6 @@
 BEGIN_NAMESPACE(FE::framework)
 
 application_base* application_base::s_app = nullptr;
-//std::unique_ptr<function_table> application_base::s_function_table;
 RESTART_OR_NOT application_base::s_restart_or_not = RESTART_OR_NOT::_NO_OPERATION;
 
 application_base::initializer_t application_base::create_application(initializer_t script_p) noexcept
@@ -38,20 +37,17 @@ void application_base::__set_up_main() noexcept
 	std::signal(SIGFPE, __abnormal_shutdown_with_exit_code);
 	std::set_terminate([]() { __abnormal_shutdown_with_exit_code(SIGTERM); });
 
-	//FE::pool_allocator_base<FE::SIMD_auto_alignment>::create_pool_allocator_resource(1);
-	//FE::pool_allocator_base<FE::align_CPU_L1_cache_line>::create_pool_allocator_resource(1);
-	//FE::framework::application_base::s_function_table = std::make_unique<function_table>();
 	FE::framework::application_base::initializer_t l_get_app_address = FE::framework::application_base::create_application();
 	FE::framework::application_base::s_app = l_get_app_address();
 	FE_ASSERT(FE::framework::application_base::s_app == nullptr, "Assertion Failure: An app pointer is nullptr.");
+
+	FE::framework::function_table::initialize();
 }
 
 void application_base::__shutdown_main() noexcept
 {
-	//FE::framework::application_base::s_function_table.reset();
+	FE::framework::function_table::clean_up();
 	delete FE::framework::application_base::s_app;
-	//FE::pool_allocator_base<FE::align_CPU_L1_cache_line>::destroy_pool_allocator_resource();
-	//FE::pool_allocator_base<FE::SIMD_auto_alignment>::destroy_pool_allocator_resource();
 }
 
 _NORETURN_ void application_base::__abnormal_shutdown_with_exit_code(int32 signal_p)

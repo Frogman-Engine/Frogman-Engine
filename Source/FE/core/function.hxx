@@ -46,7 +46,7 @@ public:
     using return_type = R;
 
     _FORCE_INLINE_ _CONSTEXPR20_ function() noexcept : m_function_pointer() {}
-    _CONSTEXPR23_ _FORCE_INLINE_ ~function() noexcept {}
+    _FORCE_INLINE_ _CONSTEXPR23_ ~function() noexcept {}
 
     _FORCE_INLINE_ _CONSTEXPR20_ function(function_type function_p) noexcept : m_function_pointer(function_p) {}
     _FORCE_INLINE_ _CONSTEXPR20_ function(const function& other_p) noexcept : m_function_pointer(other_p.m_function_pointer) {}
@@ -235,7 +235,7 @@ public:
     using return_type = void;
 
     _FORCE_INLINE_ _CONSTEXPR20_ function() noexcept : m_function_pointer() {}
-    _CONSTEXPR23_ _FORCE_INLINE_ ~function() noexcept {}
+    _FORCE_INLINE_ _CONSTEXPR23_ ~function() noexcept {}
 
     _FORCE_INLINE_ _CONSTEXPR20_ function(function_type function_p) noexcept : m_function_pointer(function_p) {}
     _FORCE_INLINE_ _CONSTEXPR20_ function(const function& other_p) noexcept : m_function_pointer(other_p.m_function_pointer) {}
@@ -304,7 +304,7 @@ public:
     using class_type = C;
 
     _FORCE_INLINE_ _CONSTEXPR20_ method() noexcept : m_method_pointer() {}
-    _CONSTEXPR23_ _FORCE_INLINE_ ~method() noexcept {}
+    _FORCE_INLINE_ _CONSTEXPR23_ ~method() noexcept {}
 
     _FORCE_INLINE_ _CONSTEXPR20_ method(method_type method_p) noexcept : m_method_pointer(method_p) {}
     _FORCE_INLINE_ _CONSTEXPR20_ method(const method& other_p) noexcept : m_method_pointer(other_p.m_method_pointer) {}
@@ -367,7 +367,7 @@ public:
     using class_type = C;
 
     _FORCE_INLINE_ _CONSTEXPR20_ method() noexcept : m_method_pointer() {}
-    _CONSTEXPR23_ _FORCE_INLINE_ ~method() noexcept {}
+    _FORCE_INLINE_ _CONSTEXPR23_ ~method() noexcept {}
 
     _FORCE_INLINE_ _CONSTEXPR20_ method(method_type method_p) noexcept : m_method_pointer(method_p) {}
     _FORCE_INLINE_ _CONSTEXPR20_ method(const method& other_p) noexcept : m_method_pointer(other_p.m_method_pointer) {}
@@ -430,7 +430,7 @@ public:
     using class_type = C;
 
     constexpr _FORCE_INLINE_ method() noexcept : m_method_pointer() {}
-    _CONSTEXPR23_ _FORCE_INLINE_ ~method() noexcept {}
+    _FORCE_INLINE_ _CONSTEXPR23_ ~method() noexcept {}
 
     _FORCE_INLINE_ _CONSTEXPR20_ method(method_type method_p) noexcept : m_method_pointer(method_p) {}
     _FORCE_INLINE_ _CONSTEXPR20_ method(const method& other_p) noexcept : m_method_pointer(other_p.m_method_pointer) {}
@@ -493,7 +493,7 @@ public:
     using class_type = C;
 
     _FORCE_INLINE_ _CONSTEXPR20_ method() noexcept : m_method_pointer() {}
-    _CONSTEXPR23_ _FORCE_INLINE_ ~method() noexcept {}
+    _FORCE_INLINE_ _CONSTEXPR23_ ~method() noexcept {}
 
     _FORCE_INLINE_ _CONSTEXPR20_ method(method_type method_p) noexcept : m_method_pointer(method_p) {}
     _FORCE_INLINE_ _CONSTEXPR20_ method(const method& other_p) noexcept : m_method_pointer(other_p.m_method_pointer) {}
@@ -557,7 +557,7 @@ public:
     using class_type = C;
 
     _FORCE_INLINE_ _CONSTEXPR20_ method() noexcept : m_method_pointer() {}
-    _CONSTEXPR23_ _FORCE_INLINE_ ~method() noexcept {}
+    _FORCE_INLINE_ _CONSTEXPR23_ ~method() noexcept {}
 
     _FORCE_INLINE_ _CONSTEXPR20_ method(method_type method_p) noexcept : m_method_pointer(method_p) {}
     _FORCE_INLINE_ _CONSTEXPR20_ method(const method& other_p) noexcept : m_method_pointer(other_p.m_method_pointer) {}
@@ -620,7 +620,7 @@ public:
     using class_type = C;
 
     _FORCE_INLINE_ _CONSTEXPR20_ method() noexcept : m_method_pointer() {}
-    _CONSTEXPR23_ _FORCE_INLINE_ ~method() noexcept {}
+    _FORCE_INLINE_ _CONSTEXPR23_ ~method() noexcept {}
 
     _FORCE_INLINE_ _CONSTEXPR20_ method(method_type method_p) noexcept : m_method_pointer(method_p) {}
     _FORCE_INLINE_ _CONSTEXPR20_ method(const method& other_p) noexcept : m_method_pointer(other_p.m_method_pointer) {}
@@ -683,7 +683,7 @@ public:
     using class_type = C;
 
     _FORCE_INLINE_ _CONSTEXPR20_ method() noexcept : m_method_pointer() {}
-     _CONSTEXPR23_ _FORCE_INLINE_ ~method() noexcept {}
+     _FORCE_INLINE_ _CONSTEXPR23_ ~method() noexcept {}
 
     _FORCE_INLINE_ _CONSTEXPR20_ method(method_type method_p) noexcept : m_method_pointer(method_p) {}
     _FORCE_INLINE_ _CONSTEXPR20_ method(const method& other_p) noexcept : m_method_pointer(other_p.m_method_pointer) {}
@@ -746,7 +746,7 @@ public:
     using class_type = C;
 
     _FORCE_INLINE_ _CONSTEXPR20_ method() noexcept : m_method_pointer() {}
-    _CONSTEXPR23_ _FORCE_INLINE_ ~method() noexcept {}
+    _FORCE_INLINE_ _CONSTEXPR23_ ~method() noexcept {}
 
     _FORCE_INLINE_ _CONSTEXPR20_ method(method_type method_p) noexcept : m_method_pointer(method_p) {}
     _FORCE_INLINE_ _CONSTEXPR20_ method(const method& other_p) noexcept : m_method_pointer(other_p.m_method_pointer) {}
@@ -829,7 +829,7 @@ struct arguments<First, void, void, void, void, void, void, void, void, void>
     static constexpr inline ARGUMENTS_COUNT count = ARGUMENTS_COUNT::_1;
     
     _FORCE_INLINE_ _CONSTEXPR20_ arguments() noexcept = default;
-    _CONSTEXPR23_ _FORCE_INLINE_ ~arguments() noexcept = default;
+    _FORCE_INLINE_ _CONSTEXPR23_ ~arguments() noexcept = default;
 
     _FORCE_INLINE_ _CONSTEXPR20_ arguments(arguments& arguments_p) noexcept : _first(arguments_p._first) {};
     _FORCE_INLINE_ _CONSTEXPR20_ arguments(arguments&& arguments_p) noexcept : _first(std::move(arguments_p._first)) {};
@@ -858,7 +858,7 @@ struct arguments<First, Second, void, void, void, void, void, void, void, void> 
     static constexpr inline ARGUMENTS_COUNT count = ARGUMENTS_COUNT::_2;
 
     _FORCE_INLINE_ _CONSTEXPR20_ arguments() noexcept : base_type(), _second() {};
-    _CONSTEXPR23_ _FORCE_INLINE_ ~arguments() noexcept = default;
+    _FORCE_INLINE_ _CONSTEXPR23_ ~arguments() noexcept = default;
 
     _FORCE_INLINE_ _CONSTEXPR20_ arguments(arguments& arguments_p) noexcept : base_type(arguments_p), _second(arguments_p._second) {};
     _FORCE_INLINE_ _CONSTEXPR20_ arguments(arguments&& arguments_p) noexcept : base_type(std::move(arguments_p)), _second(std::move(arguments_p._second)) {};
@@ -890,7 +890,7 @@ struct arguments<First, Second, Third, void, void, void, void, void, void, void>
     static constexpr inline ARGUMENTS_COUNT count = ARGUMENTS_COUNT::_3;
 
     _FORCE_INLINE_ _CONSTEXPR20_ arguments() noexcept : base_type(), _third() {};
-    _CONSTEXPR23_ _FORCE_INLINE_ ~arguments() noexcept = default;
+    _FORCE_INLINE_ _CONSTEXPR23_ ~arguments() noexcept = default;
 
     _FORCE_INLINE_ _CONSTEXPR20_ arguments(arguments& arguments_p) noexcept : base_type(arguments_p), _third(arguments_p._third) {};
     _FORCE_INLINE_ _CONSTEXPR20_ arguments(arguments&& arguments_p) noexcept : base_type(std::move(arguments_p)), _third(std::move(arguments_p._third)) {};
@@ -923,7 +923,7 @@ struct arguments<First, Second, Third, Fourth, void, void, void, void, void, voi
     static constexpr inline ARGUMENTS_COUNT count = ARGUMENTS_COUNT::_4;
 
     _FORCE_INLINE_ _CONSTEXPR20_ arguments() noexcept : base_type(), _fourth() {};
-    _CONSTEXPR23_ _FORCE_INLINE_ ~arguments() noexcept = default;
+    _FORCE_INLINE_ _CONSTEXPR23_ ~arguments() noexcept = default;
 
     _FORCE_INLINE_ _CONSTEXPR20_ arguments(arguments& arguments_p) noexcept : base_type(arguments_p), _fourth(arguments_p._fourth) {};
     _FORCE_INLINE_ _CONSTEXPR20_ arguments(arguments&& arguments_p) noexcept : base_type(std::move(arguments_p)), _fourth(std::move(arguments_p._fourth)) {};
@@ -957,7 +957,7 @@ struct arguments<First, Second, Third, Fourth, Fifth, void, void, void, void, vo
     static constexpr inline ARGUMENTS_COUNT count = ARGUMENTS_COUNT::_5;
 
     _FORCE_INLINE_ _CONSTEXPR20_ arguments() noexcept : base_type(), _fifth() {};
-    _CONSTEXPR23_ _FORCE_INLINE_ ~arguments() noexcept = default;
+    _FORCE_INLINE_ _CONSTEXPR23_ ~arguments() noexcept = default;
 
     _FORCE_INLINE_ _CONSTEXPR20_ arguments(arguments& arguments_p) noexcept : base_type(arguments_p), _fifth(arguments_p._fifth) {};
     _FORCE_INLINE_ _CONSTEXPR20_ arguments(arguments&& arguments_p) noexcept : base_type(std::move(arguments_p)), _fifth(std::move(arguments_p._fifth)) {};
@@ -992,7 +992,7 @@ struct arguments<First, Second, Third, Fourth, Fifth, Sixth, void, void, void, v
     static constexpr inline ARGUMENTS_COUNT count = ARGUMENTS_COUNT::_6;
 
     _FORCE_INLINE_ _CONSTEXPR20_ arguments() noexcept : base_type(), _sixth() {};
-    _CONSTEXPR23_ _FORCE_INLINE_ ~arguments() noexcept = default;
+    _FORCE_INLINE_ _CONSTEXPR23_ ~arguments() noexcept = default;
 
     _FORCE_INLINE_ _CONSTEXPR20_ arguments(arguments& arguments_p) noexcept : base_type(arguments_p), _sixth(arguments_p._sixth) {};
     _FORCE_INLINE_ _CONSTEXPR20_ arguments(arguments&& arguments_p) noexcept : base_type(std::move(arguments_p)), _sixth(std::move(arguments_p._sixth)) {};
@@ -1028,7 +1028,7 @@ struct arguments<First, Second, Third, Fourth, Fifth, Sixth, Seventh, void, void
     static constexpr inline ARGUMENTS_COUNT count = ARGUMENTS_COUNT::_7;
 
     _FORCE_INLINE_ _CONSTEXPR20_ arguments() noexcept : base_type(), _seventh() {};
-    _CONSTEXPR23_ _FORCE_INLINE_ ~arguments() noexcept = default;
+    _FORCE_INLINE_ _CONSTEXPR23_ ~arguments() noexcept = default;
 
     _FORCE_INLINE_ _CONSTEXPR20_ arguments(arguments& arguments_p) noexcept : base_type(arguments_p), _seventh(arguments_p._seventh) {};
     _FORCE_INLINE_ _CONSTEXPR20_ arguments(arguments&& arguments_p) noexcept : base_type(std::move(arguments_p)), _seventh(std::move(arguments_p._seventh)) {};

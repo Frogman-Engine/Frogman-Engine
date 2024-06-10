@@ -5,6 +5,10 @@
 #include <FE/core/block_pool_allocator.hxx>
 #include <FE/core/private/pool_common.hxx>
 
+#ifdef _DEBUG_
+#include <FE/core/memory_metrics.h>
+#endif
+
 
 
 
@@ -88,45 +92,6 @@ namespace internal::pool
             return (_page_iterator + size_in_bytes_to_allocate_p) >= _end;
         }
     };
-
-    // For debugging purpose only
-    template<size_t PossibleAddressCount>
-    class pool_monitor
-    {
-    public:
-        using tracker_type = address_map<PossibleAddressCount>;
-
-    private:
-        tracker_type m_tracker;
-
-    public:
-        template<typename T>
-		void track_allocation(void* pointer_p, size_t size_in_bytes_including_alignment) noexcept
-		{
-            auto l_insertion_result = this->m_tracker.insert(typename tracker_type::value_type{ static_cast<var::byte*>(pointer_p), size_in_bytes_including_alignment });
-			FE_ASSERT(l_insertion_result.second == false, "Pool Monitor: something went wrong with memory recycling algorithm. The same address has been allocated twice.");
-		}
-
-        template<typename T>
-        void track_deallocation(void* pointer_p) noexcept
-        {
-			this->m_tracker.erase(static_cast<var::byte*>(pointer_p));
-        }
-
-		void log_current_memory_utilization() noexcept
-		{
-#ifdef _ENABLE_LOG_
-            var::uint64 l_total_size_in_bytes = 0;
-            auto l_last_address = this->m_tracker.end();
-            for (auto address_iterator = this->m_tracker.begin(); address_iterator != l_last_address; ++address_iterator)
-            {
-				l_total_size_in_bytes += address_iterator->second;
-            }
-            float64 l_percent = (static_cast<float64>(l_total_size_in_bytes) / static_cast<float64>(PossibleAddressCount)) * 100.0f;
-			FE_LOG("Pool Monitor: [${%lu@0} bytes of the pool memory has been used: currently using ${%lf@1}% of the pool memory.]", &l_total_size_in_bytes, &l_percent);
-#endif
-		}
-    };
 }
 
 
@@ -162,10 +127,6 @@ private:
     pool_type m_memory_pool;
 
 public:
-#if defined(_ENABLE_LOG_) && defined(_DEBUG_)
-    internal::pool::pool_monitor<PageCapacity / Alignment::size> _pool_monitor;
-#endif
-
     pool() noexcept = default;
     ~pool() noexcept = default;
 
@@ -175,6 +136,13 @@ public:
     pool& operator=(const pool& other_p) noexcept = delete;
     pool& operator=(pool&& rvalue) noexcept = delete;
 
+/* - Memory pool corruption detector - 
+1. unused bits are always 0.
+2. bits are set to 0 during the deallocate() routine.
+3. Something definitely went wrong, if anything else rather than 0 is found within the allocation target's bitset, or if the nearest bits are inspected as 1.
+It is hard to tell which corrupted memory, but very sure to say that there was an illegal memory access operation.
+-- This feature is enabled if _DEBUG_ is defined. --
+*/
     template<typename U>
     U* allocate(count_t size_p = 1) noexcept
     {
@@ -187,7 +155,7 @@ public:
         size_t l_queried_allocation_size_in_bytes = FE::calculate_aligned_memory_size_in_bytes<U, Alignment>(size_p);
         typename pool_type::iterator l_list_iterator = this->m_memory_pool.begin();
         typename pool_type::const_iterator l_cend = this->m_memory_pool.cend();
-        
+
         /*
             first contains the address of the memory block.
             second contains the size of the memory block.
@@ -242,9 +210,6 @@ public:
                     }
                 }
 
-#if defined(_ENABLE_LOG_) && defined(_DEBUG_)
-                this->_pool_monitor.template track_allocation<U>(l_allocation_result, FE::calculate_aligned_memory_size_in_bytes<U, Alignment>(size_p));
-#endif
                 return static_cast<U*>(l_allocation_result);
             }   
             
@@ -316,10 +281,6 @@ public:
         typename pool_type::const_iterator l_cend = this->m_memory_pool.cend();
         FE_ASSERT(l_list_iterator == l_cend, "Unable to request deallocate() to an empty pool.");
 
-#if defined(_ENABLE_LOG_) && defined(_DEBUG_)
-        this->_pool_monitor.template track_deallocation<T>(pointer_p);
-#endif
-
         var::byte* const l_value = reinterpret_cast<var::byte*>(pointer_p);
 
         for (; l_list_iterator != l_cend; ++l_list_iterator)
@@ -337,7 +298,7 @@ public:
 
                 size_t l_block_size_in_bytes = FE::calculate_aligned_memory_size_in_bytes<T, Alignment>(element_count_p);
                 auto l_address_tree_insertion_result = l_list_iterator->_free_blocks.insert(block_info_type{ l_value, l_block_size_in_bytes });
-                FE_EXIT(l_address_tree_insertion_result.second == false, FE::MEMORY_ERROR_1XX::_FATAL_ERROR_DOUBLE_FREE, "Double-free detected.");
+                FE_EXIT(l_address_tree_insertion_result.second == false, FE::MEMORY_ERROR_1XX::_FATAL_ERROR_DOUBLE_FREE, "Frogman Engine Memory Pool Debug Information: double free detected.");
 
                 if (l_list_iterator->_free_blocks.size() > 1)
                 {
@@ -426,7 +387,7 @@ private:
                 if (l_leftover_size > 0)
                 {
                     _MAYBE_UNUSED_ auto l_address_tree_insertion_result = in_out_memory_p._free_blocks.insert(block_info_type{ l_leftover_address, l_leftover_size });
-                    FE_EXIT(l_address_tree_insertion_result.second == false, FE::MEMORY_ERROR_1XX::_FATAL_ERROR_DOUBLE_FREE, "Double-free detected.");
+                    FE_EXIT(l_address_tree_insertion_result.second == false, FE::MEMORY_ERROR_1XX::_FATAL_ERROR_DOUBLE_FREE, "Frogman Engine Memory Pool Debug Information: double free detected.");
                 }
                 in_out_memory_p._free_blocks.erase(free_block_iterator);
 

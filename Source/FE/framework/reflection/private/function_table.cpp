@@ -8,7 +8,7 @@
 BEGIN_NAMESPACE(FE::framework)
 
 typename function_table::function_pool_type function_table::s_function_pool(function_table::initial_size_in_bytes);
-typename function_table::underlying_container function_table::s_task_map(function_table::initial_capacity);
+typename function_table::underlying_container* function_table::s_task_map = nullptr;
 typename function_table::lock_type function_table::s_lock;
 
 END_NAMESPACE

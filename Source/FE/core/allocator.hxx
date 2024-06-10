@@ -117,7 +117,7 @@ public:
 
 	_FORCE_INLINE_ void deallocate(pointer pointer_p, size_type count_p) noexcept
 	{
-		FE_ASSERT(count_p == 0, "${%s@0}: queried allocation size is ${%lu@1}.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_INVALID_SIZE), &count_p);
+		FE_ASSERT(count_p == 0, "${%s@0}: queried deallocation size is ${%lu@1}.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_INVALID_SIZE), &count_p);
 		FE_ASSERT(pointer_p == nullptr, "${%s@0}: attempted to delete ${%p@1}.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), pointer_p);
 		
 		if constexpr (is_trivial == FE::TYPE_TRIVIALITY::_NOT_TRIVIAL)
@@ -192,7 +192,7 @@ public:
 
 	_FORCE_INLINE_ void deallocate(pointer pointer_p, size_type count_p) noexcept
 	{
-		FE_ASSERT(count_p == 0, "${%s@0}: queried allocation size is ${%lu@1}.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_INVALID_SIZE), &count_p);
+		FE_ASSERT(count_p == 0, "${%s@0}: queried deallocation size is ${%lu@1}.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_INVALID_SIZE), &count_p);
 		FE_ASSERT(pointer_p == nullptr, "${%s@0}: attempted to delete ${%p@1}.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), pointer_p);
 		
 		base_type::trackable_free<value_type, Alignment>(pointer_p, count_p * sizeof(value_type));

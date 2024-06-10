@@ -2,7 +2,7 @@
 #define _FE_CORE_STRING_VIEW_HXX_
 // Copyright © from 2023 to current, UNKNOWN STRYKER. All Rights Reserved.
 #include <FE/core/prerequisites.h>
-#include <FE/core/smart_ptrs/ptr.hxx>
+#include <FE/core/managed/ptr.hxx>
 #include <FE/core/algorithm/string.hxx>
 #include <FE/core/algorithm/utility.hxx>
 #include <FE/core/iterator.hxx>
@@ -64,7 +64,7 @@ public:
 			return;
 		}
 
-		this->m_end = algorithm::string::length(this->m_watcher.get_unchecked());
+		this->m_end = algorithm::string::length(this->m_watcher.get());
 	}
 
 
@@ -226,7 +226,7 @@ public:
 		FE_ASSERT(this->m_watcher.is_expired() == true, "Assertion Failed: Cannot reset an empty string view.");
 
 		this->m_begin = 0;
-		this->m_end = algorithm::string::length(this->m_watcher.get_unchecked());
+		this->m_end = algorithm::string::length(this->m_watcher.get());
 	}
 	
 	_CONSTEXPR20_ void swap(basic_string_view& in_out_other_p) noexcept
@@ -442,7 +442,7 @@ public:
 	}
 	_CONSTEXPR20_ friend boolean operator==(const CharT* const string_p, basic_string_view& other_p) noexcept
 	{
-		return algorithm::string::compare_ranged(other_p.m_watcher.operator->(), algorithm::string::range{ other_p.m_begin(), other_p.m_end}, string_p, algorithm::string::range{0, algorithm::string::length(string_p)});
+		return algorithm::string::compare_ranged(other_p.m_watcher.operator->(), algorithm::string::range{ other_p.m_begin, other_p.m_end }, string_p, algorithm::string::range{0, algorithm::string::length(string_p)});
 	}
 
 	template<class Allocator, class Traits>
@@ -460,7 +460,7 @@ public:
 	}
 	_CONSTEXPR20_ friend boolean operator!=(const CharT* const string_p, basic_string_view& other_p) noexcept
 	{
-		return !algorithm::string::compare_ranged(other_p.m_watcher.operator->(), algorithm::string::range{ other_p.m_begin(), other_p.m_end }, string_p, algorithm::string::range{ 0, algorithm::string::length(string_p) });
+		return !algorithm::string::compare_ranged(other_p.m_watcher.operator->(), algorithm::string::range{ other_p.m_begin , other_p.m_end }, string_p, algorithm::string::range{ 0, algorithm::string::length(string_p) });
 	}
 };
 

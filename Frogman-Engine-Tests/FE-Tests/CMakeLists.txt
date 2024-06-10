@@ -177,19 +177,18 @@ ${CMAKE_CURRENT_SOURCE_DIR}/../../Source/FE/core/private/memory_metrics.cpp
 )
 ADD_SUBDIRECTORY(FE.core.pool)
 
-SET(FE_CORE_SMART_PTRS
-${CMAKE_CURRENT_SOURCE_DIR}/../../Source/FE/core/smart_ptrs/exclusive_ptr.hxx
-${CMAKE_CURRENT_SOURCE_DIR}/../../Source/FE/core/smart_ptrs/ptr.hxx
-${CMAKE_CURRENT_SOURCE_DIR}/../../Source/FE/core/smart_ptrs/unique_ptr.hxx
-${CMAKE_CURRENT_SOURCE_DIR}/../../Source/FE/core/smart_ptrs/private/smart_ptr_variants_base.hpp
-${CMAKE_CURRENT_SOURCE_DIR}/../../Source/FE/core/smart_ptrs/private/smart_ptr_variants_base.cpp
+SET(FE_CORE_MANAGED
+${CMAKE_CURRENT_SOURCE_DIR}/../../Source/FE/core/managed/exclusive_ptr.hxx
+${CMAKE_CURRENT_SOURCE_DIR}/../../Source/FE/core/managed/ptr.hxx
+${CMAKE_CURRENT_SOURCE_DIR}/../../Source/FE/core/managed/unique_ptr.hxx
 
-${CMAKE_CURRENT_SOURCE_DIR}/../../Source/FE/core/smart_refs/trackable.hxx
-${CMAKE_CURRENT_SOURCE_DIR}/../../Source/FE/core/smart_refs/ref.hxx
-${CMAKE_CURRENT_SOURCE_DIR}/../../Source/FE/core/smart_refs/private/smart_ref_base.hpp
-${CMAKE_CURRENT_SOURCE_DIR}/../../Source/FE/core/smart_refs/private/smart_ref_base.cpp
+${CMAKE_CURRENT_SOURCE_DIR}/../../Source/FE/core/managed/trackable.hxx
+${CMAKE_CURRENT_SOURCE_DIR}/../../Source/FE/core/managed/ref.hxx
+
+${CMAKE_CURRENT_SOURCE_DIR}/../../Source/FE/core/managed/private/ref_table.hpp
+${CMAKE_CURRENT_SOURCE_DIR}/../../Source/FE/core/managed/private/ref_table.cpp
 )
-ADD_SUBDIRECTORY(FE.core.smart_ptrs)
+ADD_SUBDIRECTORY(FE.core.managed)
 
 SET(FE_CORE_STRING
 ${CMAKE_CURRENT_SOURCE_DIR}/../../Source/FE/core/string.hxx
@@ -209,6 +208,13 @@ ${CMAKE_CURRENT_SOURCE_DIR}/../../Source/FE/core/containers/private/array_impl.h
 )
 ADD_SUBDIRECTORY(FE.core.containers)
 
+SET(FE_FRAMEWORK_REFLECTION
+${CMAKE_CURRENT_SOURCE_DIR}/../../Source/FE/framework/reflection/reflection.h
+${CMAKE_CURRENT_SOURCE_DIR}/../../Source/FE/framework/reflection/function_table.hpp
+${CMAKE_CURRENT_SOURCE_DIR}/../../Source/FE/framework/reflection/private/function_table.cpp
+)
+ADD_SUBDIRECTORY(FE.framework.reflection)
+
 SET(FE_FRAMEWORK_PREDEFINED_MAIN
 ${CMAKE_CURRENT_SOURCE_DIR}/../../Source/FE/framework/framework.hpp
 ${CMAKE_CURRENT_SOURCE_DIR}/../../Source/FE/framework/private/framework.cpp
@@ -217,11 +223,5 @@ ${CMAKE_CURRENT_SOURCE_DIR}/../../Source/FE/core/private/clock.cpp
 )
 ADD_SUBDIRECTORY(FE.framework.predefined_main)
 
-SET(FE_FRAMEWORK_REFLECTION
-${CMAKE_CURRENT_SOURCE_DIR}/../../Source/FE/framework/reflection/reflection.h
-${CMAKE_CURRENT_SOURCE_DIR}/../../Source/FE/framework/reflection/function_table.hpp
-${CMAKE_CURRENT_SOURCE_DIR}/../../Source/FE/framework/reflection/private/function_table.cpp
-)
-ADD_SUBDIRECTORY(FE.framework.reflection)
 
 

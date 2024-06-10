@@ -29,7 +29,7 @@ if [ -z "$SPECIFIED_TEST_NAME" ];
         "$CURRENT_DIRECTORY/$BUILD_FILES_FOLDER_NAME/FE.core.algorithm.string/FE.core.algorithm.string_test"
         "$CURRENT_DIRECTORY/$BUILD_FILES_FOLDER_NAME/FE.core.fstring/FE.core.fstring_test"
         "$CURRENT_DIRECTORY/$BUILD_FILES_FOLDER_NAME/FE.core.pool/FE.core.pool_test"
-        "$CURRENT_DIRECTORY/$BUILD_FILES_FOLDER_NAME/FE.core.smart_ptrs/FE.core.smart_ptrs_test"
+        "$CURRENT_DIRECTORY/$BUILD_FILES_FOLDER_NAME/FE.core.managed/FE.core.managed_test"
         "$CURRENT_DIRECTORY/$BUILD_FILES_FOLDER_NAME/FE.core.string/FE.core.string_test"
         "$CURRENT_DIRECTORY/$BUILD_FILES_FOLDER_NAME/FE.core.string_view/FE.core.string_view_test"
         "$CURRENT_DIRECTORY/$BUILD_FILES_FOLDER_NAME/FE.core.containers/FE.core.containers_test"

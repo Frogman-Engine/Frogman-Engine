@@ -135,8 +135,8 @@ _FORCE_INLINE_ _CONSTEXPR17_ boolean is_prime(uint64 number_p) noexcept
 	return l_count == number_p;
 }
 
-_CONSTEXPR20_ uint64 to_higher_prime(uint64 number_p) noexcept;
-_CONSTEXPR20_ uint64 to_lower_prime(uint64 number_p) noexcept;
+uint64 to_higher_prime(uint64 number_p) noexcept;
+uint64 to_lower_prime(uint64 number_p) noexcept;
 
 template<typename T>
 _CONSTEXPR17_ T select_minimum(std::initializer_list<T>&& initializer_list_p) noexcept

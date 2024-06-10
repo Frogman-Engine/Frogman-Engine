@@ -377,7 +377,7 @@ template<typename CharT>
 _FORCE_INLINE_ _CONSTEXPR20_ void concatenate(CharT* const out_string_buffer_p, _MAYBE_UNUSED_ size_t string_buffer_size_p, ::std::initializer_list<const CharT* const>&& strings_p) noexcept
 {
     FE_STATIC_ASSERT(FE::is_char<CharT>::value == false, "CharT is not a valid character type");
-    FE_ABORT_IF(out_string_buffer_p == nullptr, "NULLPTR DETECTED: out_string_buffer_p is nullptr.");
+    FE_ASSERT(out_string_buffer_p == nullptr, "NULLPTR DETECTED: out_string_buffer_p is nullptr.");
 
     var::size_t l_current_begin_index = algorithm::string::length(out_string_buffer_p);
 
@@ -385,7 +385,7 @@ _FORCE_INLINE_ _CONSTEXPR20_ void concatenate(CharT* const out_string_buffer_p, 
     {
         size_t l_string_length_buffer = algorithm::string::length(strings_p.begin()[i]);
 
-        FE_ABORT_IF(string_buffer_size_p <= l_current_begin_index, "MEMORY BOUNDARY CHECK FAILURES: the string_buffer_size_p is smaller or equal to the l_current_begin_index");
+        FE_ASSERT(string_buffer_size_p <= l_current_begin_index, "Memory boundary check failure: the string_buffer_size_p is smaller or equal to the l_current_begin_index");
 
         std::memcpy(out_string_buffer_p + l_current_begin_index, strings_p.begin()[i], l_string_length_buffer * sizeof(CharT));
         l_current_begin_index += l_string_length_buffer;

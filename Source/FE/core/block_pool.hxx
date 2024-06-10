@@ -41,7 +41,11 @@ namespace internal::pool
         using pointer = typename block_info_type::pointer;
 
     private:
+    #ifdef _DEBUG_
+        alignas(FE::SIMD_auto_alignment::size) std::array<var::byte, sizeof(T)* PageCapacity> m_memory = { 0 };
+    #else
         alignas(FE::SIMD_auto_alignment::size) std::array<var::byte, sizeof(T)* PageCapacity> m_memory;
+    #endif
 
     public:
         constexpr static size_t page_capacity = PageCapacity;
@@ -93,11 +97,21 @@ public:
 
     pool& operator=(const pool& other_p) noexcept = delete;
     pool& operator=(pool&& rvalue) noexcept = delete;
-
+/* - Memory pool corruption detector - 
+1. unused bits are always 0.
+2. bits are set to 0 during the deallocate() routine.
+3. if anything else rather than 0 is found within the allocation target's bitset, then something went wrong.
+It is hard to tell which corrupted memory, but very sure to say that there was an illegal memory access operation.
+-- This feature is enabled if _DEBUG_ is defined. --
+*/
     T* allocate() noexcept
     {
         typename pool_type::iterator l_list_iterator = this->m_memory_pool.begin();
         typename pool_type::const_iterator l_cend = this->m_memory_pool.cend();
+
+    #ifdef _DEBUG_
+        static FE::byte s_clean_bits[sizeof(T)] { 0 };
+    #endif
 
         for (; l_list_iterator != l_cend; ++l_list_iterator)
         {
@@ -114,6 +128,10 @@ public:
                     l_allocation_result = l_list_iterator->_free_blocks.pop()._address;
                 }
 
+            #ifdef _DEBUG_
+                FE_ASSERT(( std::memcmp(l_allocation_result, s_clean_bits, sizeof(T)) != 0 ), "Frogman Engine Block Memory Pool Debug Information: Detected memory corruption!");
+            #endif
+            
                 if constexpr (FE::is_trivial<T>::value == FE::TYPE_TRIVIALITY::_NOT_TRIVIAL)
                 {
                     new(l_allocation_result) T();
@@ -145,6 +163,10 @@ public:
                 {
                     pointer_p->~T();
                 }
+
+            #ifdef _DEBUG_
+                std::memset(pointer_p, _FE_NULL_, sizeof(T));
+            #endif
 
                 l_list_iterator->_free_blocks.push(block_info_type{ pointer_p });
                 return;

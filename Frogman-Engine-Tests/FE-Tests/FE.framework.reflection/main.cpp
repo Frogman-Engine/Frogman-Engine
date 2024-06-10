@@ -65,14 +65,31 @@ int main(int argc_p, char** argv_p)
 	
     benchmark::Initialize(&argc_p, argv_p);
 	FE_ABORT_IF(benchmark::ReportUnrecognizedArguments(argc_p, argv_p) == true, "Failed to meet the expectation: Unrecognized Benchmark Arguments Detected.");
-    int32 l_exit_code = RUN_ALL_TESTS();
+    FE::framework::function_table::initialize();
+	
+	int32 l_exit_code = RUN_ALL_TESTS();
 	std::cerr << "\n\n";
 	benchmark::RunSpecifiedBenchmarks();
 	std::cerr << "\n\n";
     benchmark::Shutdown();
+
+	FE::framework::function_table::clean_up();
     return l_exit_code;
 }
 
+
+TEST(reflection, table_seg_fault)
+{
+	{
+		_MAYBE_UNUSED_ robin_hood::unordered_map<FE::string, int, FE::hash<FE::string>> l_hash_map;
+		std::cout << "static robin_hood::unordered_map<FE::string, int, FE::hash<FE::string>> l_hash_map;\n" 
+				  << "   ^                                  ^\n" 
+				  << "remove static                    FE::string uses a thread_local static reference table to manage its memory.\n"
+				  << "NOTE: anything associated with the Frogman Engine smart pointers and references is not allowed to have static lifetime.\n";
+		l_hash_map.emplace("bah", 0);
+		EXPECT_TRUE(false);
+	}
+}
 
 
 class object
@@ -94,6 +111,7 @@ public:
 		return s; 
 	}
 };
+
 
 TEST(reflection, method)
 {
@@ -125,6 +143,7 @@ bool JesusLovesYou() noexcept
 	return true;
 }
 
+
 // https://learn.microsoft.com/en-us/cpp/build/reference/gf-eliminate-duplicate-strings?view=msvc-170
 TEST(reflection, function)
 {
@@ -152,5 +171,4 @@ void FE_function_table_invocation_overhead_benchmark(benchmark::State& state_p) 
 	}
 	_DISCARD_ auto l_actual_result = std::any_cast<bool>(FE::framework::function_table::retrieve(l_function_signature)->get_result());
 }
-
 BENCHMARK(FE_function_table_invocation_overhead_benchmark);

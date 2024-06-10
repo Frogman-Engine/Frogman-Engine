@@ -16,6 +16,9 @@
 #ifdef _HAS_CXX20_
 	#define _LIKELY_ [[likely]]
 	#define _UNLIKELY_ [[unlikely]]
+	#define LIKELY(c) (c)
+	#define UNLIKELY(c) (c)
+
 		#ifdef _MSVC_
 			#define _NO_UNIQUE_ADDRESS_ [[msvc::no_unique_address]]
 		#else

@@ -2,9 +2,18 @@
 #define _FE_FRAMEWORK_HPP_
 // Copyright © from 2023 to current, UNKNOWN STRYKER. All Rights Reserved.
 #include <FE/core/prerequisites.h>
-//#include <FE/framework/reflection/function_table.hpp>
 #include <functional>
-#define _CREATE_AN_APP_ new
+
+#ifdef CONFIGURE_A_FROGMAN_ENGINE_PROJECT
+	#error Frogman Engine Prohibits macroizing the keyword "CONFIGURE_A_FROGMAN_ENGINE_PROJECT()".
+#else
+	#define CONFIGURE_A_FROGMAN_ENGINE_PROJECT() FE::framework::application_base::initializer_t g_init = FE::framework::application_base::create_application( []() {
+	#ifdef END_OF_THE_FROGMAN_ENGINE_PROJECT_CONFIGURATION
+		#error Frogman Engine Prohibits macroizing the keyword "END_OF_THE_FROGMAN_ENGINE_PROJECT_CONFIGURATION()".
+	#else
+		#define END_OF_THE_FROGMAN_ENGINE_PROJECT_CONFIGURATION() } );
+	#endif
+#endif
 
 
 
@@ -29,8 +38,6 @@ class application_base
 	static application_base* s_app;
 
 protected:
-	//static std::unique_ptr<function_table> s_function_table;
-
 	virtual bool set_up(int argc_p, char** argv_p) = 0;
 	virtual int run(int argc_p, char** argv_p) = 0;
 	virtual void clean_up() = 0;
@@ -44,7 +51,6 @@ public:
 	virtual ~application_base() {};
 
 	static initializer_t create_application(initializer_t script_p = []() { return nullptr; }) noexcept;
-	//_FORCE_INLINE_ static function_table& get_function_table() noexcept { return *s_function_table; }
 
 private:
 	static void __set_up_main() noexcept;

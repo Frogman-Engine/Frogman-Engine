@@ -75,10 +75,8 @@ private:
 
 
 
-FE::framework::application_base::initializer_t g_init = FE::framework::application_base::create_application
-(
-	[]()
-	{
-		return _CREATE_AN_APP_ my_test_app;
-	}
-);
+CONFIGURE_A_FROGMAN_ENGINE_PROJECT()
+
+return new my_test_app;
+
+END_OF_THE_FROGMAN_ENGINE_PROJECT_CONFIGURATION()

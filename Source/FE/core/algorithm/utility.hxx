@@ -390,7 +390,7 @@ _FORCE_INLINE_ _CONSTEXPR20_ void any_object_binary_representation(CharT* const 
 
 
 template<typename CharT, typename T>
-_FORCE_INLINE_ _CONSTEXPR20_ const CharT* buffered_any_primitive_to_string(T value_p) noexcept
+_FORCE_INLINE_ const CharT* buffered_any_primitive_to_string(T value_p) noexcept
 {
     FE_STATIC_ASSERT(FE::is_char<CharT>::value == false, "an illegal type assigned to the template argument CharT");
     FE_STATIC_ASSERT(FE::is_primitive<T>::value == false, "static assertion failed: T must be a primitive type.");
@@ -501,7 +501,7 @@ _FORCE_INLINE_ _CONSTEXPR20_ void any_primitive_to_string(CharT* const out_dest_
 #define _UTILITY_ALGORITHM_BUFER_SIZE_ 2048
 
 template<typename CharT, typename U>
-_FORCE_INLINE_ _CONSTEXPR20_ const CharT* buffered_any_to_string(U& value_p) noexcept
+_FORCE_INLINE_ const CharT* buffered_any_to_string(U& value_p) noexcept
 {
     FE_STATIC_ASSERT((FE::is_char<CharT>::value == false), "Static Assertion Failed: an illegal type assigned to the template argument CharT");
 

@@ -107,7 +107,12 @@ _MAYBE_UNUSED_	constexpr inline FE::uint64 uint64_min = min_value<FE::uint64>;
 #define _FE_FAILED_ 0
 
 
-struct null {};
+class null_t 
+{
+	_MAYBE_UNUSED_ uint8 m_value = 0;
+};
+
+inline constexpr null_t null;
 
 
 template <typename T>
