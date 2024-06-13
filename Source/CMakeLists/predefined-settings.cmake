@@ -19,7 +19,7 @@ SIMD options:
 
 
 IF(NOT ((CMAKE_CXX_STANDARD EQUAL 17) OR (CMAKE_CXX_STANDARD EQUAL 20) OR (CMAKE_CXX_STANDARD EQUAL 23)))
-    MESSAGE(FATAL_ERROR "Frogman Engine supports C++ 17, C++ 20, and C++ 23")
+    MESSAGE(FATAL_ERROR "Frogman Engine supports C++ 17, C++ 20, and C++ 23.")
 ENDIF()
 
 
@@ -27,8 +27,8 @@ FILE(TO_NATIVE_PATH "${CMAKE_CURRENT_SOURCE_DIR}" OS_NATIVE_CMAKE_CURRENT_SOURCE
 
 
 IF(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-	MESSAGE("Configurating The Build Environment for Windows X86-64")
-	ADD_COMPILE_OPTIONS(/D_WINDOWS_X86_64_)
+	MESSAGE("Configurating The Build Environment for Windows X86-64.")
+	ADD_COMPILE_OPTIONS(/D_WINDOWS_X86_64_ /D_ALLOWED_DIRECTORY_LENGTH_=256)
 	STRING(REPLACE "\\" "\\\\" OS_NATIVE_CMAKE_CURRENT_SOURCE_DIR "${OS_NATIVE_CMAKE_CURRENT_SOURCE_DIR}")
 
 
@@ -131,20 +131,16 @@ IF(CMAKE_SYSTEM_NAME STREQUAL "Windows")
 
 
 ELSEIF(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-	MESSAGE("Configurating The Build Environment for Linux X86-64 Distributions")
-	ADD_COMPILE_OPTIONS(-D_LINUX_X86_64_)
-	MESSAGE("CMake detected a C++ compiler at: ${CMAKE_CXX_COMPILER}")
+	MESSAGE("Configurating The Build Environment for Linux X86-64 Distributions.")
+	ADD_COMPILE_OPTIONS(-D_LINUX_X86_64_ -D_ALLOWED_DIRECTORY_LENGTH_=4096)
+	MESSAGE("CMake detected a C++ compiler at: ${CMAKE_CXX_COMPILER}.")
 	STRING(FIND "${CMAKE_CXX_COMPILER}" "clang" CLANG_COMPILER)
-	STRING(FIND "${CMAKE_CXX_COMPILER}" "g" GCC_COMPILER)
 
     IF(CLANG_COMPILER GREATER -1)
 		ADD_COMPILE_OPTIONS(-D_CLANG_=1)
-		MESSAGE("The detected C++ compiler is clang++")
-    ELSEIF(GCC_COMPILER GREATER -1)
-	 	ADD_COMPILE_OPTIONS(-D_GNUC_=1)
-		MESSAGE("The detected C++ compiler is g++")
+		MESSAGE("The detected C++ compiler is clang++.")
     ELSE()
-        MESSAGE(FATAL_ERROR "Could Not Find Any of Executable GNU C++ compilers nor Clang C++ compilers")
+        MESSAGE(FATAL_ERROR "Could Not Find Any of Executable Clang C++ compilers.")
     ENDIF()
 	
 
@@ -177,12 +173,13 @@ ELSEIF(CMAKE_SYSTEM_NAME STREQUAL "Linux")
 		MESSAGE("Building the project with 'Debug' mode.")
 		ADD_COMPILE_OPTIONS(-D_DEBUG_ -D_ENABLE_ASSERT_ -D_ENABLE_ABORT_IF_ -D_ENABLE_LOG_ -D_ENABLE_EXIT_)
 		ADD_COMPILE_OPTIONS(-g  -fno-inline-functions	-fno-unroll-loops	-fno-omit-frame-pointer -O0)
+		SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=undefined")
 
 	ELSEIF(CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
 		MESSAGE("Building the project with 'Release With Debug Information' mode.")
 		ADD_COMPILE_OPTIONS(-D_RELWITHDEBINFO_ -D_DEBUG_ -D_ENABLE_ASSERT_ -D_ENABLE_ABORT_IF_ -D_ENABLE_LOG_ -D_ENABLE_EXIT_)
 		ADD_COMPILE_OPTIONS(-finline-functions		-funroll-loops		-fomit-frame-pointer	-O3)
-
+		SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=undefined")
 	ELSEIF(CMAKE_BUILD_TYPE STREQUAL "Release")
 		MESSAGE("Building the project with 'Release' mode.")
 		ADD_COMPILE_OPTIONS(-D_RELEASE_)
@@ -230,5 +227,5 @@ ELSEIF(CMAKE_SYSTEM_NAME STREQUAL "Linux")
 	ENDIF()
 
 ELSE()
-MESSAGE(FATAL_ERROR "System not selected")
+	MESSAGE(FATAL_ERROR "System not selected.")
 ENDIF()

@@ -4,19 +4,17 @@
 #include <FE/core/types.hxx>
 
 
-#if !defined(_MSVC_) && !defined(_GNUC_)&& !defined(_CLANG_)
-#error Frogman Engine requires Microsoft Visual Studio 2022 C++ v143, LLVM Clang, g++ 11 ,or latest g++ to compile. Please use one of these compilers.
+#if !defined(_MSVC_) && !defined(_CLANG_)
+#error Frogman Engine requires LLVM Clang to compile.
 #endif
+
+#ifdef _MSVC_
+#pragma message("Frogman Engine will drop MSVC compiler support in later updates. Please use LLVM Clang toolset instead of v143.")
+#endif
+
 #if !defined(_WINDOWS_X86_64_) && !defined(_LINUX_X86_64_)
 #error An Incompatible System Environment Detected: Frogman Engine supports Windows x86-64 and Linux(Ubuntu) x86-64. Please use one of them.
 #endif
-#ifdef __APPLE__
-#error Apple platforms are not supported. Please use Windows x86-64 or Linux(Ubuntu) x84-64 Operating System.
-#endif
-#ifndef _X86_64_
-#error Frogman Engine is only works on X86-64 environment.
-#endif
-
 
 #ifdef FE
 #error Frogman Engine Prohibits macroizing the keyword "FE".
@@ -54,14 +52,12 @@
 #error Frogman Engine Prohibits macroizing the keyword "deprecated".
 #endif
 
-
 #ifdef max_value
 #error Frogman Engine Prohibits macroizing the keyword "max_value".
 #endif
 #ifdef min_value
 #error Frogman Engine Prohibits macroizing the keyword "min_value".
 #endif
-
 
 #ifdef boolean
 #error Frogman Engine Prohibits macroizing the keyword "boolean".
@@ -140,7 +136,6 @@
 #error Frogman Engine Prohibits macroizing the keyword "count_t".
 #endif
 
-
 #ifdef T
 #error Frogman Engine Prohibits macroizing the keyword "T".
 #endif
@@ -153,23 +148,5 @@
 #ifdef CharT
 #error Frogman Engine Prohibits macroizing the keyword "CharT".
 #endif
-
-
-#ifdef ATOMIC_BYTE_PTR
-#error Frogman Engine Prohibits macroizing the keyword "ATOMIC_BYTE_PTR".
-#endif
-#ifdef BYTE_PTR
-#error Frogman Engine Prohibits macroizing the keyword "BYTE_PTR".
-#endif
-#ifdef WORD_PTR
-#error Frogman Engine Prohibits macroizing the keyword "WORD_PTR".
-#endif
-#ifdef DWORD_PTR
-#error Frogman Engine Prohibits macroizing the keyword "DWORD_PTR".
-#endif
-#ifdef QWORD_PTR
-#error Frogman Engine Prohibits macroizing the keyword "QWORD_PTR".
-#endif
-
 
 #endif

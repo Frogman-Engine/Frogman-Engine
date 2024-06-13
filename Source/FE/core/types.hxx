@@ -1,7 +1,6 @@
 ﻿#ifndef _FE_CORE_TYPES_HXX_
 #define _FE_CORE_TYPES_HXX_
 // Copyright © from 2023 to current, UNKNOWN STRYKER. All Rights Reserved.
-#include <FE/miscellaneous/configuration.h>
 #include <FE/core/macros/attributes.h>
 #include <atomic>
 #include <cassert>

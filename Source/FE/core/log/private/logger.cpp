@@ -140,11 +140,11 @@ fatal_error_logger_base::fatal_error_logger_base() noexcept : base_type()
     FE::log::logger_base::mkdir(STRING(Crash Report));
     FE::log::logger_base::cd(STRING(Crash Report));
     std::filesystem::path l_path_to_log_file = this->m_directory_buffer.c_str();
-    var::wchar l_path_to_log_file_buffer[allowed_directory_string_length] = STRING(\0);
+    var::wchar l_path_to_log_file_buffer[default_buffer_size - 1] = STRING(\0);
     FE::algorithm::string::concatenate<var::wchar>
     (
             l_path_to_log_file_buffer,
-            allowed_directory_string_length,
+            default_buffer_size,
             {
                 l_path_to_log_file.c_str(),
                 STRING(\\thread ),
@@ -165,11 +165,11 @@ fatal_error_logger_base::fatal_error_logger_base() noexcept : base_type()
     var::character l_thread_id[FE::thread::max_thread_id_digit_length] = STRING(\0);
     std::snprintf(l_thread_id, FE::thread::max_thread_id_digit_length, STRING(%lu), FE::thread::this_thread_id()); // hashed thread-ids from std::hash are too long and hard to read 
 
-    var::character l_path_to_log_file_buffer[allowed_directory_string_length] = STRING(\0);
+    var::character l_path_to_log_file_buffer[default_buffer_size - 1] = STRING(\0);
     FE::algorithm::string::concatenate<var::character>
     (
             l_path_to_log_file_buffer,
-            allowed_directory_string_length,
+            default_buffer_size,
             {
                 l_path_to_log_file.c_str(),
                 STRING(/thread ),
@@ -258,11 +258,11 @@ message_logger_base::message_logger_base() noexcept : base_type()
     FE::log::logger_base::mkdir(l_current_local_time_buffer);
     FE::log::logger_base::cd(l_current_local_time_buffer);
     std::filesystem::path l_path_to_log_file = this->m_directory_buffer.c_str();
-    var::wchar l_path_to_log_file_buffer[allowed_directory_string_length] = L"\0";
+    var::wchar l_path_to_log_file_buffer[default_buffer_size - 1] = L"\0";
     FE::algorithm::string::concatenate<var::wchar>
         (
             l_path_to_log_file_buffer,
-            allowed_directory_string_length,
+            default_buffer_size,
             {
                 l_path_to_log_file.c_str(),
                 L"\\thread ",
@@ -283,11 +283,11 @@ message_logger_base::message_logger_base() noexcept : base_type()
     var::character l_thread_id[FE::thread::max_thread_id_digit_length] = "\0";
     std::snprintf(l_thread_id, FE::thread::max_thread_id_digit_length, "%lu", FE::thread::this_thread_id()); // hashed thread-ids from std::hash are too long and hard to read 
 
-    var::character l_path_to_log_file_buffer[allowed_directory_string_length] = "\0";
+    var::character l_path_to_log_file_buffer[default_buffer_size - 1] = "\0";
     FE::algorithm::string::concatenate<var::character>
         (
             l_path_to_log_file_buffer,
-            allowed_directory_string_length,
+            default_buffer_size,
             {
                 l_path_to_log_file.c_str(),
                 "/thread ",
