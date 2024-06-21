@@ -19,7 +19,8 @@ It is a non-owning pointer and its functionality is similar to eastl's smart poi
 template<typename T>
 class ptr final
 {
-	using smart_ptr_type = internal::managed::ref_block*;
+	using ref_block_type = internal::managed::ref_block<T>;
+	using smart_ptr_type = ref_block_type*;
 
 public:
 	using element_type = typename std::remove_all_extents<T>::type;
@@ -271,7 +272,7 @@ private:
 
 		if(this->m_ref_block->_address == nullptr && this->m_ref_block->_ref_count == 0)
 		{
-			internal::managed::ref_table::tl_s_ref_block_pool.deallocate(this->m_ref_block);
+			internal::managed::ref_table::tl_s_ref_block_pool.template deallocate<ref_block_type>(this->m_ref_block);
 			this->m_ref_block = nullptr;
 		}
 	}
@@ -283,13 +284,14 @@ private:
 template<typename T>
 class ptr<T[]> final
 {
+	using ref_block_type = internal::managed::ref_block<T>;
+	using smart_ptr_type = ref_block_type*;
+
 public:
 	using element_type = typename std::remove_all_extents<T>::type;
 	using pointer = element_type*;
 
 private:
-	using smart_ptr_type = internal::managed::ref_block*;
-
 	mutable smart_ptr_type m_ref_block;
 	mutable pointer m_smart_ptr_end;
 
@@ -596,7 +598,7 @@ private:
 
 		if(this->m_ref_block->_address == nullptr && this->m_ref_block->_ref_count == 0)
 		{
-			internal::managed::ref_table::tl_s_ref_block_pool.deallocate(this->m_ref_block);
+			internal::managed::ref_table::tl_s_ref_block_pool.template deallocate<ref_block_type>(this->m_ref_block);
 			this->m_ref_block = nullptr;
 		}
 	}

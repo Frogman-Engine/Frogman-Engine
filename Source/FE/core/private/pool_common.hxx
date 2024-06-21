@@ -6,7 +6,6 @@
 #include <FE/core/private/allocator_base.hpp>
 #include <FE/core/type_traits.hxx>
 
-
 // std
 #include <array>
 #include <cstring>
@@ -23,25 +22,25 @@ BEGIN_NAMESPACE(FE)
 
 enum struct POOL_TYPE : uint8
 {
-    _BLOCK = 0,
-    _GENERIC = 1,
+    _STATIC = 0,
+    _DYNAMIC = 1,
 };
 
 
 namespace internal::pool
 {
-    template <typename T, POOL_TYPE PoolType>
-    struct block_info;
+    struct block_info
+    {
+        var::byte* _address = nullptr;
+        var::size_t _size_in_bytes = 0;
+    };
 
-    template<typename T, POOL_TYPE PoolType, size_t PageCapacity, class Alignment>
+    template<POOL_TYPE PoolType, size_t PageCapacity, class Alignment>
     struct chunk;
 }
 
 
-template<typename T, POOL_TYPE PoolType, size_t PageCapacity, class Alignment, class Allocator>
-struct pool_deleter;
-
-template<typename T, POOL_TYPE PoolType, size_t PageCapacity, class Alignment, class Allocator>
+template<POOL_TYPE PoolType, size_t PageCapacity, class Alignment, class Allocator>
 class pool;
 
 
@@ -62,6 +61,7 @@ struct size_in_bytes final
 {
     _MAYBE_UNUSED_ static constexpr inline size_t size = SizeInBytes;
 };
+
 
 END_NAMESPACE
 #pragma warning (pop)

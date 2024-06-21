@@ -11,14 +11,21 @@ BEGIN_NAMESPACE(FE)
 
 
 template<class To, class From>
-_FORCE_INLINE_ _CONSTEXPR20_ To iterator_cast(const From& ptr_p) noexcept
+_FORCE_INLINE_ _CONSTEXPR17_ To iterator_cast(const From& ptr_p) noexcept
 {
 	FE_STATIC_ASSERT(((std::is_class<From>::value == false) && (std::is_pointer<From>::value == false)), "Static assertion failure: template arguments must be a pointer type or an iterator type.");
 	FE_STATIC_ASSERT(((std::is_class<To>::value == false) && (std::is_pointer<To>::value == false)), "Static assertion failure: template arguments must be a pointer type or an iterator type.");
-
+	
 	if constexpr (std::is_class<To>::value == true)
 	{
-		return To{ const_cast<To>(ptr_p) };
+		if constexpr (std::is_pointer<From>::value == true)
+		{
+			return const_cast<To>(ptr_p);
+		}
+		else if constexpr (std::is_class<From>::value == true)
+		{
+			return To{ ptr_p.operator->() };
+		}
 	}
 	else if constexpr (std::is_pointer<To>::value == true)
 	{
@@ -47,11 +54,10 @@ struct iterator final : public Implementation
 	using reference = typename Implementation::reference;
 	using const_pointer = typename Implementation::const_pointer;
 	using const_reference = typename Implementation::const_reference;
-	using index_type = typename Implementation::index_type;
 
 public:
 	_FORCE_INLINE_ _CONSTEXPR20_ iterator() noexcept : base_type() {}
-	_FORCE_INLINE_ _CONSTEXPR20_ iterator(const pointer value_p) noexcept : base_type(value_p) {}
+	_FORCE_INLINE_ _CONSTEXPR17_ iterator(const pointer value_p) noexcept : base_type(value_p) {}
 	_FORCE_INLINE_ _CONSTEXPR20_ iterator(const base_type& other_p) noexcept : base_type(other_p) {}
 	_FORCE_INLINE_ _CONSTEXPR20_ iterator(base_type&& rvalue_p) noexcept : base_type(rvalue_p) {}
 	_FORCE_INLINE_ _CONSTEXPR23_ ~iterator() noexcept {}
@@ -136,10 +142,9 @@ public:
 	}
 
 
-	_FORCE_INLINE_ _CONSTEXPR20_ reference operator[](const index_type index_p) const noexcept
+	_FORCE_INLINE_ _CONSTEXPR20_ reference operator[](const difference_type index_p) const noexcept
 	{
 		FE_ASSERT(this->is_null() == true, "${%s@0}: The iterator was null.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR));
-		FE_ASSERT(index_p == FE::max_value<index_t>, "${%s@0}: negative integers cannot be assigned to an index_t variable.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_RANGE));
 		return Implementation::operator[](index_p);
 	}
 
@@ -209,11 +214,10 @@ struct reverse_iterator final : public Implementation
 	using reference = typename Implementation::reference;
 	using const_pointer = typename Implementation::const_pointer;
 	using const_reference = typename Implementation::const_reference;
-	using index_type = typename Implementation::index_type;
 
 public:
 	_FORCE_INLINE_ _CONSTEXPR20_ reverse_iterator() noexcept : base_type() {}
-	_FORCE_INLINE_ _CONSTEXPR20_ reverse_iterator(const pointer value_p) noexcept : base_type(value_p) {}
+	_FORCE_INLINE_ _CONSTEXPR17_ reverse_iterator(const pointer value_p) noexcept : base_type(value_p) {}
 	_FORCE_INLINE_ _CONSTEXPR20_ reverse_iterator(const base_type& other_p) noexcept : base_type(other_p) {}
 	_FORCE_INLINE_ _CONSTEXPR20_ reverse_iterator(base_type&& rvalue_p) noexcept : base_type(rvalue_p) {}
 	_FORCE_INLINE_ _CONSTEXPR23_ ~reverse_iterator() noexcept {}
@@ -301,10 +305,9 @@ public:
 	}
 
 
-	_FORCE_INLINE_ _CONSTEXPR20_ reference operator[](const index_type index_p) const noexcept
+	_FORCE_INLINE_ _CONSTEXPR20_ reference operator[](const difference_type index_p) const noexcept
 	{
 		FE_ASSERT(this->is_null() == true, "${%s@0}: The iterator was null.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR));
-		FE_ASSERT(index_p == FE::max_value<index_t>, "${%s@0}: negative integers cannot be assigned to an index_t variable.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_RANGE));
 		return Implementation::operator[](index_p);
 	}
 
@@ -374,11 +377,10 @@ struct const_iterator final : public Implementation
 	using reference = typename Implementation::reference;
 	using const_pointer = typename Implementation::const_pointer;
 	using const_reference = typename Implementation::const_reference;
-	using index_type = typename Implementation::index_type;
 
 public:
 	_FORCE_INLINE_ _CONSTEXPR20_ const_iterator() noexcept : base_type() {}
-	_FORCE_INLINE_ _CONSTEXPR20_ const_iterator(const_pointer const value_p) noexcept : base_type(value_p) {}
+	_FORCE_INLINE_ _CONSTEXPR17_ const_iterator(const_pointer const value_p) noexcept : base_type(value_p) {}
 	_FORCE_INLINE_ _CONSTEXPR20_ const_iterator(const base_type& other_p) noexcept : base_type(other_p) {}
 	_FORCE_INLINE_ _CONSTEXPR20_ const_iterator(base_type&& other_p) noexcept : base_type(other_p) {}
 	_FORCE_INLINE_ _CONSTEXPR23_ ~const_iterator() noexcept {}
@@ -463,10 +465,9 @@ public:
 	}
 
 
-	_FORCE_INLINE_ _CONSTEXPR20_ reference operator[](const index_type index_p) const noexcept
+	_FORCE_INLINE_ _CONSTEXPR20_ reference operator[](const difference_type index_p) const noexcept
 	{
 		FE_ASSERT(this->is_null() == true, "${%s@0}: The const_iterator was null.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR));
-		FE_ASSERT(index_p == FE::max_value<index_t>, "${%s@0}: negative integers cannot be assigned to an index_t variable.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_RANGE));
 		return Implementation::operator[](index_p);
 	}
 
@@ -536,11 +537,10 @@ struct const_reverse_iterator final : public Implementation
 	using reference = typename Implementation::reference;
 	using const_pointer = typename Implementation::const_pointer;
 	using const_reference = typename Implementation::const_reference;
-	using index_type = typename Implementation::index_type;
 
 public:
 	_FORCE_INLINE_ _CONSTEXPR20_ const_reverse_iterator() noexcept : base_type() {}
-	_FORCE_INLINE_ _CONSTEXPR20_ const_reverse_iterator(const_pointer const value_p) noexcept : base_type(value_p) {}
+	_FORCE_INLINE_ _CONSTEXPR17_ const_reverse_iterator(const_pointer const value_p) noexcept : base_type(value_p) {}
 	_FORCE_INLINE_ _CONSTEXPR20_ const_reverse_iterator(const base_type& other_p) noexcept : base_type(other_p) {}
 	_FORCE_INLINE_ _CONSTEXPR20_ const_reverse_iterator(base_type&& other_p) noexcept : base_type(other_p) {}
 	_FORCE_INLINE_ _CONSTEXPR23_ ~const_reverse_iterator() noexcept {}
@@ -628,10 +628,9 @@ public:
 	}
 
 
-	_FORCE_INLINE_ _CONSTEXPR20_ const_reference operator[](const index_type index_p) const noexcept
+	_FORCE_INLINE_ _CONSTEXPR20_ const_reference operator[](const difference_type index_p) const noexcept
 	{
 		FE_ASSERT(this->is_null() == true, "${%s@0}: The const_reverse_iterator was null.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR));
-		FE_ASSERT(index_p == FE::max_value<index_t>, "${%s@0}: negative integers cannot be assigned to an index_t variable.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_RANGE));
 		return Implementation::operator[](index_p);
 	}
 
@@ -700,14 +699,13 @@ struct contiguous_iterator
 	using reference = T&;
 	using const_pointer = const T*;
 	using const_reference = const T&;
-	using index_type = var::index_t;
 
 protected:
 	pointer m_iterator;
 
 public:
 	_FORCE_INLINE_ _CONSTEXPR20_ contiguous_iterator() noexcept : m_iterator() {}
-	_FORCE_INLINE_ _CONSTEXPR20_ contiguous_iterator(const_pointer const value_p) noexcept : m_iterator(const_cast<pointer>(value_p)) {}
+	_FORCE_INLINE_ _CONSTEXPR17_ contiguous_iterator(const_pointer const value_p) noexcept : m_iterator(const_cast<pointer>(value_p)) {}
 	_FORCE_INLINE_ _CONSTEXPR20_ contiguous_iterator(const contiguous_iterator& other_p) noexcept : m_iterator(other_p.m_iterator) {}
 	_FORCE_INLINE_ _CONSTEXPR20_ contiguous_iterator(contiguous_iterator&& other_p) noexcept : m_iterator(other_p.m_iterator) { other_p.m_iterator = nullptr; }
 	_FORCE_INLINE_ _CONSTEXPR23_ ~contiguous_iterator() noexcept {}
@@ -773,10 +771,9 @@ public:
 	}
 
 
-	_FORCE_INLINE_ _CONSTEXPR20_ reference operator[](const index_type index_p) const noexcept
+	_FORCE_INLINE_ _CONSTEXPR20_ reference operator[](const difference_type index_p) const noexcept
 	{
 		FE_ASSERT(this->m_iterator == nullptr, "${%s@0}: The iterator was null.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR));
-		FE_ASSERT(index_p == FE::max_value<index_t>, "${%s@0}: negative integers cannot be assigned to an index_t variable.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_RANGE));
 		return this->m_iterator[index_p];
 	}
 
@@ -795,37 +792,31 @@ public:
 
 	_FORCE_INLINE_ _CONSTEXPR20_ boolean operator<(const contiguous_iterator& other_p) const noexcept
 	{
-		FE_ASSERT(this->m_iterator == nullptr, "${%s@0}: The iterator was null.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR));
 		return this->m_iterator < other_p.m_iterator;
 	}
 
 	_FORCE_INLINE_ _CONSTEXPR20_ boolean operator<=(const contiguous_iterator& other_p) const noexcept
 	{
-		FE_ASSERT(this->m_iterator == nullptr, "${%s@0}: The iterator was null.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR));
 		return this->m_iterator <= other_p.m_iterator;
 	}
 
 	_FORCE_INLINE_ _CONSTEXPR20_ boolean operator>(const contiguous_iterator& other_p) const noexcept
 	{
-		FE_ASSERT(this->m_iterator == nullptr, "${%s@0}: The iterator was null.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR));
 		return this->m_iterator > other_p.m_iterator;
 	}
 
 	_FORCE_INLINE_ _CONSTEXPR20_ boolean operator>=(const contiguous_iterator& other_p) const noexcept
 	{
-		FE_ASSERT(this->m_iterator == nullptr, "${%s@0}: The iterator was null.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR));
 		return this->m_iterator >= other_p.m_iterator;
 	}
 
 	_FORCE_INLINE_ _CONSTEXPR20_ boolean operator==(const contiguous_iterator& other_p) const noexcept
 	{
-		FE_ASSERT(this->m_iterator == nullptr, "${%s@0}: The iterator was null.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR));
 		return this->m_iterator == other_p.m_iterator;
 	}
 
 	_FORCE_INLINE_ _CONSTEXPR20_ boolean operator!=(const contiguous_iterator& other_p) const noexcept
 	{
-		FE_ASSERT(this->m_iterator == nullptr, "${%s@0}: The iterator was null.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR));
 		return this->m_iterator != other_p.m_iterator;
 	}
 };

@@ -2,7 +2,7 @@
 #define _FE_CORE_ARRAY_HXX_
 // Copyright © from 2023 to current, UNKNOWN STRYKER. All Rights Reserved.
 #include <FE/core/prerequisites.h>
-#include <FE/core/containers/private/array_impl.hxx>
+#include <FE/core/private/array_impl.hxx>
 #include <array>
 #ifdef _MEMORY_POOL_FE_ARRAYS_
 #include <FE/core/pool_allocator.hxx>

@@ -54,3 +54,6 @@
 /workspace/Frogman-Engine-Lab/Frogman-Engine-Tests/FE-Tests/Unit-Tests/build/FE.framework.predefined_main/CMakeFiles/FE.framework.predefined_main_test.dir
 /workspace/Frogman-Engine-Lab/Frogman-Engine-Tests/FE-Tests/Unit-Tests/build/FE.framework.predefined_main/CMakeFiles/edit_cache.dir
 /workspace/Frogman-Engine-Lab/Frogman-Engine-Tests/FE-Tests/Unit-Tests/build/FE.framework.predefined_main/CMakeFiles/rebuild_cache.dir
+/workspace/Frogman-Engine-Lab/Frogman-Engine-Tests/FE-Tests/Unit-Tests/build/FE.core.adjacency_graph/CMakeFiles/FE.core.adjacency_graph_test.dir
+/workspace/Frogman-Engine-Lab/Frogman-Engine-Tests/FE-Tests/Unit-Tests/build/FE.core.adjacency_graph/CMakeFiles/edit_cache.dir
+/workspace/Frogman-Engine-Lab/Frogman-Engine-Tests/FE-Tests/Unit-Tests/build/FE.core.adjacency_graph/CMakeFiles/rebuild_cache.dir

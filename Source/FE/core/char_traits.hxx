@@ -13,7 +13,7 @@ BEGIN_NAMESPACE(FE)
 template<typename CharT>
 struct null_escape_size
 {
-    _MAYBE_UNUSED_ constexpr static uint8 value = sizeof(CharT);
+    _MAYBE_UNUSED_ static constexpr uint8 value = sizeof(CharT);
 };
 
 

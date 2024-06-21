@@ -1,8 +1,8 @@
-
 #include <gtest/gtest.h>
 #include <benchmark/benchmark.h>
 #include <FE/core/function.hxx>
 #include <FE/framework/reflection/reflection.h>
+
 
 
 
@@ -65,15 +65,17 @@ int main(int argc_p, char** argv_p)
 	
     benchmark::Initialize(&argc_p, argv_p);
 	FE_ABORT_IF(benchmark::ReportUnrecognizedArguments(argc_p, argv_p) == true, "Failed to meet the expectation: Unrecognized Benchmark Arguments Detected.");
-    FE::framework::function_table::initialize();
-	
+    FE::framework::reflection::function_table::initialize();
+	FE::framework::reflection::variable_map::initialize();
+
 	int32 l_exit_code = RUN_ALL_TESTS();
 	std::cerr << "\n\n";
 	benchmark::RunSpecifiedBenchmarks();
 	std::cerr << "\n\n";
     benchmark::Shutdown();
 
-	FE::framework::function_table::clean_up();
+	FE::framework::reflection::variable_map::clean_up();
+	FE::framework::reflection::function_table::clean_up();
     return l_exit_code;
 }
 
@@ -96,7 +98,18 @@ class object
 { 
 	REGISTER_FE_CLASS(object);
 
+	REGISTER_FE_PROPERTY(m_speed);
+	var::float64 m_speed;
+
+	REGISTER_FE_PROPERTY(m_direction);
+	var::float64 m_direction;
+
+	REGISTER_FE_PROPERTY(m_health);
+	var::float64 m_health;
+
 public:
+	object() noexcept : m_speed(), m_direction(), m_health() {}
+
 	REGISTER_FE_METHOD(object, initialize, std::string  (void));
 	std::string initialize() { return "object initialized"; }
 
@@ -116,7 +129,7 @@ public:
 TEST(reflection, method)
 {
 	object l_object;
-	FE::task_base* l_task = ::FE::framework::function_table::invoke_method(l_object, "std::string object::initialize(void)");
+	FE::task_base* l_task = ::FE::framework::reflection::function_table::invoke_method(l_object, "std::string object::initialize(void)");
 	std::any l_result = l_task->get_result();
 	EXPECT_TRUE(l_result.has_value());
 	{
@@ -128,7 +141,7 @@ TEST(reflection, method)
 	FE::arguments<var::length_t> l_args;
 	l_args._first = 16;
 	
-	l_task = ::FE::framework::function_table::invoke_method(l_object, l_object.reflection_instance_do_as_what_i_say.get_signature(), std::move(l_args));
+	l_task = ::FE::framework::reflection::function_table::invoke_method(l_object, l_object.method_reflection_instance_do_as_what_i_say.get_signature(), std::move(l_args));
 	l_result = l_task->get_result();
 	EXPECT_TRUE(l_result.has_value());
 	{
@@ -148,12 +161,12 @@ bool JesusLovesYou() noexcept
 TEST(reflection, function)
 {
 	FE::string l_function_signature = "bool JesusLovesYou() noexcept";
-	FE::framework::function_table::register_task<FE::c_style_task<bool(void)>>(l_function_signature, &JesusLovesYou);
-	EXPECT_TRUE(FE::framework::function_table::check_presence(l_function_signature));
+	FE::framework::reflection::function_table::register_task<FE::c_style_task<bool(void)>>(l_function_signature, &JesusLovesYou);
+	EXPECT_TRUE(FE::framework::reflection::function_table::check_presence(l_function_signature));
 
-	FE::framework::function_table::invoke_function(l_function_signature);
+	FE::framework::reflection::function_table::invoke_function(l_function_signature);
 
-	auto l_fn = FE::framework::function_table::retrieve(l_function_signature);
+	auto l_fn = FE::framework::reflection::function_table::retrieve(l_function_signature);
 	auto l_result = l_fn->get_result();
 	EXPECT_TRUE(l_result.has_value());
 
@@ -167,8 +180,8 @@ void FE_function_table_invocation_overhead_benchmark(benchmark::State& state_p) 
 	FE::string l_function_signature = "bool JesusLovesYou() noexcept";
 	for(auto _ : state_p)
 	{
-		FE::framework::function_table::invoke_function(l_function_signature);
+		FE::framework::reflection::function_table::invoke_function(l_function_signature);
 	}
-	_DISCARD_ auto l_actual_result = std::any_cast<bool>(FE::framework::function_table::retrieve(l_function_signature)->get_result());
+	_DISCARD_ auto l_actual_result = std::any_cast<bool>(FE::framework::reflection::function_table::retrieve(l_function_signature)->get_result());
 }
 BENCHMARK(FE_function_table_invocation_overhead_benchmark);

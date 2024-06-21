@@ -3,7 +3,7 @@
 
 
 // Copyright © from 2023 to current, UNKNOWN STRYKER. All Rights Reserved.
-#include <FE/core/containers/array.hxx>
+#include <FE/core/array.hxx>
 #include <FE/core/string.hxx>
 #include <FE/core/fstring.hxx>
 using namespace FE;

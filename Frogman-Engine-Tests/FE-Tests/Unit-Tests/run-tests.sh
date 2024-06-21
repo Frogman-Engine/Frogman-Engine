@@ -36,6 +36,7 @@ if [ -z "$SPECIFIED_TEST_NAME" ];
         "$WORKING_DIRECTORY/FE.core.containers/FE.core.containers_test"
         "$WORKING_DIRECTORY/FE.framework.predefined_main/FE.framework.predefined_main_test"
         "$WORKING_DIRECTORY/FE.framework.reflection/FE.framework.reflection_test"
+        "$WORKING_DIRECTORY/FE.core.adjacency_graph/FE.core.adjacency_graph_test"
     )
 
     echo " "

@@ -5,6 +5,7 @@
 #include <atomic>
 #include <cassert>
 #include <cstdint>
+#include <functional>
 #include <limits>
 #include <typeinfo>
 #include <type_traits>
@@ -203,7 +204,7 @@ namespace internal
 {
 	struct do_once
 	{
-		_FORCE_INLINE_ do_once(void(*code_p)(void)) noexcept
+		_FORCE_INLINE_ do_once(const std::function<void()>& code_p) noexcept
 		{
 			code_p();
 		}
@@ -229,7 +230,7 @@ namespace internal
 #endif
 #define FE_DO_ONCE(frequency, ...)\
 { \
-	frequency ::FE::internal::do_once __FE_DO_ONCE_INSTANCE__([]() { __VA_ARGS__; }); \
+	frequency ::FE::internal::do_once __FE_DO_ONCE_INSTANCE__([=]() { __VA_ARGS__; }); \
 }
 
 END_NAMESPACE

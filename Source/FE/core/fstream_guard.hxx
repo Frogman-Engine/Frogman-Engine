@@ -69,52 +69,8 @@ public:
 		return true;
 	}
 
-
 	_FORCE_INLINE_ bool is_open() noexcept { return this->m_fstream.is_open(); }
-
 	_FORCE_INLINE_ void endl() noexcept { this->m_fstream << std::endl; }
-
-	template<class Container>
-	boolean write_a_file(Container& container_p) noexcept
-	{
-		if (this->m_fstream.is_open() == false)
-		{
-			return false;
-		}
-
-		for (auto& string_ref : container_p)
-		{
-			if (*(string_ref.unsafe_begin()) != _FE_NULL_)
-			{
-				this->m_fstream << string_ref.c_str() << std::endl;
-			}
-		}
-
-		return true;
-	}
-
-	template<class Container, FE::uint64 line_buffer_max_size>
-	boolean read_a_file(Container& container_p) noexcept
-	{
-		if (this->m_fstream.is_open() == false)
-		{
-			return false;
-		}
-
-		typename FStream::char_type l_string_buffer[line_buffer_max_size] = _FE_NULL_;
-
-		while (this->m_fstream)
-		{
-			this->m_fstream.getline(l_string_buffer, line_buffer_max_size);
-			if (l_string_buffer[0] != _FE_NULL_)
-			{
-				container_p.emplace_back(l_string_buffer);
-			}
-		}
-
-		return true;
-	}
-
 	_FORCE_INLINE_ FStream& get_fstream_reference() noexcept { return this->m_fstream; }
 };
 

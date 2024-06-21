@@ -38,13 +38,13 @@ void format_string(char* out_buffer_pointer_p, const char* string_format_p, _MAY
 
             if (string_format_p[4] == '@')
             {
-                constexpr static index_t _JUMP_TO_FORMAT_SPECIFIER_VALUE_PREFIX_ = 5;
+                static constexpr index_t _JUMP_TO_FORMAT_SPECIFIER_VALUE_PREFIX_ = 5;
                 l_index = algorithm::utility::string_to_uint<var::uint32>(string_format_p + _JUMP_TO_FORMAT_SPECIFIER_VALUE_PREFIX_);
                 FE_ABORT_IF(string_format_p[_JUMP_TO_FORMAT_SPECIFIER_VALUE_PREFIX_ + l_index._digit_length] != '}', "ERROR: an illegal string format detected! } is missing.");
             }
             else if (string_format_p[5] == '@')
             {
-                constexpr static index_t _JUMP_TO_FORMAT_SPECIFIER_VALUE_PREFIX_ = 6;
+                static constexpr index_t _JUMP_TO_FORMAT_SPECIFIER_VALUE_PREFIX_ = 6;
                 l_index = algorithm::utility::string_to_uint<var::uint32>(string_format_p + _JUMP_TO_FORMAT_SPECIFIER_VALUE_PREFIX_);
                 FE_ABORT_IF(string_format_p[_JUMP_TO_FORMAT_SPECIFIER_VALUE_PREFIX_ + l_index._digit_length] != '}', "ERROR: an illegal string format detected! } is missing.");
             }

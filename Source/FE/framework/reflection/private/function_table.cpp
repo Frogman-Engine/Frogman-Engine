@@ -5,7 +5,7 @@
 
 
 
-BEGIN_NAMESPACE(FE::framework)
+BEGIN_NAMESPACE(FE::framework::reflection)
 
 typename function_table::function_pool_type function_table::s_function_pool(function_table::initial_size_in_bytes);
 typename function_table::underlying_container* function_table::s_task_map = nullptr;

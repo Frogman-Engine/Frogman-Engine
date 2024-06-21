@@ -1,5 +1,5 @@
-﻿#ifndef _FE_FRAMEWORK_FUNCTION_TABLE_HPP_
-#define _FE_FRAMEWORK_FUNCTION_TABLE_HPP_
+﻿#ifndef _FE_FRAMEWORK_REFLECTION_FUNCTION_TABLE_HPP_
+#define _FE_FRAMEWORK_REFLECTION_FUNCTION_TABLE_HPP_
 // Copyright © from 2023 to current, UNKNOWN STRYKER. All Rights Reserved.
 #include <FE/core/prerequisites.h>
 #include <FE/core/function.hxx>
@@ -17,10 +17,9 @@
 
 
 
-BEGIN_NAMESPACE(FE::framework)
+BEGIN_NAMESPACE(FE::framework::reflection)
 
 
-// function_table is currently under development. It might not be suitable to use
 class function_table
 {
 public:		
@@ -29,8 +28,8 @@ public:
 	using lock_type = std::mutex;
 	using alignment_type = FE::align_CPU_L1_cache_line;
 
-	constexpr static size_t initial_size_in_bytes = (64 KB);
-	constexpr static size_t initial_capacity = initial_size_in_bytes / alignment_type::size;
+	static constexpr size_t initial_size_in_bytes = (64 KB);
+	static constexpr size_t initial_capacity = initial_size_in_bytes / alignment_type::size;
 
 private:
 	static function_pool_type s_function_pool;
@@ -43,7 +42,7 @@ public:
 
 	static boolean initialize() noexcept
 	{
-		FE_ASSERT(s_task_map != nullptr, "Assertion failure: cannot initialize FE.function_table more than once.");
+		FE_ASSERT(s_task_map != nullptr, "Assertion failure: cannot initialize FE::framework::reflection::function_table more than once.");
 		if(s_task_map == nullptr)
 		{
 			s_task_map = (underlying_container*)ALIGNED_ALLOC(sizeof(underlying_container), FE::align_CPU_L1_cache_line::size);
@@ -56,7 +55,7 @@ public:
 	
 	static boolean clean_up() noexcept
 	{
-		FE_ASSERT(s_task_map == nullptr, "Assertion failure: unable to clean_up() FE.function_table. It is null.");
+		FE_ASSERT(s_task_map == nullptr, "Assertion failure: unable to clean_up() FE::framework::reflection::function_table. It is null.");
 
 		if(s_task_map != nullptr)
 		{
@@ -134,10 +133,10 @@ public:
 		return l_task;
 	}
 
-	_FORCE_INLINE_ static void reserve(size_t size_p) noexcept 
+	_FORCE_INLINE_ static void reserve(size_t size_p) noexcept
 	{
 		std::lock_guard<std::mutex> l_lock(s_lock);
-		s_task_map->reserve(size_p); 
+		s_task_map->reserve(size_p);
 	}
 };
 

@@ -5,24 +5,30 @@
 #include <FE/core/string.hxx>
 
 #include <FE/framework/reflection/function_table.hpp>
+#include <FE/framework/reflection/variable_map.hpp>
+
+
 
 
 #ifdef REGISTER_FE_CLASS
-#error REGISTER_FE_CLASS is a reserved Frogman Engine macro keyword.
-#endif
+	#error REGISTER_FE_CLASS is a reserved Frogman Engine macro keyword.
+#else
 #define REGISTER_FE_CLASS(class_name) \
 public: \
 struct class_meta_data \
 { \
 	using type = class_name; \
 	static constexpr const char* name = #class_name; \
-}; \
+	class_name* _this; \
+	class_meta_data(class_name* this_p) noexcept : _this(this_p) {} \
+} _class_meta_data = this; \
 private:
+#endif
 
 
 #ifdef REGISTER_FE_METHOD
-#error REGISTER_FE_METHOD is a reserved Frogman Engine macro keyword.
-#endif
+	#error REGISTER_FE_METHOD is a reserved Frogman Engine macro keyword.
+#else
 /*Parameter order:
 1st - method name
 2nd - method attributes[ EX: void(void) ]
@@ -30,12 +36,11 @@ private:
 4th and so on - arguments buffer type[ EX: FE::string, var::length_t ] 
 */
 #define REGISTER_FE_METHOD(namespace, method_name, ...) \
-private: \
-struct reflection_##method_name \
+struct method_reflection_##method_name \
 { \
-	reflection_##method_name() noexcept \
+	method_reflection_##method_name() noexcept \
 	{ \
-		FE_DO_ONCE(_DO_ONCE_AT_APP_PROCESS_, ::FE::framework::function_table::register_task<::FE::cpp_style_task<class_meta_data::type, __VA_ARGS__>>(get_signature(), &class_meta_data::type::method_name)); \
+		FE_DO_ONCE(_DO_ONCE_AT_APP_PROCESS_, ::FE::framework::reflection::function_table::register_task<::FE::cpp_style_task<class_meta_data::type, __VA_ARGS__>>(get_signature(), &class_meta_data::type::method_name)); \
 	} \
 public: \
 	static ::FE::string get_signature() noexcept \
@@ -61,6 +66,21 @@ public: \
 		} \
 		return l_full_signature; \
 	} \
-}; public: reflection_##method_name reflection_instance_##method_name
+} method_reflection_instance_##method_name;
+#endif
+
+
+#ifdef REGISTER_FE_PROPERTY
+	#error REGISTER_FE_PROPERTY is a reserved Frogman Engine macro keyword.
+#else
+#define REGISTER_FE_PROPERTY(property_name)  \
+struct property_reflection_##property_name \
+{ \
+	property_reflection_##property_name(typename class_meta_data::type* this_p) noexcept \
+	{ \
+		FE_DO_ONCE(_DO_ONCE_AT_APP_PROCESS_, ::FE::framework::reflection::variable_map::register_variable(class_meta_data::name, #property_name, (reinterpret_cast<std::byte*>(&(this_p->property_name)) - reinterpret_cast<std::byte*>(this_p)))); \
+	} \
+} property_reflection_instance_##property_name = this;
+#endif
 
 #endif

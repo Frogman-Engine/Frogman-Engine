@@ -44,7 +44,8 @@ class exclusive_ptr final
 	FE_STATIC_ASSERT(std::is_class<Allocator>::value == false, "Static Assertion Failed: The template argument Allocator is not a class or a struct type.");
 	FE_STATIC_ASSERT((std::is_same<T, typename Allocator::value_type>::value == false), "static assertion failed: enforcing Allocator's value_type to be equivalent to the typename T. The template parameter T must be identical to the value_type of the Allocator.");
 
-	using smart_ptr_type = internal::managed::ref_block*;
+	using ref_block_type = internal::managed::ref_block<T>;
+	using smart_ptr_type = ref_block_type*;
 
 public:
 	using allocator_type = Allocator;
@@ -76,7 +77,7 @@ public:
 
 	_FORCE_INLINE_ _CONSTEXPR20_ exclusive_ptr(const element_type& value_p, const Allocator& allocator_p = Allocator()) noexcept : m_allocator(allocator_p)
 	{
-		this->m_ref_block = internal::managed::ref_table::tl_s_ref_block_pool.allocate();
+		this->m_ref_block = internal::managed::ref_table::tl_s_ref_block_pool.template allocate<ref_block_type>();
 		this->m_ref_block->_address = this->m_allocator.allocate(1);
 		*static_cast<pointer>(this->m_ref_block->_address) = value_p;
 	}
@@ -105,7 +106,7 @@ public:
 		}
 		else
 		{
-			this->m_ref_block = internal::managed::ref_table::tl_s_ref_block_pool.allocate();
+			this->m_ref_block = internal::managed::ref_table::tl_s_ref_block_pool.template allocate<ref_block_type>();
 			this->m_ref_block->_address = this->m_allocator.allocate(1);
 		}
 
@@ -122,7 +123,7 @@ public:
 			this->m_ref_block->_address = nullptr;
 			if(this->m_ref_block->_ref_count == 0)
 			{
-				internal::managed::ref_table::tl_s_ref_block_pool.deallocate(this->m_ref_block);
+				internal::managed::ref_table::tl_s_ref_block_pool.template deallocate<ref_block_type>(this->m_ref_block);
 				this->m_ref_block = nullptr;
 			}
 		}
@@ -315,7 +316,7 @@ private:
 
 		if(this->m_ref_block->_ref_count == 0)
 		{
-			internal::managed::ref_table::tl_s_ref_block_pool.deallocate(this->m_ref_block);
+			internal::managed::ref_table::tl_s_ref_block_pool.template deallocate<ref_block_type>(this->m_ref_block);
 			this->m_ref_block = nullptr;
 		}
 	}
@@ -358,7 +359,8 @@ class exclusive_ptr<T[], Allocator> final
 	FE_STATIC_ASSERT(std::is_class<Allocator>::value == false, "Static Assertion Failed: The template argument Allocator is not a class or a struct type.");
 	FE_STATIC_ASSERT((std::is_same<T, typename Allocator::value_type>::value == false), "static assertion failed: enforcing Allocator's value_type to be equivalent to the typename T. The template parameter T must be identical to the value_type of the Allocator.");
 	
-	using smart_ptr_type = internal::managed::ref_block*;
+	using ref_block_type = internal::managed::ref_block<T>;
+	using smart_ptr_type = ref_block_type*;
 
 public:
 	using allocator_type = Allocator;
@@ -392,7 +394,7 @@ public:
 
 	_FORCE_INLINE_ _CONSTEXPR20_ exclusive_ptr(FE::reserve&& array_size_p, const Allocator& allocator_p = Allocator()) noexcept : m_allocator(allocator_p)
 	{
-		this->m_ref_block = internal::managed::ref_table::tl_s_ref_block_pool.allocate();
+		this->m_ref_block = internal::managed::ref_table::tl_s_ref_block_pool.template allocate<ref_block_type>();
 		this->m_ref_block->_address = this->m_allocator.allocate(array_size_p._value);
 		this->m_smart_ptr_end = static_cast<pointer>(this->m_ref_block->_address) + array_size_p._value;
 	}
@@ -405,7 +407,7 @@ public:
 			return;
 		}
 
-		this->m_ref_block = internal::managed::ref_table::tl_s_ref_block_pool.allocate();
+		this->m_ref_block = internal::managed::ref_table::tl_s_ref_block_pool.template allocate<ref_block_type>();
 		this->m_ref_block->_address = this->m_allocator.allocate(l_initializer_list_size);
 		this->m_smart_ptr_end = static_cast<pointer>(this->m_ref_block->_address) + l_initializer_list_size;
 		this->__copy_from_initializer_list(std::move(values_p));
@@ -420,7 +422,7 @@ public:
 			this->__destruct();
 		}
 
-		this->m_ref_block = algorithm::utility::exchange<internal::managed::ref_block*>(rvalue_p.m_ref_block, nullptr);
+		this->m_ref_block = algorithm::utility::exchange<smart_ptr_type>(rvalue_p.m_ref_block, nullptr);
 		this->m_smart_ptr_end = algorithm::utility::exchange<pointer>(rvalue_p.m_smart_ptr_end, nullptr);
 		this->m_allocator = rvalue_p.m_allocator;
 
@@ -437,7 +439,7 @@ public:
 
 		if(this->m_ref_block == nullptr)
 		{
-			this->m_ref_block = internal::managed::ref_table::tl_s_ref_block_pool.allocate();
+			this->m_ref_block = internal::managed::ref_table::tl_s_ref_block_pool.template allocate<ref_block_type>();
 		}
 
 		this->__reallocate(l_initializer_list_size);
@@ -450,7 +452,7 @@ public:
 	{
 		if(this->m_ref_block == nullptr)
 		{
-			this->m_ref_block = internal::managed::ref_table::tl_s_ref_block_pool.allocate();
+			this->m_ref_block = internal::managed::ref_table::tl_s_ref_block_pool.template allocate<ref_block_type>();
 		}
 
 		this->__reallocate(new_array_size_p._value);
@@ -467,7 +469,7 @@ public:
 			this->m_ref_block->_address = nullptr;
 			if(this->m_ref_block->_ref_count == 0)
 			{
-				internal::managed::ref_table::tl_s_ref_block_pool.deallocate(this->m_ref_block);
+				internal::managed::ref_table::tl_s_ref_block_pool.template deallocate<ref_block_type>(this->m_ref_block);
 				this->m_ref_block = nullptr;
 			}
 		}
@@ -751,7 +753,7 @@ private:
 
 		if(this->m_ref_block->_ref_count == 0)
 		{
-			internal::managed::ref_table::tl_s_ref_block_pool.deallocate(this->m_ref_block);
+			internal::managed::ref_table::tl_s_ref_block_pool.template deallocate<ref_block_type>(this->m_ref_block);
 			this->m_ref_block = nullptr;
 		}
 	}

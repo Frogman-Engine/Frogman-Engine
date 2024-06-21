@@ -3,6 +3,7 @@
 
 // std
 #include <iostream>
+#include <unordered_map>
 
 // Copyright © from 2023 to current, UNKNOWN STRYKER. All Rights Reserved.
 #include <FE/core/algorithm/utility.hxx>

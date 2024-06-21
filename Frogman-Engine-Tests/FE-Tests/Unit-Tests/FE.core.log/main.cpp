@@ -16,13 +16,13 @@ int main()
 
     FE_LOG("Compilation test of FE.core.log source code is successful.\n");
 
-    var::int32 i = 7;
+    _MAYBE_UNUSED_ var::int32 i = 7;
     FE_LOG("This is how an integer can be logged. ${%s@0} = ${%d@1};\n", TO_STRING(var::int32 i), &i);
 
-    var::float32 f = 3.14f;
+    _MAYBE_UNUSED_ var::float32 f = 3.14f;
     FE_LOG("This is how a float can be logged. ${%s@0} = ${%f@1};\n", TO_STRING(var::float32 i), &f);
 
-    var::boolean b = true;
+    _MAYBE_UNUSED_ var::boolean b = true;
     FE_LOG("This is how a boolean can be logged. ${%s@0} = ${%b@1};\n", TO_STRING(var::boolean b), &b);
 
     {
@@ -30,7 +30,7 @@ int main()
         constexpr FE::size_t l_buffer_size = sizeof(object_t) * 100;
         std::unique_ptr<char[]> u = std::make_unique<char[]>(l_buffer_size);
 
-        object_t arr = {1,2,3,4,5,6,7,8,9,10};
+        _MAYBE_UNUSED_ object_t arr = {1,2,3,4,5,6,7,8,9,10};
         FE::algorithm::utility::any_object_binary_representation<char>(u.get(), l_buffer_size, arr);
         FE_LOG("This is how an object's binary can be logged. ${%s@0} :\n${%s@1}\n", "object_t arr = {1,2,3,4,5,6,7,8,9,10} can be represented as", u.get());
     }

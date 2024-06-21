@@ -7,7 +7,7 @@
 
 # =============================================================================
 # Project: FE_UNIT_TEST
-# Configurations: Debug
+# Configurations: Release
 # =============================================================================
 # =============================================================================
 
@@ -22,18 +22,18 @@ rule CUSTOM_COMMAND
 #############################################
 # Rule for compiling CXX files.
 
-rule CXX_COMPILER__FE.2ecore.2eprerequisites_test_unscanned_Debug
+rule CXX_COMPILER__FE.2ecore.2eprerequisites_test_unscanned_Release
   depfile = $DEP_FILE
   deps = gcc
-  command = ${LAUNCHER}${CODE_CHECK}/usr/bin/clang++ $DEFINES $INCLUDES $FLAGS -MD -MT $out -MF $DEP_FILE -o $out -c $in
+  command = ${LAUNCHER}${CODE_CHECK}/usr/bin/clang++-12 $DEFINES $INCLUDES $FLAGS -MD -MT $out -MF $DEP_FILE -o $out -c $in
   description = Building CXX object $out
 
 
 #############################################
 # Rule for linking CXX executable.
 
-rule CXX_EXECUTABLE_LINKER__FE.2ecore.2eprerequisites_test_Debug
-  command = $PRE_LINK && /usr/bin/clang++ $FLAGS $LINK_FLAGS $in -o $TARGET_FILE $LINK_PATH $LINK_LIBRARIES && $POST_BUILD
+rule CXX_EXECUTABLE_LINKER__FE.2ecore.2eprerequisites_test_Release
+  command = $PRE_LINK && /usr/bin/clang++-12 $FLAGS $LINK_FLAGS $in -o $TARGET_FILE $LINK_PATH $LINK_LIBRARIES && $POST_BUILD
   description = Linking CXX executable $TARGET_FILE
   restat = $RESTAT
 
@@ -41,18 +41,18 @@ rule CXX_EXECUTABLE_LINKER__FE.2ecore.2eprerequisites_test_Debug
 #############################################
 # Rule for compiling CXX files.
 
-rule CXX_COMPILER__FE.2ecore.2etype_traits_test_unscanned_Debug
+rule CXX_COMPILER__FE.2ecore.2etype_traits_test_unscanned_Release
   depfile = $DEP_FILE
   deps = gcc
-  command = ${LAUNCHER}${CODE_CHECK}/usr/bin/clang++ $DEFINES $INCLUDES $FLAGS -MD -MT $out -MF $DEP_FILE -o $out -c $in
+  command = ${LAUNCHER}${CODE_CHECK}/usr/bin/clang++-12 $DEFINES $INCLUDES $FLAGS -MD -MT $out -MF $DEP_FILE -o $out -c $in
   description = Building CXX object $out
 
 
 #############################################
 # Rule for linking CXX executable.
 
-rule CXX_EXECUTABLE_LINKER__FE.2ecore.2etype_traits_test_Debug
-  command = $PRE_LINK && /usr/bin/clang++ $FLAGS $LINK_FLAGS $in -o $TARGET_FILE $LINK_PATH $LINK_LIBRARIES && $POST_BUILD
+rule CXX_EXECUTABLE_LINKER__FE.2ecore.2etype_traits_test_Release
+  command = $PRE_LINK && /usr/bin/clang++-12 $FLAGS $LINK_FLAGS $in -o $TARGET_FILE $LINK_PATH $LINK_LIBRARIES && $POST_BUILD
   description = Linking CXX executable $TARGET_FILE
   restat = $RESTAT
 
@@ -60,18 +60,18 @@ rule CXX_EXECUTABLE_LINKER__FE.2ecore.2etype_traits_test_Debug
 #############################################
 # Rule for compiling CXX files.
 
-rule CXX_COMPILER__FE.2ecore.2ealgorithm.2eutility_test_unscanned_Debug
+rule CXX_COMPILER__FE.2ecore.2ealgorithm.2eutility_test_unscanned_Release
   depfile = $DEP_FILE
   deps = gcc
-  command = ${LAUNCHER}${CODE_CHECK}/usr/bin/clang++ $DEFINES $INCLUDES $FLAGS -MD -MT $out -MF $DEP_FILE -o $out -c $in
+  command = ${LAUNCHER}${CODE_CHECK}/usr/bin/clang++-12 $DEFINES $INCLUDES $FLAGS -MD -MT $out -MF $DEP_FILE -o $out -c $in
   description = Building CXX object $out
 
 
 #############################################
 # Rule for linking CXX executable.
 
-rule CXX_EXECUTABLE_LINKER__FE.2ecore.2ealgorithm.2eutility_test_Debug
-  command = $PRE_LINK && /usr/bin/clang++ $FLAGS $LINK_FLAGS $in -o $TARGET_FILE $LINK_PATH $LINK_LIBRARIES && $POST_BUILD
+rule CXX_EXECUTABLE_LINKER__FE.2ecore.2ealgorithm.2eutility_test_Release
+  command = $PRE_LINK && /usr/bin/clang++-12 $FLAGS $LINK_FLAGS $in -o $TARGET_FILE $LINK_PATH $LINK_LIBRARIES && $POST_BUILD
   description = Linking CXX executable $TARGET_FILE
   restat = $RESTAT
 
@@ -79,18 +79,18 @@ rule CXX_EXECUTABLE_LINKER__FE.2ecore.2ealgorithm.2eutility_test_Debug
 #############################################
 # Rule for compiling CXX files.
 
-rule CXX_COMPILER__FE.2ecore.2ehash_test_unscanned_Debug
+rule CXX_COMPILER__FE.2ecore.2ehash_test_unscanned_Release
   depfile = $DEP_FILE
   deps = gcc
-  command = ${LAUNCHER}${CODE_CHECK}/usr/bin/clang++ $DEFINES $INCLUDES $FLAGS -MD -MT $out -MF $DEP_FILE -o $out -c $in
+  command = ${LAUNCHER}${CODE_CHECK}/usr/bin/clang++-12 $DEFINES $INCLUDES $FLAGS -MD -MT $out -MF $DEP_FILE -o $out -c $in
   description = Building CXX object $out
 
 
 #############################################
 # Rule for linking CXX executable.
 
-rule CXX_EXECUTABLE_LINKER__FE.2ecore.2ehash_test_Debug
-  command = $PRE_LINK && /usr/bin/clang++ $FLAGS $LINK_FLAGS $in -o $TARGET_FILE $LINK_PATH $LINK_LIBRARIES && $POST_BUILD
+rule CXX_EXECUTABLE_LINKER__FE.2ecore.2ehash_test_Release
+  command = $PRE_LINK && /usr/bin/clang++-12 $FLAGS $LINK_FLAGS $in -o $TARGET_FILE $LINK_PATH $LINK_LIBRARIES && $POST_BUILD
   description = Linking CXX executable $TARGET_FILE
   restat = $RESTAT
 
@@ -98,18 +98,18 @@ rule CXX_EXECUTABLE_LINKER__FE.2ecore.2ehash_test_Debug
 #############################################
 # Rule for compiling CXX files.
 
-rule CXX_COMPILER__FE.2ecore.2elog_test_unscanned_Debug
+rule CXX_COMPILER__FE.2ecore.2elog_test_unscanned_Release
   depfile = $DEP_FILE
   deps = gcc
-  command = ${LAUNCHER}${CODE_CHECK}/usr/bin/clang++ $DEFINES $INCLUDES $FLAGS -MD -MT $out -MF $DEP_FILE -o $out -c $in
+  command = ${LAUNCHER}${CODE_CHECK}/usr/bin/clang++-12 $DEFINES $INCLUDES $FLAGS -MD -MT $out -MF $DEP_FILE -o $out -c $in
   description = Building CXX object $out
 
 
 #############################################
 # Rule for linking CXX executable.
 
-rule CXX_EXECUTABLE_LINKER__FE.2ecore.2elog_test_Debug
-  command = $PRE_LINK && /usr/bin/clang++ $FLAGS $LINK_FLAGS $in -o $TARGET_FILE $LINK_PATH $LINK_LIBRARIES && $POST_BUILD
+rule CXX_EXECUTABLE_LINKER__FE.2ecore.2elog_test_Release
+  command = $PRE_LINK && /usr/bin/clang++-12 $FLAGS $LINK_FLAGS $in -o $TARGET_FILE $LINK_PATH $LINK_LIBRARIES && $POST_BUILD
   description = Linking CXX executable $TARGET_FILE
   restat = $RESTAT
 
@@ -117,18 +117,18 @@ rule CXX_EXECUTABLE_LINKER__FE.2ecore.2elog_test_Debug
 #############################################
 # Rule for compiling CXX files.
 
-rule CXX_COMPILER__FE.2ecore.2ethread_test_unscanned_Debug
+rule CXX_COMPILER__FE.2ecore.2ethread_test_unscanned_Release
   depfile = $DEP_FILE
   deps = gcc
-  command = ${LAUNCHER}${CODE_CHECK}/usr/bin/clang++ $DEFINES $INCLUDES $FLAGS -MD -MT $out -MF $DEP_FILE -o $out -c $in
+  command = ${LAUNCHER}${CODE_CHECK}/usr/bin/clang++-12 $DEFINES $INCLUDES $FLAGS -MD -MT $out -MF $DEP_FILE -o $out -c $in
   description = Building CXX object $out
 
 
 #############################################
 # Rule for linking CXX executable.
 
-rule CXX_EXECUTABLE_LINKER__FE.2ecore.2ethread_test_Debug
-  command = $PRE_LINK && /usr/bin/clang++ $FLAGS $LINK_FLAGS $in -o $TARGET_FILE $LINK_PATH $LINK_LIBRARIES && $POST_BUILD
+rule CXX_EXECUTABLE_LINKER__FE.2ecore.2ethread_test_Release
+  command = $PRE_LINK && /usr/bin/clang++-12 $FLAGS $LINK_FLAGS $in -o $TARGET_FILE $LINK_PATH $LINK_LIBRARIES && $POST_BUILD
   description = Linking CXX executable $TARGET_FILE
   restat = $RESTAT
 
@@ -136,18 +136,18 @@ rule CXX_EXECUTABLE_LINKER__FE.2ecore.2ethread_test_Debug
 #############################################
 # Rule for compiling CXX files.
 
-rule CXX_COMPILER__FE.2ecore.2ealgorithm.2emath_test_unscanned_Debug
+rule CXX_COMPILER__FE.2ecore.2ealgorithm.2emath_test_unscanned_Release
   depfile = $DEP_FILE
   deps = gcc
-  command = ${LAUNCHER}${CODE_CHECK}/usr/bin/clang++ $DEFINES $INCLUDES $FLAGS -MD -MT $out -MF $DEP_FILE -o $out -c $in
+  command = ${LAUNCHER}${CODE_CHECK}/usr/bin/clang++-12 $DEFINES $INCLUDES $FLAGS -MD -MT $out -MF $DEP_FILE -o $out -c $in
   description = Building CXX object $out
 
 
 #############################################
 # Rule for linking CXX executable.
 
-rule CXX_EXECUTABLE_LINKER__FE.2ecore.2ealgorithm.2emath_test_Debug
-  command = $PRE_LINK && /usr/bin/clang++ $FLAGS $LINK_FLAGS $in -o $TARGET_FILE $LINK_PATH $LINK_LIBRARIES && $POST_BUILD
+rule CXX_EXECUTABLE_LINKER__FE.2ecore.2ealgorithm.2emath_test_Release
+  command = $PRE_LINK && /usr/bin/clang++-12 $FLAGS $LINK_FLAGS $in -o $TARGET_FILE $LINK_PATH $LINK_LIBRARIES && $POST_BUILD
   description = Linking CXX executable $TARGET_FILE
   restat = $RESTAT
 
@@ -155,18 +155,18 @@ rule CXX_EXECUTABLE_LINKER__FE.2ecore.2ealgorithm.2emath_test_Debug
 #############################################
 # Rule for compiling CXX files.
 
-rule CXX_COMPILER__FE.2ecore.2eiterator_test_unscanned_Debug
+rule CXX_COMPILER__FE.2ecore.2eiterator_test_unscanned_Release
   depfile = $DEP_FILE
   deps = gcc
-  command = ${LAUNCHER}${CODE_CHECK}/usr/bin/clang++ $DEFINES $INCLUDES $FLAGS -MD -MT $out -MF $DEP_FILE -o $out -c $in
+  command = ${LAUNCHER}${CODE_CHECK}/usr/bin/clang++-12 $DEFINES $INCLUDES $FLAGS -MD -MT $out -MF $DEP_FILE -o $out -c $in
   description = Building CXX object $out
 
 
 #############################################
 # Rule for linking CXX executable.
 
-rule CXX_EXECUTABLE_LINKER__FE.2ecore.2eiterator_test_Debug
-  command = $PRE_LINK && /usr/bin/clang++ $FLAGS $LINK_FLAGS $in -o $TARGET_FILE $LINK_PATH $LINK_LIBRARIES && $POST_BUILD
+rule CXX_EXECUTABLE_LINKER__FE.2ecore.2eiterator_test_Release
+  command = $PRE_LINK && /usr/bin/clang++-12 $FLAGS $LINK_FLAGS $in -o $TARGET_FILE $LINK_PATH $LINK_LIBRARIES && $POST_BUILD
   description = Linking CXX executable $TARGET_FILE
   restat = $RESTAT
 
@@ -174,18 +174,18 @@ rule CXX_EXECUTABLE_LINKER__FE.2ecore.2eiterator_test_Debug
 #############################################
 # Rule for compiling CXX files.
 
-rule CXX_COMPILER__FE.2ecore.2ememory_test_unscanned_Debug
+rule CXX_COMPILER__FE.2ecore.2ememory_test_unscanned_Release
   depfile = $DEP_FILE
   deps = gcc
-  command = ${LAUNCHER}${CODE_CHECK}/usr/bin/clang++ $DEFINES $INCLUDES $FLAGS -MD -MT $out -MF $DEP_FILE -o $out -c $in
+  command = ${LAUNCHER}${CODE_CHECK}/usr/bin/clang++-12 $DEFINES $INCLUDES $FLAGS -MD -MT $out -MF $DEP_FILE -o $out -c $in
   description = Building CXX object $out
 
 
 #############################################
 # Rule for linking CXX executable.
 
-rule CXX_EXECUTABLE_LINKER__FE.2ecore.2ememory_test_Debug
-  command = $PRE_LINK && /usr/bin/clang++ $FLAGS $LINK_FLAGS $in -o $TARGET_FILE $LINK_PATH $LINK_LIBRARIES && $POST_BUILD
+rule CXX_EXECUTABLE_LINKER__FE.2ecore.2ememory_test_Release
+  command = $PRE_LINK && /usr/bin/clang++-12 $FLAGS $LINK_FLAGS $in -o $TARGET_FILE $LINK_PATH $LINK_LIBRARIES && $POST_BUILD
   description = Linking CXX executable $TARGET_FILE
   restat = $RESTAT
 
@@ -193,18 +193,18 @@ rule CXX_EXECUTABLE_LINKER__FE.2ecore.2ememory_test_Debug
 #############################################
 # Rule for compiling CXX files.
 
-rule CXX_COMPILER__FE.2ecore.2ealgorithm.2estring_test_unscanned_Debug
+rule CXX_COMPILER__FE.2ecore.2ealgorithm.2estring_test_unscanned_Release
   depfile = $DEP_FILE
   deps = gcc
-  command = ${LAUNCHER}${CODE_CHECK}/usr/bin/clang++ $DEFINES $INCLUDES $FLAGS -MD -MT $out -MF $DEP_FILE -o $out -c $in
+  command = ${LAUNCHER}${CODE_CHECK}/usr/bin/clang++-12 $DEFINES $INCLUDES $FLAGS -MD -MT $out -MF $DEP_FILE -o $out -c $in
   description = Building CXX object $out
 
 
 #############################################
 # Rule for linking CXX executable.
 
-rule CXX_EXECUTABLE_LINKER__FE.2ecore.2ealgorithm.2estring_test_Debug
-  command = $PRE_LINK && /usr/bin/clang++ $FLAGS $LINK_FLAGS $in -o $TARGET_FILE $LINK_PATH $LINK_LIBRARIES && $POST_BUILD
+rule CXX_EXECUTABLE_LINKER__FE.2ecore.2ealgorithm.2estring_test_Release
+  command = $PRE_LINK && /usr/bin/clang++-12 $FLAGS $LINK_FLAGS $in -o $TARGET_FILE $LINK_PATH $LINK_LIBRARIES && $POST_BUILD
   description = Linking CXX executable $TARGET_FILE
   restat = $RESTAT
 
@@ -212,18 +212,18 @@ rule CXX_EXECUTABLE_LINKER__FE.2ecore.2ealgorithm.2estring_test_Debug
 #############################################
 # Rule for compiling CXX files.
 
-rule CXX_COMPILER__FE.2ecore.2efstring_test_unscanned_Debug
+rule CXX_COMPILER__FE.2ecore.2efstring_test_unscanned_Release
   depfile = $DEP_FILE
   deps = gcc
-  command = ${LAUNCHER}${CODE_CHECK}/usr/bin/clang++ $DEFINES $INCLUDES $FLAGS -MD -MT $out -MF $DEP_FILE -o $out -c $in
+  command = ${LAUNCHER}${CODE_CHECK}/usr/bin/clang++-12 $DEFINES $INCLUDES $FLAGS -MD -MT $out -MF $DEP_FILE -o $out -c $in
   description = Building CXX object $out
 
 
 #############################################
 # Rule for linking CXX executable.
 
-rule CXX_EXECUTABLE_LINKER__FE.2ecore.2efstring_test_Debug
-  command = $PRE_LINK && /usr/bin/clang++ $FLAGS $LINK_FLAGS $in -o $TARGET_FILE $LINK_PATH $LINK_LIBRARIES && $POST_BUILD
+rule CXX_EXECUTABLE_LINKER__FE.2ecore.2efstring_test_Release
+  command = $PRE_LINK && /usr/bin/clang++-12 $FLAGS $LINK_FLAGS $in -o $TARGET_FILE $LINK_PATH $LINK_LIBRARIES && $POST_BUILD
   description = Linking CXX executable $TARGET_FILE
   restat = $RESTAT
 
@@ -231,18 +231,18 @@ rule CXX_EXECUTABLE_LINKER__FE.2ecore.2efstring_test_Debug
 #############################################
 # Rule for compiling CXX files.
 
-rule CXX_COMPILER__FE.2ecore.2epool_test_unscanned_Debug
+rule CXX_COMPILER__FE.2ecore.2epool_test_unscanned_Release
   depfile = $DEP_FILE
   deps = gcc
-  command = ${LAUNCHER}${CODE_CHECK}/usr/bin/clang++ $DEFINES $INCLUDES $FLAGS -MD -MT $out -MF $DEP_FILE -o $out -c $in
+  command = ${LAUNCHER}${CODE_CHECK}/usr/bin/clang++-12 $DEFINES $INCLUDES $FLAGS -MD -MT $out -MF $DEP_FILE -o $out -c $in
   description = Building CXX object $out
 
 
 #############################################
 # Rule for linking CXX executable.
 
-rule CXX_EXECUTABLE_LINKER__FE.2ecore.2epool_test_Debug
-  command = $PRE_LINK && /usr/bin/clang++ $FLAGS $LINK_FLAGS $in -o $TARGET_FILE $LINK_PATH $LINK_LIBRARIES && $POST_BUILD
+rule CXX_EXECUTABLE_LINKER__FE.2ecore.2epool_test_Release
+  command = $PRE_LINK && /usr/bin/clang++-12 $FLAGS $LINK_FLAGS $in -o $TARGET_FILE $LINK_PATH $LINK_LIBRARIES && $POST_BUILD
   description = Linking CXX executable $TARGET_FILE
   restat = $RESTAT
 
@@ -250,18 +250,18 @@ rule CXX_EXECUTABLE_LINKER__FE.2ecore.2epool_test_Debug
 #############################################
 # Rule for compiling CXX files.
 
-rule CXX_COMPILER__FE.2ecore.2emanaged_test_unscanned_Debug
+rule CXX_COMPILER__FE.2ecore.2emanaged_test_unscanned_Release
   depfile = $DEP_FILE
   deps = gcc
-  command = ${LAUNCHER}${CODE_CHECK}/usr/bin/clang++ $DEFINES $INCLUDES $FLAGS -MD -MT $out -MF $DEP_FILE -o $out -c $in
+  command = ${LAUNCHER}${CODE_CHECK}/usr/bin/clang++-12 $DEFINES $INCLUDES $FLAGS -MD -MT $out -MF $DEP_FILE -o $out -c $in
   description = Building CXX object $out
 
 
 #############################################
 # Rule for linking CXX executable.
 
-rule CXX_EXECUTABLE_LINKER__FE.2ecore.2emanaged_test_Debug
-  command = $PRE_LINK && /usr/bin/clang++ $FLAGS $LINK_FLAGS $in -o $TARGET_FILE $LINK_PATH $LINK_LIBRARIES && $POST_BUILD
+rule CXX_EXECUTABLE_LINKER__FE.2ecore.2emanaged_test_Release
+  command = $PRE_LINK && /usr/bin/clang++-12 $FLAGS $LINK_FLAGS $in -o $TARGET_FILE $LINK_PATH $LINK_LIBRARIES && $POST_BUILD
   description = Linking CXX executable $TARGET_FILE
   restat = $RESTAT
 
@@ -269,18 +269,18 @@ rule CXX_EXECUTABLE_LINKER__FE.2ecore.2emanaged_test_Debug
 #############################################
 # Rule for compiling CXX files.
 
-rule CXX_COMPILER__FE.2ecore.2estring_test_unscanned_Debug
+rule CXX_COMPILER__FE.2ecore.2estring_test_unscanned_Release
   depfile = $DEP_FILE
   deps = gcc
-  command = ${LAUNCHER}${CODE_CHECK}/usr/bin/clang++ $DEFINES $INCLUDES $FLAGS -MD -MT $out -MF $DEP_FILE -o $out -c $in
+  command = ${LAUNCHER}${CODE_CHECK}/usr/bin/clang++-12 $DEFINES $INCLUDES $FLAGS -MD -MT $out -MF $DEP_FILE -o $out -c $in
   description = Building CXX object $out
 
 
 #############################################
 # Rule for linking CXX executable.
 
-rule CXX_EXECUTABLE_LINKER__FE.2ecore.2estring_test_Debug
-  command = $PRE_LINK && /usr/bin/clang++ $FLAGS $LINK_FLAGS $in -o $TARGET_FILE $LINK_PATH $LINK_LIBRARIES && $POST_BUILD
+rule CXX_EXECUTABLE_LINKER__FE.2ecore.2estring_test_Release
+  command = $PRE_LINK && /usr/bin/clang++-12 $FLAGS $LINK_FLAGS $in -o $TARGET_FILE $LINK_PATH $LINK_LIBRARIES && $POST_BUILD
   description = Linking CXX executable $TARGET_FILE
   restat = $RESTAT
 
@@ -288,18 +288,18 @@ rule CXX_EXECUTABLE_LINKER__FE.2ecore.2estring_test_Debug
 #############################################
 # Rule for compiling CXX files.
 
-rule CXX_COMPILER__FE.2ecore.2estring_view_test_unscanned_Debug
+rule CXX_COMPILER__FE.2ecore.2estring_view_test_unscanned_Release
   depfile = $DEP_FILE
   deps = gcc
-  command = ${LAUNCHER}${CODE_CHECK}/usr/bin/clang++ $DEFINES $INCLUDES $FLAGS -MD -MT $out -MF $DEP_FILE -o $out -c $in
+  command = ${LAUNCHER}${CODE_CHECK}/usr/bin/clang++-12 $DEFINES $INCLUDES $FLAGS -MD -MT $out -MF $DEP_FILE -o $out -c $in
   description = Building CXX object $out
 
 
 #############################################
 # Rule for linking CXX executable.
 
-rule CXX_EXECUTABLE_LINKER__FE.2ecore.2estring_view_test_Debug
-  command = $PRE_LINK && /usr/bin/clang++ $FLAGS $LINK_FLAGS $in -o $TARGET_FILE $LINK_PATH $LINK_LIBRARIES && $POST_BUILD
+rule CXX_EXECUTABLE_LINKER__FE.2ecore.2estring_view_test_Release
+  command = $PRE_LINK && /usr/bin/clang++-12 $FLAGS $LINK_FLAGS $in -o $TARGET_FILE $LINK_PATH $LINK_LIBRARIES && $POST_BUILD
   description = Linking CXX executable $TARGET_FILE
   restat = $RESTAT
 
@@ -307,18 +307,18 @@ rule CXX_EXECUTABLE_LINKER__FE.2ecore.2estring_view_test_Debug
 #############################################
 # Rule for compiling CXX files.
 
-rule CXX_COMPILER__FE.2ecore.2econtainers_test_unscanned_Debug
+rule CXX_COMPILER__FE.2ecore.2econtainers_test_unscanned_Release
   depfile = $DEP_FILE
   deps = gcc
-  command = ${LAUNCHER}${CODE_CHECK}/usr/bin/clang++ $DEFINES $INCLUDES $FLAGS -MD -MT $out -MF $DEP_FILE -o $out -c $in
+  command = ${LAUNCHER}${CODE_CHECK}/usr/bin/clang++-12 $DEFINES $INCLUDES $FLAGS -MD -MT $out -MF $DEP_FILE -o $out -c $in
   description = Building CXX object $out
 
 
 #############################################
 # Rule for linking CXX executable.
 
-rule CXX_EXECUTABLE_LINKER__FE.2ecore.2econtainers_test_Debug
-  command = $PRE_LINK && /usr/bin/clang++ $FLAGS $LINK_FLAGS $in -o $TARGET_FILE $LINK_PATH $LINK_LIBRARIES && $POST_BUILD
+rule CXX_EXECUTABLE_LINKER__FE.2ecore.2econtainers_test_Release
+  command = $PRE_LINK && /usr/bin/clang++-12 $FLAGS $LINK_FLAGS $in -o $TARGET_FILE $LINK_PATH $LINK_LIBRARIES && $POST_BUILD
   description = Linking CXX executable $TARGET_FILE
   restat = $RESTAT
 
@@ -326,18 +326,18 @@ rule CXX_EXECUTABLE_LINKER__FE.2ecore.2econtainers_test_Debug
 #############################################
 # Rule for compiling CXX files.
 
-rule CXX_COMPILER__FE.2eframework.2ereflection_test_unscanned_Debug
+rule CXX_COMPILER__FE.2eframework.2ereflection_test_unscanned_Release
   depfile = $DEP_FILE
   deps = gcc
-  command = ${LAUNCHER}${CODE_CHECK}/usr/bin/clang++ $DEFINES $INCLUDES $FLAGS -MD -MT $out -MF $DEP_FILE -o $out -c $in
+  command = ${LAUNCHER}${CODE_CHECK}/usr/bin/clang++-12 $DEFINES $INCLUDES $FLAGS -MD -MT $out -MF $DEP_FILE -o $out -c $in
   description = Building CXX object $out
 
 
 #############################################
 # Rule for linking CXX executable.
 
-rule CXX_EXECUTABLE_LINKER__FE.2eframework.2ereflection_test_Debug
-  command = $PRE_LINK && /usr/bin/clang++ $FLAGS $LINK_FLAGS $in -o $TARGET_FILE $LINK_PATH $LINK_LIBRARIES && $POST_BUILD
+rule CXX_EXECUTABLE_LINKER__FE.2eframework.2ereflection_test_Release
+  command = $PRE_LINK && /usr/bin/clang++-12 $FLAGS $LINK_FLAGS $in -o $TARGET_FILE $LINK_PATH $LINK_LIBRARIES && $POST_BUILD
   description = Linking CXX executable $TARGET_FILE
   restat = $RESTAT
 
@@ -345,18 +345,37 @@ rule CXX_EXECUTABLE_LINKER__FE.2eframework.2ereflection_test_Debug
 #############################################
 # Rule for compiling CXX files.
 
-rule CXX_COMPILER__FE.2eframework.2epredefined_main_test_unscanned_Debug
+rule CXX_COMPILER__FE.2eframework.2epredefined_main_test_unscanned_Release
   depfile = $DEP_FILE
   deps = gcc
-  command = ${LAUNCHER}${CODE_CHECK}/usr/bin/clang++ $DEFINES $INCLUDES $FLAGS -MD -MT $out -MF $DEP_FILE -o $out -c $in
+  command = ${LAUNCHER}${CODE_CHECK}/usr/bin/clang++-12 $DEFINES $INCLUDES $FLAGS -MD -MT $out -MF $DEP_FILE -o $out -c $in
   description = Building CXX object $out
 
 
 #############################################
 # Rule for linking CXX executable.
 
-rule CXX_EXECUTABLE_LINKER__FE.2eframework.2epredefined_main_test_Debug
-  command = $PRE_LINK && /usr/bin/clang++ $FLAGS $LINK_FLAGS $in -o $TARGET_FILE $LINK_PATH $LINK_LIBRARIES && $POST_BUILD
+rule CXX_EXECUTABLE_LINKER__FE.2eframework.2epredefined_main_test_Release
+  command = $PRE_LINK && /usr/bin/clang++-12 $FLAGS $LINK_FLAGS $in -o $TARGET_FILE $LINK_PATH $LINK_LIBRARIES && $POST_BUILD
+  description = Linking CXX executable $TARGET_FILE
+  restat = $RESTAT
+
+
+#############################################
+# Rule for compiling CXX files.
+
+rule CXX_COMPILER__FE.2ecore.2eadjacency_graph_test_unscanned_Release
+  depfile = $DEP_FILE
+  deps = gcc
+  command = ${LAUNCHER}${CODE_CHECK}/usr/bin/clang++-12 $DEFINES $INCLUDES $FLAGS -MD -MT $out -MF $DEP_FILE -o $out -c $in
+  description = Building CXX object $out
+
+
+#############################################
+# Rule for linking CXX executable.
+
+rule CXX_EXECUTABLE_LINKER__FE.2ecore.2eadjacency_graph_test_Release
+  command = $PRE_LINK && /usr/bin/clang++-12 $FLAGS $LINK_FLAGS $in -o $TARGET_FILE $LINK_PATH $LINK_LIBRARIES && $POST_BUILD
   description = Linking CXX executable $TARGET_FILE
   restat = $RESTAT
 

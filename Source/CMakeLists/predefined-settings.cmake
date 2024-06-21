@@ -1,5 +1,6 @@
 SET(CMAKE_CXX_STANDARD_REQUIRED ON)
-
+#https://cmake.org/cmake/help/latest/generator/Visual%20Studio%2017%202022.html
+# This project will use LLVM Clang across all platforms.
 
 MESSAGE("
 Available -D macro options:
@@ -166,7 +167,7 @@ ELSEIF(CMAKE_SYSTEM_NAME STREQUAL "Linux")
 
 
     # Common Compile Options
-	ADD_COMPILE_OPTIONS(-Wall -Wextra -march=x86-64 -Wno-unknown-pragmas)
+	ADD_COMPILE_OPTIONS(-Wall -Wextra -Werror -Wno-unknown-pragmas -march=x86-64)
 
 	
 	IF(CMAKE_BUILD_TYPE STREQUAL "Debug")
@@ -194,8 +195,8 @@ ELSEIF(CMAKE_SYSTEM_NAME STREQUAL "Linux")
 		MESSAGE(FATAL_ERROR "Something went wrong with the build mode selection.")
 	ENDIF()
 	
-
-	ADD_LINK_OPTIONS(-ldl -pthread)
+#-static 
+	ADD_LINK_OPTIONS(-pthread -ldl)
 
 
 	IF(DEFINED AVX2)

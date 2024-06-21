@@ -332,7 +332,7 @@ _NODISCARD_ _FORCE_INLINE_ _CONSTEXPR20_ boolean insensitive_ranged_comparison(c
     length_t l_left_string_length = lstr_range_p._end - lstr_range_p._begin;
     length_t l_right_string_length = rstr_range_p._end - rstr_range_p._begin;
 
-    if (l_left_string_length != l_right_string_length)
+    if (l_left_string_length != l_right_string_length || (l_left_string_length == 0))
     {
         return false;
     }
@@ -403,7 +403,7 @@ _FORCE_INLINE_ _CONSTEXPR20_ void concatenate(CharT* const out_string_buffer_p, 
 
     FE_ASSERT(string_buffer_size_p <= chars_p.size() + l_string_buffer_length, "${%s@0}: The total input string length exceeds the destination string buffer capacity.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_RANGE));
 
-    ::memcpy(out_string_buffer_p + l_string_buffer_length, chars_p.begin(), sizeof(CharT) * chars_p.size());
+    std::memcpy(out_string_buffer_p + l_string_buffer_length, chars_p.begin(), sizeof(CharT) * chars_p.size());
 }
 
 
@@ -433,8 +433,11 @@ _NODISCARD_ _CONSTEXPR20_ std::optional<range> find_the_last(const CharT* const 
 {
     FE_STATIC_ASSERT(FE::is_char<CharT>::value == false, "CharT is not a valid character type");
     FE_ASSERT(string_p == nullptr, "${%s@0}: ${%s@1} is nullptr.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(string_p));
+    
+    length_t l_string_length = length(string_p);
+    FE_ASSERT(l_string_length == 0, "Assertion failed: the input string range length must not be zero.");
 
-    FE::const_reverse_iterator<FE::contiguous_iterator<const CharT>> l_string_rbegin = string_p + (length(string_p)-1);
+    FE::const_reverse_iterator<FE::contiguous_iterator<const CharT>> l_string_rbegin = string_p + (l_string_length-1);
     FE::const_reverse_iterator<FE::contiguous_iterator<const CharT>> l_string_rend = string_p - 1;
 
     while (l_string_rbegin != l_string_rend)
@@ -460,6 +463,7 @@ _NODISCARD_ _CONSTEXPR20_ std::optional<range> find_the_first_within_range(const
     FE_ASSERT(string_p == nullptr, "${%s@0}: ${%s@1} is nullptr.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(string_p));
     FE_ASSERT(string_range_p._begin > string_range_p._end, "${%s@0}: ${%s@1} cannot be greater than ${%s@2}.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_RANGE), TO_STRING(string_range_p._begin), TO_STRING(string_range_p._end));
     FE_ASSERT(length(string_p) < string_range_p._end, "${%s@0}: ${%s@2} cannot be greater than the length of ${%s@1}.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_RANGE), TO_STRING(length(string_p)), TO_STRING(string_range_p._end));
+    FE_ASSERT((string_range_p._end - string_range_p._begin) == 0, "Assertion failed: the input string range length must not be zero.");
 
     const CharT* l_string_pointer = string_p + string_range_p._begin;
     while (*l_string_pointer != _FE_NULL_)
@@ -483,7 +487,8 @@ _NODISCARD_ _CONSTEXPR20_ std::optional<range> find_the_last_within_range(const 
     FE_ASSERT(string_p == nullptr, "${%s@0}: ${%s@1} is nullptr.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(string_p));
     FE_ASSERT(string_range_p._begin > string_range_p._end, "${%s@0}: ${%s@1} cannot be greater than ${%s@2}.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_RANGE), TO_STRING(string_range_p._begin), TO_STRING(string_range_p._end));
     FE_ASSERT(length(string_p) < string_range_p._end, "${%s@0}: ${%s@2} cannot be greater than the length of ${%s@1}.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_RANGE), TO_STRING(length(string_p)), TO_STRING(string_range_p._end));
-
+    FE_ASSERT((string_range_p._end - string_range_p._begin) == 0, "Assertion failed: the input string range length must not be zero.");
+    
     FE::const_reverse_iterator<FE::contiguous_iterator<const CharT>> l_string_rbegin = string_p + (string_range_p._end - 1);
     FE::const_reverse_iterator<FE::contiguous_iterator<const CharT>> l_string_rend = string_p + (string_range_p._begin - 1);
 
@@ -512,7 +517,10 @@ _NODISCARD_ _CONSTEXPR20_ std::optional<range> find_the_first(const CharT* const
 
     const CharT* l_string_pointer = string_p;
     const CharT* l_target_substring_pointer = target_substring_p;
+
     length_t l_string_length = length(string_p);
+    FE_ASSERT(l_string_length == 0, "Assertion failed: the input string range length must not be zero.");
+
     length_t l_target_substring_length = length(target_substring_p);
  
     FE_ASSERT(l_target_substring_length > l_string_length, "${%s@0}: the ${%s@1} is greater than to the string length of ${%s@2}. ${%s@1} was ${%lu@3}, and ${%s@2} was ${%lu@4}", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_RANGE), TO_STRING(l_target_substring_length), TO_STRING(l_string_length), &l_target_substring_length, &l_string_length);
@@ -553,6 +561,8 @@ _NODISCARD_ _CONSTEXPR20_ std::optional<range> find_the_last(const CharT* const 
     FE_ASSERT(target_substring_p == nullptr, "${%s@0}: ${%s@1} is nullptr.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(target_substring_p));
 
     length_t l_string_length = length(string_p);
+    FE_ASSERT(l_string_length == 0, "Assertion failed: the input string range length must not be zero.");
+
     length_t l_target_substring_length = length(target_substring_p);
 
     FE::const_reverse_iterator<FE::contiguous_iterator<const CharT>> l_string_crbegin(string_p + (l_string_length - 1));
@@ -602,7 +612,10 @@ _NODISCARD_ _CONSTEXPR20_ std::optional<range> find_the_first_within_range(const
 
     const CharT* l_string_pointer = string_p + string_range_p._begin;
     const CharT* l_target_substring_pointer = target_substring_p;
+
     length_t l_string_length = string_range_p._end - string_range_p._begin;
+    FE_ASSERT(l_string_length == 0, "Assertion failed: the input string range length must not be zero.");
+
     length_t l_target_substring_length = length(target_substring_p);
 
     FE_ASSERT(l_target_substring_length > l_string_length, "${%s@0}: the ${%s@1} is greater than or equal to the string length of ${%s@2}", TO_STRING(FE::MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_RANGE), TO_STRING(l_target_substring_length), TO_STRING(l_string_length));
@@ -647,6 +660,8 @@ _NODISCARD_ _CONSTEXPR20_ std::optional<range> find_the_last_within_range(const 
 
 
     length_t l_string_length = string_range_p._end - string_range_p._begin;
+    FE_ASSERT(l_string_length == 0, "Assertion failed: the input string range length must not be zero.");
+
     length_t l_target_substring_length = algorithm::string::length(target_substring_p);
 
     FE::const_reverse_iterator<FE::contiguous_iterator<const CharT>> l_string_crbegin(string_p + (l_string_length - 1));

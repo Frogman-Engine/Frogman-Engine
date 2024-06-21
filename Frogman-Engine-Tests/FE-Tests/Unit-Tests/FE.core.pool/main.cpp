@@ -225,7 +225,7 @@ BENCHMARK(boost_object_pool_allocator_extreme_test);
 
 void FE_pool_allocator_extreme_test(benchmark::State& state_p) noexcept
 {
-	FE::generic_pool<1000 MB> l_allocator;
+	FE::dynamic_pool<1000 MB> l_allocator;
 	l_allocator.create_pages(1);
 	benchmark::DoNotOptimize(l_allocator);
 
@@ -236,14 +236,14 @@ void FE_pool_allocator_extreme_test(benchmark::State& state_p) noexcept
 	{
 		for(var::uint32 i = 0; i < _MAX_ITERATION_; ++i)
 		{
-			l_s_strings[i] = l_allocator.allocate<std::string>(1);
+			l_s_strings[i] = l_allocator.template allocate<std::string>(1);
 		}
 
 		for (var::uint32 i = 0; i < _MAX_ITERATION_; ++i)
 		{
 			if (i % 2 == 0)
 			{
-				l_allocator.deallocate<std::string>(l_s_strings[i], 1);
+				l_allocator.template deallocate<std::string>(l_s_strings[i], 1);
 			}
 		}
 	
@@ -251,7 +251,7 @@ void FE_pool_allocator_extreme_test(benchmark::State& state_p) noexcept
 		{
 			if (i % 2 == 1)
 			{
-				l_allocator.deallocate<std::string>(l_s_strings[i], 1);
+				l_allocator.template deallocate<std::string>(l_s_strings[i], 1);
 			}
 		}
 	}
@@ -260,7 +260,7 @@ BENCHMARK(FE_pool_allocator_extreme_test);
 
 void FE_block_pool_allocator_extreme_test(benchmark::State& state_p) noexcept
 {
-	FE::block_pool<std::string, _MAX_ITERATION_> l_allocator;
+	FE::block_pool<sizeof(std::string), _MAX_ITERATION_> l_allocator;
 	l_allocator.create_pages(1);
 	benchmark::DoNotOptimize(l_allocator);
 
@@ -271,14 +271,14 @@ void FE_block_pool_allocator_extreme_test(benchmark::State& state_p) noexcept
 	{
 		for (var::uint32 i = 0; i < _MAX_ITERATION_; ++i)
 		{
-			l_s_strings[i] = l_allocator.allocate();
+			l_s_strings[i] = l_allocator.template allocate<std::string>();
 		}
 
 		for (var::uint32 i = 0; i < _MAX_ITERATION_; ++i)
 		{
 			if (i % 2 == 0)
 			{
-				l_allocator.deallocate(l_s_strings[i]);
+				l_allocator.template deallocate<std::string>(l_s_strings[i]);
 			}
 		}
 
@@ -286,7 +286,7 @@ void FE_block_pool_allocator_extreme_test(benchmark::State& state_p) noexcept
 		{
 			if (i % 2 == 1)
 			{
-				l_allocator.deallocate(l_s_strings[i]);
+				l_allocator.template deallocate<std::string>(l_s_strings[i]);
 			}
 		}
 	}

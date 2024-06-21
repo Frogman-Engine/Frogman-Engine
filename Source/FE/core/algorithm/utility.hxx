@@ -162,7 +162,7 @@ _FORCE_INLINE_ _CONSTEXPR20_ boolean string_to_boolean(const CharT* const string
 
     default: _UNLIKELY_
         FE_ABORT_IF(true, "ERROR: The calculation cannot be done properly. The input string is neither \"true\" nor \"false\".");
-        break;
+        return false;
     }
 }
 #pragma warning(pop)

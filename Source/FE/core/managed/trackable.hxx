@@ -23,7 +23,8 @@ class trackable final
 {
 	friend class ref<T>;
 
-	using smart_ref_type = internal::managed::ref_block*;
+	using ref_block_type = internal::managed::ref_block<T>;
+	using smart_ref_type = ref_block_type*;
 
 public:
 	using element_type = T;
@@ -45,7 +46,7 @@ public:
 		}
 	}
 
-	_FORCE_INLINE_ _CONSTEXPR20_ trackable(const trackable& other_p) noexcept : m_data(other_p.m_data), m_ref_block(internal::managed::ref_table::tl_s_ref_block_pool.allocate())
+	_FORCE_INLINE_ _CONSTEXPR20_ trackable(const trackable& other_p) noexcept : m_data(other_p.m_data), m_ref_block(internal::managed::ref_table::tl_s_ref_block_pool.template allocate<ref_block_type>())
 	{
 		this->m_ref_block->_address = &(this->m_data);
 	}
@@ -55,13 +56,13 @@ public:
 		rvalue_p.m_ref_block = nullptr;
 	}
 
-	_FORCE_INLINE_ _CONSTEXPR20_ trackable(const element_type& value_p) noexcept : m_data(value_p), m_ref_block(internal::managed::ref_table::tl_s_ref_block_pool.allocate())
+	_FORCE_INLINE_ _CONSTEXPR20_ trackable(const element_type& value_p) noexcept : m_data(value_p), m_ref_block(internal::managed::ref_table::tl_s_ref_block_pool.template allocate<ref_block_type>())
 	{
 		this->m_ref_block->_address = &(this->m_data);
 	}
 
 	template<typename... Arguments>
-	_FORCE_INLINE_ _CONSTEXPR20_ trackable(Arguments&&... values_p) noexcept : m_data(std::forward<Arguments&&>(values_p)...), m_ref_block(internal::managed::ref_table::tl_s_ref_block_pool.allocate())
+	_FORCE_INLINE_ _CONSTEXPR20_ trackable(Arguments&&... values_p) noexcept : m_data(std::forward<Arguments&&>(values_p)...), m_ref_block(internal::managed::ref_table::tl_s_ref_block_pool.template allocate<ref_block_type>())
 	{
 		this->m_ref_block->_address = &(this->m_data);
 	}
@@ -70,7 +71,7 @@ public:
 	{
 		if (this->m_ref_block == nullptr)
 		{
-			this->m_ref_block = internal::managed::ref_table::tl_s_ref_block_pool.allocate();
+			this->m_ref_block = internal::managed::ref_table::tl_s_ref_block_pool.template allocate<ref_block_type>();
 		}
 
 		this->m_data = other_p.m_data;
@@ -95,7 +96,7 @@ public:
 	{
 		if (this->m_ref_block == nullptr)
 		{
-			this->m_ref_block = internal::managed::ref_table::tl_s_ref_block_pool.allocate();
+			this->m_ref_block = internal::managed::ref_table::tl_s_ref_block_pool.template allocate<ref_block_type>();
 		}
 
 		this->m_data = value_p;
@@ -223,7 +224,7 @@ private:
 
 		if(this->m_ref_block->_ref_count == 0)
 		{
-			internal::managed::ref_table::tl_s_ref_block_pool.deallocate(this->m_ref_block);
+			internal::managed::ref_table::tl_s_ref_block_pool.template deallocate<ref_block_type>(this->m_ref_block);
 			this->m_ref_block = nullptr;
 		}
 	}

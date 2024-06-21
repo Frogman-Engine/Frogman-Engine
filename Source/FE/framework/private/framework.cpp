@@ -41,12 +41,12 @@ void application_base::__set_up_main() noexcept
 	FE::framework::application_base::s_app = l_get_app_address();
 	FE_ASSERT(FE::framework::application_base::s_app == nullptr, "Assertion Failure: An app pointer is nullptr.");
 
-	FE::framework::function_table::initialize();
+	FE::framework::reflection::function_table::initialize();
 }
 
 void application_base::__shutdown_main() noexcept
 {
-	FE::framework::function_table::clean_up();
+	FE::framework::reflection::function_table::clean_up();
 	delete FE::framework::application_base::s_app;
 }
 

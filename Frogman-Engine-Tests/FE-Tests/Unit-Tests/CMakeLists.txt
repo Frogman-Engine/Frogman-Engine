@@ -118,11 +118,9 @@ SET(FE_CORE_LOG
 ${CMAKE_CURRENT_SOURCE_DIR}/../../../Source/FE/core/log/macros.h
 ${CMAKE_CURRENT_SOURCE_DIR}/../../../Source/FE/core/log/logger.hpp
 ${CMAKE_CURRENT_SOURCE_DIR}/../../../Source/FE/core/log/private/logger.cpp
-${CMAKE_CURRENT_SOURCE_DIR}/../../../Source/FE/core/clock.hpp
 ${CMAKE_CURRENT_SOURCE_DIR}/../../../Source/FE/core/private/clock.cpp
 ${CMAKE_CURRENT_SOURCE_DIR}/../../../Source/FE/core/log/format_string.h
 ${CMAKE_CURRENT_SOURCE_DIR}/../../../Source/FE/core/log/private/format_string.cpp
-${CMAKE_CURRENT_SOURCE_DIR}/../../../Source/FE/core/thread.hpp
 ${CMAKE_CURRENT_SOURCE_DIR}/../../../Source/FE/core/private/thread.cpp
 )
 ADD_SUBDIRECTORY(FE.core.log)
@@ -167,11 +165,8 @@ ${CMAKE_CURRENT_SOURCE_DIR}/../../../Source/FE/core/pool_allocator.hxx
 ${CMAKE_CURRENT_SOURCE_DIR}/../../../Source/FE/core/block_pool_allocator.hxx
 ${CMAKE_CURRENT_SOURCE_DIR}/../../../Source/FE/core/private/allocator_base.hpp
 ${CMAKE_CURRENT_SOURCE_DIR}/../../../Source/FE/core/private/allocator_base.cpp
-${CMAKE_CURRENT_SOURCE_DIR}/../../../Source/FE/core/clock.hpp
 ${CMAKE_CURRENT_SOURCE_DIR}/../../../Source/FE/core/private/clock.cpp
-${CMAKE_CURRENT_SOURCE_DIR}/../../../Source/FE/core/hash.hpp
 ${CMAKE_CURRENT_SOURCE_DIR}/../../../Source/FE/core/private/hash.cpp
-${CMAKE_CURRENT_SOURCE_DIR}/../../../Source/FE/core/memory_metrics.h
 ${CMAKE_CURRENT_SOURCE_DIR}/../../../Source/FE/core/private/memory_metrics.cpp
 )
 ADD_SUBDIRECTORY(FE.core.pool)
@@ -200,10 +195,10 @@ ${CMAKE_CURRENT_SOURCE_DIR}/../../../Source/FE/core/string_view.hxx
 ADD_SUBDIRECTORY(FE.core.string_view)
 
 SET(FE_CORE_CONTAINERS
-${CMAKE_CURRENT_SOURCE_DIR}/../../../Source/FE/core/containers/stack.hxx
-${CMAKE_CURRENT_SOURCE_DIR}/../../../Source/FE/core/containers/queue.hxx
-${CMAKE_CURRENT_SOURCE_DIR}/../../../Source/FE/core/containers/array.hxx
-${CMAKE_CURRENT_SOURCE_DIR}/../../../Source/FE/core/containers/private/array_impl.hxx
+${CMAKE_CURRENT_SOURCE_DIR}/../../../Source/FE/core/stack.hxx
+${CMAKE_CURRENT_SOURCE_DIR}/../../../Source/FE/core/queue.hxx
+${CMAKE_CURRENT_SOURCE_DIR}/../../../Source/FE/core/array.hxx
+${CMAKE_CURRENT_SOURCE_DIR}/../../../Source/FE/core/private/array_impl.hxx
 )
 ADD_SUBDIRECTORY(FE.core.containers)
 
@@ -211,16 +206,21 @@ SET(FE_FRAMEWORK_REFLECTION
 ${CMAKE_CURRENT_SOURCE_DIR}/../../../Source/FE/framework/reflection/reflection.h
 ${CMAKE_CURRENT_SOURCE_DIR}/../../../Source/FE/framework/reflection/function_table.hpp
 ${CMAKE_CURRENT_SOURCE_DIR}/../../../Source/FE/framework/reflection/private/function_table.cpp
+${CMAKE_CURRENT_SOURCE_DIR}/../../../Source/FE/framework/reflection/variable_map.hpp
+${CMAKE_CURRENT_SOURCE_DIR}/../../../Source/FE/framework/reflection/private/variable_map.cpp
 )
 ADD_SUBDIRECTORY(FE.framework.reflection)
 
 SET(FE_FRAMEWORK_PREDEFINED_MAIN
 ${CMAKE_CURRENT_SOURCE_DIR}/../../../Source/FE/framework/framework.hpp
 ${CMAKE_CURRENT_SOURCE_DIR}/../../../Source/FE/framework/private/framework.cpp
-${CMAKE_CURRENT_SOURCE_DIR}/../../../Source/FE/core/clock.hpp
-${CMAKE_CURRENT_SOURCE_DIR}/../../../Source/FE/core/private/clock.cpp
 )
 ADD_SUBDIRECTORY(FE.framework.predefined_main)
 
-
-
+SET(FE_CORE_ADJACENCY_GRAPH
+${CMAKE_CURRENT_SOURCE_DIR}/../../../Source/FE/core/private/allocator_base.hpp
+${CMAKE_CURRENT_SOURCE_DIR}/../../../Source/FE/core/private/allocator_base.cpp
+${CMAKE_CURRENT_SOURCE_DIR}/../../../Source/FE/core/private/memory_metrics.cpp
+${CMAKE_CURRENT_SOURCE_DIR}/../../../Source/FE/core/adjacency_graph.hxx
+)
+ADD_SUBDIRECTORY(FE.core.adjacency_graph)

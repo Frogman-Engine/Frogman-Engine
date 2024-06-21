@@ -2,9 +2,9 @@
 #include <benchmark/benchmark.h>
 
 // Copyright © from 2023 to current, UNKNOWN STRYKER. All Rights Reserved.
-#include <FE/core/containers/array.hxx>
-#include <FE/core/containers/queue.hxx>
-#include <FE/core/containers/stack.hxx>
+#include <FE/core/array.hxx>
+#include <FE/core/queue.hxx>
+#include <FE/core/stack.hxx>
 
 #include <FE/core/fstring.hxx>
 

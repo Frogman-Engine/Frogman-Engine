@@ -49,12 +49,6 @@ enum struct OBJECT_STATUS : boolean
 	_DESTRUCTED = false
 };
 
-enum struct MEMORY_SIZE_SCALABILITY : boolean
-{
-	_STATICALLY_SIZED = false,
-	_DYNAMICALLY_SIZED = true
-};
-
 enum struct MEMORY_ERROR_1XX : int32
 {
 	_NONE = 0,

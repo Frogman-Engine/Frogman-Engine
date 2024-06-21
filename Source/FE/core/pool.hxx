@@ -4,10 +4,7 @@
 #include <FE/core/prerequisites.h>
 #include <FE/core/block_pool_allocator.hxx>
 #include <FE/core/private/pool_common.hxx>
-
-#ifdef _DEBUG_
-#include <FE/core/memory_metrics.h>
-#endif
+#include <FE/core/adjacency_graph.hxx>
 
 
 
@@ -17,58 +14,14 @@ BEGIN_NAMESPACE(FE)
 
 namespace internal::pool
 {
-    template <>
-    struct block_info<void, POOL_TYPE::_GENERIC>
+
+    template<size_t PageCapacity, class Alignment>
+    struct chunk<POOL_TYPE::_DYNAMIC, PageCapacity, Alignment>
     {
-        var::byte* _address = nullptr;
-        var::size_t _size_in_bytes = 0;
-    };
-
-    template<count_t PossibleAddressCount>
-    class address_map : public std::map<var::byte*, var::size_t, std::greater<var::byte*>, FE::block_pool_allocator< std::pair<var::byte* const, var::size_t>, FE::object_count<PossibleAddressCount>>> 
-    {
-    public:
-        using base_type = std::map< var::byte*, var::size_t, 
-                                    std::greater<var::byte*>, 
-                                    FE::block_pool_allocator<   std::pair<var::byte* const, var::size_t>, 
-                                                                FE::object_count<PossibleAddressCount>>>;
-        using key_type = var::byte*;
-        using key_compare = std::greater<var::byte*>;
-        using value_compare = typename base_type::value_compare;
-        using value_type = typename base_type::value_type;
-        using allocator_type = typename base_type::allocator_type;
-        using size_type = typename base_type::size_type;
-        using difference_type = typename base_type::difference_type;
-        using pointer = typename base_type::pointer;
-        using const_pointer = typename base_type::const_pointer;
-        using reference = value_type&;
-        using const_reference = const value_type&;
-        using iterator = typename base_type::iterator;
-        using const_iterator = typename base_type::const_iterator;
-        using reverse_iterator = typename base_type::reverse_iterator;
-        using const_reverse_iterator = typename base_type::const_reverse_iterator;
-
-    public:
-        _FORCE_INLINE_ address_map() noexcept = default;
-        _FORCE_INLINE_ ~address_map() noexcept = default;
-        _FORCE_INLINE_ address_map(const address_map& other_p) noexcept = delete;
-        _FORCE_INLINE_ address_map(address_map&& rvalue_p) noexcept = delete;
-
-        _FORCE_INLINE_ boolean is_empty() const noexcept
-        {
-            return base_type::empty();
-        }
-    };
-
-    template<count_t PageCapacity, class Alignment>
-    struct chunk<void, POOL_TYPE::_GENERIC, PageCapacity, Alignment>
-    {
-        constexpr static count_t page_capacity = PageCapacity;
-        constexpr static size_t recycler_capacity = ((PageCapacity / Alignment::size) / 2) + 1; // The possible fragment count would be ((PageCapacity / Alignment::size) / 2) + 1 because adjacent fragments gets immediately merged during deallocate() operation.
-        using recycler_type = FE::internal::pool::address_map<recycler_capacity>;
+        constexpr static count_t recycler_capacity = ((PageCapacity / Alignment::size) / 2) + 1; // The possible fragment count would be ((PageCapacity / Alignment::size) / 2) + 1 because adjacent fragments gets immediately merged during deallocate() operation.
+        using recycler_type = FE::adjacency_graph<var::byte*, var::size_t>;
         using recycler_iterator = typename recycler_type::iterator;
-        using block_info_type = typename recycler_type::value_type;
-
+        
     private:
         alignas(FE::SIMD_auto_alignment::size) std::array<var::byte, PageCapacity> m_memory;
         /*
@@ -98,30 +51,20 @@ namespace internal::pool
 
 
 // static declaration of FE.generic_pool is not supported.
-template<count_t PageCapacity, class Alignment, class Allocator>
-class pool<void, POOL_TYPE::_GENERIC, PageCapacity, Alignment, Allocator>
+template<size_t PageCapacity, class Alignment, class Allocator>
+class pool<POOL_TYPE::_DYNAMIC, PageCapacity, Alignment, Allocator>
 {
-    template<typename T, POOL_TYPE pool_ype, count_t page_capacity, class alignment, class allocator>
-    friend struct pool_deleter;
-
-    template<count_t page_capacity, class alignment, class allocator>
-    friend struct nondestructive_generic_deleter;
-
 public:
-    using chunk_type = internal::pool::chunk<void, POOL_TYPE::_GENERIC, PageCapacity, Alignment>;
+    using chunk_type = internal::pool::chunk<POOL_TYPE::_DYNAMIC, PageCapacity, Alignment>;
     using recycler_type = typename chunk_type::recycler_type;
     using recycler_iterator = typename chunk_type::recycler_iterator;
 
-    template<typename U>
-    using deleter_type = pool_deleter<U, POOL_TYPE::_GENERIC, PageCapacity, Alignment, Allocator>;
-   
 	using pool_type = std::list<chunk_type, Allocator>;
 
-    using block_info_type = typename chunk_type::block_info_type;
-
-    static constexpr size_t page_capacity = chunk_type::page_capacity;
-    static constexpr size_t recycler_capacity = chunk_type::recycler_capacity;
-    static constexpr count_t maximum_list_node_count = 10;
+    constexpr static size_t page_capacity = PageCapacity;
+    constexpr static count_t possible_address_count = (PageCapacity / Alignment::size);
+    constexpr static count_t recycler_capacity = chunk_type::recycler_capacity;
+    constexpr static count_t maximum_list_node_count = 10;
 
 private:
     pool_type m_memory_pool;
@@ -166,7 +109,7 @@ It is hard to tell which corrupted memory, but very sure to say that there was a
             if (l_list_iterator->is_full() == false)
             {
                 void* l_allocation_result = nullptr;
-                internal::pool::block_info<void, POOL_TYPE::_GENERIC> l_memblock_info;
+                internal::pool::block_info l_memblock_info;
 
                 if (l_list_iterator->_free_blocks.is_empty() == true)
                 {
@@ -297,12 +240,12 @@ It is hard to tell which corrupted memory, but very sure to say that there was a
                 }
 
                 size_t l_block_size_in_bytes = FE::calculate_aligned_memory_size_in_bytes<T, Alignment>(element_count_p);
-                auto l_address_tree_insertion_result = l_list_iterator->_free_blocks.insert(block_info_type{ l_value, l_block_size_in_bytes });
-                FE_EXIT(l_address_tree_insertion_result.second == false, FE::MEMORY_ERROR_1XX::_FATAL_ERROR_DOUBLE_FREE, "Frogman Engine Memory Pool Debug Information: double free detected.");
+                auto l_dealloc_result = l_list_iterator->_free_blocks.insert(l_value, l_block_size_in_bytes);
+                FE_EXIT(l_dealloc_result == nullptr, FE::MEMORY_ERROR_1XX::_FATAL_ERROR_DOUBLE_FREE, "Frogman Engine Memory Pool Debug Information: double free detected.");
 
                 if (l_list_iterator->_free_blocks.size() > 1)
                 {
-                    __merge(l_address_tree_insertion_result.first, l_list_iterator->_free_blocks);
+                    __merge(l_dealloc_result, l_list_iterator->_free_blocks);
                 }
                 return;
             }
@@ -312,28 +255,22 @@ It is hard to tell which corrupted memory, but very sure to say that there was a
 private:
     static void __merge(recycler_iterator in_out_recently_deleted_p, recycler_type& in_out_free_block_list_p) noexcept
     {
-        auto l_null = in_out_free_block_list_p.end();
-        auto l_adjacent_to_begin = in_out_free_block_list_p.upper_bound(in_out_recently_deleted_p->first); // Logarithmic time complexity: O(log N)
-        auto l_adjacent_to_end = l_adjacent_to_begin;
+        auto l_upper_adjacent = in_out_recently_deleted_p + 1;
+        auto l_lower_adjacent = in_out_recently_deleted_p - 1;
 
-        if(l_adjacent_to_end != l_null)
-        {
-            --l_adjacent_to_end; // Logarithmic time complexity: O(log N)
-        }
-
-        var::byte* l_merged_address = in_out_recently_deleted_p->first;
-        var::size_t l_merged_size = in_out_recently_deleted_p->second;
+        var::byte* l_merged_address = in_out_recently_deleted_p->get_key();
+        var::size_t l_merged_size = in_out_recently_deleted_p->_value;
 
         // merge upper part
-        for(; l_adjacent_to_begin != l_null;)
+        for(; l_upper_adjacent != nullptr;)
         {
-            if(l_merged_address + l_merged_size == l_adjacent_to_begin->first)
+            if(l_merged_address + l_merged_size == l_upper_adjacent->get_key())
             {
-                l_merged_size += l_adjacent_to_begin->second;
+                l_merged_size += l_upper_adjacent->_value;
 
-                auto l_previous = l_adjacent_to_begin;
-                ++l_adjacent_to_begin; // Logarithmic time complexity: O(log N)if
-                in_out_free_block_list_p.erase(l_previous); // Constant time complexity: O(1)f
+                auto l_previous = l_upper_adjacent;
+                ++l_upper_adjacent;
+                in_out_free_block_list_p.erase(l_previous); 
                 continue;
             }
             else
@@ -343,15 +280,15 @@ private:
         }
 
         // merge lower part
-        for(; l_adjacent_to_end != l_null;) 
+        for(; l_lower_adjacent != nullptr;) 
         {
-            if( l_adjacent_to_end->first + l_adjacent_to_end->second == l_merged_address)
+            if( l_lower_adjacent->get_key() + l_lower_adjacent->_value == l_merged_address)
             {
-                l_merged_size += l_adjacent_to_end->second;
-                l_merged_address = l_adjacent_to_end->first;
-                auto l_previous = l_adjacent_to_end;
-                --l_adjacent_to_end;  // Logarithmic time complexity: O(log N)
-                in_out_free_block_list_p.erase(l_previous); // Constant time complexity: O(1)f
+                l_merged_size += l_lower_adjacent->_value;
+                l_merged_address = l_lower_adjacent->get_key();
+                auto l_previous = l_lower_adjacent;
+                --l_lower_adjacent; 
+                in_out_free_block_list_p.erase(l_previous); 
                 continue;
             }
             else
@@ -360,11 +297,11 @@ private:
             }
         }
 
-        in_out_free_block_list_p.insert({l_merged_address, l_merged_size}); // Logarithmic time complexity: O(log N)
+        in_out_free_block_list_p.insert(l_merged_address, l_merged_size); 
     }
 
     template <typename T>
-    static void __recycle(internal::pool::block_info<void, POOL_TYPE::_GENERIC>& out_memblock_info_p, chunk_type& in_out_memory_p, size_t queried_allocation_size_in_bytes_p) noexcept
+    static void __recycle(internal::pool::block_info& out_memblock_info_p, chunk_type& in_out_memory_p, size_t queried_allocation_size_in_bytes_p) noexcept
     {
         FE_ASSERT(in_out_memory_p._free_blocks.is_empty() == true, "Assertion Failure: Cannot recycle from an empty bin.");
 
@@ -373,21 +310,19 @@ private:
                      second contains the size of the memory block.
         */
 
-        auto l_cend = in_out_memory_p._free_blocks.cend();
-
-        for (auto free_block_iterator = in_out_memory_p._free_blocks.begin(); free_block_iterator != l_cend; ++free_block_iterator)
+        for (auto free_block_iterator = in_out_memory_p._free_blocks.begin(); free_block_iterator != nullptr; ++free_block_iterator)
         {
-            if (free_block_iterator->second >= queried_allocation_size_in_bytes_p)
+            if (free_block_iterator->_value >= queried_allocation_size_in_bytes_p)
             {
-                out_memblock_info_p._address = free_block_iterator->first;
+                out_memblock_info_p._address = free_block_iterator->get_key();
                 out_memblock_info_p._size_in_bytes = queried_allocation_size_in_bytes_p;
-                auto l_leftover_address = free_block_iterator->first + queried_allocation_size_in_bytes_p;
-                auto l_leftover_size = free_block_iterator->second - queried_allocation_size_in_bytes_p;
+                auto l_leftover_address = out_memblock_info_p._address + queried_allocation_size_in_bytes_p;
+                auto l_leftover_size = free_block_iterator->_value - queried_allocation_size_in_bytes_p;
 
                 if (l_leftover_size > 0)
                 {
-                    _MAYBE_UNUSED_ auto l_address_tree_insertion_result = in_out_memory_p._free_blocks.insert(block_info_type{ l_leftover_address, l_leftover_size });
-                    FE_EXIT(l_address_tree_insertion_result.second == false, FE::MEMORY_ERROR_1XX::_FATAL_ERROR_DOUBLE_FREE, "Frogman Engine Memory Pool Debug Information: double free detected.");
+                    _MAYBE_UNUSED_ auto l_split_result = in_out_memory_p._free_blocks.insert(l_leftover_address, l_leftover_size);
+                    FE_EXIT(l_split_result == nullptr, FE::MEMORY_ERROR_1XX::_FATAL_ERROR_DOUBLE_FREE, "Frogman Engine Memory Pool Debug Information: double free detected.");
                 }
                 in_out_memory_p._free_blocks.erase(free_block_iterator);
 
@@ -398,8 +333,8 @@ private:
 };
 
 
-template<size_t PageCapacity = 1 MB, class Alignment = FE::SIMD_auto_alignment, class Allocator = FE::aligned_allocator<internal::pool::chunk<void, POOL_TYPE::_GENERIC, PageCapacity, Alignment>>>
-using generic_pool = pool<void, POOL_TYPE::_GENERIC, PageCapacity, Alignment, Allocator>;
+template<size_t PageCapacity = 1 MB, class Alignment = FE::SIMD_auto_alignment, class Allocator = FE::aligned_allocator<internal::pool::chunk<POOL_TYPE::_DYNAMIC, PageCapacity, Alignment>>>
+using dynamic_pool = pool<POOL_TYPE::_DYNAMIC, PageCapacity, Alignment, Allocator>;
 
 
 END_NAMESPACE

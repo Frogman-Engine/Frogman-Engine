@@ -16,7 +16,7 @@ class pool_allocator : public allocator_base
 {
 public:
 	using base_type = allocator_base;
-	using pool_type = FE::generic_pool<PageCapacity::size, Alignment>;
+	using pool_type = FE::dynamic_pool<PageCapacity::size, Alignment>;
 	using value_type = T;
 	using pointer = value_type*;
 	using const_pointer = const pointer;

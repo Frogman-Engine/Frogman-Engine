@@ -30,9 +30,10 @@ namespace FE
 BEGIN_NAMESPACE(FE::internal::managed)
 
 
+template<typename T>
 struct ref_block
 {
-	void* _address = nullptr;
+	T* _address = nullptr;
 	var::count_t _ref_count = 0;
 };
 
@@ -52,10 +53,10 @@ class ref_table
 	friend class ::FE::ref;
 	
 public:
-	constexpr static auto ref_table_page_capacity = 10000;
+	static constexpr auto ref_table_page_capacity = 10000;
 
 private:
-	thread_local static FE::block_pool<ref_block, ref_table_page_capacity> tl_s_ref_block_pool;
+	thread_local static FE::block_pool<sizeof(ref_block<void>), ref_table_page_capacity> tl_s_ref_block_pool;
 };
 
 

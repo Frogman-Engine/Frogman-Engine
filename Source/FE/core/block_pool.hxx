@@ -3,7 +3,7 @@
 // Copyright © from 2023 to current, UNKNOWN STRYKER. All Rights Reserved.
 #include <FE/core/prerequisites.h>
 #include <FE/core/private/pool_common.hxx>
-#include <FE/core/containers/stack.hxx>
+#include <FE/core/stack.hxx>
 
 
 
@@ -13,47 +13,32 @@ BEGIN_NAMESPACE(FE)
 
 namespace internal::pool
 {
-    template <typename T>
-    struct block_info<T, POOL_TYPE::_BLOCK>
-    {
-        using value_type = T;
-        using pointer = value_type*;
-
-        pointer _address = nullptr;
-    };
-
-
     template <size_t InBytes>
     class uninitialized_bytes
     {
         var::byte m_memory[InBytes];
     };
 
-
-    template<typename T, count_t PageCapacity>
-    struct chunk<T, POOL_TYPE::_BLOCK, PageCapacity, FE::align_custom_bytes<sizeof(T)>>
+    template<count_t PageCapacity, class Alignment>
+    struct chunk<POOL_TYPE::_STATIC, PageCapacity, Alignment>
     {
-        FE_STATIC_ASSERT(std::is_array<T>::value == true, "Static Assertion Failed: The T must not be an array[] type.");
-        FE_STATIC_ASSERT(std::is_const<T>::value == true, "Static Assertion Failed: The T must not be a const type.");
-
-        using block_info_type = block_info<T, POOL_TYPE::_BLOCK>;
-        using value_type = typename block_info_type::value_type;
-        using pointer = typename block_info_type::pointer;
+        static constexpr size_t fixed_block_size_in_bytes = Alignment::size;
+        static constexpr count_t page_capacity = PageCapacity;
+        static constexpr size_t page_capacity_in_bytes = fixed_block_size_in_bytes * page_capacity;
+        using block_info_type = var::byte*;
 
     private:
     #ifdef _DEBUG_
-        alignas(FE::SIMD_auto_alignment::size) std::array<var::byte, sizeof(T)* PageCapacity> m_memory = { 0 };
+        alignas(FE::SIMD_auto_alignment::size) std::array<var::byte, page_capacity_in_bytes> m_memory = { 0 };
     #else
-        alignas(FE::SIMD_auto_alignment::size) std::array<var::byte, sizeof(T)* PageCapacity> m_memory;
+        alignas(FE::SIMD_auto_alignment::size) std::array<var::byte, page_capacity_in_bytes> m_memory;
     #endif
 
     public:
-        constexpr static size_t page_capacity = PageCapacity;
-
         FE::fstack<block_info_type, PageCapacity> _free_blocks;
-        pointer const _begin = reinterpret_cast<pointer const>(m_memory.data());
-        pointer _page_iterator = _begin;
-        pointer const _end = _begin + PageCapacity;
+        var::byte* const _begin = reinterpret_cast<var::byte* const>(m_memory.data());
+        var::byte* _page_iterator = _begin;
+        var::byte* const _end = _begin + page_capacity_in_bytes;
 
         _FORCE_INLINE_ boolean is_full() const noexcept
         {
@@ -65,26 +50,19 @@ namespace internal::pool
 
 
 
-template<typename T, count_t PageCapacity, class Allocator>
-class pool<T, POOL_TYPE::_BLOCK, PageCapacity, FE::align_custom_bytes<sizeof(T)>, Allocator>
+template<size_t PageCapacity, class Alignment, class Allocator>
+class pool<POOL_TYPE::_STATIC, PageCapacity, Alignment, Allocator>
 {
-    FE_STATIC_ASSERT(std::is_array<T>::value == true, "Static Assertion Failed: The T must not be an array[] type.");
-    FE_STATIC_ASSERT(std::is_const<T>::value == true, "Static Assertion Failed: The T must not be a const type.");
-
 public:
-    using chunk_type = internal::pool::chunk<T, POOL_TYPE::_BLOCK, PageCapacity, FE::align_custom_bytes<sizeof(T)>>;
-    using deleter_type = pool_deleter<T, POOL_TYPE::_BLOCK, PageCapacity, FE::align_custom_bytes<sizeof(T)>, Allocator>;
-    using block_info_type = typename chunk_type::block_info_type;
-
+    using chunk_type = internal::pool::chunk<POOL_TYPE::_STATIC, PageCapacity, Alignment>;
     FE_STATIC_ASSERT((std::is_same<chunk_type, typename Allocator::value_type>::value == false), "Static Assertion Failed: The chunk_type has to be equivalent to Allocator::value_type.");
+    using block_info_type = typename chunk_type::block_info_type;
     using pool_type = std::list<chunk_type, Allocator>;
 
-    constexpr static count_t page_capacity = PageCapacity;
+    static constexpr size_t fixed_block_size_in_bytes = Alignment::size;
+    static constexpr count_t page_capacity = PageCapacity;
     static constexpr count_t maximum_list_node_count = 10;
 
-    FE_STATIC_ASSERT((std::is_same<T, typename chunk_type::value_type>::value == false), "Static Assertion Failed: The value_type does not match.");
-    FE_STATIC_ASSERT((std::is_same<T*, typename chunk_type::pointer>::value == false), "Static Assertion Failed: The value_type* does not match.");
-    
 private:
     pool_type m_memory_pool;
 
@@ -97,6 +75,7 @@ public:
 
     pool& operator=(const pool& other_p) noexcept = delete;
     pool& operator=(pool&& rvalue) noexcept = delete;
+
 /* - Memory pool corruption detector - 
 1. unused bits are always 0.
 2. bits are set to 0 during the deallocate() routine.
@@ -104,37 +83,40 @@ public:
 It is hard to tell which corrupted memory, but very sure to say that there was an illegal memory access operation.
 -- This feature is enabled if _DEBUG_ is defined. --
 */
-    T* allocate() noexcept
+
+    template<typename U>
+    U* allocate() noexcept
     {
+        FE_STATIC_ASSERT((sizeof(U) > fixed_block_size_in_bytes), "Static assertion failed: sizeof(U) must not be greater than fixed_block_size_in_bytes.");
         typename pool_type::iterator l_list_iterator = this->m_memory_pool.begin();
         typename pool_type::const_iterator l_cend = this->m_memory_pool.cend();
 
     #ifdef _DEBUG_
-        static FE::byte s_clean_bits[sizeof(T)] { 0 };
+        static FE::byte s_clean_bits[sizeof(U)] { 0 };
     #endif
 
         for (; l_list_iterator != l_cend; ++l_list_iterator)
         {
             if (l_list_iterator->is_full() == false)
             {
-                T* l_allocation_result;
+                U* l_allocation_result;
                 if (l_list_iterator->_free_blocks.is_empty() == true)
                 {
-                    l_allocation_result = l_list_iterator->_page_iterator;
-                    ++(l_list_iterator->_page_iterator);
+                    l_allocation_result = reinterpret_cast<U*>(l_list_iterator->_page_iterator);
+                    l_list_iterator->_page_iterator += fixed_block_size_in_bytes;
                 }
                 else
                 {
-                    l_allocation_result = l_list_iterator->_free_blocks.pop()._address;
+                    l_allocation_result = reinterpret_cast<U*>(l_list_iterator->_free_blocks.pop());
                 }
 
             #ifdef _DEBUG_
-                FE_ASSERT(( std::memcmp(l_allocation_result, s_clean_bits, sizeof(T)) != 0 ), "Frogman Engine Block Memory Pool Debug Information: Detected memory corruption!");
+                FE_ASSERT(( std::memcmp(l_allocation_result, s_clean_bits, sizeof(U)) != 0 ), "Frogman Engine Block Memory Pool Debug Information: Detected memory corruption!");
             #endif
             
-                if constexpr (FE::is_trivial<T>::value == FE::TYPE_TRIVIALITY::_NOT_TRIVIAL)
+                if constexpr (FE::is_trivial<U>::value == FE::TYPE_TRIVIALITY::_NOT_TRIVIAL)
                 {
-                    new(l_allocation_result) T();
+                    new(l_allocation_result) U();
                 }
 
                 return l_allocation_result;
@@ -145,30 +127,32 @@ It is hard to tell which corrupted memory, but very sure to say that there was a
         }
 
         create_pages(1);
-        return allocate();
+        return allocate<U>();
     }
 
-    void deallocate(T* const pointer_p) noexcept
+    template<typename U>
+    void deallocate(U* const pointer_p) noexcept
     {
+        FE_STATIC_ASSERT((sizeof(U) > fixed_block_size_in_bytes), "Static assertion failed: sizeof(U) must not be greater than fixed_block_size_in_bytes.");
         typename pool_type::iterator  l_list_iterator = this->m_memory_pool.begin();
         typename pool_type::const_iterator l_cend = this->m_memory_pool.cend();
         FE_ASSERT(l_list_iterator == l_cend, "Unable to request deallocate() to an empty pool.");
 
+        block_info_type l_to_be_freed = reinterpret_cast<block_info_type>(pointer_p);
 
         for (; l_list_iterator != l_cend; ++l_list_iterator)
         {
-            if ((l_list_iterator->_begin <= pointer_p) && (pointer_p < l_list_iterator->_end))
+            if ((l_list_iterator->_begin <= l_to_be_freed) && (l_to_be_freed < l_list_iterator->_end))
             {
-                if constexpr (FE::is_trivial<T>::value == FE::TYPE_TRIVIALITY::_NOT_TRIVIAL)
+                if constexpr (FE::is_trivial<U>::value == FE::TYPE_TRIVIALITY::_NOT_TRIVIAL)
                 {
-                    pointer_p->~T();
+                    pointer_p->~U();
                 }
 
             #ifdef _DEBUG_
-                std::memset(pointer_p, _FE_NULL_, sizeof(T));
+                std::memset(l_to_be_freed, _FE_NULL_, sizeof(U));
             #endif
-
-                l_list_iterator->_free_blocks.push(block_info_type{ pointer_p });
+                l_list_iterator->_free_blocks.push(l_to_be_freed);
                 return;
             }
         }
@@ -213,7 +197,7 @@ It is hard to tell which corrupted memory, but very sure to say that there was a
             {
                 this->m_memory_pool.erase(l_list_iterator);
 
-                if (this->m_memory_pool.size() == 0)
+                if (this->m_memory_pool.empty() == true)
                 {
                     break;
                 }
@@ -227,8 +211,8 @@ It is hard to tell which corrupted memory, but very sure to say that there was a
 };
 
 
-template<typename T, count_t PageCapacity = 128, class Allocator = FE::aligned_allocator<internal::pool::chunk<T, POOL_TYPE::_BLOCK, PageCapacity, FE::align_custom_bytes<sizeof(T)>>>>
-using block_pool = pool<T, POOL_TYPE::_BLOCK, PageCapacity, FE::align_custom_bytes<sizeof(T)>, Allocator>;
+template<size_t FixedBlockSizeInBytes = FE::SIMD_auto_alignment::size, count_t PageCapacity = 128, class Allocator = FE::aligned_allocator<internal::pool::chunk<POOL_TYPE::_STATIC, PageCapacity, FE::align_custom_bytes<FixedBlockSizeInBytes>>>>
+using block_pool = pool<POOL_TYPE::_STATIC, PageCapacity, FE::align_custom_bytes<FixedBlockSizeInBytes>, Allocator>;
 
 
 END_NAMESPACE
