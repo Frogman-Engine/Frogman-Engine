@@ -28,7 +28,7 @@ public:
     using value_type = CharT;
     using size_type = var::uint64;
     using length_type = var::uint64;
-    using difference_type = var::ptrdiff_t;
+    using difference_type = var::ptrdiff;
     using reference = CharT&;
     using const_reference = const CharT&;
     using pointer = CharT*;

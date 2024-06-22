@@ -27,7 +27,7 @@ int main()
 
     {
         using object_t = std::array<var::int32, 10>;
-        constexpr FE::size_t l_buffer_size = sizeof(object_t) * 100;
+        constexpr FE::size l_buffer_size = sizeof(object_t) * 100;
         std::unique_ptr<char[]> u = std::make_unique<char[]>(l_buffer_size);
 
         _MAYBE_UNUSED_ object_t arr = {1,2,3,4,5,6,7,8,9,10};

@@ -38,17 +38,17 @@ public:
     using value_type = CharT;
 
     template<ADDRESS DestAddressAlignment = ADDRESS::_NOT_ALIGNED, ADDRESS SourceAddressAlignment = ADDRESS::_NOT_ALIGNED>
-    _FORCE_INLINE_ static void copy(CharT* const out_dest_string_p, const CharT* const source_string_p, size_t count_p) noexcept
+    _FORCE_INLINE_ static void copy(CharT* const out_dest_string_p, const CharT* const source_string_p, size count_p) noexcept
     {
         algorithm::string::copy<CharT, DestAddressAlignment, SourceAddressAlignment>(out_dest_string_p, source_string_p, count_p);
     }
 
-	_FORCE_INLINE_ static void assign(CharT* in_out_string_p, size_t count_p, CharT value_p) noexcept
+	_FORCE_INLINE_ static void assign(CharT* in_out_string_p, size count_p, CharT value_p) noexcept
 	{
         FE_ASSERT(in_out_string_p == nullptr, "${%s@0}: {%s@1} is nullptr.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(in_out_string_p));
         FE_ASSERT(count_p == 0, "${%s@0}: {%s@1} is zero.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_INVALID_SIZE), TO_STRING(count_p));
 
-        for (var::size_t i = 0; i != count_p; ++i)
+        for (var::size i = 0; i != count_p; ++i)
         {
             *in_out_string_p = value_p;
             ++in_out_string_p;
@@ -56,19 +56,19 @@ public:
         *in_out_string_p = _FE_NULL_;
 	}
 
-    _FORCE_INLINE_ static void assign(const string_info<CharT>& in_out_string_p, const CharT* const string_p, size_t input_begin_p, size_t input_end_p) noexcept
+    _FORCE_INLINE_ static void assign(const string_info<CharT>& in_out_string_p, const CharT* const string_p, size input_begin_p, size input_end_p) noexcept
     {
         FE_ASSERT(in_out_string_p._string_pointer == nullptr, "${%s@0}: ${%s@1} is nullptr.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(in_out_string_p._string_pointer));
         FE_ASSERT(string_p == nullptr, "${%s@0}: ${%s@1} is nullptr.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(string_p));
         FE_ASSERT(input_begin_p >= input_end_p, "${%s@0}: ${%s@1} cannot be greater than or equal to ${%s@2}.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_ILLEGAL_POSITION), TO_STRING(input_begin_p), TO_STRING(input_end_p));
 
-        size_t l_size_to_copy = input_end_p - input_begin_p;
+        size l_size_to_copy = input_end_p - input_begin_p;
         FE_ASSERT(l_size_to_copy > in_out_string_p._capacity, "${%s@0}: ${%s@2} was greater than or equal to ${%s@1}. ${%s@1} was ${%lu@3}, and ${%s@2} was ${%lu@4}", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_RANGE), TO_STRING(in_out_string_p._capacity), TO_STRING(l_size_to_copy), &in_out_string_p._capacity, &l_size_to_copy);
 
         algorithm::string::copy<CharT>(in_out_string_p._string_pointer, string_p + input_begin_p, l_size_to_copy);
     }
 
-    _FORCE_INLINE_ static void assign(const string_info<CharT>& in_out_string_p, const CharT* const string_p, size_t size_to_assign_p) noexcept
+    _FORCE_INLINE_ static void assign(const string_info<CharT>& in_out_string_p, const CharT* const string_p, size size_to_assign_p) noexcept
     {
         FE_ASSERT(size_to_assign_p == 0, "${%s@0}: {%s@1} is zero.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_INVALID_SIZE), TO_STRING(size_to_assign_p));
         FE_ASSERT(string_p == nullptr, "${%s@0}: {%s@1} is nullptr.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(string_p));
@@ -88,7 +88,7 @@ public:
 
         FE_ASSERT(input_begin_p >= input_end_p, "${%s@0}: ${%s@1} must be smaller than ${%s@2}.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_RANGE), TO_STRING(input_begin_p), TO_STRING(input_end_p));
 
-        size_t l_size_to_assign = input_end_p - input_begin_p;
+        size l_size_to_assign = input_end_p - input_begin_p;
         FE_ASSERT(l_size_to_assign > in_out_string_p._capacity, "${%s@0}: input string range length exceeds the string capacity.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_RANGE));
 
         if constexpr (std::is_same<typename ConstIterator::iterator_category, typename FE::contiguous_iterator<CharT>::category>::value == true)
@@ -110,7 +110,7 @@ public:
     }
 
 
-    _FORCE_INLINE_ static void insert(string_info<CharT>& in_out_string_p, size_t position_p, size_t count_p, CharT value_p) noexcept
+    _FORCE_INLINE_ static void insert(string_info<CharT>& in_out_string_p, size position_p, size count_p, CharT value_p) noexcept
     {
         FE_ASSERT(in_out_string_p._string_pointer == nullptr, "${%s@0}: {%s@1} is nullptr.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(in_out_string_p._string_pointer));
         FE_ASSERT(count_p == 0, "ERROR: insert() operation was unsuccessful. ${%s@0} was zero.", TO_STRING(count_p));
@@ -127,12 +127,12 @@ public:
         in_out_string_p._string_pointer[in_out_string_p._length] = _FE_NULL_;
     }
 
-    _FORCE_INLINE_ static void insert(const string_info<CharT>& in_out_string_p, size_t this_position_p, const CharT* const string_p, size_t input_begin_p, size_t input_end_p) noexcept
+    _FORCE_INLINE_ static void insert(const string_info<CharT>& in_out_string_p, size this_position_p, const CharT* const string_p, size input_begin_p, size input_end_p) noexcept
     {
         FE_ASSERT(this_position_p > in_out_string_p._capacity, "${%s@0}: ${%s@1} cannot be greater than the ${%s@2}.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_CAPACITY), TO_STRING(this_position_p), TO_STRING(in_out_string_p._capacity));
         FE_ASSERT(input_begin_p >= input_end_p, "${%s@0}: ${%s@1} cannot be greater than or equal to ${%s@2}.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_ILLEGAL_POSITION), TO_STRING(input_begin_p), TO_STRING(input_end_p));
 
-        size_t l_input_string_length = input_end_p - input_begin_p;
+        size l_input_string_length = input_end_p - input_begin_p;
         FE_ASSERT((in_out_string_p._length + l_input_string_length) > in_out_string_p._capacity, "${%s@0}: string capacity overflowed.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_CAPACITY));
 
         std::memmove(in_out_string_p._string_pointer + (this_position_p + l_input_string_length), in_out_string_p._string_pointer + this_position_p, (in_out_string_p._length - this_position_p) * sizeof(CharT));
@@ -141,7 +141,7 @@ public:
         in_out_string_p._string_pointer[in_out_string_p._length + l_input_string_length] = _FE_NULL_;
     }
 
-    _FORCE_INLINE_ static void insert(const string_info<CharT>& in_out_string_p, size_t this_position_p, const CharT* const string_p, size_t inout_string_length_p) noexcept
+    _FORCE_INLINE_ static void insert(const string_info<CharT>& in_out_string_p, size this_position_p, const CharT* const string_p, size inout_string_length_p) noexcept
     {
         FE_ASSERT(this_position_p >= in_out_string_p._capacity, "${%s@0}: ${%s@1} cannot be greater than the string capacity.", TO_STRING(FE::MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_RANGE), TO_STRING(this_position_p));
         FE_ASSERT(in_out_string_p._string_pointer == nullptr, "${%s@0}: ${%s@1} is nullptr", TO_STRING(FE::MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(in_out_string_p));
@@ -152,7 +152,7 @@ public:
         in_out_string_p._string_pointer[in_out_string_p._length + inout_string_length_p] = _FE_NULL_;
     }
 
-    _FORCE_INLINE_ static void insert(const string_info<CharT>& in_out_string_p, size_t this_position_p, std::initializer_list<const CharT>&& initializer_list_p) noexcept
+    _FORCE_INLINE_ static void insert(const string_info<CharT>& in_out_string_p, size this_position_p, std::initializer_list<const CharT>&& initializer_list_p) noexcept
     {
         FE_ASSERT(initializer_list_p.size() == 0, "${%s@0}: initializer_list_p is empty.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_INVALID_SIZE));
         FE_ASSERT((in_out_string_p._length + initializer_list_p.size()) >= in_out_string_p._capacity, "${%s@0}: string capacity overflowed.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_CAPACITY));
@@ -163,7 +163,7 @@ public:
         in_out_string_p._string_pointer[in_out_string_p._length + initializer_list_p.size()] = _FE_NULL_;
     }
 
-    _FORCE_INLINE_ static void erase(const string_info<CharT>& in_out_string_p, size_t this_index_p = 0, size_t this_count_p = 1) noexcept
+    _FORCE_INLINE_ static void erase(const string_info<CharT>& in_out_string_p, size this_index_p = 0, size this_count_p = 1) noexcept
     {
         FE_ASSERT(in_out_string_p._capacity < (this_index_p + this_count_p), "${%s@0}: string capacity overflowed.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_RANGE));
         FE_ASSERT(this_count_p == 0, "${%s@0}: ${%s@1} is zero.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_INVALID_SIZE), TO_STRING(this_count_p));
@@ -172,7 +172,7 @@ public:
         in_out_string_p._string_pointer[in_out_string_p._length - this_count_p] = _FE_NULL_;
     }
 
-    _FORCE_INLINE_ static void append(string_info<CharT>& in_out_string_p, size_t input_count_p, CharT value_p) noexcept
+    _FORCE_INLINE_ static void append(string_info<CharT>& in_out_string_p, size input_count_p, CharT value_p) noexcept
     {
         FE_ASSERT(input_count_p == 0, "${%s0}: ${%s1} is zero", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_INVALID_SIZE), TO_STRING(input_count_p));
         FE_ASSERT(in_out_string_p._capacity < (in_out_string_p._length + input_count_p), "${%s0}: cannot append ${%ld@1} character(s) to the string.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_RANGE), &input_count_p);
@@ -189,7 +189,7 @@ public:
         *in_out_string_p._string_pointer = _FE_NULL_;
     }
 
-    _FORCE_INLINE_ static void append(string_info<CharT>& in_out_string_p, const CharT* const string_p, size_t input_position_p, size_t input_count_p = 1) noexcept
+    _FORCE_INLINE_ static void append(string_info<CharT>& in_out_string_p, const CharT* const string_p, size input_position_p, size input_count_p = 1) noexcept
     {
         FE_ASSERT(string_p == nullptr, "${%s@0}: ${%s@1} is nullptr.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(string_p));
         FE_ASSERT(input_count_p == 0, "${%s0}: ${%s1} is zero", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_INVALID_SIZE), TO_STRING(input_count_p));
@@ -199,7 +199,7 @@ public:
         algorithm::string::copy<CharT>(in_out_string_p._string_pointer, string_p + input_position_p, input_count_p);
     }
 
-    _FORCE_INLINE_ static void append(string_info<CharT>& in_out_string_p, const CharT* string_p, size_t input_count_p) noexcept
+    _FORCE_INLINE_ static void append(string_info<CharT>& in_out_string_p, const CharT* string_p, size input_count_p) noexcept
     {
         FE_ASSERT(string_p == nullptr, "${%s@0}: ${%s@1} is nullptr.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(string_p));
         FE_ASSERT(input_count_p == 0, "${%s0}: ${%s1} is zero", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_INVALID_SIZE), TO_STRING(input_count_p));
@@ -219,7 +219,7 @@ public:
         FE_ASSERT(input_end_p == nullptr, "${%s@0}: ${%s@1} is nullptr.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(input_end_p));
         FE_ASSERT(input_begin_p >= input_end_p, "${%s@0}: ${%s@0} must not be greater than l_input_count.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_RANGE), TO_STRING(input_begin_p));
  
-        size_t l_input_size = input_end_p - input_begin_p;
+        size l_input_size = input_end_p - input_begin_p;
         FE_ASSERT(l_input_size + in_out_string_p._length >= in_out_string_p._capacity, "${%s@0}: input string range length exceeds string capacity.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_RANGE));
 
         in_out_string_p._string_pointer += in_out_string_p._length;
@@ -243,7 +243,7 @@ public:
     }
 
 
-    static void replace(string_info<CharT>& in_out_string_p, size_t target_position_p, size_t count_to_be_removed_p, const CharT* const string_p, size_t input_count_p) noexcept
+    static void replace(string_info<CharT>& in_out_string_p, size target_position_p, size count_to_be_removed_p, const CharT* const string_p, size input_count_p) noexcept
     {
         FE_ASSERT(((in_out_string_p._length + input_count_p) - count_to_be_removed_p) > in_out_string_p._capacity, "${%s@0}: failed to replace.", TO_STRING(FE::MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_CAPACITY));
         FE_ASSERT(target_position_p > in_out_string_p._length, "${%s@0}: ${%s@1} must not be greater than ${%s@2}.", TO_STRING(FE::MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_RANGE), TO_STRING(target_position_p), TO_STRING(in_out_string_p._length));
@@ -253,7 +253,7 @@ public:
         // move the string pointer to the target position
         in_out_string_p._string_pointer += target_position_p;
 
-        size_t l_bytes_to_move = in_out_string_p._length - (count_to_be_removed_p + target_position_p);
+        size l_bytes_to_move = in_out_string_p._length - (count_to_be_removed_p + target_position_p);
         CharT* l_move_to = nullptr;
         CharT* l_move_from = nullptr;
 
@@ -278,7 +278,7 @@ public:
         std::memcpy(in_out_string_p._string_pointer, string_p, input_count_p * sizeof(CharT));
     }
 
-    static void replace(string_info<CharT>& in_out_string_p, size_t target_position_p, size_t count_to_be_removed_p, const CharT value_p, size_t input_count_p) noexcept
+    static void replace(string_info<CharT>& in_out_string_p, size target_position_p, size count_to_be_removed_p, const CharT value_p, size input_count_p) noexcept
     {
         FE_ASSERT(input_count_p == 0, "${%s@0}: ${%s@1} is zero.", TO_STRING(FE::MEMORY_ERROR_1XX::_FATAL_ERROR_INVALID_SIZE), TO_STRING(input_count_p));
         FE_ASSERT(((in_out_string_p._length + input_count_p) - count_to_be_removed_p) > in_out_string_p._capacity, "${%s@0}: failed to replace.", TO_STRING(FE::MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_CAPACITY));
@@ -287,7 +287,7 @@ public:
         // move the string pointer to the target position
         in_out_string_p._string_pointer += target_position_p;
 
-        size_t l_bytes_to_move = in_out_string_p._length - (count_to_be_removed_p + target_position_p);
+        size l_bytes_to_move = in_out_string_p._length - (count_to_be_removed_p + target_position_p);
         CharT* l_move_to = nullptr;
         CharT* l_move_from = nullptr;
 
@@ -322,9 +322,9 @@ public:
         }
     }
 
-    static void replace(string_info<CharT>& in_out_string_p, size_t target_position_p, size_t count_to_be_removed_p, std::initializer_list<const CharT>&& initializer_list_p) noexcept
+    static void replace(string_info<CharT>& in_out_string_p, size target_position_p, size count_to_be_removed_p, std::initializer_list<const CharT>&& initializer_list_p) noexcept
     {
-        size_t l_input_count = initializer_list_p.size();
+        size l_input_count = initializer_list_p.size();
 
         FE_ASSERT(((in_out_string_p._length + l_input_count) - count_to_be_removed_p) > in_out_string_p._capacity, "${%s@0}: failed to replace.", TO_STRING(FE::MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_CAPACITY));
         FE_ASSERT(count_to_be_removed_p == 0, "${%s@0}: ${%s@1} is zero.", TO_STRING(FE::MEMORY_ERROR_1XX::_FATAL_ERROR_INVALID_SIZE), TO_STRING(count_to_be_removed_p));
@@ -333,7 +333,7 @@ public:
         // move the string pointer to the target position
         in_out_string_p._string_pointer += target_position_p;
 
-        size_t l_bytes_to_move = in_out_string_p._length - (count_to_be_removed_p + target_position_p);
+        size l_bytes_to_move = in_out_string_p._length - (count_to_be_removed_p + target_position_p);
         CharT* l_move_to = nullptr;
         CharT* l_move_from = nullptr;
 
@@ -359,7 +359,7 @@ public:
     }
 
     template<class ConstIterator>
-    static void replace(string_info<CharT>& in_out_string_p, size_t first_index_p, size_t last_index_p, ConstIterator input_first_p, ConstIterator input_last_p) noexcept
+    static void replace(string_info<CharT>& in_out_string_p, size first_index_p, size last_index_p, ConstIterator input_first_p, ConstIterator input_last_p) noexcept
     {
         FE_ASSERT(input_first_p == nullptr, "${%s@0}: ${%s@1} is nullptr.", TO_STRING(FE::MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(input_first_p));
         FE_ASSERT(input_last_p == nullptr, "${%s@0}: ${%s@1} is nullptr.", TO_STRING(FE::MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(input_last_p));
@@ -369,11 +369,11 @@ public:
         // move the string pointer to the target position
         in_out_string_p._string_pointer += first_index_p;
 
-        size_t l_count_to_be_removed = last_index_p - first_index_p;
-        size_t l_bytes_to_move = in_out_string_p._length - (l_count_to_be_removed + first_index_p);
+        size l_count_to_be_removed = last_index_p - first_index_p;
+        size l_bytes_to_move = in_out_string_p._length - (l_count_to_be_removed + first_index_p);
         CharT* l_move_to = nullptr;
         CharT* l_move_from = nullptr;
-        size_t l_input_count = input_last_p - input_first_p;
+        size l_input_count = input_last_p - input_first_p;
 
         if (l_count_to_be_removed > l_input_count)
         {

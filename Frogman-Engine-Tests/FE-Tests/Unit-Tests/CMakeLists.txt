@@ -1,4 +1,4 @@
-CMAKE_MINIMUM_REQUIRED(VERSION 3.27.0...3.29.3)
+CMAKE_MINIMUM_REQUIRED(VERSION 3.27.0...3.29.6)
 
 PROJECT(FE_UNIT_TEST
         VERSION 0.0
@@ -7,8 +7,6 @@ PROJECT(FE_UNIT_TEST
 
 INCLUDE("${CMAKE_CURRENT_SOURCE_DIR}/../../../Source/CMakeLists/predefined-settings.cmake")
 
-
-ADD_COMPILE_DEFINITIONS(BENCHMARK_STATIC_DEFINE)
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/../../../Third-Party-Tools/Google-Test/include)
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/../../../Third-Party-Tools/Benchmark/include)
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/../../../Source)
@@ -50,6 +48,7 @@ IF(CMAKE_SYSTEM_NAME STREQUAL "Linux")
         $<$<CONFIG:MINSIZEREL>:		${CMAKE_CURRENT_SOURCE_DIR}/../../../Third-Party-Tools/Google-Test/linux/libgtest.a>
     )
 
+    ADD_COMPILE_OPTIONS(-DBENCHMARK_STATIC_DEFINE)
     SET(BENCHMARK_TEST			
         $<$<CONFIG:DEBUG>:			${CMAKE_CURRENT_SOURCE_DIR}/../../../Third-Party-Tools/Benchmark/linux/libbenchmark.a>
         $<$<CONFIG:RELWITHDEBINFO>: ${CMAKE_CURRENT_SOURCE_DIR}/../../../Third-Party-Tools/Benchmark/linux/libbenchmark.a>
@@ -61,17 +60,17 @@ IF(CMAKE_SYSTEM_NAME STREQUAL "Linux")
 ELSEIF(CMAKE_SYSTEM_NAME STREQUAL "Windows")
 
     SET(BOOST_STACKTRACE 
-    $<$<CONFIG:DEBUG>:			${CMAKE_CURRENT_SOURCE_DIR}/../../../Third-Party-Libraries/boost-1.85.0/lib/windows/VS2022-v143/debug/libboost_stacktrace_windbg_cached-vc143-mt-gd-x64-1_85.lib>
-    $<$<CONFIG:RELWITHDEBINFO>: ${CMAKE_CURRENT_SOURCE_DIR}/../../../Third-Party-Libraries/boost-1.85.0/lib/windows/VS2022-v143/release/libboost_stacktrace_basic-vc143-mt-x64-1_85.lib>
-    $<$<CONFIG:RELEASE>:		${CMAKE_CURRENT_SOURCE_DIR}/../../../Third-Party-Libraries/boost-1.85.0/lib/windows/VS2022-v143/release/libboost_stacktrace_noop-vc143-mt-x64-1_85.lib>
-    $<$<CONFIG:MINSIZEREL>:		${CMAKE_CURRENT_SOURCE_DIR}/../../../Third-Party-Libraries/boost-1.85.0/lib/windows/VS2022-v143/release/libboost_stacktrace_noop-vc143-mt-x64-1_85.lib>
+    $<$<CONFIG:DEBUG>:			${CMAKE_CURRENT_SOURCE_DIR}/../../../Third-Party-Libraries/boost-1.85.0/lib/windows/clangw17-mt-sgd-x64/debug/libboost_stacktrace_windbg_cached-clangw17-mt-sgd-x64-1_85.lib>
+    $<$<CONFIG:RELWITHDEBINFO>: ${CMAKE_CURRENT_SOURCE_DIR}/../../../Third-Party-Libraries/boost-1.85.0/lib/windows/clangw17-mt-sgd-x64/release/libboost_stacktrace_windbg_cached-clangw17-mt-s-x64-1_85.lib>
+    $<$<CONFIG:RELEASE>:		${CMAKE_CURRENT_SOURCE_DIR}/../../../Third-Party-Libraries/boost-1.85.0/lib/windows/clangw17-mt-sgd-x64/release/libboost_stacktrace_noop-clangw17-mt-s-x64-1_85.lib>
+    $<$<CONFIG:MINSIZEREL>:		${CMAKE_CURRENT_SOURCE_DIR}/../../../Third-Party-Libraries/boost-1.85.0/lib/windows/clangw17-mt-sgd-x64/release/libboost_stacktrace_noop-clangw17-mt-s-x64-1_85.lib>
     )
 
     SET(BOOST_CHRONO 
-    $<$<CONFIG:DEBUG>:			${CMAKE_CURRENT_SOURCE_DIR}/../../../Third-Party-Libraries/boost-1.85.0/lib/windows/VS2022-v143/debug/libboost_chrono-vc143-mt-gd-x64-1_85.lib>
-    $<$<CONFIG:RELWITHDEBINFO>: ${CMAKE_CURRENT_SOURCE_DIR}/../../../Third-Party-Libraries/boost-1.85.0/lib/windows/VS2022-v143/release/libboost_chrono-vc143-mt-x64-1_85.lib>
-    $<$<CONFIG:RELEASE>:		${CMAKE_CURRENT_SOURCE_DIR}/../../../Third-Party-Libraries/boost-1.85.0/lib/windows/VS2022-v143/release/libboost_chrono-vc143-mt-x64-1_85.lib>
-    $<$<CONFIG:MINSIZEREL>:		${CMAKE_CURRENT_SOURCE_DIR}/../../../Third-Party-Libraries/boost-1.85.0/lib/windows/VS2022-v143/release/libboost_chrono-vc143-mt-x64-1_85.lib>
+    $<$<CONFIG:DEBUG>:			${CMAKE_CURRENT_SOURCE_DIR}/../../../Third-Party-Libraries/boost-1.85.0/lib/windows/clangw17-mt-sgd-x64/debug/libboost_chrono-clangw17-mt-sgd-x64-1_85.lib>
+    $<$<CONFIG:RELWITHDEBINFO>: ${CMAKE_CURRENT_SOURCE_DIR}/../../../Third-Party-Libraries/boost-1.85.0/lib/windows/clangw17-mt-sgd-x64/release/libboost_chrono-clangw17-mt-s-x64-1_85.lib>
+    $<$<CONFIG:RELEASE>:		${CMAKE_CURRENT_SOURCE_DIR}/../../../Third-Party-Libraries/boost-1.85.0/lib/windows/clangw17-mt-sgd-x64/release/libboost_chrono-clangw17-mt-s-x64-1_85.lib>
+    $<$<CONFIG:MINSIZEREL>:		${CMAKE_CURRENT_SOURCE_DIR}/../../../Third-Party-Libraries/boost-1.85.0/lib/windows/clangw17-mt-sgd-x64/release/libboost_chrono-clangw17-mt-s-x64-1_85.lib>
     )
 
 
@@ -82,6 +81,8 @@ ELSEIF(CMAKE_SYSTEM_NAME STREQUAL "Windows")
         $<$<CONFIG:MINSIZEREL>:		${CMAKE_CURRENT_SOURCE_DIR}/../../../Third-Party-Tools/Google-Test/windows/MinSizeRel/gtest.lib>
     )
 
+    ADD_COMPILE_OPTIONS(/DBENCHMARK_STATIC_DEFINE)
+    LINK_LIBRARIES(advapi32.lib shlwapi.lib)
     SET(BENCHMARK_TEST			
         $<$<CONFIG:DEBUG>:			${CMAKE_CURRENT_SOURCE_DIR}/../../../Third-Party-Tools/Benchmark/windows/Debug/benchmark.lib>
         $<$<CONFIG:RELWITHDEBINFO>: ${CMAKE_CURRENT_SOURCE_DIR}/../../../Third-Party-Tools/Benchmark/windows/RelWithDebInfo/benchmark.lib>

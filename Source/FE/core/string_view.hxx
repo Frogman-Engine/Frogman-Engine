@@ -41,7 +41,7 @@ public:
 	using reverse_iterator = FE::reverse_iterator<FE::contiguous_iterator<CharT>>;
 	using size_type = var::index_t;
 	using length_type = var::index_t;
-	using difference_type = ptrdiff_t;
+	using difference_type = ptrdiff;
 
 
 	_CONSTEXPR17_ basic_string_view() noexcept : m_watcher(), m_begin(), m_end() {}

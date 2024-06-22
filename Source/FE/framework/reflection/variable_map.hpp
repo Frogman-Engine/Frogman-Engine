@@ -27,7 +27,7 @@ class variable_map
 {
 public:
     using underlying_container = robin_hood::unordered_map< FE::string, 
-                                                            robin_hood::unordered_map<FE::string, var::ptrdiff_t, FE::hash<FE::string>>, 
+                                                            robin_hood::unordered_map<FE::string, var::ptrdiff, FE::hash<FE::string>>,
                                                             FE::hash<FE::string>
                                                             >;
 	using lock_type = std::mutex;
@@ -70,7 +70,7 @@ public:
 		return false;
 	}
 
-    _FORCE_INLINE_ static void register_variable(const typename underlying_container::key_type& class_name_p, const typename underlying_container::key_type& variable_name_p, FE::ptrdiff_t offset_p) noexcept
+    _FORCE_INLINE_ static void register_variable(const typename underlying_container::key_type& class_name_p, const typename underlying_container::key_type& variable_name_p, FE::ptrdiff offset_p) noexcept
     {
 		{
 			std::lock_guard<std::mutex> l_lock(s_lock);
@@ -90,7 +90,7 @@ public:
 		}
     }
 
-	_FORCE_INLINE_ static FE::ptrdiff_t retrieve(const typename underlying_container::key_type& class_name_p, const typename underlying_container::key_type& variable_name_p) noexcept 
+	_FORCE_INLINE_ static FE::ptrdiff retrieve(const typename underlying_container::key_type& class_name_p, const typename underlying_container::key_type& variable_name_p) noexcept
 	{
 		{
 			std::lock_guard<std::mutex> l_lock(s_lock);

@@ -355,7 +355,7 @@ _FORCE_INLINE_ _CONSTEXPR20_ void any_object_binary_representation(CharT* const 
     byte* l_ptr = reinterpret_cast<byte*>(&object_p);
 
     std::bitset<8> l_binary_representation = *l_ptr;
-    for (var::size_t i = 0; i != sizeof(T); ++i)
+    for (var::size i = 0; i != sizeof(T); ++i)
     {
         *l_buffer_pointer = (l_binary_representation[0] + 48);
         ++l_buffer_pointer;

@@ -14,7 +14,7 @@
 BEGIN_NAMESPACE(FE)
 
 
-template <typename T, size_t Capacity>
+template <typename T, size Capacity>
 class farray : public std::array<T, Capacity>
 {
 public:

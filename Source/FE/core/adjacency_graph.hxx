@@ -11,7 +11,6 @@
 
 
 
-
 BEGIN_NAMESPACE(FE)
 
 namespace internal::adjacency_graph
@@ -43,11 +42,21 @@ public:
 
 	using key_type = Key;
 	using value_type = T; 
+
 	using underlying_container = std::set<node_type, internal::adjacency_graph::less<node_type>, FE::aligned_allocator<node_type>>;
 	using edge_type = typename underlying_container::value_type*;
+
+	using size_type = typename underlying_container::size_type;
+	using difference_type = typename underlying_container::difference_type;
+
 	using key_comparator = typename underlying_container::key_compare;
 	using allocator_type = typename underlying_container::allocator_type;
-	using size_type = typename underlying_container::size_type;
+
+	using reference = typename underlying_container::reference;
+	using const_reference = typename underlying_container::const_reference;
+
+	using pointer = typename underlying_container::pointer;
+	using const_pointer = typename underlying_container::const_pointer;
 
 	class node_type
 	{
@@ -74,7 +83,7 @@ public:
 	{
 		using category = adjacent_node_iterator;
 		using value_type = node_type;
-		using difference_type = var::ptrdiff_t;
+		using difference_type = var::ptrdiff;
 		using pointer = value_type*;
 		using reference = value_type&;
 		using const_pointer = const value_type*;
@@ -282,17 +291,17 @@ public:
 		auto l_lower_adjacent = l_result;
 		--l_lower_adjacent;
 		
-		edge_type l_type_casted_result = (l_result != this->m_set.end()) ? iterator_cast<edge_type>(l_result) : nullptr;
+		edge_type l_type_casted_result = (l_result != this->m_set.end()) ? iterator_cast<edge_type, typename underlying_container::iterator>(l_result) : nullptr;
 		if(l_upper_adjacent != this->m_set.end())
 		{
-			edge_type l_upper_adjacent_node = iterator_cast<edge_type>(l_upper_adjacent); 
+			edge_type l_upper_adjacent_node = iterator_cast<edge_type, typename underlying_container::iterator>(l_upper_adjacent);
 			l_upper_adjacent_node->m_lower_adjacent = l_type_casted_result;
 			l_type_casted_result->m_upper_adjacent = l_upper_adjacent_node;
 		}
 
 		if(l_lower_adjacent != this->m_set.end())
 		{
-			edge_type l_lower_adjacent_node = iterator_cast<edge_type>(l_lower_adjacent); 
+			edge_type l_lower_adjacent_node = iterator_cast<edge_type, typename underlying_container::iterator>(l_lower_adjacent);
 			l_lower_adjacent_node->m_upper_adjacent = l_type_casted_result;
 			l_type_casted_result->m_lower_adjacent = l_lower_adjacent_node;
 		}

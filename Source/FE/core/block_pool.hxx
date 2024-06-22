@@ -13,7 +13,7 @@ BEGIN_NAMESPACE(FE)
 
 namespace internal::pool
 {
-    template <size_t InBytes>
+    template <size InBytes>
     class uninitialized_bytes
     {
         var::byte m_memory[InBytes];
@@ -22,9 +22,9 @@ namespace internal::pool
     template<count_t PageCapacity, class Alignment>
     struct chunk<POOL_TYPE::_STATIC, PageCapacity, Alignment>
     {
-        static constexpr size_t fixed_block_size_in_bytes = Alignment::size;
+        static constexpr size fixed_block_size_in_bytes = Alignment::size;
         static constexpr count_t page_capacity = PageCapacity;
-        static constexpr size_t page_capacity_in_bytes = fixed_block_size_in_bytes * page_capacity;
+        static constexpr size page_capacity_in_bytes = fixed_block_size_in_bytes * page_capacity;
         using block_info_type = var::byte*;
 
     private:
@@ -50,7 +50,7 @@ namespace internal::pool
 
 
 
-template<size_t PageCapacity, class Alignment, class Allocator>
+template<size PageCapacity, class Alignment, class Allocator>
 class pool<POOL_TYPE::_STATIC, PageCapacity, Alignment, Allocator>
 {
 public:
@@ -59,7 +59,7 @@ public:
     using block_info_type = typename chunk_type::block_info_type;
     using pool_type = std::list<chunk_type, Allocator>;
 
-    static constexpr size_t fixed_block_size_in_bytes = Alignment::size;
+    static constexpr size fixed_block_size_in_bytes = Alignment::size;
     static constexpr count_t page_capacity = PageCapacity;
     static constexpr count_t maximum_list_node_count = 10;
 
@@ -158,11 +158,11 @@ It is hard to tell which corrupted memory, but very sure to say that there was a
         }
     }
 
-    _FORCE_INLINE_ void create_pages(size_t chunk_count_p) noexcept
+    _FORCE_INLINE_ void create_pages(size chunk_count_p) noexcept
     {
         FE_ASSERT(chunk_count_p == 0, "${%s@0}: ${%s@1} was 0", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_INVALID_SIZE), TO_STRING(chunk_count_p));
 
-        for (var::size_t i = 0; i < chunk_count_p; ++i)
+        for (var::size i = 0; i < chunk_count_p; ++i)
         {
             this->m_memory_pool.emplace_back();
         }
@@ -184,7 +184,7 @@ It is hard to tell which corrupted memory, but very sure to say that there was a
 
         for (; l_list_iterator != l_cend; ++l_list_iterator)
         {
-            var::size_t l_unused_element_size = l_list_iterator->_free_blocks.size();
+            var::size l_unused_element_size = l_list_iterator->_free_blocks.size();
 
             FE_ASSERT((l_list_iterator->_end - l_list_iterator->_begin) != PageCapacity, "The chunk range is invalid.");
 
@@ -211,7 +211,7 @@ It is hard to tell which corrupted memory, but very sure to say that there was a
 };
 
 
-template<size_t FixedBlockSizeInBytes = FE::SIMD_auto_alignment::size, count_t PageCapacity = 128, class Allocator = FE::aligned_allocator<internal::pool::chunk<POOL_TYPE::_STATIC, PageCapacity, FE::align_custom_bytes<FixedBlockSizeInBytes>>>>
+template<size FixedBlockSizeInBytes = FE::SIMD_auto_alignment::size, count_t PageCapacity = 128, class Allocator = FE::aligned_allocator<internal::pool::chunk<POOL_TYPE::_STATIC, PageCapacity, FE::align_custom_bytes<FixedBlockSizeInBytes>>>>
 using block_pool = pool<POOL_TYPE::_STATIC, PageCapacity, FE::align_custom_bytes<FixedBlockSizeInBytes>, Allocator>;
 
 

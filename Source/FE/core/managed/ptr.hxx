@@ -421,7 +421,7 @@ public:
 		return static_cast<pointer>(this->m_ref_block->_address);
 	}
 	
-	_FORCE_INLINE_ size_t capacity() const noexcept
+	_FORCE_INLINE_ size capacity() const noexcept
 	{
 		if(this->m_ref_block == nullptr) { return 0; }
 		return this->m_smart_ptr_end - static_cast<pointer>(this->m_ref_block->_address);

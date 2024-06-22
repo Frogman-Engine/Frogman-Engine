@@ -1,12 +1,13 @@
 #include <gtest/gtest.h>
 #include <benchmark/benchmark.h>
-#include <FE/core/pair.hxx>
 // Copyright © from 2023 to current, UNKNOWN STRYKER. All Rights Reserved.
 
 #include <FE/core/adjacency_graph.hxx>
 
 // std
+#include <array>
 #include <map>
+#include <utility>
 
 // Set up GitHub CI pipeline.
 /*
@@ -80,12 +81,12 @@ int main(int argc_p, char** argv_p)
 TEST(AdjacencyGraph, adjacent_node_iteration)
 {
 	{
-		std::array<std::pair<var::size_t, const char*>, 5> l_answer_sheet = { std::pair<var::size_t, const char*>{3, "Pineapple"}, std::pair<var::size_t, const char*>{5, "Orange"}, std::pair<var::size_t, const char*>{6, "Rotten apple"}, std::pair<var::size_t, const char*>{7, "Mango"}, std::pair<var::size_t, const char*>{9, "Melon"} };
-		FE::adjacency_graph<var::size_t, std::string> l_adjacency_graph = { {6, "Rotten apple"}, {3, "Pineapple"}, {7, "Mango"}, {9, "Melon"}, {5, "Orange"} };
+		std::array<std::pair<var::size, const char*>, 5> l_answer_sheet = { std::pair<var::size, const char*>{3, "Pineapple"}, std::pair<var::size, const char*>{5, "Orange"}, std::pair<var::size, const char*>{6, "Rotten apple"}, std::pair<var::size, const char*>{7, "Mango"}, std::pair<var::size, const char*>{9, "Melon"} };
+		FE::adjacency_graph<var::size, std::string> l_adjacency_graph = { {6, "Rotten apple"}, {3, "Pineapple"}, {7, "Mango"}, {9, "Melon"}, {5, "Orange"} };
 
 		auto l_adjacency_graph_iterator = l_adjacency_graph.begin();
 		auto l_adjacency_graph_end = l_adjacency_graph.end();
-		for(var::size_t i = 0; l_adjacency_graph_iterator != l_adjacency_graph_end; ++i)
+		for(var::size i = 0; l_adjacency_graph_iterator != l_adjacency_graph_end; ++i)
 		{
 			EXPECT_EQ(l_answer_sheet[i].second, l_adjacency_graph_iterator->_value);
 			++l_adjacency_graph_iterator;
@@ -116,9 +117,9 @@ FE_map_adjacent_node_iteration_speed_benchmark                   13.6 ns        
 */
 void FE_adjacency_graph_adjacent_node_iteration_speed_benchmark(benchmark::State& state_p) noexcept
 {
-	FE::adjacency_graph<var::size_t, std::string> l_adjacency_graph = { {6, "Rotten apple"}, {3, "Pineapple"}, {7, "Mango"}, {9, "Melon"}, {5, "Orange"} };
+	FE::adjacency_graph<var::size, std::string> l_adjacency_graph = { {6, "Rotten apple"}, {3, "Pineapple"}, {7, "Mango"}, {9, "Melon"}, {5, "Orange"} };
 	
-	for (auto _ : state_p)
+	for (_MAYBE_UNUSED_ auto _ : state_p)
 	{
 		auto l_end = l_adjacency_graph.end();
 		for(auto begin = l_adjacency_graph.begin(); begin != l_end; ++begin)
@@ -133,9 +134,9 @@ BENCHMARK(FE_adjacency_graph_adjacent_node_iteration_speed_benchmark);
 void FE_map_adjacent_node_iteration_speed_benchmark(benchmark::State& state_p) noexcept
 {
 	
-	std::map<var::size_t, std::string> l_map = { {6, "Rotten apple"}, {3, "Pineapple"}, {7, "Mango"}, {9, "Melon"}, {5, "Orange"} };
+	std::map<var::size, std::string> l_map = { {6, "Rotten apple"}, {3, "Pineapple"}, {7, "Mango"}, {9, "Melon"}, {5, "Orange"} };
 	
-	for (auto _ : state_p)
+	for (_MAYBE_UNUSED_ auto _ : state_p)
 	{
 		auto l_end = l_map.end();
 		for(auto begin = l_map.begin(); begin != l_end; ++begin)

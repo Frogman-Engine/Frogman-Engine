@@ -347,7 +347,7 @@ public:
 		this->operator=(std::move(new_array_size_p));
 	}
 
-	_FORCE_INLINE_ _CONSTEXPR20_ size_t capacity() const noexcept
+	_FORCE_INLINE_ _CONSTEXPR20_ size capacity() const noexcept
 	{
 		return this->m_smart_ptr_end - this->m_smart_ptr;
 	}
@@ -505,7 +505,7 @@ private:
 		}
 	}
 
-	_FORCE_INLINE_ _CONSTEXPR20_ void __reallocate(size_t new_count_p) noexcept
+	_FORCE_INLINE_ _CONSTEXPR20_ void __reallocate(size new_count_p) noexcept
 	{
 		this->m_smart_ptr = this->m_allocator.reallocate(this->m_smart_ptr, this->m_smart_ptr_end - this->m_smart_ptr, new_count_p);
 		this->m_smart_ptr_end = this->m_smart_ptr + new_count_p;
@@ -519,7 +519,7 @@ template <typename T,
 	class Allocator = FE::new_delete_allocator<FE::aligned_allocator<typename std::remove_all_extents<T>::type>>
 #endif
 >
-_NODISCARD_ _FORCE_INLINE_ _CONSTEXPR20_ unique_ptr<typename std::remove_all_extents<T>::type[], Allocator> make_unique(size_t array_size_p) noexcept
+_NODISCARD_ _FORCE_INLINE_ _CONSTEXPR20_ unique_ptr<typename std::remove_all_extents<T>::type[], Allocator> make_unique(size array_size_p) noexcept
 {
 	static_assert(std::is_array<T>::value == true, "static assertion failed: The typename T must be an array type");
 	return unique_ptr<typename std::remove_all_extents<T>::type[], Allocator>(FE::reserve{ array_size_p });

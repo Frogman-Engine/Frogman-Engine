@@ -4,12 +4,12 @@
 #include <FE/core/types.hxx>
 
 
-#if !defined(_MSVC_) && !defined(_CLANG_)
+#if !defined(_CLANG_CL_) && !defined(_CLANG_)
 #error Frogman Engine requires LLVM Clang to compile.
 #endif
 
-#ifdef _MSVC_
-#pragma message("Frogman Engine will drop MSVC compiler support in later updates. Please use LLVM Clang toolset instead of v143.")
+#ifdef _MSC_VER
+#pragma message("Frogman Engine will drop MSVC++ compiler support in later updates. Please use LLVM Clang toolset instead of v143.")
 #endif
 
 #if !defined(_WINDOWS_X86_64_) && !defined(_LINUX_X86_64_)
@@ -21,6 +21,12 @@
 #endif
 #ifdef var
 #error Frogman Engine Prohibits macroizing the keyword "var".
+#endif
+#ifdef framework
+#error Frogman Engine Prohibits macroizing the keyword "framework".
+#endif
+#ifdef internal
+#error Frogman Engine Prohibits macroizing the keyword "internal".
 #endif
 
 #ifdef const
@@ -95,9 +101,6 @@
 #ifdef byte
 #error Frogman Engine Prohibits macroizing the keyword "sbyte".
 #endif
-#ifdef ubyte
-#error Frogman Engine Prohibits macroizing the keyword "ubyte".
-#endif
 #ifdef int8
 #error Frogman Engine Prohibits macroizing the keyword "int8".
 #endif
@@ -123,17 +126,27 @@
 #error Frogman Engine Prohibits macroizing the keyword "uint64".
 #endif
 
-#ifdef size_t
-#error Frogman Engine Prohibits macroizing the keyword "size_t".
+#ifdef ptrdiff
+#error Frogman Engine Prohibits macroizing the keyword "ptrdiff".
 #endif
-#ifdef length_t
-#error Frogman Engine Prohibits macroizing the keyword "length_t".
+#ifdef intptr
+#error Frogman Engine Prohibits macroizing the keyword "intptr".
 #endif
-#ifdef index_t
-#error Frogman Engine Prohibits macroizing the keyword "index_t".
+#ifdef uintptr
+#error Frogman Engine Prohibits macroizing the keyword "uintptr".
 #endif
-#ifdef count_t
-#error Frogman Engine Prohibits macroizing the keyword "count_t".
+
+#ifdef size
+#error Frogman Engine Prohibits macroizing the keyword "size".
+#endif
+#ifdef length
+#error Frogman Engine Prohibits macroizing the keyword "length".
+#endif
+#ifdef index
+#error Frogman Engine Prohibits macroizing the keyword "index".
+#endif
+#ifdef count
+#error Frogman Engine Prohibits macroizing the keyword "count".
 #endif
 
 #ifdef T

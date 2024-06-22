@@ -22,7 +22,7 @@ BEGIN_NAMESPACE(FE)
 
 
 
-template<class T, size_t Capacity, class Traits = FE::memory_traits<T>>
+template<class T, size Capacity, class Traits = FE::memory_traits<T>>
 class fqueue final
 {
 	FE_STATIC_ASSERT((std::is_same<T, typename Traits::value_type>::value == false), "Static Assertion Failed: The template argument T and Traits' value_type have be the same type.");
@@ -38,7 +38,7 @@ public:
 	using const_pointer = const T*;
 	using const_iterator = FE::const_iterator<FE::contiguous_iterator<T>>;
 	using const_reverse_iterator = FE::const_reverse_iterator<FE::contiguous_iterator<T>>;
-	using difference_type = var::ptrdiff_t;
+	using difference_type = var::ptrdiff;
 
 protected:
 	var::byte m_memory[sizeof(value_type) * Capacity];

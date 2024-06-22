@@ -1,6 +1,6 @@
 SET(CMAKE_CXX_STANDARD_REQUIRED ON)
-#https://cmake.org/cmake/help/latest/generator/Visual%20Studio%2017%202022.html
-# This project will use LLVM Clang across all platforms.
+# Frogman Engine leverages LLVM across all platforms.
+
 
 MESSAGE("
 Available -D macro options:
@@ -25,6 +25,8 @@ ENDIF()
 
 
 FILE(TO_NATIVE_PATH "${CMAKE_CURRENT_SOURCE_DIR}" OS_NATIVE_CMAKE_CURRENT_SOURCE_DIR)
+
+
 
 
 IF(CMAKE_SYSTEM_NAME STREQUAL "Windows")
@@ -73,31 +75,17 @@ IF(CMAKE_SYSTEM_NAME STREQUAL "Windows")
 	# /GR: Enable RTTI
 
 	# Common Compile Options
-	ADD_COMPILE_OPTIONS(/std:c17 /Zc:__cplusplus /WX /W4 /MP /GF /GT /Gy /GL /Oi /Gr /GR)
+	ADD_COMPILE_OPTIONS(/D_CLANG_=1 /D_CLANG_CL_=1 /std:c17 /Zc:__cplusplus /WX /W4 /MP /GF /Gy /GL /Oi /Gr /GR)
 
-	IF(CMAKE_BUILD_TYPE STREQUAL "Debug")
-		MESSAGE("Building the project with 'Debug' mode.")
-		ADD_COMPILE_OPTIONS(/D_DEBUG_ /D_ENABLE_ASSERT_ /D_ENABLE_ABORT_IF_ /D_ENABLE_LOG_ /D_ENABLE_EXIT_)
-		ADD_COMPILE_OPTIONS(/Od /Ob0 /Ot /Oy- /MTd	/guard:cf /fp:except /sdl /JMC)
+	ADD_COMPILE_OPTIONS("$<$<CONFIG:DEBUG>:/D_DEBUG_;/D_ENABLE_ASSERT_;/D_ENABLE_ABORT_IF_;/D_ENABLE_LOG_;/D_ENABLE_EXIT_>")
+	ADD_COMPILE_OPTIONS("$<$<CONFIG:RELWITHDEBINFO>:/D_RELWITHDEBINFO_;/D_DEBUG_;/D_ENABLE_ASSERT_;/D_ENABLE_ABORT_IF_;/D_ENABLE_LOG_;/D_ENABLE_EXIT_>")
+	ADD_COMPILE_OPTIONS("$<$<CONFIG:RELEASE>:/D_RELEASE_>")
+	ADD_COMPILE_OPTIONS("$<$<CONFIG:MINSIZEREL>:/D_RELEASE_;/D_MINSIZEREL_>")
 
-	ELSEIF(CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
-		MESSAGE("Building the project with 'Release With Debug Information' mode.")
-		ADD_COMPILE_OPTIONS(/D_RELWITHDEBINFO_ /D_DEBUG_ /D_ENABLE_ASSERT_ /D_ENABLE_ABORT_IF_ /D_ENABLE_LOG_ /D_ENABLE_EXIT_)
-		ADD_COMPILE_OPTIONS(/Ox /Ob2 /Ot /Oy- /MT /guard:cf /fp:except /sdl /JMC)
-
-	ELSEIF(CMAKE_BUILD_TYPE STREQUAL "Release")
-		MESSAGE("Building the project with 'Release' mode.")
-		ADD_COMPILE_OPTIONS(/D_RELEASE_)
-		ADD_COMPILE_OPTIONS(/Ox /Ob2 /Ot /Oy /MT)
-
-	ELSEIF(CMAKE_BUILD_TYPE STREQUAL "MinSizeRel")
-		MESSAGE("Building the project with 'Minimally Sized Release' mode.")
-		ADD_COMPILE_OPTIONS(/D_RELEASE_ /D_MINSIZEREL_)
-		ADD_COMPILE_OPTIONS(/Ox /Ob2 /Os /Oy /MT)
-
-	ELSE()
-		MESSAGE(FATAL_ERROR "Something went wrong with the build mode selection.")
-	ENDIF()
+	ADD_COMPILE_OPTIONS("$<$<CONFIG:DEBUG>:/Od;/Ob0;/Ot;/Oy-;/MTd;/guard:cf;/sdl;/JMC>")
+	ADD_COMPILE_OPTIONS("$<$<CONFIG:RELWITHDEBINFO>:/Ox;/Ob2;/Ot;/Oy-;/MT;/guard:cf;/sdl;/JMC>")
+	ADD_COMPILE_OPTIONS("$<$<CONFIG:RELEASE>:/Ox;/Ob2;/Ot;/Oy;/MT>")
+	ADD_COMPILE_OPTIONS("$<$<CONFIG:MINSIZEREL>:/Ox;/Ob2;/Ot;/Oy;/MT>")
 
 
 	ADD_LINK_OPTIONS(/MACHINE:X64 /INCREMENTAL:NO /LTCG /PROFILE )
@@ -131,6 +119,8 @@ IF(CMAKE_SYSTEM_NAME STREQUAL "Windows")
 	ENDIF()
 
 
+
+
 ELSEIF(CMAKE_SYSTEM_NAME STREQUAL "Linux")
 	MESSAGE("Configurating The Build Environment for Linux X86-64 Distributions.")
 	ADD_COMPILE_OPTIONS(-D_LINUX_X86_64_ -D_ALLOWED_DIRECTORY_LENGTH_=4096)
@@ -138,12 +128,11 @@ ELSEIF(CMAKE_SYSTEM_NAME STREQUAL "Linux")
 	STRING(FIND "${CMAKE_CXX_COMPILER}" "clang" CLANG_COMPILER)
 
     IF(CLANG_COMPILER GREATER -1)
-		ADD_COMPILE_OPTIONS(-D_CLANG_=1)
 		MESSAGE("The detected C++ compiler is clang++.")
     ELSE()
         MESSAGE(FATAL_ERROR "Could Not Find Any of Executable Clang C++ compilers.")
     ENDIF()
-	
+
 
 	IF(DEFINED LEAVE_OUT_ALL_EXCEPTIONS)
 		MESSAGE("Enabled the option: LEAVE_OUT_ALL_EXCEPTIONS")
@@ -166,36 +155,21 @@ ELSEIF(CMAKE_SYSTEM_NAME STREQUAL "Linux")
 	ENDIF()
 
 
-    # Common Compile Options
-	ADD_COMPILE_OPTIONS(-Wall -Wextra -Werror -Wno-unknown-pragmas -march=x86-64)
+	# Common Compile Options
+	ADD_COMPILE_OPTIONS(-D_CLANG_=1 -Wall -Wextra -Werror -Wno-unknown-pragmas -march=x86-64)
 
 	
-	IF(CMAKE_BUILD_TYPE STREQUAL "Debug")
-		MESSAGE("Building the project with 'Debug' mode.")
-		ADD_COMPILE_OPTIONS(-D_DEBUG_ -D_ENABLE_ASSERT_ -D_ENABLE_ABORT_IF_ -D_ENABLE_LOG_ -D_ENABLE_EXIT_)
-		ADD_COMPILE_OPTIONS(-g  -fno-inline-functions	-fno-unroll-loops	-fno-omit-frame-pointer -O0)
-		SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=undefined")
+	ADD_COMPILE_OPTIONS("$<$<CONFIG:DEBUG>:-D_DEBUG_;-D_ENABLE_ASSERT_;-D_ENABLE_ABORT_IF_;-D_ENABLE_LOG_;-D_ENABLE_EXIT_>")
+	ADD_COMPILE_OPTIONS("$<$<CONFIG:RELWITHDEBINFO>:-D_RELWITHDEBINFO_;-D_DEBUG_;-D_ENABLE_ASSERT_;-D_ENABLE_ABORT_IF_;-D_ENABLE_LOG_;-D_ENABLE_EXIT_>")
+	ADD_COMPILE_OPTIONS("$<$<CONFIG:RELEASE>:-D_RELEASE_>")
+	ADD_COMPILE_OPTIONS("$<$<CONFIG:MINSIZEREL>:-D_RELEASE_;-D_MINSIZEREL_>")
 
-	ELSEIF(CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
-		MESSAGE("Building the project with 'Release With Debug Information' mode.")
-		ADD_COMPILE_OPTIONS(-D_RELWITHDEBINFO_ -D_DEBUG_ -D_ENABLE_ASSERT_ -D_ENABLE_ABORT_IF_ -D_ENABLE_LOG_ -D_ENABLE_EXIT_)
-		ADD_COMPILE_OPTIONS(-finline-functions		-funroll-loops		-fomit-frame-pointer	-O3)
-		SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=undefined")
-	ELSEIF(CMAKE_BUILD_TYPE STREQUAL "Release")
-		MESSAGE("Building the project with 'Release' mode.")
-		ADD_COMPILE_OPTIONS(-D_RELEASE_)
-		ADD_COMPILE_OPTIONS(-finline-functions		-funroll-loops		-fomit-frame-pointer	-O3)
-
-	ELSEIF(CMAKE_BUILD_TYPE STREQUAL "MinSizeRel")
-		MESSAGE("Building the project with 'Minimally Sized Release' mode.")
-		ADD_COMPILE_OPTIONS(-D_RELEASE_ -D_MINSIZEREL_)
-		ADD_COMPILE_OPTIONS(-finline-functions		-funroll-loops		-fomit-frame-pointer	-O3)
-		
-	ELSE()
-		MESSAGE(FATAL_ERROR "Something went wrong with the build mode selection.")
-	ENDIF()
+	ADD_COMPILE_OPTIONS("$<$<CONFIG:DEBUG>:-g;-fno-inline-functions;-fno-unroll-loops;-fno-omit-frame-pointer;-O0>")
+	ADD_COMPILE_OPTIONS("$<$<CONFIG:RELWITHDEBINFO>:-finline-functions;-funroll-loops;-fomit-frame-pointer;-O3>")
+	ADD_COMPILE_OPTIONS("$<$<CONFIG:RELEASE>:-finline-functions;-funroll-loops;-fomit-frame-pointer;-O3>")
+	ADD_COMPILE_OPTIONS("$<$<CONFIG:MINSIZEREL>:-finline-functions;-funroll-loops;-fomit-frame-pointer;-O3>")
 	
-#-static 
+
 	ADD_LINK_OPTIONS(-pthread -ldl)
 
 
@@ -226,6 +200,7 @@ ELSEIF(CMAKE_SYSTEM_NAME STREQUAL "Linux")
 		ADD_COMPILE_OPTIONS(-std=c++23)
 		MESSAGE("C++23 has been selected.")
 	ENDIF()
+
 
 ELSE()
 	MESSAGE(FATAL_ERROR "System not selected.")

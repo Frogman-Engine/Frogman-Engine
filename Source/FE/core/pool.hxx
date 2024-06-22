@@ -15,11 +15,11 @@ BEGIN_NAMESPACE(FE)
 namespace internal::pool
 {
 
-    template<size_t PageCapacity, class Alignment>
+    template<size PageCapacity, class Alignment>
     struct chunk<POOL_TYPE::_DYNAMIC, PageCapacity, Alignment>
     {
         constexpr static count_t recycler_capacity = ((PageCapacity / Alignment::size) / 2) + 1; // The possible fragment count would be ((PageCapacity / Alignment::size) / 2) + 1 because adjacent fragments gets immediately merged during deallocate() operation.
-        using recycler_type = FE::adjacency_graph<var::byte*, var::size_t>;
+        using recycler_type = FE::adjacency_graph<var::byte*, var::size>;
         using recycler_iterator = typename recycler_type::iterator;
         
     private:
@@ -40,7 +40,7 @@ namespace internal::pool
             return (_free_blocks.is_empty() == true) && (_page_iterator >= _end);
         }
 
-        _FORCE_INLINE_ boolean will_it_overflow(size_t size_in_bytes_to_allocate_p) const noexcept
+        _FORCE_INLINE_ boolean will_it_overflow(size size_in_bytes_to_allocate_p) const noexcept
         {
             return (_page_iterator + size_in_bytes_to_allocate_p) >= _end;
         }
@@ -51,7 +51,7 @@ namespace internal::pool
 
 
 // static declaration of FE.generic_pool is not supported.
-template<size_t PageCapacity, class Alignment, class Allocator>
+template<size PageCapacity, class Alignment, class Allocator>
 class pool<POOL_TYPE::_DYNAMIC, PageCapacity, Alignment, Allocator>
 {
 public:
@@ -61,7 +61,7 @@ public:
 
 	using pool_type = std::list<chunk_type, Allocator>;
 
-    constexpr static size_t page_capacity = PageCapacity;
+    constexpr static size page_capacity = PageCapacity;
     constexpr static count_t possible_address_count = (PageCapacity / Alignment::size);
     constexpr static count_t recycler_capacity = chunk_type::recycler_capacity;
     constexpr static count_t maximum_list_node_count = 10;
@@ -95,7 +95,7 @@ It is hard to tell which corrupted memory, but very sure to say that there was a
         FE_ASSERT(size_p == 0, "${%s@0}: ${%s@1} was 0", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_INVALID_SIZE), TO_STRING(size_p));
         FE_EXIT(size_p > PageCapacity, MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_CAPACITY, "Fatal Error: Unable to allocate the size of memmory that exceeds the pool chunk's capacity.");
 
-        size_t l_queried_allocation_size_in_bytes = FE::calculate_aligned_memory_size_in_bytes<U, Alignment>(size_p);
+        size l_queried_allocation_size_in_bytes = FE::calculate_aligned_memory_size_in_bytes<U, Alignment>(size_p);
         typename pool_type::iterator l_list_iterator = this->m_memory_pool.begin();
         typename pool_type::const_iterator l_cend = this->m_memory_pool.cend();
 
@@ -164,11 +164,11 @@ It is hard to tell which corrupted memory, but very sure to say that there was a
         return allocate<U>(size_p);
     }
 
-    _FORCE_INLINE_ void create_pages(size_t chunk_count_p) noexcept
+    _FORCE_INLINE_ void create_pages(size chunk_count_p) noexcept
     {
         FE_ASSERT(chunk_count_p == 0, "${%s@0}: ${%s@1} was 0", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_INVALID_SIZE), TO_STRING(chunk_count_p));
 
-        for (var::size_t i = 0; i < chunk_count_p; ++i)
+        for (var::size i = 0; i < chunk_count_p; ++i)
         {
             this->m_memory_pool.emplace_back();
         }
@@ -190,7 +190,7 @@ It is hard to tell which corrupted memory, but very sure to say that there was a
 
         for (; l_list_iterator != l_cend; ++l_list_iterator)
         {
-            var::size_t l_unused_memory_size_in_bytes = 0;
+            var::size l_unused_memory_size_in_bytes = 0;
             for (auto block : l_list_iterator->_free_blocks)
             {
                 l_unused_memory_size_in_bytes += block.second;
@@ -239,7 +239,7 @@ It is hard to tell which corrupted memory, but very sure to say that there was a
                     }
                 }
 
-                size_t l_block_size_in_bytes = FE::calculate_aligned_memory_size_in_bytes<T, Alignment>(element_count_p);
+                size l_block_size_in_bytes = FE::calculate_aligned_memory_size_in_bytes<T, Alignment>(element_count_p);
                 auto l_dealloc_result = l_list_iterator->_free_blocks.insert(l_value, l_block_size_in_bytes);
                 FE_EXIT(l_dealloc_result == nullptr, FE::MEMORY_ERROR_1XX::_FATAL_ERROR_DOUBLE_FREE, "Frogman Engine Memory Pool Debug Information: double free detected.");
 
@@ -259,7 +259,7 @@ private:
         auto l_lower_adjacent = in_out_recently_deleted_p - 1;
 
         var::byte* l_merged_address = in_out_recently_deleted_p->get_key();
-        var::size_t l_merged_size = in_out_recently_deleted_p->_value;
+        var::size l_merged_size = in_out_recently_deleted_p->_value;
 
         // merge upper part
         for(; l_upper_adjacent != nullptr;)
@@ -301,7 +301,7 @@ private:
     }
 
     template <typename T>
-    static void __recycle(internal::pool::block_info& out_memblock_info_p, chunk_type& in_out_memory_p, size_t queried_allocation_size_in_bytes_p) noexcept
+    static void __recycle(internal::pool::block_info& out_memblock_info_p, chunk_type& in_out_memory_p, size queried_allocation_size_in_bytes_p) noexcept
     {
         FE_ASSERT(in_out_memory_p._free_blocks.is_empty() == true, "Assertion Failure: Cannot recycle from an empty bin.");
 
@@ -333,7 +333,7 @@ private:
 };
 
 
-template<size_t PageCapacity = 1 MB, class Alignment = FE::SIMD_auto_alignment, class Allocator = FE::aligned_allocator<internal::pool::chunk<POOL_TYPE::_DYNAMIC, PageCapacity, Alignment>>>
+template<size PageCapacity = 1 MB, class Alignment = FE::SIMD_auto_alignment, class Allocator = FE::aligned_allocator<internal::pool::chunk<POOL_TYPE::_DYNAMIC, PageCapacity, Alignment>>>
 using dynamic_pool = pool<POOL_TYPE::_DYNAMIC, PageCapacity, Alignment, Allocator>;
 
 

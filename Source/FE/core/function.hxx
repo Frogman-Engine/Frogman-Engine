@@ -1179,7 +1179,7 @@ public:
 	virtual void set_instance(void* const target_instance_p) noexcept = 0;
 
 	// Caller must ensure that the types and size of the arguments are correct.
-    virtual void set_arguments(void* arguments_p, _MAYBE_UNUSED_ size_t size_in_bytes_p) noexcept = 0;
+    virtual void set_arguments(void* arguments_p, _MAYBE_UNUSED_ size size_in_bytes_p) noexcept = 0;
 
 	// Checks if the function pointer is nullptr.
     virtual boolean is_null(void) const noexcept = 0;
@@ -1377,7 +1377,7 @@ public:
     }
 
 
-    virtual void set_arguments(void* arguments_p, _MAYBE_UNUSED_ size_t size_in_bytes_p) noexcept override
+    virtual void set_arguments(void* arguments_p, _MAYBE_UNUSED_ size size_in_bytes_p) noexcept override
     {
 		FE_ASSERT(arguments_p == nullptr, "The arguments are null!");
 		FE_ASSERT(size_in_bytes_p == 0, "The size of the arguments is 0!");
@@ -1795,7 +1795,7 @@ public:
     }
 
 
-    virtual void set_arguments(void* arguments_p, _MAYBE_UNUSED_ size_t size_in_bytes_p) noexcept override
+    virtual void set_arguments(void* arguments_p, _MAYBE_UNUSED_ size size_in_bytes_p) noexcept override
     {
         FE_ASSERT(arguments_p == nullptr, "The arguments are null!");
         FE_ASSERT(size_in_bytes_p == 0, "The size of the arguments is 0!");
@@ -2193,7 +2193,7 @@ public:
     }
 
 
-    virtual void set_arguments(void* arguments_p, _MAYBE_UNUSED_ size_t size_in_bytes_p) noexcept override
+    virtual void set_arguments(void* arguments_p, _MAYBE_UNUSED_ size size_in_bytes_p) noexcept override
     {
         FE_ASSERT(arguments_p == nullptr, "The arguments are null!");
         FE_ASSERT(size_in_bytes_p == 0, "The size of the arguments is 0!");
@@ -2586,7 +2586,7 @@ public:
     }
 
 
-    virtual void set_arguments(void* arguments_p, _MAYBE_UNUSED_ size_t size_in_bytes_p) noexcept override
+    virtual void set_arguments(void* arguments_p, _MAYBE_UNUSED_ size size_in_bytes_p) noexcept override
     {
         FE_ASSERT(arguments_p == nullptr, "The arguments are null!");
         FE_ASSERT(size_in_bytes_p == 0, "The size of the arguments is 0!");

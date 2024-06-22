@@ -28,8 +28,8 @@ public:
 	using lock_type = std::mutex;
 	using alignment_type = FE::align_CPU_L1_cache_line;
 
-	static constexpr size_t initial_size_in_bytes = (64 KB);
-	static constexpr size_t initial_capacity = initial_size_in_bytes / alignment_type::size;
+	static constexpr size initial_size_in_bytes = (64 KB);
+	static constexpr size initial_capacity = initial_size_in_bytes / alignment_type::size;
 
 private:
 	static function_pool_type s_function_pool;
@@ -133,7 +133,7 @@ public:
 		return l_task;
 	}
 
-	_FORCE_INLINE_ static void reserve(size_t size_p) noexcept
+	_FORCE_INLINE_ static void reserve(size size_p) noexcept
 	{
 		std::lock_guard<std::mutex> l_lock(s_lock);
 		s_task_map->reserve(size_p);

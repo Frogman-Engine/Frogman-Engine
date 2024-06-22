@@ -231,7 +231,7 @@ TEST(exclusive_ptr, release_array)
 
 	{
 		FE::exclusive_ptr<std::string[]> l_exclusive_ptr = { "std::string" };
-		FE::size_t l_prev_size = l_exclusive_ptr.capacity();
+		FE::size l_prev_size = l_exclusive_ptr.capacity();
 
 		FE::exclusive_ptr<std::string[]>::pointer l_pointer = l_exclusive_ptr.release();
 		EXPECT_EQ(l_exclusive_ptr.get(), nullptr);
@@ -339,7 +339,7 @@ TEST(FE_smart_ptr_variants, never_dangling_pointer)
 	EXPECT_TRUE(l_smart_safe_pointer.is_expired()); // The safe pointer is pointing to nothing.
 
 	{
-		FE::exclusive_ptr<var::byte[]> l_smart_array_pointer = FE::make_exclusive<var::byte[]>(FE::size_t{ 128 });
+		FE::exclusive_ptr<var::byte[]> l_smart_array_pointer = FE::make_exclusive<var::byte[]>(FE::size{ 128 });
 		l_smart_safe_pointer = l_smart_array_pointer;
 
 		EXPECT_FALSE(l_smart_safe_pointer.is_expired());
@@ -364,11 +364,11 @@ TEST(FE_smart_ptr_variants, never_dangling_pointer)
 TEST(std_smart_ptrs, dangling_pointer)
 {
 	using namespace FE;
-	std::shared_ptr<var::byte[]> l_shared = std::make_shared<var::byte[]>(16);
-	std::weak_ptr<var::byte[]>l_watcher = l_shared; // The weak pointer is pointing to the sixteen bytes sized memory.
+	std::shared_ptr<var::int16> l_shared = std::make_shared<var::int16>(std::size_t(16));
+	std::weak_ptr<var::int16>l_watcher = l_shared; // The weak pointer is pointing to the sixteen bytes sized memory.
 
 	{
-		std::shared_ptr<var::byte[]> l_new_capacity = std::make_shared<var::byte[]>(64);
+		std::shared_ptr<var::int16> l_new_capacity = std::make_shared<var::int16>(std::size_t(64));
 		l_shared.swap(l_new_capacity); // It swaps to extend the size.
 	}
 
@@ -528,7 +528,7 @@ TEST(unique_ptr, release_array)
 
 	{
 		FE::unique_ptr<std::string[]> l_unique_ptr = { "std::string" };
-		FE::size_t l_prev_size = l_unique_ptr.capacity();
+		FE::size l_prev_size = l_unique_ptr.capacity();
 
 		FE::unique_ptr<std::string[]>::pointer l_pointer = l_unique_ptr.release();
 		EXPECT_EQ(l_unique_ptr.get(), nullptr);
@@ -655,11 +655,11 @@ BENCHMARK(FE_smart_refs);
 void std_smart_ptrs(benchmark::State& state_p) noexcept
 {
 	using namespace FE;
-	std::shared_ptr<var::uint32[]> l_shared_ptr = std::make_shared<var::uint32[]>(_MAGICAL_SIZE_);
+	std::shared_ptr<var::uint32> l_shared_ptr = std::make_shared<var::uint32>(_MAGICAL_SIZE_);
 
 	for (auto _ : state_p)
 	{
-		std::weak_ptr<var::uint32[]> l_weak_ptr = l_shared_ptr;
+		std::weak_ptr<var::uint32> l_weak_ptr = l_shared_ptr;
 		if (l_weak_ptr.expired() == false)
 		{
 			auto* l_ptr = l_weak_ptr.lock().get();

@@ -157,8 +157,8 @@ public:
 	using const_pointer = const pointer;
 	using reference = value_type&;
 	using const_reference = const value_type&;
-	using size_type = var::size_t;
-	using difference_type = var::ptrdiff_t;
+	using size_type = var::size;
+	using difference_type = var::ptrdiff;
 
 	_MAYBE_UNUSED_ static constexpr inline auto is_trivial = FE::is_trivial<value_type>::value;
 	_MAYBE_UNUSED_ static constexpr inline ADDRESS is_address_aligned = (std::is_same<FE::SIMD_auto_alignment, Alignment>::value == true) ? ADDRESS::_ALIGNED : ADDRESS::_NOT_ALIGNED;

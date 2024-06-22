@@ -77,7 +77,7 @@ protected:
 		add(size_in_bytes_to_allocate_p);
 		memory_utilization l_new_heap_mem_usage_in_bytes = query_all_data();
 		FE_LOG("This application is using ${%lu@0} bytes. \n Current thread[id:${%lu@1}] is using ${%lu@2} bytes.", &(l_new_heap_mem_usage_in_bytes._total_bytes), &l_this_thread_id, &(l_new_heap_mem_usage_in_bytes._thread_local_bytes));
-		FE_LOG("Allocated data information: [address: 0x${%p@0} | allocation size: ${%lu@1} bytes | type name: ${%s@2} | size of type: ${%lu@3} bytes].\n", &allocated_address_p, &size_in_bytes_to_allocate_p, typeid(T).name(), &FE::buffer<var::size_t>::set_and_get(sizeof(T)));
+		FE_LOG("Allocated data information: [address: 0x${%p@0} | allocation size: ${%lu@1} bytes | type name: ${%s@2} | size of type: ${%lu@3} bytes].\n", &allocated_address_p, &size_in_bytes_to_allocate_p, typeid(T).name(), &FE::buffer<var::size>::set_and_get(sizeof(T)));
 	}
 
 	template <typename T>
@@ -89,7 +89,7 @@ protected:
 		add(new_size_in_bytes_to_allocate_p);
 		memory_utilization l_new_heap_mem_usage_in_bytes = query_all_data();
 		FE_LOG("This application is using ${%lu@0} bytes. \n Current thread[id:${%lu@1}] is using ${%lu@2} bytes.", &(l_new_heap_mem_usage_in_bytes._total_bytes), &l_this_thread_id, &(l_new_heap_mem_usage_in_bytes._thread_local_bytes));
-		FE_LOG("Reallocated data information: [address: 0x${%p@0} | Reallocation size: ${%lu@1} bytes | type name: ${%s@2} | size of type: ${%lu@3} bytes].\n", &realloc_target_p, &new_size_in_bytes_to_allocate_p, typeid(T).name(), &FE::buffer<var::size_t>::set_and_get(sizeof(T)));
+		FE_LOG("Reallocated data information: [address: 0x${%p@0} | Reallocation size: ${%lu@1} bytes | type name: ${%s@2} | size of type: ${%lu@3} bytes].\n", &realloc_target_p, &new_size_in_bytes_to_allocate_p, typeid(T).name(), &FE::buffer<var::size>::set_and_get(sizeof(T)));
 	}
 
 	template <typename T>
@@ -100,7 +100,7 @@ protected:
 		sub(size_in_bytes_to_deallocate_p);
 		memory_utilization l_new_heap_mem_usage_in_bytes = query_all_data();
 		FE_LOG("This application is using ${%lu@0} bytes. \n Current thread[id:${%lu@1}] is using ${%lu@2} bytes.", &(l_new_heap_mem_usage_in_bytes._total_bytes), &l_this_thread_id, &(l_new_heap_mem_usage_in_bytes._thread_local_bytes));
-		FE_LOG("Deleted data information: [address: 0x${%p@0} | Deleted size: ${%lu@1} bytes | type name: ${%s@2} | size of type: ${%lu@3} bytes].\n", &address_to_be_freed_p, &size_in_bytes_to_deallocate_p, typeid(T).name(), &FE::buffer<var::size_t>::set_and_get(sizeof(T)));
+		FE_LOG("Deleted data information: [address: 0x${%p@0} | Deleted size: ${%lu@1} bytes | type name: ${%s@2} | size of type: ${%lu@3} bytes].\n", &address_to_be_freed_p, &size_in_bytes_to_deallocate_p, typeid(T).name(), &FE::buffer<var::size>::set_and_get(sizeof(T)));
 	}
 #endif
 
@@ -121,11 +121,11 @@ public:
 	}
 
 	template<typename T, class Alignment = typename FE::SIMD_auto_alignment>
-	_FORCE_INLINE_ T* trackable_alloc(size_t bytes_p) noexcept
+	_FORCE_INLINE_ T* trackable_alloc(size bytes_p) noexcept
 	{
 		T* const l_result = (T*)ALIGNED_ALLOC(bytes_p, Alignment::size);
 		FE_ASSERT(l_result == nullptr, "${%s@0}: Failed to allocate memory from scalable_aligned_malloc()", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR));
-		FE_ASSERT((reinterpret_cast<uintptr_t>(l_result) % Alignment::size) != 0, "${%s@0}: The allocated heap memory address not aligned by ${%lu@1}.", TO_STRING(MEMORY_ERROR_1XX::_ERROR_ILLEGAL_ADDRESS_ALIGNMENT), &Alignment::size);
+		FE_ASSERT((reinterpret_cast<uintptr>(l_result) % Alignment::size) != 0, "${%s@0}: The allocated heap memory address not aligned by ${%lu@1}.", TO_STRING(MEMORY_ERROR_1XX::_ERROR_ILLEGAL_ADDRESS_ALIGNMENT), &Alignment::size);
 #ifndef _RELEASE_
 		ALIGNED_MEMSET(l_result, _FE_NULL_, bytes_p);
 #endif
@@ -137,9 +137,9 @@ public:
 	}
 
 	template<typename T, class Alignment = typename FE::SIMD_auto_alignment>
-	_FORCE_INLINE_ void trackable_free(T* const ptr_to_memory_p, _MAYBE_UNUSED_ size_t bytes_p) noexcept
+	_FORCE_INLINE_ void trackable_free(T* const ptr_to_memory_p, _MAYBE_UNUSED_ size bytes_p) noexcept
 	{
-		FE_ASSERT((reinterpret_cast<uintptr_t>(ptr_to_memory_p) % Alignment::size) != 0, "${%s@0}: The allocated heap memory address not aligned by ${%lu@1}.", TO_STRING(MEMORY_ERROR_1XX::_ERROR_ILLEGAL_ADDRESS_ALIGNMENT), &Alignment::size);
+		FE_ASSERT((reinterpret_cast<uintptr>(ptr_to_memory_p) % Alignment::size) != 0, "${%s@0}: The allocated heap memory address not aligned by ${%lu@1}.", TO_STRING(MEMORY_ERROR_1XX::_ERROR_ILLEGAL_ADDRESS_ALIGNMENT), &Alignment::size);
 
 		ALIGNED_FREE(ptr_to_memory_p);
 
@@ -149,7 +149,7 @@ public:
 	}
 
 	template<typename T, class Alignment = typename FE::SIMD_auto_alignment>
-	_FORCE_INLINE_ T* trackable_realloc(T* const ptr_to_memory_p, size_t prev_bytes_p, size_t new_bytes_p) noexcept
+	_FORCE_INLINE_ T* trackable_realloc(T* const ptr_to_memory_p, size prev_bytes_p, size new_bytes_p) noexcept
 	{
 #ifdef _WINDOWS_X86_64_
 		T* l_realloc_result = (T*)::_aligned_realloc(ptr_to_memory_p, new_bytes_p, Alignment::size);
@@ -185,7 +185,7 @@ public:
 #ifdef _ENABLE_MEMORY_TRACKER_
 		allocator_base::__log_heap_memory_reallocation<T>(prev_bytes_p, new_bytes_p, l_realloc_result);
 #endif
-		FE_ASSERT((reinterpret_cast<uintptr_t>(l_realloc_result) % Alignment::size) != 0, "${%s@0}: The allocated heap memory address not aligned by ${%lu@1}.", TO_STRING(MEMORY_ERROR_1XX::_ERROR_ILLEGAL_ADDRESS_ALIGNMENT), &Alignment::size);
+		FE_ASSERT((reinterpret_cast<uintptr>(l_realloc_result) % Alignment::size) != 0, "${%s@0}: The allocated heap memory address not aligned by ${%lu@1}.", TO_STRING(MEMORY_ERROR_1XX::_ERROR_ILLEGAL_ADDRESS_ALIGNMENT), &Alignment::size);
 		return l_realloc_result;
 	}
 };

@@ -15,7 +15,7 @@
 BEGIN_NAMESPACE(FE)
 
 
-template<class T, size_t Capacity, class Traits = FE::memory_traits<T>>
+template<class T, size Capacity, class Traits = FE::memory_traits<T>>
 class fstack final
 {
 	FE_STATIC_ASSERT((std::is_same<T, typename Traits::value_type>::value == false), "Static Assertion Failed: The template argument T and Traits' value_type have be the same type.");
@@ -23,15 +23,15 @@ class fstack final
 
 public:
 	using value_type = T;
-	using length_type = var::size_t;
-	using size_type = var::size_t;
+	using length_type = var::size;
+	using size_type = var::size;
 	using reference = T&;
 	using const_reference = const T&;
 	using pointer = T*;
 	using const_pointer = const T*;
 	using const_iterator = FE::const_iterator<FE::contiguous_iterator<T>>;
 	using const_reverse_iterator = FE::const_reverse_iterator<FE::contiguous_iterator<T>>;
-	using difference_type = ptrdiff_t;
+	using difference_type = ptrdiff;
 
 private:
 	var::byte m_memory[sizeof(value_type) * Capacity];
@@ -99,7 +99,7 @@ public:
 			return *this;
 		}
 
-		size_t l_initializer_list_size = initializer_list_p.size();
+		FE::size l_initializer_list_size = initializer_list_p.size();
 		this->__restructrue_fstack_with_move_semantics(const_cast<value_type*>(initializer_list_p.begin()), l_initializer_list_size);
 		this->__set_top_pointer_to_zero();
 		this->__jump_top_pointer(l_initializer_list_size);
@@ -108,7 +108,7 @@ public:
 
 	_CONSTEXPR20_ fstack& operator=(fstack& other_p) noexcept
 	{
-		size_t l_other_size = other_p.size();
+		FE::size l_other_size = other_p.size();
 		if (l_other_size == 0)
 		{
 			return *this;
@@ -130,7 +130,7 @@ public:
 
 	_CONSTEXPR20_ fstack& operator=(fstack&& rvalue_p) noexcept
 	{
-		size_t l_other_size = rvalue_p.size();
+		FE::size l_other_size = rvalue_p.size();
 		if (l_other_size == 0)
 		{
 			return *this;
@@ -262,20 +262,20 @@ private:
 		this->m_top_ptr = this->m_absolute_begin_pointer;
 	}
 
-	_CONSTEXPR20_ void __restructrue_fstack_with_move_semantics(value_type* const source_begin_p, size_t source_size_p) noexcept
+	_CONSTEXPR20_ void __restructrue_fstack_with_move_semantics(value_type* const source_begin_p, FE::size source_size_p) noexcept
 	{
-		size_t l_this_size = this->size();
+		FE::size l_this_size = this->size();
 
 		if (source_size_p > l_this_size)
 		{
-			size_t l_count_to_construct = source_size_p - l_this_size;
+			FE::size l_count_to_construct = source_size_p - l_this_size;
 			Traits::move_construct(this->m_top_ptr, source_begin_p - l_count_to_construct, l_count_to_construct);
 
 			Traits::move_assign(this->m_absolute_begin_pointer, source_begin_p, l_this_size);
 		}
 		else if (source_size_p < l_this_size)
 		{
-			size_t l_count_to_destruct = l_this_size - source_size_p;
+			FE::size l_count_to_destruct = l_this_size - source_size_p;
 
 			if constexpr (Traits::is_trivial == TYPE_TRIVIALITY::_NOT_TRIVIAL)
 			{
@@ -290,20 +290,20 @@ private:
 		}
 	}
 
-	_CONSTEXPR20_ void __restructrue_fstack_with_copy_semantics(value_type* const source_begin_p, size_t source_size_p) noexcept
+	_CONSTEXPR20_ void __restructrue_fstack_with_copy_semantics(value_type* const source_begin_p, FE::size source_size_p) noexcept
 	{
-		size_t l_this_size = this->size();
+		FE::size l_this_size = this->size();
 
 		if (source_size_p > l_this_size)
 		{
-			size_t l_count_to_construct = source_size_p - l_this_size;
+			FE::size l_count_to_construct = source_size_p - l_this_size;
 			Traits::copy_construct(this->m_top_ptr, source_begin_p - l_count_to_construct, l_count_to_construct);
 
 			Traits::copy_assign(this->m_absolute_begin_pointer, source_begin_p, l_this_size);
 		}
 		else if (source_size_p < l_this_size)
 		{
-			size_t l_count_to_destruct = l_this_size - source_size_p;
+			FE::size l_count_to_destruct = l_this_size - source_size_p;
 
 			if constexpr (Traits::is_trivial == TYPE_TRIVIALITY::_NOT_TRIVIAL)
 			{

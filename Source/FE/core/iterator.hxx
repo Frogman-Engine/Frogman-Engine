@@ -11,7 +11,7 @@ BEGIN_NAMESPACE(FE)
 
 
 template<class To, class From>
-_FORCE_INLINE_ _CONSTEXPR17_ To iterator_cast(const From& ptr_p) noexcept
+_FORCE_INLINE_ _CONSTEXPR20_ To iterator_cast(const From& ptr_p) noexcept
 {
 	FE_STATIC_ASSERT(((std::is_class<From>::value == false) && (std::is_pointer<From>::value == false)), "Static assertion failure: template arguments must be a pointer type or an iterator type.");
 	FE_STATIC_ASSERT(((std::is_class<To>::value == false) && (std::is_pointer<To>::value == false)), "Static assertion failure: template arguments must be a pointer type or an iterator type.");
@@ -694,7 +694,7 @@ struct contiguous_iterator
 {
 	using category = contiguous_iterator<typename FE::remove_const_reference<T>::type>;
 	using value_type = T;
-	using difference_type = var::ptrdiff_t;
+	using difference_type = var::ptrdiff;
 	using pointer = T*;
 	using reference = T&;
 	using const_pointer = const T*;

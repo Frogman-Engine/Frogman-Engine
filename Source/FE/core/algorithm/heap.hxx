@@ -43,7 +43,7 @@ enum struct HEAP_TYPE : boolean
 
 
 template<typename T, HEAP_TYPE HeapType>
-index_t binary_search_contiguous_binary_heap(const T* const contiguous_binary_heap_p, size_t capacity_p, const T& target_p) noexcept
+index_t binary_search_contiguous_binary_heap(const T* const contiguous_binary_heap_p, size capacity_p, const T& target_p) noexcept
 {
 	var::index_t l_index = 0;
 	while (l_index < capacity_p)

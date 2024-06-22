@@ -401,7 +401,7 @@ public:
 
 	_FORCE_INLINE_ _CONSTEXPR20_ exclusive_ptr(std::initializer_list<element_type>&& values_p, const Allocator& allocator_p = Allocator()) noexcept : m_allocator(allocator_p)
 	{
-		size_t l_initializer_list_size = values_p.size();
+		size l_initializer_list_size = values_p.size();
 		if (l_initializer_list_size == 0)
 		{
 			return;
@@ -431,7 +431,7 @@ public:
 
 	_CONSTEXPR20_ exclusive_ptr& operator=(std::initializer_list<element_type>&& values_p) noexcept
 	{
-		size_t l_initializer_list_size = values_p.size();
+		size l_initializer_list_size = values_p.size();
 		if (l_initializer_list_size == 0)
 		{
 			return *this;
@@ -506,7 +506,7 @@ public:
 		return this->m_allocator;
 	}
 
-	_FORCE_INLINE_ _CONSTEXPR20_ size_t capacity() const noexcept
+	_FORCE_INLINE_ _CONSTEXPR20_ size capacity() const noexcept
 	{
 		if(this->m_ref_block == nullptr) { return 0; }
 		return this->m_smart_ptr_end - static_cast<pointer>(this->m_ref_block->_address);
@@ -735,7 +735,7 @@ private:
 		}
 	}
 
-	_FORCE_INLINE_ _CONSTEXPR20_ void __reallocate(size_t new_count_p) noexcept
+	_FORCE_INLINE_ _CONSTEXPR20_ void __reallocate(size new_count_p) noexcept
 	{
 		FE_ASSERT(this->m_ref_block == nullptr, "${%s@0}: The smart pointer was nullptr.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR));
 		this->m_ref_block->_address = this->m_allocator.reallocate(static_cast<pointer>(this->m_ref_block->_address), this->m_smart_ptr_end - static_cast<pointer>(this->m_ref_block->_address), new_count_p);
@@ -766,7 +766,7 @@ template <typename T,
 	class Allocator = FE::new_delete_allocator<FE::aligned_allocator<typename std::remove_all_extents<T>::type>>
 #endif
 >
-_NODISCARD_ _FORCE_INLINE_ _CONSTEXPR23_ exclusive_ptr<typename std::remove_all_extents<T>::type[], Allocator> make_exclusive(size_t array_size_p) noexcept
+_NODISCARD_ _FORCE_INLINE_ _CONSTEXPR23_ exclusive_ptr<typename std::remove_all_extents<T>::type[], Allocator> make_exclusive(size array_size_p) noexcept
 {
 	static_assert(std::is_array<T>::value == true, "static assertion failed: The typename T must be an array type");
 	return exclusive_ptr<typename std::remove_all_extents<T>::type[], Allocator>(FE::reserve{ array_size_p });

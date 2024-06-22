@@ -288,7 +288,11 @@ namespace performance_benchmark
 {
 	void fn() noexcept
 	{
-		static var::uint64 l_uint = 0;
+/*
+Severity	Code	Description	Project	File	Line	Suppression State	Details
+Error		variable 'l_uint' set but not used [-Werror,-Wunused-but-set-variable]	FE.core.thread_test	C:\Users\leeho\OneDrive\臾몄꽌\GitHub\Frogman-Engine-Lab\Frogman-Engine-Tests\FE-Tests\Unit-Tests\FE.core.thread\main.cpp	291
+*/
+		_MAYBE_UNUSED_ static var::uint64 l_uint = 0;
 
 		++l_uint;
 	}
@@ -297,7 +301,7 @@ namespace performance_benchmark
 	{
 		FE::function<void(void)> l_fn = fn;
 
-		for (auto _ : state_p)
+		for (_MAYBE_UNUSED_ auto _ : state_p)
 		{
 			l_fn();
 		}
@@ -309,7 +313,7 @@ namespace performance_benchmark
 	{
 		FE::c_style_task<void(void)> l_task = fn;
 
-		for (auto _ : state_p)
+		for (_MAYBE_UNUSED_ auto _ : state_p)
 		{
 			l_task();
 		}
@@ -321,7 +325,7 @@ namespace performance_benchmark
 	{
 		std::function l_fn = fn;
 
-		for (auto _ : state_p)
+		for (_MAYBE_UNUSED_ auto _ : state_p)
 		{
 			l_fn();
 		}

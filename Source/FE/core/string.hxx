@@ -56,7 +56,7 @@ public:
     using allocator_type = Allocator;
     using size_type = var::uint64;
     using length_type = var::uint64;
-    using difference_type = var::ptrdiff_t;
+    using difference_type = var::ptrdiff;
     using reference = CharT&;
     using const_reference = const CharT&;
     using pointer = CharT*;
@@ -152,7 +152,7 @@ public:
         this->m_smart_string[count_p] = _FE_NULL_;
     }
 
-    _CONSTEXPR20_ basic_string(const value_type* const string_p, const size_type count_p) noexcept : m_smart_string(FE::make_exclusive<CharT[], Allocator>(size_t{ count_p + _FE_NULL_ESCAPE_SIZE_ })), m_length(count_p)
+    _CONSTEXPR20_ basic_string(const value_type* const string_p, const size_type count_p) noexcept : m_smart_string(FE::make_exclusive<CharT[], Allocator>(FE::size{ count_p + _FE_NULL_ESCAPE_SIZE_ })), m_length(count_p)
     {
         FE_ASSERT(string_p == nullptr, "${%s@0}: ${%s@1} was nullptr.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(string_p));
         FE_ASSERT(algorithm::string::length(string_p) < count_p, "${%s@0}: ${%s@1} was greater than the length of the input string. The input string length was ${%lu@2}, and ${%s@1} was ${%s@1}", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_RANGE), TO_STRING(count_p), &FE::buffer<size_type>::set_and_get(algorithm::string::length(string_p)), &count_p);
@@ -164,7 +164,7 @@ public:
         Traits::assign(l_this_string_info, string_p, count_p);
     }
   
-    _CONSTEXPR20_ basic_string(const value_type* const string_p) noexcept : m_smart_string(FE::make_exclusive<CharT[], Allocator>(size_t{ algorithm::string::length(string_p) + _FE_NULL_ESCAPE_SIZE_ })), m_length(m_smart_string.capacity() - _FE_NULL_ESCAPE_SIZE_)
+    _CONSTEXPR20_ basic_string(const value_type* const string_p) noexcept : m_smart_string(FE::make_exclusive<CharT[], Allocator>(FE::size{ algorithm::string::length(string_p) + _FE_NULL_ESCAPE_SIZE_ })), m_length(m_smart_string.capacity() - _FE_NULL_ESCAPE_SIZE_)
     {
         FE_ASSERT(string_p == nullptr, "${%s@0}: ${%s@1} was nullptr.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(string_p));
         FE_ASSERT(this->m_length == 0, "${%s@0}: ${%s@1} was zero.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(l_input_string_length));
@@ -179,7 +179,7 @@ public:
     basic_string(std::nullptr_t) noexcept = delete;
 
     template<class InputIterator>
-    _CONSTEXPR20_ basic_string(InputIterator first_p, InputIterator last_p) noexcept : m_smart_string(FE::make_exclusive<CharT[], Allocator>(static_cast<size_t>(last_p - first_p) + _FE_NULL_ESCAPE_SIZE_)), m_length(m_smart_string.capacity() - _FE_NULL_ESCAPE_SIZE_)
+    _CONSTEXPR20_ basic_string(InputIterator first_p, InputIterator last_p) noexcept : m_smart_string(FE::make_exclusive<CharT[], Allocator>(static_cast<FE::size>(last_p - first_p) + _FE_NULL_ESCAPE_SIZE_)), m_length(m_smart_string.capacity() - _FE_NULL_ESCAPE_SIZE_)
     {
         FE_STATIC_ASSERT(std::is_class<InputIterator>::value == false, "Static Assertion Failure: The template argument InputIterator must be a class or a struct type.");
         FE_STATIC_ASSERT((std::is_same<typename std::remove_const<typename InputIterator::value_type>::type, typename std::remove_const<value_type>::type>::value == false), "Static Assertion Failure: InputIterator's value_type has to be the same as basic_string's value_type.");
@@ -216,7 +216,7 @@ public:
     }
 
     
-    _CONSTEXPR20_ basic_string(basic_string_view<CharT>& string_view_p) noexcept : m_smart_string(FE::make_exclusive<CharT[], Allocator>(size_t{ string_view_p.length() + _FE_NULL_ESCAPE_SIZE_ })), m_length(m_smart_string.capacity() - _FE_NULL_ESCAPE_SIZE_)
+    _CONSTEXPR20_ basic_string(basic_string_view<CharT>& string_view_p) noexcept : m_smart_string(FE::make_exclusive<CharT[], Allocator>(FE::size{ string_view_p.length() + _FE_NULL_ESCAPE_SIZE_ })), m_length(m_smart_string.capacity() - _FE_NULL_ESCAPE_SIZE_)
     {
         if (string_view_p.is_empty() == true)
         {
@@ -231,7 +231,7 @@ public:
     }
 
     
-    _CONSTEXPR20_ basic_string(basic_string_view<CharT>& string_view_p, const size_type position_p, const size_type count_p) noexcept : m_smart_string(FE::make_exclusive<CharT[], Allocator>(size_t{ count_p + _FE_NULL_ESCAPE_SIZE_ })), m_length(count_p)
+    _CONSTEXPR20_ basic_string(basic_string_view<CharT>& string_view_p, const size_type position_p, const size_type count_p) noexcept : m_smart_string(FE::make_exclusive<CharT[], Allocator>(FE::size{ count_p + _FE_NULL_ESCAPE_SIZE_ })), m_length(count_p)
     {
         if (string_view_p.is_empty() == true)
         {

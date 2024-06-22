@@ -68,11 +68,11 @@ struct hash<T, HasherType, HASH_INPUT_DATA_TYPE::_ADDRESS> : public hash_base
 	using base = hash_base;
 	static constexpr HASH_INPUT_DATA_TYPE hash_input_data_type = HASH_INPUT_DATA_TYPE::_ADDRESS;
 
-	_NODISCARD_ _FORCE_INLINE_ var::uintptr_t operator()(T value_p) const noexcept
+	_NODISCARD_ _FORCE_INLINE_ var::uintptr operator()(T value_p) const noexcept
 	{
 		if constexpr (HasherType == HASHER_TYPE::_ROBIN_HOOD_HASH)
 		{
-			return robin_hood::hash_int(reinterpret_cast<var::uintptr_t>(value_p));
+			return robin_hood::hash_int(reinterpret_cast<var::uintptr>(value_p));
 		}
 		else if constexpr (HasherType == HASHER_TYPE::_CITY_HASH)
 		{
@@ -106,7 +106,7 @@ struct hash<T, HasherType, HASH_INPUT_DATA_TYPE::_STRING_CLASS> : public hash_ba
 	using base = hash_base;
 	static constexpr HASH_INPUT_DATA_TYPE hash_input_data_type = HASH_INPUT_DATA_TYPE::_STRING_CLASS;
 
-	_NODISCARD_ _FORCE_INLINE_ var::uintptr_t operator()(const T& value_p) const noexcept
+	_NODISCARD_ _FORCE_INLINE_ var::uintptr operator()(const T& value_p) const noexcept
 	{
 		if constexpr (HasherType == HASHER_TYPE::_ROBIN_HOOD_HASH)
 		{

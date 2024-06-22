@@ -32,34 +32,34 @@ namespace internal::pool
     struct block_info
     {
         var::byte* _address = nullptr;
-        var::size_t _size_in_bytes = 0;
+        var::size _size_in_bytes = 0;
     };
 
-    template<POOL_TYPE PoolType, size_t PageCapacity, class Alignment>
+    template<POOL_TYPE PoolType, size PageCapacity, class Alignment>
     struct chunk;
 }
 
 
-template<POOL_TYPE PoolType, size_t PageCapacity, class Alignment, class Allocator>
+template<POOL_TYPE PoolType, size PageCapacity, class Alignment, class Allocator>
 class pool;
 
 
 template<uint64 Capacity>
 struct capacity final
 {
-    _MAYBE_UNUSED_ static constexpr inline size_t size = Capacity;
+    _MAYBE_UNUSED_ static constexpr inline size size = Capacity;
 };
 
 template<uint64 Count>
 struct object_count final
 {
-    _MAYBE_UNUSED_ static constexpr inline size_t size = Count;
+    _MAYBE_UNUSED_ static constexpr inline size size = Count;
 };
 
 template<uint64 SizeInBytes>
 struct size_in_bytes final
 {
-    _MAYBE_UNUSED_ static constexpr inline size_t size = SizeInBytes;
+    _MAYBE_UNUSED_ static constexpr inline size size = SizeInBytes;
 };
 
 
