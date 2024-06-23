@@ -19,10 +19,17 @@ https://savory-moth-a00.notion.site/5cef12dd2c9b43588f22045405e80cff?v=86ea5413f
 
 All project settings can be adjusted by modifying CMakeLists.txt.
 
-| Platform     | Architecture  | Platform Support | 
+# The current development status.
+| Platform     | Architecture  | Platform Support |
 |--------------|---------------|------------------|
-| Windows      | X86-64        | Discontinued     |
-| Linux        | X86-64        | In Development   |
+| Windows 11   | X86-64        | Suspended        |
+| Ubuntu-Linux | X86-64        | In Development   |
+
+# Frogman Engine wants to support these platforms in the future.
+| Platform     | Architecture  |   CPU Brand   |
+|--------------|---------------|---------------|
+| Windows 11   | X86-64        | Intel and AMD |
+| Linux Mint   | ARM64         |    Qualcomm   |
 
 # This project uses:
 - Boost Libraries
@@ -34,7 +41,7 @@ https://github.com/google/googletest/releases/tag/v1.14.0
 - Google Benchmark
 https://github.com/google/benchmark/releases/tag/v1.8.3
 
-# Help
+# Help:
 (NOTE: This project will drop msvc compiler v143 support and use LLVM clang cl as its main compiler on Windows)
 The default settings use /MTd (Static C++ Standard Library Debug Build) for debug configuration and /MT (Static C++ Standard Library Release Build) for release.
 
