@@ -60,17 +60,17 @@ IF(CMAKE_SYSTEM_NAME STREQUAL "Linux")
 ELSEIF(CMAKE_SYSTEM_NAME STREQUAL "Windows")
 
     SET(BOOST_STACKTRACE 
-    $<$<CONFIG:DEBUG>:			${CMAKE_CURRENT_SOURCE_DIR}/../../../Third-Party-Libraries/boost-1.85.0/lib/windows/clangw17-mt-sgd-x64/debug/libboost_stacktrace_windbg_cached-clangw17-mt-sgd-x64-1_85.lib>
-    $<$<CONFIG:RELWITHDEBINFO>: ${CMAKE_CURRENT_SOURCE_DIR}/../../../Third-Party-Libraries/boost-1.85.0/lib/windows/clangw17-mt-sgd-x64/release/libboost_stacktrace_windbg_cached-clangw17-mt-s-x64-1_85.lib>
-    $<$<CONFIG:RELEASE>:		${CMAKE_CURRENT_SOURCE_DIR}/../../../Third-Party-Libraries/boost-1.85.0/lib/windows/clangw17-mt-sgd-x64/release/libboost_stacktrace_noop-clangw17-mt-s-x64-1_85.lib>
-    $<$<CONFIG:MINSIZEREL>:		${CMAKE_CURRENT_SOURCE_DIR}/../../../Third-Party-Libraries/boost-1.85.0/lib/windows/clangw17-mt-sgd-x64/release/libboost_stacktrace_noop-clangw17-mt-s-x64-1_85.lib>
+    $<$<CONFIG:DEBUG>:			${CMAKE_CURRENT_SOURCE_DIR}/../../../Third-Party-Libraries/boost-1.85.0/lib/windows/clangw17-mt-x64/debug/libboost_stacktrace_windbg_cached-clangw17-mt-sgd-x64-1_85.lib>
+    $<$<CONFIG:RELWITHDEBINFO>: ${CMAKE_CURRENT_SOURCE_DIR}/../../../Third-Party-Libraries/boost-1.85.0/lib/windows/clangw17-mt-x64/release/libboost_stacktrace_windbg_cached-clangw17-mt-s-x64-1_85.lib>
+    $<$<CONFIG:RELEASE>:		${CMAKE_CURRENT_SOURCE_DIR}/../../../Third-Party-Libraries/boost-1.85.0/lib/windows/clangw17-mt-x64/release/libboost_stacktrace_noop-clangw17-mt-s-x64-1_85.lib>
+    $<$<CONFIG:MINSIZEREL>:		${CMAKE_CURRENT_SOURCE_DIR}/../../../Third-Party-Libraries/boost-1.85.0/lib/windows/clangw17-mt-x64/release/libboost_stacktrace_noop-clangw17-mt-s-x64-1_85.lib>
     )
 
     SET(BOOST_CHRONO 
-    $<$<CONFIG:DEBUG>:			${CMAKE_CURRENT_SOURCE_DIR}/../../../Third-Party-Libraries/boost-1.85.0/lib/windows/clangw17-mt-sgd-x64/debug/libboost_chrono-clangw17-mt-sgd-x64-1_85.lib>
-    $<$<CONFIG:RELWITHDEBINFO>: ${CMAKE_CURRENT_SOURCE_DIR}/../../../Third-Party-Libraries/boost-1.85.0/lib/windows/clangw17-mt-sgd-x64/release/libboost_chrono-clangw17-mt-s-x64-1_85.lib>
-    $<$<CONFIG:RELEASE>:		${CMAKE_CURRENT_SOURCE_DIR}/../../../Third-Party-Libraries/boost-1.85.0/lib/windows/clangw17-mt-sgd-x64/release/libboost_chrono-clangw17-mt-s-x64-1_85.lib>
-    $<$<CONFIG:MINSIZEREL>:		${CMAKE_CURRENT_SOURCE_DIR}/../../../Third-Party-Libraries/boost-1.85.0/lib/windows/clangw17-mt-sgd-x64/release/libboost_chrono-clangw17-mt-s-x64-1_85.lib>
+    $<$<CONFIG:DEBUG>:			${CMAKE_CURRENT_SOURCE_DIR}/../../../Third-Party-Libraries/boost-1.85.0/lib/windows/clangw17-mt-x64/debug/libboost_chrono-clangw17-mt-sgd-x64-1_85.lib>
+    $<$<CONFIG:RELWITHDEBINFO>: ${CMAKE_CURRENT_SOURCE_DIR}/../../../Third-Party-Libraries/boost-1.85.0/lib/windows/clangw17-mt-x64/release/libboost_chrono-clangw17-mt-s-x64-1_85.lib>
+    $<$<CONFIG:RELEASE>:		${CMAKE_CURRENT_SOURCE_DIR}/../../../Third-Party-Libraries/boost-1.85.0/lib/windows/clangw17-mt-x64/release/libboost_chrono-clangw17-mt-s-x64-1_85.lib>
+    $<$<CONFIG:MINSIZEREL>:		${CMAKE_CURRENT_SOURCE_DIR}/../../../Third-Party-Libraries/boost-1.85.0/lib/windows/clangw17-mt-x64/release/libboost_chrono-clangw17-mt-s-x64-1_85.lib>
     )
 
 

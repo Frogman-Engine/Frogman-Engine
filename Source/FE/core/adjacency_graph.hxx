@@ -35,16 +35,39 @@ namespace internal::adjacency_graph
 }
 
 template<typename Key, typename T>
+class adjacency_graph;
+
+template<typename Key, typename T>
+class node_type
+{
+	template<typename key, typename t>
+	friend class adjacency_graph;
+
+	node_type* m_upper_adjacent = nullptr;
+	node_type* m_lower_adjacent = nullptr;
+
+	Key m_key;
+
+public:
+	T _value;
+
+
+	node_type(const Key& key_p, const T& value_p) noexcept : m_key(key_p), _value(value_p) {}
+	node_type() noexcept = default;
+	~node_type() noexcept = default;
+
+	_FORCE_INLINE_ const Key& get_key() const noexcept { return this->m_key; }
+};
+
+template<typename Key, typename T>
 class adjacency_graph
 {
 public:
-	class node_type;
-
 	using key_type = Key;
 	using value_type = T; 
 
-	using underlying_container = std::set<node_type, internal::adjacency_graph::less<node_type>, FE::aligned_allocator<node_type>>;
-	using edge_type = typename underlying_container::value_type*;
+	using underlying_container = std::set<node_type<Key, T>, internal::adjacency_graph::less<node_type<Key, T>>, FE::aligned_allocator<node_type<Key, T>>>;
+	using edge_type = typename underlying_container::pointer;
 
 	using size_type = typename underlying_container::size_type;
 	using difference_type = typename underlying_container::difference_type;
@@ -58,31 +81,10 @@ public:
 	using pointer = typename underlying_container::pointer;
 	using const_pointer = typename underlying_container::const_pointer;
 
-	class node_type
-	{
-		friend class adjacency_graph;
-		
-		node_type* m_upper_adjacent = nullptr;
-		node_type* m_lower_adjacent = nullptr;
-		std::any m_iterator_to_this;
-
-		Key m_key;
-
-	public: 
-		T _value;
-
-
-		node_type(const Key& key_p, const T& value_p) noexcept : m_key(key_p), _value(value_p) {}
-		node_type() noexcept = default;
-		~node_type() noexcept = default;
-
-		_FORCE_INLINE_ const Key& get_key() const noexcept { return this->m_key; }
-	};
-
 	struct adjacent_node_iterator
 	{
 		using category = adjacent_node_iterator;
-		using value_type = node_type;
+		using value_type = node_type<Key, T>;
 		using difference_type = var::ptrdiff;
 		using pointer = value_type*;
 		using reference = value_type&;
@@ -249,9 +251,9 @@ private:
 public:
 	_FORCE_INLINE_ adjacency_graph() noexcept : m_set() {}
 	_FORCE_INLINE_ adjacency_graph(const allocator_type& allocator_p) noexcept : m_set(allocator_p) {}
-	_FORCE_INLINE_ adjacency_graph(std::initializer_list<node_type>&& initializer_list_p, const allocator_type& allocator_p = allocator_type()) noexcept : m_set(allocator_p) 
+	_FORCE_INLINE_ adjacency_graph(std::initializer_list<node_type<Key, T>>&& initializer_list_p, const allocator_type& allocator_p = allocator_type()) noexcept : m_set(allocator_p)
 	{
-		auto l_input_data = const_cast<node_type*>(initializer_list_p.begin());
+		auto l_input_data = const_cast<node_type<Key, T>*>(initializer_list_p.begin());
 		auto l_input_end = initializer_list_p.end();
 
 		while(l_input_data != l_input_end)
@@ -280,7 +282,7 @@ public:
 
 	iterator insert(const Key& key_p, const T& value_p) noexcept // Logarithmic time complexity: O(3 * log N)
 	{
-		node_type l_value;
+		node_type<Key, T> l_value;
 		l_value.m_key = key_p;
 		l_value._value = value_p;
 		typename underlying_container::iterator l_result = this->m_set.insert(std::move(l_value)).first;
@@ -290,22 +292,22 @@ public:
 
 		auto l_lower_adjacent = l_result;
 		--l_lower_adjacent;
-		
-		edge_type l_type_casted_result = (l_result != this->m_set.end()) ? iterator_cast<edge_type, typename underlying_container::iterator>(l_result) : nullptr;
+
+		edge_type l_type_casted_result = (l_result != this->m_set.end()) ? std::pointer_traits<edge_type>::pointer_to(const_cast<reference>(*l_result)) : nullptr;
 		if(l_upper_adjacent != this->m_set.end())
 		{
-			edge_type l_upper_adjacent_node = iterator_cast<edge_type, typename underlying_container::iterator>(l_upper_adjacent);
+			edge_type l_upper_adjacent_node = std::pointer_traits<edge_type>::pointer_to(const_cast<reference>(*l_upper_adjacent));
 			l_upper_adjacent_node->m_lower_adjacent = l_type_casted_result;
 			l_type_casted_result->m_upper_adjacent = l_upper_adjacent_node;
 		}
 
 		if(l_lower_adjacent != this->m_set.end())
 		{
-			edge_type l_lower_adjacent_node = iterator_cast<edge_type, typename underlying_container::iterator>(l_lower_adjacent);
+			edge_type l_lower_adjacent_node = std::pointer_traits<edge_type>::pointer_to(const_cast<reference>(*l_lower_adjacent));
 			l_lower_adjacent_node->m_upper_adjacent = l_type_casted_result;
 			l_type_casted_result->m_lower_adjacent = l_lower_adjacent_node;
 		}
-		return iterator{ l_type_casted_result };
+		return iterator_cast<iterator>(l_type_casted_result);
 	}
 
 	_FORCE_INLINE_ void erase(iterator position_p) noexcept // Constant time complexity
@@ -326,27 +328,27 @@ public:
 			l_upper_adjacent->m_lower_adjacent = l_lower_adjacent;
 		}
 
-		node_type l_target_to_erase;
+		node_type<Key, T> l_target_to_erase;
 		l_target_to_erase.m_key = position_p->get_key();
 		this->m_set.erase(l_target_to_erase);
 	}
 
 	_FORCE_INLINE_ iterator find(const Key& key_p) noexcept // Logarithmic time complexity
 	{
-		node_type l_target_to_find;
+		node_type<Key, T> l_target_to_find;
 		l_target_to_find.m_key = key_p;
 		return this->m_set.find(l_target_to_find);
 	}
 
 	/* Iterating adjacent nodes from begin to end takes linear time complexity of N amount of nodes. */
-	_FORCE_INLINE_ iterator begin() const noexcept { return iterator{this->m_set.begin().operator->()}; } 
-	_FORCE_INLINE_ const_iterator cbegin() const noexcept { return const_iterator{this->m_set.cbegin().operator->()}; }
+	_FORCE_INLINE_ iterator begin() const noexcept { return iterator{ std::pointer_traits<edge_type>::pointer_to(const_cast<reference>(*(this->m_set.begin()))) }; }
+	_FORCE_INLINE_ const_iterator cbegin() const noexcept { return const_iterator{ std::pointer_traits<edge_type>::pointer_to(const_cast<reference>(*(this->m_set.cbegin()))) }; }
 
 	_FORCE_INLINE_ _CONSTEXPR17_ iterator end() const noexcept { return iterator{nullptr}; }
 	_FORCE_INLINE_ _CONSTEXPR17_ const_iterator cend() const noexcept { return const_iterator{nullptr}; }
 
-	_FORCE_INLINE_ reverse_iterator rbegin() const noexcept { return reverse_iterator{this->m_set.rbegin().operator->()}; }
-	_FORCE_INLINE_ const_reverse_iterator crbegin() const noexcept { return const_reverse_iterator{this->m_set.crbegin().operator->()}; }
+	_FORCE_INLINE_ reverse_iterator rbegin() const noexcept { return reverse_iterator{ std::pointer_traits<edge_type>::pointer_to(const_cast<reference>(*(this->m_set.rbegin()))) }; }
+	_FORCE_INLINE_ const_reverse_iterator crbegin() const noexcept { return const_reverse_iterator{ std::pointer_traits<edge_type>::pointer_to(const_cast<reference>(*(this->m_set.crbegin()))) }; }
 
 	_FORCE_INLINE_ _CONSTEXPR17_ reverse_iterator rend() const noexcept { return reverse_iterator{nullptr}; }
 	_FORCE_INLINE_ _CONSTEXPR17_ const_reverse_iterator crend() const noexcept { return const_reverse_iterator{nullptr}; }

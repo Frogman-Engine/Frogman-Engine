@@ -46,17 +46,17 @@ IF(CMAKE_SYSTEM_NAME STREQUAL "Linux")
 ELSEIF(CMAKE_SYSTEM_NAME STREQUAL "Windows")
 
     SET(BOOST_STACKTRACE 
-    $<$<CONFIG:DEBUG>:			${CMAKE_CURRENT_SOURCE_DIR}/../../../Third-Party-Libraries/boost-1.85.0/lib/windows/clangw17-mt-sgd-x64/debug/libboost_stacktrace_windbg_cached-clangw17-mt-sgd-x64-1_85.lib>
-    $<$<CONFIG:RELWITHDEBINFO>: ${CMAKE_CURRENT_SOURCE_DIR}/../../../Third-Party-Libraries/boost-1.85.0/lib/windows/clangw17-mt-sgd-x64/release/libboost_stacktrace_windbg_cached-clangw17-mt-s-x64-1_85.lib>
-    $<$<CONFIG:RELEASE>:		${CMAKE_CURRENT_SOURCE_DIR}/../../../Third-Party-Libraries/boost-1.85.0/lib/windows/clangw17-mt-sgd-x64/release/libboost_stacktrace_noop-clangw17-mt-s-x64-1_85.lib>
-    $<$<CONFIG:MINSIZEREL>:		${CMAKE_CURRENT_SOURCE_DIR}/../../../Third-Party-Libraries/boost-1.85.0/lib/windows/clangw17-mt-sgd-x64/release/libboost_stacktrace_noop-clangw17-mt-s-x64-1_85.lib>
+    $<$<CONFIG:DEBUG>:			${CMAKE_CURRENT_SOURCE_DIR}/../../../Third-Party-Libraries/boost-1.85.0/lib/windows/clangw17-mt-x64/debug/libboost_stacktrace_windbg_cached-clangw17-mt-sgd-x64-1_85.lib>
+    $<$<CONFIG:RELWITHDEBINFO>: ${CMAKE_CURRENT_SOURCE_DIR}/../../../Third-Party-Libraries/boost-1.85.0/lib/windows/clangw17-mt-x64/release/libboost_stacktrace_windbg_cached-clangw17-mt-s-x64-1_85.lib>
+    $<$<CONFIG:RELEASE>:		${CMAKE_CURRENT_SOURCE_DIR}/../../../Third-Party-Libraries/boost-1.85.0/lib/windows/clangw17-mt-x64/release/libboost_stacktrace_noop-clangw17-mt-s-x64-1_85.lib>
+    $<$<CONFIG:MINSIZEREL>:		${CMAKE_CURRENT_SOURCE_DIR}/../../../Third-Party-Libraries/boost-1.85.0/lib/windows/clangw17-mt-x64/release/libboost_stacktrace_noop-clangw17-mt-s-x64-1_85.lib>
     )
 
     SET(BOOST_CHRONO 
-    $<$<CONFIG:DEBUG>:			${CMAKE_CURRENT_SOURCE_DIR}/../../../Third-Party-Libraries/boost-1.85.0/lib/windows/clangw17-mt-sgd-x64/debug/libboost_chrono-clangw17-mt-sgd-x64-1_85.lib>
-    $<$<CONFIG:RELWITHDEBINFO>: ${CMAKE_CURRENT_SOURCE_DIR}/../../../Third-Party-Libraries/boost-1.85.0/lib/windows/clangw17-mt-sgd-x64/release/libboost_chrono-clangw17-mt-s-x64-1_85.lib>
-    $<$<CONFIG:RELEASE>:		${CMAKE_CURRENT_SOURCE_DIR}/../../../Third-Party-Libraries/boost-1.85.0/lib/windows/clangw17-mt-sgd-x64/release/libboost_chrono-clangw17-mt-s-x64-1_85.lib>
-    $<$<CONFIG:MINSIZEREL>:		${CMAKE_CURRENT_SOURCE_DIR}/../../../Third-Party-Libraries/boost-1.85.0/lib/windows/clangw17-mt-sgd-x64/release/libboost_chrono-clangw17-mt-s-x64-1_85.lib>
+    $<$<CONFIG:DEBUG>:			${CMAKE_CURRENT_SOURCE_DIR}/../../../Third-Party-Libraries/boost-1.85.0/lib/windows/clangw17-mt-x64/debug/libboost_chrono-clangw17-mt-sgd-x64-1_85.lib>
+    $<$<CONFIG:RELWITHDEBINFO>: ${CMAKE_CURRENT_SOURCE_DIR}/../../../Third-Party-Libraries/boost-1.85.0/lib/windows/clangw17-mt-x64/release/libboost_chrono-clangw17-mt-s-x64-1_85.lib>
+    $<$<CONFIG:RELEASE>:		${CMAKE_CURRENT_SOURCE_DIR}/../../../Third-Party-Libraries/boost-1.85.0/lib/windows/clangw17-mt-x64/release/libboost_chrono-clangw17-mt-s-x64-1_85.lib>
+    $<$<CONFIG:MINSIZEREL>:		${CMAKE_CURRENT_SOURCE_DIR}/../../../Third-Party-Libraries/boost-1.85.0/lib/windows/clangw17-mt-x64/release/libboost_chrono-clangw17-mt-s-x64-1_85.lib>
     )
 
 
@@ -162,12 +162,13 @@ ${CMAKE_CURRENT_SOURCE_DIR}/../../../Source/FE/core/clock.hpp
 ${CMAKE_CURRENT_SOURCE_DIR}/../../../Source/FE/core/private/clock.cpp
 )
 
+
 #https://llvm.org/docs/LibFuzzer.html?ref=jumpcrypto.com
 #-fsanitize=address
 #-fsanitize=memory
 #-fsanitize=undefined
 #-fsanitize=fuzzer
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=fuzzer,undefined")
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=fuzzer,undefined,address")
 
 
 
@@ -177,6 +178,7 @@ ${FE_CORE_LOG}
 tests/FE.core.algorithm.string.count_chars.cpp
 )
 SET_TARGET_PROPERTIES(FE.core.algorithm.string.count_chars PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/binaries)
+TARGET_LINK_LIBRARIES(FE.core.algorithm.string.count_chars ${BOOST_STACKTRACE} ${BOOST_CHRONO})
 
 
 ADD_EXECUTABLE(FE.core.algorithm.string.capitalize
@@ -184,6 +186,7 @@ ${FE_CORE_LOG}
 tests/FE.core.algorithm.string.capitalize.cpp
 )
 SET_TARGET_PROPERTIES(FE.core.algorithm.string.capitalize PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/binaries)
+TARGET_LINK_LIBRARIES(FE.core.algorithm.string.capitalize ${BOOST_STACKTRACE} ${BOOST_CHRONO})
 
 
 ADD_EXECUTABLE(FE.core.algorithm.string.to_lowercase
@@ -191,6 +194,7 @@ ${FE_CORE_LOG}
 tests/FE.core.algorithm.string.to_lowercase.cpp
 )
 SET_TARGET_PROPERTIES(FE.core.algorithm.string.to_lowercase PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/binaries)
+TARGET_LINK_LIBRARIES(FE.core.algorithm.string.to_lowercase ${BOOST_STACKTRACE} ${BOOST_CHRONO})
 
 
 ADD_EXECUTABLE(FE.core.algorithm.string.capitalize_every_first_letter_of_words
@@ -198,6 +202,7 @@ ${FE_CORE_LOG}
 tests/FE.core.algorithm.string.capitalize_every_first_letter_of_words.cpp
 )
 SET_TARGET_PROPERTIES(FE.core.algorithm.string.capitalize_every_first_letter_of_words PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/binaries)
+TARGET_LINK_LIBRARIES(FE.core.algorithm.string.capitalize_every_first_letter_of_words ${BOOST_STACKTRACE} ${BOOST_CHRONO})
 
 
 ADD_EXECUTABLE(FE.core.algorithm.string.length
@@ -205,3 +210,4 @@ ${FE_CORE_LOG}
 tests/FE.core.algorithm.string.length.cpp
 )
 SET_TARGET_PROPERTIES(FE.core.algorithm.string.length PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/binaries)
+TARGET_LINK_LIBRARIES(FE.core.algorithm.string.length ${BOOST_STACKTRACE} ${BOOST_CHRONO})

@@ -75,6 +75,32 @@ int main(int argc_p, char** argv_p)
 
 
 
+TEST(iterator_casting, iterator_to_pointer)
+{
+	std::vector<int> l_vector = { 0, 1, 2, 3, 4, 5 };
+
+	int* l_pointer = iterator_cast<int*>(l_vector.begin());
+	EXPECT_EQ(l_pointer, l_vector.begin().operator->());
+}
+
+TEST(iterator_casting, pointer_to_iterator)
+{
+	std::vector<int> l_vector = { 0, 1, 2, 3, 4, 5 };
+
+	int* l_pointer = iterator_cast<int*>(l_vector.begin());
+	EXPECT_EQ(l_pointer, l_vector.begin().operator->());
+
+	FE::iterator<FE::contiguous_iterator<int>> l_iterator = iterator_cast<FE::iterator<FE::contiguous_iterator<int>>>(l_pointer);
+	EXPECT_EQ(l_iterator.operator->(), l_pointer);
+}
+
+TEST(iterator_casting, iterator_to_iterator)
+{
+	std::vector<int> l_vector = { 0, 1, 2, 3, 4, 5 };
+
+	FE::iterator<FE::contiguous_iterator<int>> l_iterator = iterator_cast<FE::iterator<FE::contiguous_iterator<int>>>(l_vector.begin());
+	EXPECT_EQ(l_iterator.operator->(), l_vector.begin().operator->());
+}
 
 TEST(iterator, std_vector_iteration)
 {

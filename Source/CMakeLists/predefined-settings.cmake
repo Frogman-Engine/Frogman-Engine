@@ -9,7 +9,7 @@ Available -D macro options:
 -DMEMORY_POOL_FE_STRINGS 
 -DMEMORY_POOL_FE_SMART_PTR_PROPERTIES
 
-This project uses AVX as a default SIMD option.
+This project uses AVX as the default SIMD option.
 Define a cmake macro if you want to change the setting.
 SIMD options:
 -DAVX

@@ -51,7 +51,8 @@ In order to build boost libraries using Microsoft Visual Studio 2022 Clang CL:
 1. Download the LLVM Clang CL from Visual Studio Installer.
 2. Download Boost libraries from https://www.boost.org/
 3. Build b2.exe by running bootstrap.bat
-4. Run the command: 
+4. Run the commands: 
+
 ./b2 toolset=clang-win architecture=x86 address-model=64 link=static runtime-link=static threading=multi variant=debug 
 
 ./b2 toolset=clang-win architecture=x86 address-model=64 link=static runtime-link=static threading=multi variant=release 

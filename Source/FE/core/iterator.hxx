@@ -11,31 +11,32 @@ BEGIN_NAMESPACE(FE)
 
 
 template<class To, class From>
-_FORCE_INLINE_ _CONSTEXPR20_ To iterator_cast(const From& ptr_p) noexcept
+_FORCE_INLINE_ _CONSTEXPR20_ To iterator_cast(From ptr_p) noexcept
 {
 	FE_STATIC_ASSERT(((std::is_class<From>::value == false) && (std::is_pointer<From>::value == false)), "Static assertion failure: template arguments must be a pointer type or an iterator type.");
 	FE_STATIC_ASSERT(((std::is_class<To>::value == false) && (std::is_pointer<To>::value == false)), "Static assertion failure: template arguments must be a pointer type or an iterator type.");
 	
-	if constexpr (std::is_class<To>::value == true)
+
+	if constexpr (std::is_class<From>::value == true)
 	{
-		if constexpr (std::is_pointer<From>::value == true)
+		if constexpr (std::is_pointer<To>::value == true)
 		{
-			return const_cast<To>(ptr_p);
+			return std::pointer_traits<To>::pointer_to(const_cast<typename From::reference>(*ptr_p));
 		}
-		else if constexpr (std::is_class<From>::value == true)
+		else if constexpr (std::is_class<To>::value == true)
 		{
-			return To{ ptr_p.operator->() };
+			return To{ std::pointer_traits<typename From::pointer>::pointer_to(const_cast<typename From::reference>(*ptr_p)) };
 		}
 	}
-	else if constexpr (std::is_pointer<To>::value == true)
+	else if constexpr (std::is_pointer<From>::value == true)
 	{
-		if constexpr (std::is_class<From>::value == true)
-		{
-			return const_cast<To>(ptr_p.operator->());
-		}
-		else if constexpr (std::is_pointer<From>::value == true)
+		if constexpr (std::is_pointer<To>::value == true)
 		{
 			return const_cast<To>(ptr_p);
+		}
+		else if constexpr (std::is_class<To>::value == true)
+		{
+			return To{ const_cast<typename std::remove_const<From>::type>(ptr_p) };
 		}
 	}
 }
