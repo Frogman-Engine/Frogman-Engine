@@ -31,11 +31,11 @@ jobs:
 
     - name: LLVM libfuzzer Tests
       run: |
-        ./Frogman-Engine-Tests/FE-Tests/Unit-Tests/build-fuzz.sh Debug
-        ./Frogman-Engine-Tests/FE-Tests/Unit-Tests/run-fuzz.sh
+        ./Frogman-Engine-Tests/FE-Tests/Fuzz-Tests/build-fuzz.sh Debug
+        ./Frogman-Engine-Tests/FE-Tests/Fuzz-Tests/run-fuzz.sh
 
-        ./Frogman-Engine-Tests/FE-Tests/Unit-Tests/build-fuzz.sh RelWithDebInfo
-        ./Frogman-Engine-Tests/FE-Tests/Unit-Tests/run-fuzz.sh
+        ./Frogman-Engine-Tests/FE-Tests/Fuzz-Tests/build-fuzz.sh RelWithDebInfo
+        ./Frogman-Engine-Tests/FE-Tests/Fuzz-Tests/run-fuzz.sh
 
-        ./Frogman-Engine-Tests/FE-Tests/Unit-Tests/build-fuzz.sh Release
-        ./Frogman-Engine-Tests/FE-Tests/Unit-Tests/run-fuzz.sh
+        ./Frogman-Engine-Tests/FE-Tests/Fuzz-Tests/build-fuzz.sh Release
+        ./Frogman-Engine-Tests/FE-Tests/Fuzz-Tests/run-fuzz.sh
