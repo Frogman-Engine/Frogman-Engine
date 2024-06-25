@@ -6,11 +6,6 @@ if [ "$WORKING_DIRECTORY" = '.' ];
     WORKING_DIRECTORY=$(pwd)
 fi
 
-BUILD_TYPE=$1
-if [ -z "$BUILD_TYPE" ]; 
-    then
-    BUILD_TYPE=Debug
-fi
 
 BUILD_FILES_FOLDER_NAME=build
 
