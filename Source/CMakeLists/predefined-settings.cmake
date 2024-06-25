@@ -1,4 +1,5 @@
 SET(CMAKE_CXX_STANDARD_REQUIRED ON)
+SET(CMAKE_CXX_EXTENSIONS OFF)
 # Frogman Engine leverages LLVM across all platforms.
 
 

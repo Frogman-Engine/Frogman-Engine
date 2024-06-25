@@ -28,8 +28,8 @@ All project settings can be adjusted by modifying CMakeLists.txt.
 # Frogman Engine wants to support these platforms in the future.
 | Platform     | Architecture  |   CPU Brand   |
 |--------------|---------------|---------------|
-| Windows 11   | X86-64        | Intel and AMD |
-| Linux Mint   | ARM64         |    Qualcomm   |
+| Windows      | X86-64        | Intel and AMD |
+| Linux        | ARM64         |   Qualcomm    |
 
 # This project uses:
 - Boost Libraries
@@ -39,7 +39,7 @@ https://github.com/boostorg/boost/releases/tag/boost-1.85.0
 https://github.com/google/googletest/releases/tag/v1.14.0
 
 - Google Benchmark
-https://github.com/google/benchmark/releases/tag/v1.8.3
+https://github.com/google/benchmark/releases/tag/v1.8.4
 
 # Help:
 (NOTE: This project will drop msvc compiler v143 support and use LLVM clang cl as its main compiler on Windows)

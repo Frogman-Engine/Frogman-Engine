@@ -50,10 +50,10 @@ IF(CMAKE_SYSTEM_NAME STREQUAL "Linux")
 
     ADD_COMPILE_OPTIONS(-DBENCHMARK_STATIC_DEFINE)
     SET(BENCHMARK_TEST			
-        $<$<CONFIG:DEBUG>:			${CMAKE_CURRENT_SOURCE_DIR}/../../../Third-Party-Tools/Benchmark/linux/libbenchmark.a>
-        $<$<CONFIG:RELWITHDEBINFO>: ${CMAKE_CURRENT_SOURCE_DIR}/../../../Third-Party-Tools/Benchmark/linux/libbenchmark.a>
-        $<$<CONFIG:RELEASE>:		${CMAKE_CURRENT_SOURCE_DIR}/../../../Third-Party-Tools/Benchmark/linux/libbenchmark.a>
-        $<$<CONFIG:MINSIZEREL>:		${CMAKE_CURRENT_SOURCE_DIR}/../../../Third-Party-Tools/Benchmark/linux/libbenchmark.a>
+        $<$<CONFIG:DEBUG>:			${CMAKE_CURRENT_SOURCE_DIR}/../../../Third-Party-Tools/Benchmark/linux/Debug/libbenchmark.a>
+        $<$<CONFIG:RELWITHDEBINFO>: ${CMAKE_CURRENT_SOURCE_DIR}/../../../Third-Party-Tools/Benchmark/linux/Release/libbenchmark.a>
+        $<$<CONFIG:RELEASE>:		${CMAKE_CURRENT_SOURCE_DIR}/../../../Third-Party-Tools/Benchmark/linux/Release/libbenchmark.a>
+        $<$<CONFIG:MINSIZEREL>:		${CMAKE_CURRENT_SOURCE_DIR}/../../../Third-Party-Tools/Benchmark/linux/Release/libbenchmark.a>
     )
 
     
