@@ -2,10 +2,12 @@
 #define _FE_CORE_STRING_VIEW_HXX_
 // Copyright © from 2023 to current, UNKNOWN STRYKER. All Rights Reserved.
 #include <FE/core/prerequisites.h>
-#include <FE/core/smart_pointers/ptr.hxx>
+#include <FE/core/managed/ptr.hxx>
 #include <FE/core/algorithm/string.hxx>
 #include <FE/core/algorithm/utility.hxx>
 #include <FE/core/iterator.hxx>
+
+// std
 #include <optional>
 
 
@@ -39,7 +41,7 @@ public:
 	using reverse_iterator = FE::reverse_iterator<FE::contiguous_iterator<CharT>>;
 	using size_type = var::index_t;
 	using length_type = var::index_t;
-	using difference_type = ptrdiff_t;
+	using difference_type = ptrdiff;
 
 
 	_CONSTEXPR17_ basic_string_view() noexcept : m_watcher(), m_begin(), m_end() {}
@@ -62,7 +64,7 @@ public:
 			return;
 		}
 
-		this->m_end = algorithm::string::length(this->m_watcher.get_unchecked());
+		this->m_end = algorithm::string::length(this->m_watcher.get());
 	}
 
 
@@ -224,7 +226,7 @@ public:
 		FE_ASSERT(this->m_watcher.is_expired() == true, "Assertion Failed: Cannot reset an empty string view.");
 
 		this->m_begin = 0;
-		this->m_end = algorithm::string::length(this->m_watcher.get_unchecked());
+		this->m_end = algorithm::string::length(this->m_watcher.get());
 	}
 	
 	_CONSTEXPR20_ void swap(basic_string_view& in_out_other_p) noexcept
@@ -233,15 +235,15 @@ public:
 	}
 
 
-	_CONSTEXPR20_ void copy(CharT* const out_dest_buffer_pointer_p, const size_type buffer_capacity_p, const size_type count_p, const size_type position_p = 0) const noexcept
+	_CONSTEXPR20_ void copy(CharT* const out_out_dest_buffer_pointer_p, const size_type buffer_capacity_p, const size_type count_p, const size_type position_p = 0) const noexcept
 	{
-		FE_ASSERT(out_dest_buffer_pointer_p == nullptr, "${%s@0}: out_dest_string_buffer_p is nullptr", TO_STRING(FE::MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR));
+		FE_ASSERT(out_out_dest_buffer_pointer_p == nullptr, "${%s@0}: out_dest_string_buffer_p is nullptr", TO_STRING(FE::MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR));
 		FE_ASSERT(count_p > this->length(), "${%s@0}: ${%s@1} cannot be greater than ${%s@2}.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_RANGE), TO_STRING(count_p), TO_STRING(this->length()));
 
-		algorithm::string::copy(out_dest_buffer_pointer_p, buffer_capacity_p, this->begin().operator->() + position_p, count_p);
+		algorithm::string::copy(out_out_dest_buffer_pointer_p, buffer_capacity_p, this->begin().operator->() + position_p, count_p);
 	}
 
-	template<typename CharT, class Allocator, class Traits>
+	template<class Allocator, class Traits>
 	_CONSTEXPR20_ void copy(basic_string<CharT, Allocator, Traits>& out_dest_string_buffer_p, _MAYBE_UNUSED_ const size_type buffer_capacity_p, const size_type count_p, const size_type position_p = 0) const noexcept
 	{
 		pointer l_out_dest_string_buffer = out_dest_string_buffer_p.data();
@@ -255,7 +257,7 @@ public:
 	_NODISCARD_ _CONSTEXPR20_ basic_string_view substr(const size_type position_p, const size_type count_p) noexcept
 	{
 		FE_ASSERT(this->m_watcher.is_expired() == true, "Assertion Failed: Cannot return a substring of an empty string view.");
-		
+		FE_ASSERT((this->m_begin + position_p + count_p) > this->m_end, "Assertion Failed: requested substring exceeded the string_view index boundary.");
 		basic_string_view l_tmp_view;
 		l_tmp_view = *this;
 		l_tmp_view.m_begin = this->m_begin + position_p;
@@ -273,6 +275,12 @@ public:
 
 		length_t l_other_string_length = other_p.length();
 
+		if(this->length() < l_other_string_length)
+		{
+			FE_ASSERT(this->length() < l_other_string_length, "Assertion failure: the input string length cannot be greater than the visible string length.");
+			return false;
+		}
+
 		return algorithm::string::compare_ranged(this->begin().operator->(), algorithm::string::range{ this->m_begin, l_other_string_length },
 			other_p.begin().operator->(), algorithm::string::range{other_p.m_begin, l_other_string_length}
 		);
@@ -280,6 +288,12 @@ public:
 
 	_NODISCARD_ _CONSTEXPR20_ boolean starts_with(const CharT value_p) const noexcept
 	{
+		if(this->length() == 0)
+		{
+			FE_ASSERT(this->length() == 0, "Assertion failure: the string_view instance is empty and unable to proceed ends_with();");
+			return false;
+		}
+
 		return algorithm::string::compare_ranged(this->begin().operator->(), algorithm::string::range{ this->m_begin, this->m_begin + 1},
 			&value_p, algorithm::string::range{ 0, 1 }
 		);
@@ -290,7 +304,12 @@ public:
 		FE_ASSERT(string_p == nullptr, "${%s@0}: ${%s@0} is nullptr", TO_STRING(FE::MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(string_p));
 
 		length_t l_input_string_length = algorithm::string::length(string_p);
-
+		if(this->length() < l_input_string_length)
+		{
+			FE_ASSERT(this->length() < l_input_string_length, "Assertion failure: the input string length cannot be greater than the visible string length.");
+			return false;
+		}
+		
 		return algorithm::string::compare_ranged(this->begin().operator->(), algorithm::string::range{ this->m_begin, l_input_string_length },
 			string_p, algorithm::string::range{ 0, l_input_string_length }
 		);
@@ -303,7 +322,11 @@ public:
 			return false;
 		}
 
-		length_t l_other_string_length = other_p.length();
+		if(this->length() < other_p.m_string_length)
+		{
+			FE_ASSERT(this->length() < other_p.m_string_length, "Assertion failure: the input string length cannot be greater than the visible string length.");
+			return false;
+		}
 
 		return algorithm::string::compare_ranged(this->begin().operator->(), algorithm::string::range{ this->m_end - this->length(), this->m_end },
 			other_p.begin().operator->(), algorithm::string::range{ other_p.m_end - other_p.length(), other_p.m_end }
@@ -312,6 +335,11 @@ public:
 
 	_NODISCARD_ _CONSTEXPR20_ boolean ends_with(const CharT value_p) const noexcept
 	{
+		if(this->length() == 0)
+		{
+			FE_ASSERT(this->length() == 0, "Assertion failure: the string_view instance is empty and unable to proceed ends_with();");
+			return false;
+		}
 		return algorithm::string::compare_ranged(this->begin().operator->(), algorithm::string::range{ this->m_end - 1, this->m_end },
 			&value_p, algorithm::string::range{ 0, 1 }
 		);
@@ -322,6 +350,13 @@ public:
 		FE_ASSERT(string_p == nullptr, "${%s@0}: ${%s@1} is nullptr", TO_STRING(FE::MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(string_p));
 		
 		length_t l_input_string_length = algorithm::string::length(string_p);
+		FE_ASSERT(l_input_string_length == 0, "Assertion failure: the input string length is zero.");
+
+		if(this->length() < l_input_string_length)
+		{
+			FE_ASSERT(this->length() < l_input_string_length, "Assertion failure: the input string length cannot be greater than the visible string length.");
+			return false;
+		}
 		return algorithm::string::compare_ranged(this->begin().operator->(), algorithm::string::range{ this->m_end - l_input_string_length, this->m_end },
 			string_p, algorithm::string::range{ 0, l_input_string_length }
 		);
@@ -350,6 +385,11 @@ public:
 
 	_NODISCARD_ _CONSTEXPR20_ std::optional<algorithm::string::range> find(const basic_string_view& other_p, size_type position_p = 0) const noexcept
 	{
+		if(position_p == 0)
+		{
+			position_p = other_p.m_begin;
+		}
+
 		if (other_p.is_empty() == true)
 		{
 			return std::nullopt;
@@ -357,7 +397,7 @@ public:
 
 		FE_ASSERT(position_p > this->length(), "${%s@0}: ${%s@1} cannot be greater than ${%s@2}.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_RANGE), TO_STRING(position_p), TO_STRING(this->length()));
 
-		return std::move(this->find(other_p.begin().operator->(), position_p));
+		return this->find(other_p.begin().operator->(), position_p);
 	}
 
 	_NODISCARD_ _CONSTEXPR20_ std::optional<algorithm::string::range> find(const CharT* const string_p, const size_type position_p = 0) const noexcept
@@ -374,12 +414,13 @@ public:
 
 		l_result->_begin += position_p;
 		l_result->_end += position_p;
-		return std::move(l_result);
+		return l_result;
 	}
 
 	_NODISCARD_ _CONSTEXPR20_ std::optional<algorithm::string::range> find(const CharT value_p, const size_type position_p = 0) const noexcept
 	{
 		FE_ASSERT(position_p > this->length(), "${%s@0}: position_p cannot be greater than ${%s@1}.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_RANGE), TO_STRING(this->length()));
+		FE_ASSERT(this->m_begin > position_p, "${%s@0}: position_p cannot be less than or equal to ${%s@1}.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_RANGE), TO_STRING(this->m_begin));
 
 		std::optional<algorithm::string::range> l_result = algorithm::string::find_the_first(this->begin().operator->() + position_p, value_p);
 		
@@ -390,7 +431,7 @@ public:
 
 		l_result->_begin += position_p;
 		l_result->_end += position_p;
-		return std::move(l_result);
+		return l_result;
 	}
 
 	_NODISCARD_ _CONSTEXPR20_ std::optional<algorithm::string::range> rfind(const basic_string_view& other_p, const size_type position_p = 0) const noexcept
@@ -401,33 +442,41 @@ public:
 		}
 
 		FE_ASSERT(position_p > this->length(), "${%s@0}: position_p cannot be greater than ${%s@1}.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_RANGE), TO_STRING(this->length()));
-
-		return std::move(this->rfind(other_p.begin().operator->(), position_p));
+		return this->rfind(other_p.begin().operator->(), position_p);
 	}
 
-	_NODISCARD_ _CONSTEXPR20_ std::optional<algorithm::string::range> rfind(const CharT* const string_p, const size_type position_p = 0) const noexcept
+	_NODISCARD_ _CONSTEXPR20_ std::optional<algorithm::string::range> rfind(const CharT* const string_p, size_type position_p = 0) const noexcept
 	{
 		FE_ASSERT(string_p == nullptr, "${%s@0}: string_p is nullptr", TO_STRING(FE::MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR));
 		FE_ASSERT(position_p > this->length(), "${%s@0}: position_p cannot be greater than ${%s@1}.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_RANGE), TO_STRING(this->length()));
-
-		return std::move(algorithm::string::find_the_last_within_range(this->begin().operator->(), algorithm::string::range{this->m_begin, position_p}, string_p));
+		if(position_p == 0)
+		{
+			position_p = this->m_end;
+		}
+		FE_ASSERT(this->m_begin >= position_p, "${%s@0}: position_p cannot be less than or equal to ${%s@1}.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_RANGE), TO_STRING(this->m_begin));
+		return algorithm::string::find_the_last_within_range(this->begin().operator->(), algorithm::string::range{this->m_begin, position_p}, string_p);
 	}
 
 	_NODISCARD_ _CONSTEXPR20_ std::optional<algorithm::string::range> rfind(const CharT value_p, size_type position_p = 0) const noexcept
 	{
 		FE_ASSERT(position_p > this->length(), "${%s@0}: position_p cannot be greater than ${%s@1}.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_RANGE), TO_STRING(this->length()));
 
-		return std::move(algorithm::string::find_the_last_within_range(this->begin().operator->(), algorithm::string::range{this->m_begin, position_p}, value_p));
+		if(position_p == 0)
+		{
+			position_p = this->m_end;
+		}
+		FE_ASSERT(this->m_begin >= position_p, "${%s@0}: position_p cannot be less than or equal to ${%s@1}.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_RANGE), TO_STRING(this->m_begin));
+		return algorithm::string::find_the_last_within_range(this->begin().operator->(), algorithm::string::range{this->m_begin, position_p}, value_p);
 	}
 
 	_NODISCARD_ _CONSTEXPR20_ algorithm::string::count<CharT> count_chars(const CharT value_p, const size_type position_p = 0) const noexcept
 	{
 		FE_ASSERT(position_p > this->length(), "${%s@0}: position_p cannot be greater than ${%s@1}.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_OUT_OF_RANGE), TO_STRING(this->length()));
-
-		return std::move(algorithm::string::count_chars(this->begin().operator->() + position_p, value_p));
+		
+		return algorithm::string::count_chars(this->begin().operator->() + position_p, value_p);
 	}
 
-	template<typename CharT, class Allocator, class Traits>
+	template<class Allocator, class Traits>
 	_CONSTEXPR20_ boolean operator==(const basic_string<CharT, Allocator, Traits>& string_p) const noexcept
 	{
 		return algorithm::string::compare_ranged(this->m_watcher.operator->(), algorithm::string::range{ this->m_begin, this->m_end }, string_p.c_str(), algorithm::string::range{ 0, string_p.length() });
@@ -442,10 +491,10 @@ public:
 	}
 	_CONSTEXPR20_ friend boolean operator==(const CharT* const string_p, basic_string_view& other_p) noexcept
 	{
-		return algorithm::string::compare_ranged(other_p.m_watcher.operator->(), algorithm::string::range{ other_p.m_begin(), other_p.m_end}, string_p, algorithm::string::range{0, algorithm::string::length(string_p)});
+		return algorithm::string::compare_ranged(other_p.m_watcher.operator->(), algorithm::string::range{ other_p.m_begin, other_p.m_end }, string_p, algorithm::string::range{0, algorithm::string::length(string_p)});
 	}
 
-	template<typename CharT, class Allocator, class Traits>
+	template<class Allocator, class Traits>
 	_CONSTEXPR20_ boolean operator!=(const basic_string<CharT, Allocator, Traits>& string_p) const noexcept
 	{
 		return !algorithm::string::compare_ranged(this->m_watcher.operator->(), algorithm::string::range{ this->m_begin, this->m_end }, string_p.c_str(), algorithm::string::range{ 0, string_p.length() });
@@ -460,7 +509,7 @@ public:
 	}
 	_CONSTEXPR20_ friend boolean operator!=(const CharT* const string_p, basic_string_view& other_p) noexcept
 	{
-		return !algorithm::string::compare_ranged(other_p.m_watcher.operator->(), algorithm::string::range{ other_p.m_begin(), other_p.m_end }, string_p, algorithm::string::range{ 0, algorithm::string::length(string_p) });
+		return !algorithm::string::compare_ranged(other_p.m_watcher.operator->(), algorithm::string::range{ other_p.m_begin , other_p.m_end }, string_p, algorithm::string::range{ 0, algorithm::string::length(string_p) });
 	}
 };
 
@@ -476,6 +525,51 @@ using string_view8 = basic_string_view<var::UTF8>;
 
 using string_view16 = basic_string_view<var::UTF16>;
 using string_view32 = basic_string_view<var::UTF32>;
+
+
+template<>
+struct is_string_class<FE::string_view>
+{
+	_MAYBE_UNUSED_ static constexpr inline bool value = true;
+};
+
+template<>
+struct is_string_class<FE::ustring_view>
+{
+	_MAYBE_UNUSED_ static constexpr inline bool value = true;
+};
+
+template<>
+struct is_string_class<FE::sstring_view>
+{
+	_MAYBE_UNUSED_ static constexpr inline bool value = true;
+};
+
+template<>
+struct is_string_class<FE::wstring_view>
+{
+	_MAYBE_UNUSED_ static constexpr inline bool value = true;
+};
+
+#ifdef _HAS_CXX20_
+template<>
+struct is_string_class<FE::string_view8>
+{
+	_MAYBE_UNUSED_ static constexpr inline bool value = true;
+};
+#endif
+
+template<>
+struct is_string_class<FE::string_view16>
+{
+	_MAYBE_UNUSED_ static constexpr inline bool value = true;
+};
+
+template<>
+struct is_string_class<FE::string_view32>
+{
+	_MAYBE_UNUSED_ static constexpr inline bool value = true;
+};
 
 
 END_NAMESPACE

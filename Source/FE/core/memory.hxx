@@ -26,19 +26,16 @@
 #error UNALIGNED_MEMMOVE is a reserved Frogman Engine macro keyword.
 #endif
 
-#ifdef __AVX__
-#define _AVX_
-#endif
-
-#ifdef __AVX512F__
-#define _AVX512_
-#endif
 
 #include <FE/core/prerequisites.h>
 #include <FE/core/algorithm/math.h>
 #include <FE/core/iterator.hxx>
+
+// SIMD
 #include <immintrin.h>
-#include <memory_resource>
+
+//std
+#include <cstring>
 
 
 
@@ -50,12 +47,6 @@ enum struct OBJECT_STATUS : boolean
 {
 	_CONSTRUCTED = true,
 	_DESTRUCTED = false
-};
-
-enum struct MEMORY_SIZE_SCALABILITY : boolean
-{
-	_STATICALLY_SIZED = false,
-	_DYNAMICALLY_SIZED = true
 };
 
 enum struct MEMORY_ERROR_1XX : int32
@@ -72,12 +63,6 @@ enum struct MEMORY_ERROR_1XX : int32
 	_FATAL_ERROR_DOUBLE_FREE = 108
 };
 
-struct memory_utilization
-{
-	var::int64 _global_bytes = 0;
-	var::int64 _thread_local_bytes = 0;
-};
-
 
 _MAYBE_UNUSED_ constexpr uint8 byte_size = 1;
 _MAYBE_UNUSED_ constexpr uint8 word_size = 2;
@@ -87,54 +72,63 @@ _MAYBE_UNUSED_ constexpr uint8 qword_size = 8;
 
 struct reserve final
 {
-	size_t _value = 0;
+	size _value = 0;
 };
 
 struct resize_to final
 {
-	size_t _value = 0;
+	size _value = 0;
 };
 
 struct extend final
 {
-	size_t _value = 0;
+	size _value = 0;
 };
 
 struct count final
 {
-	size_t _value = 0;
+	size _value = 0;
 };
 
 
 struct align_8bytes final
 {
-	_MAYBE_UNUSED_ static constexpr size_t size = 8;
+	_MAYBE_UNUSED_ static constexpr size size = 8;
 };
 
 struct align_16bytes final
 {
-	_MAYBE_UNUSED_ static constexpr size_t size = 16;
+	_MAYBE_UNUSED_ static constexpr size size = 16;
 };
 
 struct align_32bytes final
 {
-	_MAYBE_UNUSED_ static constexpr size_t size = 32;
+	_MAYBE_UNUSED_ static constexpr size size = 32;
 };
 
 struct align_64bytes final
 {
-	_MAYBE_UNUSED_ static constexpr size_t size = 64;
+	_MAYBE_UNUSED_ static constexpr size size = 64;
 };
 
 struct align_128bytes final
 {
-	_MAYBE_UNUSED_ static constexpr size_t size = 128;
+	_MAYBE_UNUSED_ static constexpr size size = 128;
 };
 
 struct align_CPU_L1_cache_line final
 {
-	_MAYBE_UNUSED_ static constexpr size_t size = std::hardware_destructive_interference_size;
+    /*
+    	Sixty-four bytes is commonly used CPU L1 cache line size for X86-64, but the actual size may vary.
+    	A hardcoded value is used if the current system's compiler does not support std::hardware_destructive_interference_size.
+	*/
+	#ifdef _CLANG_
+	_MAYBE_UNUSED_ static constexpr size size = 64;
+	#else
+    _MAYBE_UNUSED_ static constexpr size size = std::hardware_destructive_interference_size;
+	#endif
 };
+
 
 
 template<uint64 PaddingSize>
@@ -148,13 +142,13 @@ struct SIMD_auto_alignment
 {
 #ifdef _AVX512_
 	using alignment_type = align_64bytes;
-#elif defined(_AVX_)
+#elif defined(_AVX_) || defined(_AVX2_)
 	using alignment_type = align_32bytes;
 #else
 	using alignment_type = align_16bytes;
 #endif
 
-	_MAYBE_UNUSED_ static constexpr size_t size = alignment_type::size;
+	_MAYBE_UNUSED_ static constexpr size size = alignment_type::size;
 };
 
 
@@ -179,7 +173,7 @@ enum struct ADDRESS : boolean
 
 
 #ifdef _AVX512_
-_FORCE_INLINE_ void unaligned_memset_with_avx512(void* const out_dest_pointer_p, int8 value_p, size_t total_bytes_p) noexcept
+_FORCE_INLINE_ void unaligned_memset_with_avx512(void* const out_dest_pointer_p, int8 value_p, size total_bytes_p) noexcept
 {
 	FE_ASSERT(out_dest_pointer_p == nullptr, "${%s@0}: ${%s@1} is nullptr.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_INVALID_SIZE), TO_STRING(out_dest_pointer_p));
 	FE_ASSERT(total_bytes_p == 0, "${%s@0}: ${%s@1} is 0.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_INVALID_SIZE), TO_STRING(total_bytes_p));
@@ -187,10 +181,10 @@ _FORCE_INLINE_ void unaligned_memset_with_avx512(void* const out_dest_pointer_p,
 	__m512i* l_m512i_dest_ptr = static_cast<__m512i*>(out_dest_pointer_p);
 	const __m512i l_m512i_value_to_be_assigned = _mm512_set1_epi8(value_p);
 
-	var::size_t l_leftover_bytes = MODULO_BY_64(total_bytes_p);
-	size_t l_avx512_operation_count = MODULO_BY_64(total_bytes_p);
+	var::size l_leftover_bytes = MODULO_BY_64(total_bytes_p);
+	size l_avx512_operation_count = MODULO_BY_64(total_bytes_p);
 
-	for (var::size_t executed_operation_count = 0; executed_operation_count != l_avx512_operation_count; ++executed_operation_count)
+	for (var::size executed_operation_count = 0; executed_operation_count != l_avx512_operation_count; ++executed_operation_count)
 	{
 		_mm512_storeu_si512(l_m512i_dest_ptr, l_m512i_value_to_be_assigned);
 		++l_m512i_dest_ptr;
@@ -203,26 +197,26 @@ _FORCE_INLINE_ void unaligned_memset_with_avx512(void* const out_dest_pointer_p,
 	}
 
 	var::byte* l_byte_ptr = reinterpret_cast<var::byte*>(l_m512i_dest_ptr);
-	for (var::size_t i = 0; i != l_leftover_bytes; ++i)
+	for (var::size i = 0; i != l_leftover_bytes; ++i)
 	{
 		*l_byte_ptr = static_cast<var::byte>(value_p);
 		++l_byte_ptr;
 	}
 }
 
-_FORCE_INLINE_ void aligned_memset_with_avx512(void* const out_dest_pointer_p, int8 value_p, size_t total_bytes_p) noexcept
+_FORCE_INLINE_ void aligned_memset_with_avx512(void* const out_dest_pointer_p, int8 value_p, size total_bytes_p) noexcept
 {
 	FE_ASSERT(out_dest_pointer_p == nullptr, "${%s@0}: ${%s@1} is nullptr.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_INVALID_SIZE), TO_STRING(out_dest_pointer_p));
 	FE_ASSERT(total_bytes_p == 0, "${%s@0}: ${%s@1} is 0.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_INVALID_SIZE), TO_STRING(total_bytes_p));
-	FE_ASSERT(MODULO_BY_64(reinterpret_cast<uintptr_t>(out_dest_pointer_p)) != 0, "${%s@0}: The address is not aligned by 64.", TO_STRING(MEMORY_ERROR_1XX::_ERROR_ILLEGAL_ADDRESS_ALIGNMENT));
+	FE_ASSERT(MODULO_BY_64(reinterpret_cast<uintptr>(out_dest_pointer_p)) != 0, "${%s@0}: The address is not aligned by 64.", TO_STRING(MEMORY_ERROR_1XX::_ERROR_ILLEGAL_ADDRESS_ALIGNMENT));
 
 	__m512i* l_m512i_dest_ptr = static_cast<__m512i*>(out_dest_pointer_p);
 	const __m512i l_m512i_value_to_be_assigned = _mm512_set1_epi8(value_p);
 
-	var::size_t l_leftover_bytes = MODULO_BY_64(total_bytes_p);
-	size_t l_avx512_operation_count = MODULO_BY_64(total_bytes_p);
+	var::size l_leftover_bytes = MODULO_BY_64(total_bytes_p);
+	size l_avx512_operation_count = MODULO_BY_64(total_bytes_p);
 
-	for (var::size_t executed_operation_count = 0; executed_operation_count != l_avx512_operation_count; ++executed_operation_count)
+	for (var::size executed_operation_count = 0; executed_operation_count != l_avx512_operation_count; ++executed_operation_count)
 	{
 		_mm512_store_si512(l_m512i_dest_ptr, l_m512i_value_to_be_assigned);
 		++l_m512i_dest_ptr;
@@ -235,7 +229,7 @@ _FORCE_INLINE_ void aligned_memset_with_avx512(void* const out_dest_pointer_p, i
 	}
 
 	var::byte* l_byte_ptr = reinterpret_cast<var::byte*>(l_m512i_dest_ptr);
-	for (var::size_t i = 0; i != l_leftover_bytes; ++i)
+	for (var::size i = 0; i != l_leftover_bytes; ++i)
 	{
 		*l_byte_ptr = static_cast<var::byte>(value_p);
 		++l_byte_ptr;
@@ -243,7 +237,7 @@ _FORCE_INLINE_ void aligned_memset_with_avx512(void* const out_dest_pointer_p, i
 }
 
 
-_FORCE_INLINE_ void unaligned_memcpy_with_avx512(void* const out_dest_pointer_p, const void* const source_pointer_p, FE::size_t bytes_to_copy_p) noexcept
+_FORCE_INLINE_ void unaligned_memcpy_with_avx512(void* const out_dest_pointer_p, const void* const source_pointer_p, size bytes_to_copy_p) noexcept
 {
 	FE_ASSERT(out_dest_pointer_p == nullptr, "${%s@0}: ${%s@1} is nullptr.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_INVALID_SIZE), TO_STRING(out_dest_pointer_p));
 	FE_ASSERT(source_pointer_p == nullptr, "${%s@0}: ${%s@1} is nullptr.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_INVALID_SIZE), TO_STRING(source_pointer_p));
@@ -253,10 +247,10 @@ _FORCE_INLINE_ void unaligned_memcpy_with_avx512(void* const out_dest_pointer_p,
 	__m512i* l_m512i_dest_ptr = static_cast<__m512i*>(out_dest_pointer_p);
 	const __m512i* l_m512i_source_ptr = static_cast<const __m512i*>(source_pointer_p);
 
-	var::size_t l_leftover_bytes = MODULO_BY_64(bytes_to_copy_p);
-	size_t l_avx512_operation_count = MODULO_BY_64(bytes_to_copy_p);
+	var::size l_leftover_bytes = MODULO_BY_64(bytes_to_copy_p);
+	size l_avx512_operation_count = MODULO_BY_64(bytes_to_copy_p);
 
-	for (var::size_t executed_operation_count = 0; executed_operation_count != l_avx512_operation_count; ++executed_operation_count)
+	for (var::size executed_operation_count = 0; executed_operation_count != l_avx512_operation_count; ++executed_operation_count)
 	{
 		_mm512_storeu_si512(l_m512i_dest_ptr, _mm512_loadu_si512(l_m512i_source_ptr));
 		++l_m512i_dest_ptr;
@@ -271,7 +265,7 @@ _FORCE_INLINE_ void unaligned_memcpy_with_avx512(void* const out_dest_pointer_p,
 
 	var::byte* l_dest_byte_ptr = reinterpret_cast<var::byte*>(l_m512i_dest_ptr);
 	byte* l_source_byte_ptr = reinterpret_cast<byte*>(l_m512i_source_ptr);
-	for (var::size_t i = 0; i != l_leftover_bytes; ++i)
+	for (var::size i = 0; i != l_leftover_bytes; ++i)
 	{
 		*l_dest_byte_ptr = *l_source_byte_ptr;
 		++l_dest_byte_ptr;
@@ -279,22 +273,22 @@ _FORCE_INLINE_ void unaligned_memcpy_with_avx512(void* const out_dest_pointer_p,
 	}
 }
 
-_FORCE_INLINE_ void aligned_memcpy_with_avx512(void* const out_dest_pointer_p, const void* const source_pointer_p, FE::size_t bytes_to_copy_p) noexcept
+_FORCE_INLINE_ void aligned_memcpy_with_avx512(void* const out_dest_pointer_p, const void* const source_pointer_p, size bytes_to_copy_p) noexcept
 {
 	FE_ASSERT(out_dest_pointer_p == nullptr, "${%s@0}: ${%s@1} is nullptr.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_INVALID_SIZE), TO_STRING(out_dest_pointer_p));
 	FE_ASSERT(source_pointer_p == nullptr, "${%s@0}: ${%s@1} is nullptr.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_INVALID_SIZE), TO_STRING(source_pointer_p));
 	FE_ASSERT(bytes_to_copy_p == 0, "${%s@0}: ${%s@1} is 0.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_INVALID_SIZE), TO_STRING(bytes_to_copy_p));
-	FE_ASSERT(MODULO_BY_64(reinterpret_cast<uintptr_t>(out_dest_pointer_p)) != 0, "${%s@}: out_dest_pointer_p is not aligned by 64.", TO_STRING(MEMORY_ERROR_1XX::_ERROR_ILLEGAL_ADDRESS_ALIGNMENT));
-	FE_ASSERT(MODULO_BY_64(reinterpret_cast<uintptr_t>(source_pointer_p)) != 0, "${%s@}: source_pointer_p is not aligned by 64.", TO_STRING(MEMORY_ERROR_1XX::_ERROR_ILLEGAL_ADDRESS_ALIGNMENT));
+	FE_ASSERT(MODULO_BY_64(reinterpret_cast<uintptr>(out_dest_pointer_p)) != 0, "${%s@}: out_dest_pointer_p is not aligned by 64.", TO_STRING(MEMORY_ERROR_1XX::_ERROR_ILLEGAL_ADDRESS_ALIGNMENT));
+	FE_ASSERT(MODULO_BY_64(reinterpret_cast<uintptr>(source_pointer_p)) != 0, "${%s@}: source_pointer_p is not aligned by 64.", TO_STRING(MEMORY_ERROR_1XX::_ERROR_ILLEGAL_ADDRESS_ALIGNMENT));
 	FE_ASSERT(out_dest_pointer_p == source_pointer_p, "Assertion Failure: A destination pointer and a source pointer cannot point to the same address.");
 
 	__m512i* l_m512i_dest_ptr = static_cast<__m512i*>(out_dest_pointer_p);
 	const __m512i* l_m512i_source_ptr = static_cast<const __m512i*>(source_pointer_p);
 
-	var::size_t l_leftover_bytes = MODULO_BY_64(bytes_to_copy_p);
-	size_t l_avx512_operation_count = MODULO_BY_64(bytes_to_copy_p);
+	var::size l_leftover_bytes = MODULO_BY_64(bytes_to_copy_p);
+	size l_avx512_operation_count = MODULO_BY_64(bytes_to_copy_p);
 
-	for (var::size_t executed_operation_count = 0; executed_operation_count != l_avx512_operation_count; ++executed_operation_count)
+	for (var::size executed_operation_count = 0; executed_operation_count != l_avx512_operation_count; ++executed_operation_count)
 	{
 		_mm512_store_si512(l_m512i_dest_ptr, _mm512_load_si512(l_m512i_source_ptr));
 		++l_m512i_dest_ptr;
@@ -309,7 +303,7 @@ _FORCE_INLINE_ void aligned_memcpy_with_avx512(void* const out_dest_pointer_p, c
 
 	var::byte* l_dest_byte_ptr = reinterpret_cast<var::byte*>(l_m512i_dest_ptr);
 	byte* l_source_byte_ptr = reinterpret_cast<byte*>(l_m512i_source_ptr);
-	for (var::size_t i = 0; i != l_leftover_bytes; ++i)
+	for (var::size i = 0; i != l_leftover_bytes; ++i)
 	{
 		*l_dest_byte_ptr = *l_source_byte_ptr;
 		++l_dest_byte_ptr;
@@ -317,21 +311,21 @@ _FORCE_INLINE_ void aligned_memcpy_with_avx512(void* const out_dest_pointer_p, c
 	}
 }
 
-_FORCE_INLINE_ void dest_aligned_memcpy_with_avx512(void* const out_dest_pointer_p, const void* const source_pointer_p, FE::size_t bytes_to_copy_p) noexcept
+_FORCE_INLINE_ void dest_aligned_memcpy_with_avx512(void* const out_dest_pointer_p, const void* const source_pointer_p, size bytes_to_copy_p) noexcept
 {
 	FE_ASSERT(out_dest_pointer_p == nullptr, "${%s@0}: ${%s@1} is nullptr.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_INVALID_SIZE), TO_STRING(out_dest_pointer_p));
 	FE_ASSERT(source_pointer_p == nullptr, "${%s@0}: ${%s@1} is nullptr.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_INVALID_SIZE), TO_STRING(source_pointer_p));
 	FE_ASSERT(bytes_to_copy_p == 0, "${%s@0}: ${%s@1} is 0.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_INVALID_SIZE), TO_STRING(bytes_to_copy_p));
-	FE_ASSERT(MODULO_BY_64(reinterpret_cast<uintptr_t>(out_dest_pointer_p)) != 0, "${%s@}: out_dest_pointer_p is not aligned by 64.", TO_STRING(MEMORY_ERROR_1XX::_ERROR_ILLEGAL_ADDRESS_ALIGNMENT));
+	FE_ASSERT(MODULO_BY_64(reinterpret_cast<uintptr>(out_dest_pointer_p)) != 0, "${%s@}: out_dest_pointer_p is not aligned by 64.", TO_STRING(MEMORY_ERROR_1XX::_ERROR_ILLEGAL_ADDRESS_ALIGNMENT));
 	FE_ASSERT(out_dest_pointer_p == source_pointer_p, "Assertion Failure: A destination pointer and a source pointer cannot point to the same address.");
 
 	__m512i* l_m512i_dest_ptr = static_cast<__m512i*>(out_dest_pointer_p);
 	const __m512i* l_m512i_source_ptr = static_cast<const __m512i*>(source_pointer_p);
 
-	var::size_t l_leftover_bytes = MODULO_BY_64(bytes_to_copy_p);
-	size_t l_avx512_operation_count = MODULO_BY_64(bytes_to_copy_p);
+	var::size l_leftover_bytes = MODULO_BY_64(bytes_to_copy_p);
+	size l_avx512_operation_count = MODULO_BY_64(bytes_to_copy_p);
 
-	for (var::size_t executed_operation_count = 0; executed_operation_count != l_avx512_operation_count; ++executed_operation_count)
+	for (var::size executed_operation_count = 0; executed_operation_count != l_avx512_operation_count; ++executed_operation_count)
 	{
 		_mm512_store_si512(l_m512i_dest_ptr, _mm512_loadu_si512(l_m512i_source_ptr));
 		++l_m512i_dest_ptr;
@@ -346,7 +340,7 @@ _FORCE_INLINE_ void dest_aligned_memcpy_with_avx512(void* const out_dest_pointer
 
 	var::byte* l_dest_byte_ptr = reinterpret_cast<var::byte*>(l_m512i_dest_ptr);
 	byte* l_source_byte_ptr = reinterpret_cast<byte*>(l_m512i_source_ptr);
-	for (var::size_t i = 0; i != l_leftover_bytes; ++i)
+	for (var::size i = 0; i != l_leftover_bytes; ++i)
 	{
 		*l_dest_byte_ptr = *l_source_byte_ptr;
 		++l_dest_byte_ptr;
@@ -354,21 +348,21 @@ _FORCE_INLINE_ void dest_aligned_memcpy_with_avx512(void* const out_dest_pointer
 	}
 }
 
-_FORCE_INLINE_ void source_aligned_memcpy_with_avx512(void* const out_dest_pointer_p, const void* const source_pointer_p, FE::size_t bytes_to_copy_p) noexcept
+_FORCE_INLINE_ void source_aligned_memcpy_with_avx512(void* const out_dest_pointer_p, const void* const source_pointer_p, size bytes_to_copy_p) noexcept
 {
 	FE_ASSERT(out_dest_pointer_p == nullptr, "${%s@0}: ${%s@1} is nullptr.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_INVALID_SIZE), TO_STRING(out_dest_pointer_p));
 	FE_ASSERT(source_pointer_p == nullptr, "${%s@0}: ${%s@1} is nullptr.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_INVALID_SIZE), TO_STRING(source_pointer_p));
 	FE_ASSERT(bytes_to_copy_p == 0, "${%s@0}: ${%s@1} is 0.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_INVALID_SIZE), TO_STRING(bytes_to_copy_p));
-	FE_ASSERT(MODULO_BY_64(reinterpret_cast<uintptr_t>(source_pointer_p)) != 0, "${%s@}: source_pointer_p is not aligned by 64.", TO_STRING(MEMORY_ERROR_1XX::_ERROR_ILLEGAL_ADDRESS_ALIGNMENT));
+	FE_ASSERT(MODULO_BY_64(reinterpret_cast<uintptr>(source_pointer_p)) != 0, "${%s@}: source_pointer_p is not aligned by 64.", TO_STRING(MEMORY_ERROR_1XX::_ERROR_ILLEGAL_ADDRESS_ALIGNMENT));
 	FE_ASSERT(out_dest_pointer_p == source_pointer_p, "Assertion Failure: A destination pointer and a source pointer cannot point to the same address.");
 
 	__m512i* l_m512i_dest_ptr = static_cast<__m512i*>(out_dest_pointer_p);
 	const __m512i* l_m512i_source_ptr = static_cast<const __m512i*>(source_pointer_p);
 
-	var::size_t l_leftover_bytes = MODULO_BY_64(bytes_to_copy_p);
-	size_t l_avx512_operation_count = MODULO_BY_64(bytes_to_copy_p);
+	var::size l_leftover_bytes = MODULO_BY_64(bytes_to_copy_p);
+	size l_avx512_operation_count = MODULO_BY_64(bytes_to_copy_p);
 
-	for (var::size_t executed_operation_count = 0; executed_operation_count != l_avx512_operation_count; ++executed_operation_count)
+	for (var::size executed_operation_count = 0; executed_operation_count != l_avx512_operation_count; ++executed_operation_count)
 	{
 		_mm512_storeu_si512(l_m512i_dest_ptr, _mm512_load_si512(l_m512i_source_ptr));
 		++l_m512i_dest_ptr;
@@ -383,7 +377,7 @@ _FORCE_INLINE_ void source_aligned_memcpy_with_avx512(void* const out_dest_point
 
 	var::byte* l_dest_byte_ptr = reinterpret_cast<var::byte*>(l_m512i_dest_ptr);
 	byte* l_source_byte_ptr = reinterpret_cast<byte*>(l_m512i_source_ptr);
-	for (var::size_t i = 0; i != l_leftover_bytes; ++i)
+	for (var::size i = 0; i != l_leftover_bytes; ++i)
 	{
 		*l_dest_byte_ptr = *l_source_byte_ptr;
 		++l_dest_byte_ptr;
@@ -392,7 +386,7 @@ _FORCE_INLINE_ void source_aligned_memcpy_with_avx512(void* const out_dest_point
 }
 
 
-_FORCE_INLINE_ void unaligned_memmove_with_avx512(void* const out_dest_pointer_p, const void* const source_pointer_p, FE::size_t bytes_to_move_p) noexcept
+_FORCE_INLINE_ void unaligned_memmove_with_avx512(void* const out_dest_pointer_p, const void* const source_pointer_p, size bytes_to_move_p) noexcept
 {
 	FE_ASSERT(out_dest_pointer_p == nullptr, "${%s@0}: ${%s@1} is nullptr.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_INVALID_SIZE), TO_STRING(out_dest_pointer_p));
 	FE_ASSERT(source_pointer_p == nullptr, "${%s@0}: ${%s@1} is nullptr.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_INVALID_SIZE), TO_STRING(source_pointer_p));
@@ -405,9 +399,9 @@ _FORCE_INLINE_ void unaligned_memmove_with_avx512(void* const out_dest_pointer_p
 		byte* l_source_byte_ptr = static_cast<byte*>(source_pointer_p) + (bytes_to_move_p - 1);
 
 		{
-			size_t l_leftover_bytes_to_copy_by_byte = MODULO_BY_64(bytes_to_move_p);
+			size l_leftover_bytes_to_copy_by_byte = MODULO_BY_64(bytes_to_move_p);
 
-			for (var::size_t i = 0; i != l_leftover_bytes_to_copy_by_byte; ++i)
+			for (var::size i = 0; i != l_leftover_bytes_to_copy_by_byte; ++i)
 			{
 				*l_dest_byte_ptr = *l_source_byte_ptr;
 				--l_dest_byte_ptr;
@@ -415,7 +409,7 @@ _FORCE_INLINE_ void unaligned_memmove_with_avx512(void* const out_dest_pointer_p
 			}
 		}
 
-		var::size_t l_avx512_operation_count = DIVIDE_BY_64(bytes_to_move_p);
+		var::size l_avx512_operation_count = DIVIDE_BY_64(bytes_to_move_p);
 
 		__m512i* l_m512i_dest_ptr = reinterpret_cast<__m512i*>(l_dest_byte_ptr - 63);
 		const __m512i* l_m512i_source_ptr = reinterpret_cast<const __m512i*>(l_source_byte_ptr - 63);
@@ -427,7 +421,7 @@ _FORCE_INLINE_ void unaligned_memmove_with_avx512(void* const out_dest_pointer_p
 			--l_m512i_source_ptr;
 		}
 
-		size_t l_leftover_bytes = reinterpret_cast<var::byte*>(l_m512i_dest_ptr) - static_cast<var::byte* const>(out_dest_pointer_p);
+		size l_leftover_bytes = reinterpret_cast<var::byte*>(l_m512i_dest_ptr) - static_cast<var::byte* const>(out_dest_pointer_p);
 
 		if (l_leftover_bytes > 0)
 		{
@@ -443,7 +437,7 @@ _FORCE_INLINE_ void unaligned_memmove_with_avx512(void* const out_dest_pointer_p
 	}
 }
 
-_FORCE_INLINE_ void aligned_memmove_with_avx512(void* const out_dest_pointer_p, const void* const source_pointer_p, FE::size_t bytes_to_move_p) noexcept
+_FORCE_INLINE_ void aligned_memmove_with_avx512(void* const out_dest_pointer_p, const void* const source_pointer_p, size bytes_to_move_p) noexcept
 {
 	FE_ASSERT(out_dest_pointer_p == nullptr, "${%s@0}: ${%s@1} is nullptr.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_INVALID_SIZE), TO_STRING(out_dest_pointer_p));
 	FE_ASSERT(source_pointer_p == nullptr, "${%s@0}: ${%s@1} is nullptr.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_INVALID_SIZE), TO_STRING(source_pointer_p));
@@ -456,9 +450,9 @@ _FORCE_INLINE_ void aligned_memmove_with_avx512(void* const out_dest_pointer_p, 
 		byte* l_source_byte_ptr = static_cast<byte*>(source_pointer_p) + (bytes_to_move_p - 1);
 
 		{
-			size_t l_leftover_bytes_to_copy_by_byte = MODULO_BY_64(bytes_to_move_p);
+			size l_leftover_bytes_to_copy_by_byte = MODULO_BY_64(bytes_to_move_p);
 
-			for (var::size_t i = 0; i != l_leftover_bytes_to_copy_by_byte; ++i)
+			for (var::size i = 0; i != l_leftover_bytes_to_copy_by_byte; ++i)
 			{
 				*l_dest_byte_ptr = *l_source_byte_ptr;
 				--l_dest_byte_ptr;
@@ -466,7 +460,7 @@ _FORCE_INLINE_ void aligned_memmove_with_avx512(void* const out_dest_pointer_p, 
 			}
 		}
 
-		var::size_t l_avx512_operation_count = DIVIDE_BY_64(bytes_to_move_p);
+		var::size l_avx512_operation_count = DIVIDE_BY_64(bytes_to_move_p);
 
 		__m512i* l_m512i_dest_ptr = reinterpret_cast<__m512i*>(l_dest_byte_ptr - 63);
 		const __m512i* l_m512i_source_ptr = reinterpret_cast<const __m512i*>(l_source_byte_ptr - 63);
@@ -478,7 +472,7 @@ _FORCE_INLINE_ void aligned_memmove_with_avx512(void* const out_dest_pointer_p, 
 			--l_m512i_source_ptr;
 		}
 
-		size_t l_leftover_bytes = reinterpret_cast<var::byte*>(l_m512i_dest_ptr) - static_cast<var::byte* const>(out_dest_pointer_p);
+		size l_leftover_bytes = reinterpret_cast<var::byte*>(l_m512i_dest_ptr) - static_cast<var::byte* const>(out_dest_pointer_p);
 
 		if (l_leftover_bytes > 0)
 		{
@@ -494,8 +488,9 @@ _FORCE_INLINE_ void aligned_memmove_with_avx512(void* const out_dest_pointer_p, 
 	}
 }
 
-#elif defined(_AVX_)
-_FORCE_INLINE_ void unaligned_memset_with_avx(void* const out_dest_pointer_p, int8 value_p, size_t total_bytes_p) noexcept
+#else
+#ifdef _AVX_
+_FORCE_INLINE_ void unaligned_memset_with_avx(void* const out_dest_pointer_p, int8 value_p, size total_bytes_p) noexcept
 {
 	FE_ASSERT(out_dest_pointer_p == nullptr, "${%s@0}: ${%s@1} is nullptr.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_INVALID_SIZE), TO_STRING(out_dest_pointer_p));
 	FE_ASSERT(total_bytes_p == 0, "${%s@0}: ${%s@1} is 0.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_INVALID_SIZE), TO_STRING(total_bytes_p));
@@ -503,8 +498,8 @@ _FORCE_INLINE_ void unaligned_memset_with_avx(void* const out_dest_pointer_p, in
 	__m256i* l_m256i_dest_ptr = static_cast<__m256i*>(out_dest_pointer_p);
 	const __m256i l_m256i_value_to_be_assigned = _mm256_set1_epi8(value_p);
 
-	var::size_t l_leftover_bytes = MODULO_BY_32(total_bytes_p);
-	size_t l_avx_operation_count = DIVIDE_BY_32(total_bytes_p);
+	var::size l_leftover_bytes = FE_MODULO_BY_32(total_bytes_p);
+	size l_avx_operation_count = FE_DIVIDE_BY_32(total_bytes_p);
 
 	for (__m256i* const m256i_dest_ptr_end = l_m256i_dest_ptr + l_avx_operation_count; l_m256i_dest_ptr != m256i_dest_ptr_end; ++l_m256i_dest_ptr)
 	{
@@ -526,17 +521,17 @@ _FORCE_INLINE_ void unaligned_memset_with_avx(void* const out_dest_pointer_p, in
 	}
 }
 
-_FORCE_INLINE_ void aligned_memset_with_avx(void* const out_dest_pointer_p, int8 value_p, size_t total_bytes_p) noexcept
+_FORCE_INLINE_ void aligned_memset_with_avx(void* const out_dest_pointer_p, int8 value_p, size total_bytes_p) noexcept
 {
 	FE_ASSERT(out_dest_pointer_p == nullptr, "${%s@0}: ${%s@1} is nullptr.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_INVALID_SIZE), TO_STRING(out_dest_pointer_p));
 	FE_ASSERT(total_bytes_p == 0, "${%s@0}: ${%s@1} is 0.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_INVALID_SIZE), TO_STRING(total_bytes_p));
-	FE_ASSERT(MODULO_BY_32(reinterpret_cast<uintptr_t>(out_dest_pointer_p)) != 0, "${%s@0}: The address is not aligned by 32.", TO_STRING(MEMORY_ERROR_1XX::_ERROR_ILLEGAL_ADDRESS_ALIGNMENT));
+	FE_ASSERT(FE_MODULO_BY_32(reinterpret_cast<uintptr>(out_dest_pointer_p)) != 0, "${%s@0}: The address is not aligned by 32.", TO_STRING(MEMORY_ERROR_1XX::_ERROR_ILLEGAL_ADDRESS_ALIGNMENT));
 
 	__m256i* l_m256i_dest_ptr = static_cast<__m256i*>(out_dest_pointer_p);
 	const __m256i l_m256i_value_to_be_assigned = _mm256_set1_epi8(value_p);
 
-	var::size_t l_leftover_bytes = MODULO_BY_32(total_bytes_p);
-	size_t l_avx_operation_count = DIVIDE_BY_32(total_bytes_p);
+	var::size l_leftover_bytes = FE_MODULO_BY_32(total_bytes_p);
+	size l_avx_operation_count = FE_DIVIDE_BY_32(total_bytes_p);
 
 	for (__m256i* const m256i_dest_ptr_end = l_m256i_dest_ptr + l_avx_operation_count; l_m256i_dest_ptr != m256i_dest_ptr_end; ++l_m256i_dest_ptr)
 	{
@@ -559,7 +554,7 @@ _FORCE_INLINE_ void aligned_memset_with_avx(void* const out_dest_pointer_p, int8
 }
 
 
-_FORCE_INLINE_ void unaligned_memcpy_with_avx(void* const out_dest_pointer_p, const void* const source_pointer_p, FE::size_t bytes_to_copy_p) noexcept
+_FORCE_INLINE_ void unaligned_memcpy_with_avx(void* const out_dest_pointer_p, const void* const source_pointer_p, size bytes_to_copy_p) noexcept
 {
 	FE_ASSERT(out_dest_pointer_p == nullptr, "${%s@0}: ${%s@1} is nullptr.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_INVALID_SIZE), TO_STRING(out_dest_pointer_p));
 	FE_ASSERT(source_pointer_p == nullptr, "${%s@0}: ${%s@1} is nullptr.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_INVALID_SIZE), TO_STRING(source_pointer_p));
@@ -569,8 +564,8 @@ _FORCE_INLINE_ void unaligned_memcpy_with_avx(void* const out_dest_pointer_p, co
 	__m256i* l_m256i_dest_ptr = static_cast<__m256i*>(out_dest_pointer_p);
 	const __m256i* l_m256i_source_ptr = static_cast<const __m256i*>(source_pointer_p);
 
-	var::size_t l_leftover_bytes = MODULO_BY_32(bytes_to_copy_p);
-	size_t l_avx_operation_count = DIVIDE_BY_32(bytes_to_copy_p);
+	var::size l_leftover_bytes = FE_MODULO_BY_32(bytes_to_copy_p);
+	size l_avx_operation_count = FE_DIVIDE_BY_32(bytes_to_copy_p);
 
 	for (__m256i* const m256i_dest_ptr_end = l_m256i_dest_ptr + l_avx_operation_count; l_m256i_dest_ptr != m256i_dest_ptr_end; ++l_m256i_dest_ptr)
 	{
@@ -597,20 +592,20 @@ _FORCE_INLINE_ void unaligned_memcpy_with_avx(void* const out_dest_pointer_p, co
 	}
 }
 
-_FORCE_INLINE_ void aligned_memcpy_with_avx(void* const out_dest_pointer_p, const void* const source_pointer_p, FE::size_t bytes_to_copy_p) noexcept
+_FORCE_INLINE_ void aligned_memcpy_with_avx(void* const out_dest_pointer_p, const void* const source_pointer_p, size bytes_to_copy_p) noexcept
 {
 	FE_ASSERT(out_dest_pointer_p == nullptr, "${%s@0}: ${%s@1} is nullptr.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_INVALID_SIZE), TO_STRING(out_dest_pointer_p));
 	FE_ASSERT(source_pointer_p == nullptr, "${%s@0}: ${%s@1} is nullptr.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_INVALID_SIZE), TO_STRING(source_pointer_p));
 	FE_ASSERT(bytes_to_copy_p == 0, "${%s@0}: ${%s@1} is 0.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_INVALID_SIZE), TO_STRING(bytes_to_copy_p));
-	FE_ASSERT(MODULO_BY_32(reinterpret_cast<uintptr_t>(out_dest_pointer_p)) != 0, "${%s@0}: ${%s@1} is not aligned by 32.", TO_STRING(MEMORY_ERROR_1XX::_ERROR_ILLEGAL_ADDRESS_ALIGNMENT), TO_STRING(out_dest_pointer_p));
-	FE_ASSERT(MODULO_BY_32(reinterpret_cast<uintptr_t>(source_pointer_p)) != 0, "${%s@0}: ${%s@1} is not aligned by 32.", TO_STRING(MEMORY_ERROR_1XX::_ERROR_ILLEGAL_ADDRESS_ALIGNMENT), TO_STRING(source_pointer_p));
+	FE_ASSERT(FE_MODULO_BY_32(reinterpret_cast<uintptr>(out_dest_pointer_p)) != 0, "${%s@0}: ${%s@1} is not aligned by 32.", TO_STRING(MEMORY_ERROR_1XX::_ERROR_ILLEGAL_ADDRESS_ALIGNMENT), TO_STRING(out_dest_pointer_p));
+	FE_ASSERT(FE_MODULO_BY_32(reinterpret_cast<uintptr>(source_pointer_p)) != 0, "${%s@0}: ${%s@1} is not aligned by 32.", TO_STRING(MEMORY_ERROR_1XX::_ERROR_ILLEGAL_ADDRESS_ALIGNMENT), TO_STRING(source_pointer_p));
 	FE_ASSERT(out_dest_pointer_p == source_pointer_p, "Assertion Failure: A destination pointer and a source pointer cannot point to the same address.");
 
 	__m256i* l_m256i_dest_ptr = static_cast<__m256i*>(out_dest_pointer_p);
 	const __m256i* l_m256i_source_ptr = static_cast<const __m256i*>(source_pointer_p);
 
-	var::size_t l_leftover_bytes = MODULO_BY_32(bytes_to_copy_p);
-	size_t l_avx_operation_count = DIVIDE_BY_32(bytes_to_copy_p);
+	var::size l_leftover_bytes = FE_MODULO_BY_32(bytes_to_copy_p);
+	size l_avx_operation_count = FE_DIVIDE_BY_32(bytes_to_copy_p);
 
 	for (__m256i* const m256i_dest_ptr_end = l_m256i_dest_ptr + l_avx_operation_count; l_m256i_dest_ptr != m256i_dest_ptr_end; ++l_m256i_dest_ptr)
 	{
@@ -637,19 +632,19 @@ _FORCE_INLINE_ void aligned_memcpy_with_avx(void* const out_dest_pointer_p, cons
 	}
 }
 
-_FORCE_INLINE_ void dest_aligned_memcpy_with_avx(void* const out_dest_pointer_p, const void* const source_pointer_p, FE::size_t bytes_to_copy_p) noexcept
+_FORCE_INLINE_ void dest_aligned_memcpy_with_avx(void* const out_dest_pointer_p, const void* const source_pointer_p, size bytes_to_copy_p) noexcept
 {
 	FE_ASSERT(out_dest_pointer_p == nullptr, "${%s@0}: ${%s@1} is nullptr.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_INVALID_SIZE), TO_STRING(out_dest_pointer_p));
 	FE_ASSERT(source_pointer_p == nullptr, "${%s@0}: ${%s@1} is nullptr.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_INVALID_SIZE), TO_STRING(source_pointer_p));
 	FE_ASSERT(bytes_to_copy_p == 0, "${%s@0}: ${%s@1} is 0.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_INVALID_SIZE), TO_STRING(bytes_to_copy_p));
-	FE_ASSERT(MODULO_BY_32(reinterpret_cast<uintptr_t>(out_dest_pointer_p)) != 0, "${%s@0}: ${%s@1} is not aligned by 32.", TO_STRING(MEMORY_ERROR_1XX::_ERROR_ILLEGAL_ADDRESS_ALIGNMENT), TO_STRING(out_dest_pointer_p));
+	FE_ASSERT(FE_MODULO_BY_32(reinterpret_cast<uintptr>(out_dest_pointer_p)) != 0, "${%s@0}: ${%s@1} is not aligned by 32.", TO_STRING(MEMORY_ERROR_1XX::_ERROR_ILLEGAL_ADDRESS_ALIGNMENT), TO_STRING(out_dest_pointer_p));
 	FE_ASSERT(out_dest_pointer_p == source_pointer_p, "Assertion Failure: A destination pointer and a source pointer cannot point to the same address.");
 
 	__m256i* l_m256i_dest_ptr = static_cast<__m256i*>(out_dest_pointer_p);
 	const __m256i* l_m256i_source_ptr = static_cast<const __m256i*>(source_pointer_p);
 
-	var::size_t l_leftover_bytes = MODULO_BY_32(bytes_to_copy_p);
-	size_t l_avx_operation_count = DIVIDE_BY_32(bytes_to_copy_p);
+	var::size l_leftover_bytes = FE_MODULO_BY_32(bytes_to_copy_p);
+	size l_avx_operation_count = FE_DIVIDE_BY_32(bytes_to_copy_p);
 
 	for (__m256i* const m256i_dest_ptr_end = l_m256i_dest_ptr + l_avx_operation_count; l_m256i_dest_ptr != m256i_dest_ptr_end; ++l_m256i_dest_ptr)
 	{
@@ -676,19 +671,19 @@ _FORCE_INLINE_ void dest_aligned_memcpy_with_avx(void* const out_dest_pointer_p,
 	}
 }
 
-_FORCE_INLINE_ void source_aligned_memcpy_with_avx(void* const out_dest_pointer_p, const void* const source_pointer_p, FE::size_t bytes_to_copy_p) noexcept
+_FORCE_INLINE_ void source_aligned_memcpy_with_avx(void* const out_dest_pointer_p, const void* const source_pointer_p, size bytes_to_copy_p) noexcept
 {
 	FE_ASSERT(out_dest_pointer_p == nullptr, "${%s@0}: ${%s@1} is nullptr.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_INVALID_SIZE), TO_STRING(out_dest_pointer_p));
 	FE_ASSERT(source_pointer_p == nullptr, "${%s@0}: ${%s@1} is nullptr.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_INVALID_SIZE), TO_STRING(source_pointer_p));
 	FE_ASSERT(bytes_to_copy_p == 0, "${%s@0}: ${%s@1} is 0.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_INVALID_SIZE), TO_STRING(bytes_to_copy_p));
-	FE_ASSERT(MODULO_BY_32(reinterpret_cast<uintptr_t>(source_pointer_p)) != 0, "${%s@0}: ${%s@1} is not aligned by 32.", TO_STRING(MEMORY_ERROR_1XX::_ERROR_ILLEGAL_ADDRESS_ALIGNMENT), TO_STRING(source_pointer_p));
+	FE_ASSERT(FE_MODULO_BY_32(reinterpret_cast<uintptr>(source_pointer_p)) != 0, "${%s@0}: ${%s@1} is not aligned by 32.", TO_STRING(MEMORY_ERROR_1XX::_ERROR_ILLEGAL_ADDRESS_ALIGNMENT), TO_STRING(source_pointer_p));
 	FE_ASSERT(out_dest_pointer_p == source_pointer_p, "Assertion Failure: A destination pointer and a source pointer cannot point to the same address.");
 
 	__m256i* l_m256i_dest_ptr = static_cast<__m256i*>(out_dest_pointer_p);
 	const __m256i* l_m256i_source_ptr = static_cast<const __m256i*>(source_pointer_p);
 
-	var::size_t l_leftover_bytes = MODULO_BY_32(bytes_to_copy_p);
-	size_t l_avx_operation_count = DIVIDE_BY_32(bytes_to_copy_p);
+	var::size l_leftover_bytes = FE_MODULO_BY_32(bytes_to_copy_p);
+	size l_avx_operation_count = FE_DIVIDE_BY_32(bytes_to_copy_p);
 
 	for (__m256i* const m256i_dest_ptr_end = l_m256i_dest_ptr + l_avx_operation_count; l_m256i_dest_ptr != m256i_dest_ptr_end; ++l_m256i_dest_ptr)
 	{
@@ -716,7 +711,7 @@ _FORCE_INLINE_ void source_aligned_memcpy_with_avx(void* const out_dest_pointer_
 }
 
 
-_FORCE_INLINE_ void unaligned_memmove_with_avx(void* const out_dest_pointer_p, const void* const source_pointer_p, FE::size_t bytes_to_move_p) noexcept
+_FORCE_INLINE_ void unaligned_memmove_with_avx(void* const out_dest_pointer_p, const void* const source_pointer_p, size bytes_to_move_p) noexcept
 {
 	FE_ASSERT(out_dest_pointer_p == nullptr, "${%s@0}: ${%s@1} is nullptr.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_INVALID_SIZE), TO_STRING(out_dest_pointer_p));
 	FE_ASSERT(source_pointer_p == nullptr, "${%s@0}: ${%s@1} is nullptr.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_INVALID_SIZE), TO_STRING(source_pointer_p));
@@ -729,9 +724,9 @@ _FORCE_INLINE_ void unaligned_memmove_with_avx(void* const out_dest_pointer_p, c
 		byte* l_source_byte_ptr = static_cast<byte*>(source_pointer_p) + (bytes_to_move_p - 1);
 
 		{
-			size_t l_leftover_bytes_to_copy_by_byte = MODULO_BY_16(bytes_to_move_p);
+			size l_leftover_bytes_to_copy_by_byte = FE_MODULO_BY_16(bytes_to_move_p);
 
-			for (var::size_t i = 0; i != l_leftover_bytes_to_copy_by_byte; ++i)
+			for (var::size i = 0; i != l_leftover_bytes_to_copy_by_byte; ++i)
 			{
 				*l_dest_byte_ptr = *l_source_byte_ptr;
 				--l_dest_byte_ptr;
@@ -739,7 +734,7 @@ _FORCE_INLINE_ void unaligned_memmove_with_avx(void* const out_dest_pointer_p, c
 			}
 		}
 
-		var::size_t l_avx_operation_count = DIVIDE_BY_16(bytes_to_move_p);
+		var::size l_avx_operation_count = FE_DIVIDE_BY_16(bytes_to_move_p);
 
 		__m256i* l_m256i_dest_ptr = reinterpret_cast<__m256i*>(l_dest_byte_ptr - 31);
 		const __m256i* l_m256i_source_ptr = reinterpret_cast<const __m256i*>(l_source_byte_ptr  - 31);
@@ -769,13 +764,13 @@ _FORCE_INLINE_ void unaligned_memmove_with_avx(void* const out_dest_pointer_p, c
 	}
 }
 
-_FORCE_INLINE_ void aligned_memmove_with_avx(void* const out_dest_pointer_p, const void* const source_pointer_p, FE::size_t bytes_to_move_p) noexcept
+_FORCE_INLINE_ void aligned_memmove_with_avx(void* const out_dest_pointer_p, const void* const source_pointer_p, FE::size bytes_to_move_p) noexcept
 {
 	FE_ASSERT(out_dest_pointer_p == nullptr, "${%s@0}: ${%s@1} is nullptr.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_INVALID_SIZE), TO_STRING(out_dest_pointer_p));
 	FE_ASSERT(source_pointer_p == nullptr, "${%s@0}: ${%s@1} is nullptr.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_INVALID_SIZE), TO_STRING(source_pointer_p));
 	FE_ASSERT(bytes_to_move_p == 0, "${%s@0}: ${%s@1} is 0.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_INVALID_SIZE), TO_STRING(bytes_to_move_p));
 	FE_ASSERT(out_dest_pointer_p == source_pointer_p, "Assertion Failure: A destination pointer and a source pointer cannot point to the same address.");
-	FE_ASSERT(MODULO_BY_32(reinterpret_cast<uintptr_t>(out_dest_pointer_p)) != 0, "${%s@0}: ${%s@1} is not aligned by 32.", TO_STRING(MEMORY_ERROR_1XX::_ERROR_ILLEGAL_ADDRESS_ALIGNMENT), TO_STRING(out_dest_pointer_p));
+	FE_ASSERT(FE_MODULO_BY_32(reinterpret_cast<uintptr>(out_dest_pointer_p)) != 0, "${%s@0}: ${%s@1} is not aligned by 32.", TO_STRING(MEMORY_ERROR_1XX::_ERROR_ILLEGAL_ADDRESS_ALIGNMENT), TO_STRING(out_dest_pointer_p));
 
 	if (source_pointer_p < out_dest_pointer_p)
 	{
@@ -783,9 +778,9 @@ _FORCE_INLINE_ void aligned_memmove_with_avx(void* const out_dest_pointer_p, con
 		byte* l_source_byte_ptr = static_cast<byte*>(source_pointer_p) + (bytes_to_move_p - 1);
 
 		{
-			size_t l_leftover_bytes_to_copy_by_byte = MODULO_BY_16(bytes_to_move_p);
+			size l_leftover_bytes_to_copy_by_byte = FE_MODULO_BY_16(bytes_to_move_p);
 
-			for (var::size_t i = 0; i != l_leftover_bytes_to_copy_by_byte; ++i)
+			for (var::size i = 0; i != l_leftover_bytes_to_copy_by_byte; ++i)
 			{
 				*l_dest_byte_ptr = *l_source_byte_ptr;
 				--l_dest_byte_ptr;
@@ -793,7 +788,7 @@ _FORCE_INLINE_ void aligned_memmove_with_avx(void* const out_dest_pointer_p, con
 			}
 }
 
-		var::size_t l_avx_operation_count = DIVIDE_BY_16(bytes_to_move_p);
+		var::size l_avx_operation_count = FE_DIVIDE_BY_16(bytes_to_move_p);
 
 		__m256i* l_m256i_dest_ptr = reinterpret_cast<__m256i*>(l_dest_byte_ptr - 31);
 		const __m256i* l_m256i_source_ptr = reinterpret_cast<const __m256i*>(l_source_byte_ptr + 31);
@@ -822,7 +817,7 @@ _FORCE_INLINE_ void aligned_memmove_with_avx(void* const out_dest_pointer_p, con
 		return;
 	}
 }
-
+#endif
 #endif
 
 
@@ -837,15 +832,14 @@ _FORCE_INLINE_ void aligned_memmove_with_avx(void* const out_dest_pointer_p, con
 #define ALIGNED_MEMMOVE(out_dest_pointer_p, source_pointer_p, bytes_to_move_p) ::FE::aligned_memmove_with_avx512(out_dest_pointer_p, source_pointer_p, bytes_to_move_p)
 
 #elif defined(_AVX_)
-#define UNALIGNED_MEMSET(out_dest_pointer_p, value_p, total_bytes_p) ::FE::unaligned_memset_with_avx(out_dest_pointer_p, value_p, total_bytes_p)
-#define ALIGNED_MEMSET(out_dest_pointer_p, value_p, total_bytes_p) ::FE::aligned_memset_with_avx(out_dest_pointer_p, value_p, total_bytes_p)
-#define UNALIGNED_MEMCPY(out_dest_pointer_p, source_pointer_p, bytes_to_copy_p) ::FE::unaligned_memcpy_with_avx(out_dest_pointer_p, source_pointer_p, bytes_to_copy_p)
-#define ALIGNED_MEMCPY(out_dest_pointer_p, source_pointer_p, bytes_to_copy_p) ::FE::aligned_memcpy_with_avx(out_dest_pointer_p, source_pointer_p, bytes_to_copy_p)
-#define DEST_ALIGNED_MEMCPY(out_dest_pointer_p, source_pointer_p, bytes_to_copy_p) ::FE::dest_aligned_memcpy_with_avx(out_dest_pointer_p, source_pointer_p, bytes_to_copy_p)
-#define SOURCE_ALIGNED_MEMCPY(out_dest_pointer_p, source_pointer_p, bytes_to_copy_p) ::FE::source_aligned_memcpy_with_avx(out_dest_pointer_p, source_pointer_p, bytes_to_copy_p)
-#define UNALIGNED_MEMMOVE(out_dest_pointer_p, source_pointer_p, bytes_to_move_p) ::FE::unaligned_memmove_with_avx(out_dest_pointer_p, source_pointer_p, bytes_to_move_p)
-#define ALIGNED_MEMMOVE(out_dest_pointer_p, source_pointer_p, bytes_to_move_p) ::FE::aligned_memmove_with_avx(out_dest_pointer_p, source_pointer_p, bytes_to_move_p)
-
+	#define UNALIGNED_MEMSET(out_dest_pointer_p, value_p, total_bytes_p) ::FE::unaligned_memset_with_avx(out_dest_pointer_p, value_p, total_bytes_p)
+	#define ALIGNED_MEMSET(out_dest_pointer_p, value_p, total_bytes_p) ::FE::aligned_memset_with_avx(out_dest_pointer_p, value_p, total_bytes_p)
+	#define UNALIGNED_MEMCPY(out_dest_pointer_p, source_pointer_p, bytes_to_copy_p) ::FE::unaligned_memcpy_with_avx(out_dest_pointer_p, source_pointer_p, bytes_to_copy_p)
+	#define ALIGNED_MEMCPY(out_dest_pointer_p, source_pointer_p, bytes_to_copy_p) ::FE::aligned_memcpy_with_avx(out_dest_pointer_p, source_pointer_p, bytes_to_copy_p)
+	#define DEST_ALIGNED_MEMCPY(out_dest_pointer_p, source_pointer_p, bytes_to_copy_p) ::FE::dest_aligned_memcpy_with_avx(out_dest_pointer_p, source_pointer_p, bytes_to_copy_p)
+	#define SOURCE_ALIGNED_MEMCPY(out_dest_pointer_p, source_pointer_p, bytes_to_copy_p) ::FE::source_aligned_memcpy_with_avx(out_dest_pointer_p, source_pointer_p, bytes_to_copy_p)
+	#define UNALIGNED_MEMMOVE(out_dest_pointer_p, source_pointer_p, bytes_to_move_p) ::FE::unaligned_memmove_with_avx(out_dest_pointer_p, source_pointer_p, bytes_to_move_p)
+	#define ALIGNED_MEMMOVE(out_dest_pointer_p, source_pointer_p, bytes_to_move_p) ::FE::aligned_memmove_with_avx(out_dest_pointer_p, source_pointer_p, bytes_to_move_p)
 #else
 #define UNALIGNED_MEMSET(out_dest_pointer_p, value_p, total_bytes_p) ::std::memset(out_dest_pointer_p, value_p, total_bytes_p)
 #define ALIGNED_MEMSET(out_dest_pointer_p, value_p, total_bytes_p) ::std::memset(out_dest_pointer_p, value_p, total_bytes_p)
@@ -894,7 +888,7 @@ _FORCE_INLINE_ boolean memcmp(ConstIterator left_iterator_begin_p, ConstIterator
 
 
 template<ADDRESS DestAddressAlignment = ADDRESS::_NOT_ALIGNED, ADDRESS SourceAddressAlignment = ADDRESS::_NOT_ALIGNED>
-_FORCE_INLINE_ void memcpy(void* const out_dest_pointer_p, size_t dest_capacity_in_bytes_p, const void* const source_pointer_p, count_t source_capacity_in_bytes_p) noexcept
+_FORCE_INLINE_ void memcpy(void* const out_dest_pointer_p, size dest_capacity_in_bytes_p, const void* const source_pointer_p, count_t source_capacity_in_bytes_p) noexcept
 	{
 	FE_ASSERT(out_dest_pointer_p == nullptr, "${%s@0}: ${%s@1} is nullptr", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(out_dest_pointer_p));
 	FE_ASSERT(source_pointer_p == nullptr, "${%s@0}: ${%s@1} is nullptr", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(source_pointer_p));
@@ -903,19 +897,19 @@ _FORCE_INLINE_ void memcpy(void* const out_dest_pointer_p, size_t dest_capacity_
 
 	if constexpr (DestAddressAlignment == ADDRESS::_ALIGNED && SourceAddressAlignment == ADDRESS::_ALIGNED)
 	{
-		ALIGNED_MEMCPY(out_dest_pointer_p, source_pointer_p, MIN(dest_capacity_in_bytes_p, source_capacity_in_bytes_p));
+		ALIGNED_MEMCPY(out_dest_pointer_p, source_pointer_p, FE_MIN(dest_capacity_in_bytes_p, source_capacity_in_bytes_p));
 	}
 	else if constexpr (DestAddressAlignment == ADDRESS::_ALIGNED && SourceAddressAlignment == ADDRESS::_NOT_ALIGNED)
 	{
-		DEST_ALIGNED_MEMCPY(out_dest_pointer_p, source_pointer_p, MIN(dest_capacity_in_bytes_p, source_capacity_in_bytes_p));
+		DEST_ALIGNED_MEMCPY(out_dest_pointer_p, source_pointer_p, FE_MIN(dest_capacity_in_bytes_p, source_capacity_in_bytes_p));
 	}
 	else if constexpr (DestAddressAlignment == ADDRESS::_NOT_ALIGNED && SourceAddressAlignment == ADDRESS::_ALIGNED)
 	{
-		SOURCE_ALIGNED_MEMCPY(out_dest_pointer_p, source_pointer_p, MIN(dest_capacity_in_bytes_p, source_capacity_in_bytes_p));
+		SOURCE_ALIGNED_MEMCPY(out_dest_pointer_p, source_pointer_p, FE_MIN(dest_capacity_in_bytes_p, source_capacity_in_bytes_p));
 	}
 	else if constexpr (DestAddressAlignment == ADDRESS::_NOT_ALIGNED && SourceAddressAlignment == ADDRESS::_NOT_ALIGNED)
 	{
-		UNALIGNED_MEMCPY(out_dest_pointer_p, source_pointer_p, MIN(dest_capacity_in_bytes_p, source_capacity_in_bytes_p));
+		UNALIGNED_MEMCPY(out_dest_pointer_p, source_pointer_p, FE_MIN(dest_capacity_in_bytes_p, source_capacity_in_bytes_p));
 	}
 }
 
@@ -961,7 +955,7 @@ _FORCE_INLINE_ void memset(void* const out_dest_pointer_p, int8 value_p, count_t
 }
 
 template<ADDRESS DestAddressAlignment = ADDRESS::_NOT_ALIGNED>
-_FORCE_INLINE_ void memmove(void* const out_dest_pointer_p, const void* const source_pointer_p, size_t bytes_p) noexcept
+_FORCE_INLINE_ void memmove(void* const out_dest_pointer_p, const void* const source_pointer_p, size bytes_p) noexcept
 {
 	FE_ASSERT(out_dest_pointer_p == nullptr, "${%s@0}: ${%s@1} is nullptr", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(out_dest_pointer_p));
 	FE_ASSERT(bytes_p == 0, "${%s@0}: ${%s@1} is zero", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(bytes_p));
@@ -1063,7 +1057,7 @@ public:
 			}
 			else
 			{
-				count_t l_max_count = MIN(dest_capacity_p, source_count_p);
+				count_t l_max_count = FE_MIN(dest_capacity_p, source_count_p);
 				for (var::count_t i = 0; i < l_max_count; ++i)
 				{
 					*out_dest_pointer_p = *source_pointer_p;
@@ -1112,7 +1106,7 @@ public:
 		FE_ASSERT(dest_capacity_p == 0, "${%s@0}: ${%s@1} is zero", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(dest_capacity_p));
 		FE_ASSERT(source_count_p == 0, "${%s@0}: ${%s@1} is zero", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(source_count_p));
 
-		memory_traits<T>::copy_construct<Iterator>(out_dest_pointer_p, dest_capacity_p, source_pointer_p, source_count_p);
+		memory_traits<T>::template copy_construct<Iterator>(out_dest_pointer_p, dest_capacity_p, source_pointer_p, source_count_p);
 	}
 
 	template<class Iterator, class InputIterator>
@@ -1122,7 +1116,7 @@ public:
 		FE_ASSERT(source_pointer_p == nullptr, "${%s@0}: ${%s@1} is nullptr", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(source_pointer_p));
 		FE_ASSERT(count_to_copy_p == 0, "${%s@0}: ${%s@1} is zero", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(count_to_copy_p));
 
-		memory_traits<T>::copy_construct<Iterator>(out_dest_pointer_p, source_pointer_p, count_to_copy_p);
+		memory_traits<T>::template copy_construct<Iterator>(out_dest_pointer_p, source_pointer_p, count_to_copy_p);
 	}
 
 
@@ -1147,7 +1141,7 @@ public:
 		FE_ASSERT(dest_capacity_p == 0, "${%s@0}: ${%s@1} is zero", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(dest_capacity_p));
 		FE_ASSERT(source_count_p == 0, "${%s@0}: ${%s@1} is zero", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(source_count_p));
 
-		memory_traits<T>::copy_construct<Iterator>(out_dest_pointer_p, dest_capacity_p, source_pointer_p, source_count_p);
+		memory_traits<T>::template copy_construct<Iterator>(out_dest_pointer_p, dest_capacity_p, source_pointer_p, source_count_p);
 	}
 	
 	template<class Iterator, class InputIterator>
@@ -1157,7 +1151,7 @@ public:
 		FE_ASSERT(source_pointer_p == nullptr, "${%s@0}: ${%s@1} is nullptr", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(source_pointer_p));
 		FE_ASSERT(count_to_copy_p == 0, "${%s@0}: ${%s@1} is zero", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(count_to_copy_p));
 
-		memory_traits<T>::copy_construct<Iterator>(out_dest_pointer_p, source_pointer_p, count_to_copy_p);
+		memory_traits<T>::template copy_construct<Iterator>(out_dest_pointer_p, source_pointer_p, count_to_copy_p);
 	}
 
 
@@ -1169,7 +1163,7 @@ public:
 		FE_ASSERT(dest_count_p == 0, "${%s@0}: ${%s@1} is zero", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(dest_capacity_p));
 		FE_ASSERT(source_count_p == 0, "${%s@0}: ${%s@1} is zero", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(source_count_p));
 
-		memory_traits<T>::copy_construct<Iterator>(out_dest_pointer_p, dest_count_p, source_pointer_p, source_count_p);
+		memory_traits<T>::template copy_construct<Iterator>(out_dest_pointer_p, dest_count_p, source_pointer_p, source_count_p);
 	}
 
 	template<class Iterator, class InputIterator>
@@ -1179,7 +1173,7 @@ public:
 		FE_ASSERT(source_pointer_p == nullptr, "${%s@0}: ${%s@1} is nullptr", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(source_pointer_p));
 		FE_ASSERT(count_to_copy_p == 0, "${%s@0}: ${%s@1} is zero", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_NULLPTR), TO_STRING(count_to_copy_p));
 
-		memory_traits<T>::copy_construct<Iterator>(out_dest_pointer_p, source_pointer_p, count_to_copy_p);
+		memory_traits<T>::template copy_construct<Iterator>(out_dest_pointer_p, source_pointer_p, count_to_copy_p);
 	}
 
 
@@ -1193,7 +1187,7 @@ public:
 
 		FE_ASSERT(in_out_dest_first_p > in_out_dest_last_p, "${%s@0}: The begin iterator ${%s@1} must be pointing at the first element of a container.", TO_STRING(MEMORY_ERROR_1XX::_FATAL_ERROR_ILLEGAL_POSITION), TO_STRING(in_out_dest_first_p));
 
-		memory_traits<T>::construct<Iterator>(in_out_dest_first_p, in_out_dest_last_p, value_p);
+		memory_traits<T>::template construct<Iterator>(in_out_dest_first_p, in_out_dest_last_p, value_p);
 	}
 };
 
@@ -1471,12 +1465,12 @@ public:
 
 
 template<typename T, class Alignment>
-_FORCE_INLINE_ size_t calculate_aligned_memory_size_in_bytes(count_t elements_p) noexcept
+_FORCE_INLINE_ size calculate_aligned_memory_size_in_bytes(count_t elements_p) noexcept
 {
 	FE_ASSERT(elements_p == 0, "Assertion Failure: ${%s@0} cannot be zero.", TO_STRING(elements_p));
 
-	size_t l_actual_size = sizeof(T) * elements_p;
-	var::size_t l_multiplier = l_actual_size / sizeof(FE::aligned<T, Alignment>);
+	size l_actual_size = sizeof(T) * elements_p;
+	var::size l_multiplier = l_actual_size / sizeof(FE::aligned<T, Alignment>);
 	l_multiplier += ((l_actual_size % sizeof(FE::aligned<T, Alignment>)) != 0);
 
 	return sizeof(FE::aligned<T, Alignment>) * l_multiplier;

@@ -1,0 +1,5 @@
+*.obj
+*.ipch
+*.idb
+*.pdb
+*.exe

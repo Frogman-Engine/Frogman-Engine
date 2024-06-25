@@ -10,7 +10,7 @@
 BEGIN_NAMESPACE(FE)
 
 
-struct task_base;
+class task_base;
 
 
 class thread final
@@ -34,19 +34,11 @@ public:
 	thread& operator=(thread& other_p) noexcept;
 	thread& operator=(thread&& rvalue_p) noexcept;
 
-	_FORCE_INLINE_ boolean is_this_thread_active() noexcept
-	{
-		return this->m_thread.joinable();
-	}
+	_FORCE_INLINE_ boolean is_this_thread_active() noexcept { return this->m_thread.joinable(); }
 
 	void fork(FE::task_base* const function_p) noexcept;
+	_FORCE_INLINE_ void join() noexcept { this->m_thread.join(); }
 
-	_FORCE_INLINE_ void join() noexcept
-	{
-		this->m_thread.join();
-	}
-	
-	void swap(thread& in_out_other_p) noexcept;
 	static uint64 calculate_suitable_thread_count() noexcept;
 
 	static uint64 this_thread_id() noexcept;

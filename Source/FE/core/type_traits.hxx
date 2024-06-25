@@ -4,6 +4,10 @@
 #include <FE/core/types.hxx>
 #include <type_traits>
 
+// std
+#include <string>
+#include <string_view>
+
 
 
 
@@ -255,65 +259,11 @@ struct is_numeric
 	_MAYBE_UNUSED_ static constexpr inline bool value = (((std::is_integral<T>::value == true) && (FE::is_boolean<T>::value == false)) || (std::is_floating_point<T>::value == true));
 };
 
-
-enum struct TYPE_TRAIT : int8
-{
-	_UNDEFINED = -1,
-	_PRIMITIVE = 0,
-	_BOOLEAN = 1,
-	_CHARACTER = 2,
-	_SIGNED_INTEGER = 3,
-	_UNSIGNED_INTEGER = 4,
-	_FLOAT = 5,
-	_C_STYLE_STRING = 6,
-	_POINTER = 7,
-	_NULLPTR = 8,
-	_CLASS = 9,
-	_FUNCTION = 10
-};
-
 template<typename T>
-constexpr inline TYPE_TRAIT check_type() noexcept
+struct is_function
 {
-	if constexpr (FE::is_boolean<T>::value)
-	{
-		return TYPE_TRAIT::_BOOLEAN;
-	}
-	else if constexpr (FE::is_char<T>::value)
-	{
-		return TYPE_TRAIT::_CHARACTER;
-	}
-	else if constexpr (std::is_signed<T>::value)
-	{
-		return TYPE_TRAIT::_SIGNED_INTEGER;
-	}
-	else if constexpr (std::is_unsigned<T>::value)
-	{
-		return TYPE_TRAIT::_UNSIGNED_INTEGER;
-	}
-	else if constexpr (std::is_floating_point<T>::value)
-	{
-		return TYPE_TRAIT::_FLOAT;
-	}
-	else if constexpr (FE::is_c_style_constant_string<T>::value)
-	{
-		return TYPE_TRAIT::_C_STYLE_STRING;
-	}
-	else if constexpr (std::is_pointer<T>::value)
-	{
-		return TYPE_TRAIT::_POINTER;
-	}
-	else if constexpr (FE::is_nullptr<T>::value)
-	{
-		return TYPE_TRAIT::_NULLPTR;
-	}
-	else if constexpr (std::is_function<T>::value)
-	{
-		return TYPE_TRAIT::_FUNCTION;
-	}
-
-	return TYPE_TRAIT::_UNDEFINED;
-}
+	_MAYBE_UNUSED_ static constexpr inline bool value = (std::is_function<T>::value == true) || (std::is_member_function_pointer<T>::value == true);
+};
 
 
 enum struct TYPE_TRIVIALITY : boolean
@@ -329,6 +279,76 @@ struct is_trivial
 };
 
 
+template<typename T>
+struct is_string_class
+{
+	_MAYBE_UNUSED_ static constexpr inline bool value = false;
+};
+
+template<>
+struct is_string_class<std::string>
+{
+	_MAYBE_UNUSED_ static constexpr inline bool value = true;
+};
+
+template<>
+struct is_string_class<std::wstring>
+{
+	_MAYBE_UNUSED_ static constexpr inline bool value = true;
+};
+
+#ifdef __cpp_lib_char8_t
+template<>
+struct is_string_class<std::u8string>
+{
+	_MAYBE_UNUSED_ static constexpr inline bool value = true;
+};
+#endif
+
+template<>
+struct is_string_class<std::u16string>
+{
+	_MAYBE_UNUSED_ static constexpr inline bool value = true;
+};
+
+template<>
+struct is_string_class<std::u32string>
+{
+	_MAYBE_UNUSED_ static constexpr inline bool value = true;
+};
+
+
+template<>
+struct is_string_class<std::string_view>
+{
+	_MAYBE_UNUSED_ static constexpr inline bool value = true;
+};
+
+template<>
+struct is_string_class<std::wstring_view>
+{
+	_MAYBE_UNUSED_ static constexpr inline bool value = true;
+};
+
+#ifdef __cpp_lib_char8_t
+template<>
+struct is_string_class<std::u8string_view>
+{
+	_MAYBE_UNUSED_ static constexpr inline bool value = true;
+};
+#endif
+
+template<>
+struct is_string_class<std::u16string_view>
+{
+	_MAYBE_UNUSED_ static constexpr inline bool value = true;
+};
+
+template<>
+struct is_string_class<std::u32string_view>
+{
+	_MAYBE_UNUSED_ static constexpr inline bool value = true;
+};
 
 
 END_NAMESPACE

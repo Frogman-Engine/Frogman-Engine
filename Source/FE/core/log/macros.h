@@ -21,22 +21,25 @@
 #include <cstdlib>
 
 #define _ERROR_FROM_FE_CORE_EXIT_CODE_ (-70)
-
-
+#ifndef __FUNCSIG__
+#define __FUNCSIG__ __func__
+#endif
 
 
 #ifdef _ENABLE_LOG_
-// ${%d at n} - int32
-// ${%u at n} - uint32
-// ${%ld at n} - int64
-// ${%lu at n} - uint64
-// ${%lf at n} - float64
-// ${%f at n} - float32
-// ${%b at n} - bool
-// ${%c at n} - char
-// ${%s at n} - string
-// ${%p at n} - hexadecimal 64bit pointer
-#define FE_LOG(...) ::FE::internal::log::__FE_LOG_IMPLEMENTATION(::FE::log::buffered_string_formatter({ __VA_ARGS__ }), __FILE__, __func__, __LINE__)
+/*
+${% d at n} - int32
+${%u at n} - uint32
+${%ld at n} - int64
+${%lu at n} - uint64
+${%lf at n} - float64
+${%f at n} - float32
+${%b at n} - bool
+${%c at n} - char
+${%s at n} - string
+${%p at n} - hexadecimal 64bit pointer | * A file and console logger_base with a string formatter.
+*/
+#define FE_LOG(...) ::FE::log::logger_base::get_logger<::FE::log::message_logger_base>().do_log(::FE::log::buffered_string_formatter({ __VA_ARGS__ }), __FILE__, __FUNCSIG__, __LINE__)
 #else
 #define FE_LOG(...)
 #endif
@@ -52,11 +55,11 @@
 // ${%b at n} - bool
 // ${%c at n} - char
 // ${%s at n} - string
-// ${%p at n} - hexadecimal 64bit pointer  |  FE_ASSERT() invokes abort() if the expression is true.
+// ${%p at n} - hexadecimal 64bit pointer | *Dynamically asserts the condition, that must not be true at runtime. 
 #define FE_ASSERT(expression, ...) \
-if(expression) _UNLIKELY_ \
+if(UNLIKELY(expression)) _UNLIKELY_ \
 { \
-	::FE::internal::log::__FE_ABORT_IMPLEMENTATION(::FE::log::buffered_string_formatter({ __VA_ARGS__ }), __FILE__, __func__, __LINE__); \
+	::FE::log::logger_base::get_fatal_error_logger<::FE::log::fatal_error_logger_base>().do_log(::FE::log::buffered_string_formatter({ __VA_ARGS__ }), __FILE__, __FUNCSIG__, __LINE__); \
 	assert(!(expression)); \
 }
 #else
@@ -65,40 +68,46 @@ if(expression) _UNLIKELY_ \
 
 
 #ifdef _ENABLE_EXIT_
-// ${%d at n} - int32
-// ${%u at n} - uint32
-// ${%ld at n} - int64
-// ${%lu at n} - uint64
-// ${%lf at n} - float64
-// ${%f at n} - float32
-// ${%b at n} - bool
-// ${%c at n} - char
-// ${%s at n} - string
-// ${%p at n} - hexadecimal 64bit pointer  |  FE_EXIT() invokes exit() if the expression is true.
+/*
+${% d at n} - int32   | ${% u at n} - uint32  
+${% ld at n} - int64  | ${%lu at n} - uint64
+${%lf at n} - float64 | ${%f at n} - float32
+${%b at n}  - bool    | ${%c at n}  - char    
+${%s at n}  - string  | ${%p at n}  - hexadecimal 64bit pointer
+*Dynamically asserts the condition, that must not be true at runtime, and exits the program with the given error code.
+*/
 #define FE_EXIT(expression, error_code, ...) \
-if(expression) _UNLIKELY_ \
+if(UNLIKELY(expression)) _UNLIKELY_ \
 { \
-	::FE::internal::log::__FE_ABORT_IMPLEMENTATION(::FE::log::buffered_string_formatter({ __VA_ARGS__ }), __FILE__, __func__, __LINE__); \
-	::std::exit(static_cast<::FE::var::int32>(error_code)); \
+	::FE::log::logger_base::get_fatal_error_logger<::FE::log::fatal_error_logger_base>().do_log(::FE::log::buffered_string_formatter({ __VA_ARGS__ }), __FILE__, __FUNCSIG__, __LINE__); \
+	::std::exit(static_cast<::var::int32>(error_code)); \
 }
 #else
 #define FE_EXIT(expression, error_code, ...)
 #endif
 
 
+/*
+${% d at n} - int32   | ${% u at n} - uint32
+${% ld at n} - int64  | ${%lu at n} - uint64
+${%lf at n} - float64 | ${%f at n} - float32
+${%b at n}  - bool    | ${%c at n}  - char
+${%s at n}  - string  | ${%p at n}  - hexadecimal 64bit pointer
+*If the given function call does not return the expected value, the program will exit with an error code, retrieved from the method. 
+*/
 #define FE_EXPECT(fn_call, expected_value, ...)\
 { \
 	auto __FE_EXPECT_RESULT__ = fn_call; \
-	if(__FE_EXPECT_RESULT__ != expected_value) _UNLIKELY_ \
+	if(UNLIKELY(__FE_EXPECT_RESULT__ != expected_value)) _UNLIKELY_ \
 	{ \
-		::FE::internal::log::__FE_ABORT_IMPLEMENTATION(::FE::log::buffered_string_formatter({ __VA_ARGS__ }), __FILE__, __func__, __LINE__); \
+		::FE::log::logger_base::get_fatal_error_logger<::FE::log::fatal_error_logger_base>().do_log(::FE::log::buffered_string_formatter({ __VA_ARGS__ }), __FILE__, __FUNCSIG__, __LINE__); \
 		if constexpr (::FE::is_boolean<decltype(__FE_EXPECT_RESULT__)>::value == true) \
 		{ \
 			::std::exit(_ERROR_FROM_FE_CORE_EXIT_CODE_); \
 		} \
 		else if constexpr (::FE::is_boolean<decltype(__FE_EXPECT_RESULT__)>::value == false) \
 		{ \
-			::std::exit((::FE::var::int32)__FE_EXPECT_RESULT__); \
+			::std::exit((::var::int32)__FE_EXPECT_RESULT__); \
 		} \
 	} \
 }

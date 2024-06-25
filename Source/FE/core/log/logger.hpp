@@ -4,13 +4,14 @@
 #include <FE/core/types.hxx>
 #include <FE/core/private/debug.h>
 #include <FE/core/fstream_guard.hxx>
+
+//std
 #include <filesystem>
 #include <fstream>
 #include <string>
 
 
-#if defined(_ENABLE_LOG_)
-#define _IS_LOGGER_ENABLED_
+#ifdef _ENABLE_LOG_
 #define IF_LOGGER_ENABLED(true_p, false_p) true_p
 #define ENABLE_IF_LOGGER_ENABLED(code_p) code_p
 #else
@@ -24,20 +25,27 @@
 BEGIN_NAMESPACE(FE::log)
 
 
-class logger
+class fatal_error_logger_base;
+
+class message_logger_base;
+
+
+class logger_base
 {
 public:
     _MAYBE_UNUSED_ static constexpr uint16 line_info_buffer_size = 32;
-    _MAYBE_UNUSED_ static constexpr uint32 default_buffer_size = 10240;
+    _MAYBE_UNUSED_ static constexpr uint32 default_buffer_size = _ALLOWED_DIRECTORY_LENGTH_;
 
 #ifdef _WINDOWS_X86_64_
     using directory_char_type = var::wchar;
-#elif defined(_LINUX_64BIT_OS_)
-    using directory_char_type = var::character
+#else
+    #ifdef _LINUX_X86_64_
+    using directory_char_type = var::character;
+    #endif
 #endif
     using directory_buffer_type = std::basic_string<directory_char_type, std::char_traits<directory_char_type>>;
     using filename_buffer_type = directory_buffer_type;
-    using buffer_type = std::basic_string<char, std::char_traits<char>>;
+    using buffer_type = std::string;
 
 protected:
     std::ofstream m_file_logger;
@@ -48,64 +56,63 @@ protected:
     void __reserve() noexcept;
 
 public:
-    logger() noexcept;
-    ~logger() noexcept = default;
+    logger_base() noexcept;
+    ~logger_base() noexcept = default;
 
     void set_root_directory(const directory_char_type* root_directory_name_p = (std::filesystem::current_path() / "Logs").c_str()) noexcept;
 
     void mkdir(const directory_char_type* folder_name_p) noexcept;
     void cd(const directory_char_type* folder_name_p) noexcept;
 
-    void do_log(const char* content_p, const directory_char_type* filename_p = nullptr) noexcept;
+    static void do_log(std::initializer_list<const void*> arguments_p) noexcept;
+
+
+    template<class FatalErrorLogger>
+    static fatal_error_logger_base& get_fatal_error_logger() noexcept
+    {
+        FE_STATIC_ASSERT(((std::is_base_of<fatal_error_logger_base, FatalErrorLogger>::value == false) && (std::is_same<fatal_error_logger_base, FatalErrorLogger>::value == false)), "FatalErrorLogger must be derived from logger_base.");
+        thread_local static std::unique_ptr<fatal_error_logger_base> tl_s_fatal_error_logger = std::make_unique<FatalErrorLogger>();
+        return *tl_s_fatal_error_logger;
+    }
+
+    template<class Logger>
+    static message_logger_base& get_logger() noexcept
+    {
+        FE_STATIC_ASSERT(((std::is_base_of<message_logger_base, Logger>::value == false) && (std::is_same<message_logger_base, Logger>::value == false)), "FatalErrorLogger must be derived from logger_base.");
+        thread_local static std::unique_ptr<message_logger_base> tl_s_fatal_error_logger = std::make_unique<Logger>();
+        return *tl_s_fatal_error_logger;
+    }
 };
 
 
-
-
-class fatal_error_log : public logger
+// It logs into file and console
+class fatal_error_logger_base : public logger_base
 {
 public:
-    using base_type = logger;
+    using base_type = logger_base;
 
-    fatal_error_log() noexcept;
-    ~fatal_error_log() noexcept;
+    fatal_error_logger_base() noexcept;
+    ~fatal_error_logger_base() noexcept;
 
     void do_log(character* const message_p, character* const file_name_p, character* const function_name_p, uint32 line_p) noexcept;
 };
 
-class file_log : public logger
+
+// It logs into file and console
+class message_logger_base : public logger_base
 {
 public:
-    using base_type = logger;
+    using base_type = logger_base;
 
-    file_log() noexcept;
-    ~file_log() noexcept;
+    message_logger_base() noexcept;
+    ~message_logger_base() noexcept;
 
     void do_log(character* const message_p, character* const file_name_p, character* const function_name_p, uint32 line_p) noexcept;
+
 };
 
 
 END_NAMESPACE
-
-
-namespace FE::internal::log
-{
-#ifdef _ENABLE_LOG_
-    _FORCE_INLINE_ void __FE_LOG_IMPLEMENTATION(const char* const message_p, const char* const file_name_p, const char* const function_name_p, FE::uint32 line_p) noexcept
-    {
-        thread_local static ::FE::log::file_log tl_s_init;
-        tl_s_init.do_log(message_p, file_name_p, function_name_p, line_p);
-    }
-#endif
-
-#if defined(_ENABLE_ASSERT_) || defined(_ENABLE_EXIT_)
-    _FORCE_INLINE_ void __FE_ABORT_IMPLEMENTATION(const char* const message_p, const char* const file_name_p, const char* const function_name_p, FE::uint32 line_p) noexcept
-    {
-        thread_local static ::FE::log::fatal_error_log tl_s_init;
-        tl_s_init.do_log(message_p, file_name_p, function_name_p, line_p);
-    }
-#endif
-}
 
 
 #endif
